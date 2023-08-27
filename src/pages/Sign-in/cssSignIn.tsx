@@ -6,6 +6,13 @@ import {
 } from "@/utils/cssVariable";
 
 const StyleTotal = styled.div`
+  width: 32rem;
+  height: 40rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
@@ -13,13 +20,6 @@ const StyleTotal = styled.div`
     -webkit-box-shadow: 0 0 0 30px ${(props) => props.theme.colorBg2} inset !important;
     -webkit-text-fill-color: ${(props) => props.theme.colorText1} !important;
   }
-
-  width: 32rem;
-  height: 40rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 
   .loginForm {
     width: 100%;

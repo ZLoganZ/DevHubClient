@@ -119,7 +119,9 @@ const SignInPage = () => {
   return (
     <div
       style={{
-        background: themeColorSet.colorBg2,
+        height: "100vh",
+        width: "100vw",
+        background: themeColorSet.colorBg1,
         color: themeColorSet.colorText2,
       }}>
       <StyleTotal theme={themeColorSet}>
