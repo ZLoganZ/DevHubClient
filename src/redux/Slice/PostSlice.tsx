@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 interface State {
-  postArr: any;
-  allPost: any;
-  post: any;
-  ownerInfo: any;
+  postArr: object[] | [null];
+  allPost: object[] | [null];
+  post: object | null;
+  ownerInfo: object | null;
   isOpenPostDetail: boolean;
   isInProfile: boolean;
 }
@@ -20,7 +20,7 @@ const initialState: State = {
 };
 
 const postSlice = createSlice({
-  name: 'post',
+  name: "post",
   initialState,
   reducers: {
     setAllPost: (state, action) => {
@@ -74,6 +74,13 @@ const postSlice = createSlice({
   },
 });
 
-export const { setAllPost, openPostDetail, setPost, setOwnerInfo, setIsInProfile, updatePosts, setPostArr } =
-  postSlice.actions;
+export const {
+  setAllPost,
+  openPostDetail,
+  setPost,
+  setOwnerInfo,
+  setIsInProfile,
+  updatePosts,
+  setPostArr,
+} = postSlice.actions;
 export default postSlice.reducer;
