@@ -1,6 +1,6 @@
 import { call, put, select, takeLatest } from "redux-saga/effects";
 import { messageService } from "../../services/MessageService";
-import STATUS_CODE from "../../utils/constants/statusCodes";
+import STATUS_CODE from "@/utils/constants/statusCodes";
 import {
   CREATE_CONVERSATION_SAGA,
   GET_CONVERSATIONS_SAGA,
@@ -40,7 +40,7 @@ export function* createConversationSaga({ payload }: any) {
       messageService.createConversation,
       payload
     );
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(AddConversations(data.content));
       yield put(SetCurrentConversation(data.content));
     }
@@ -60,7 +60,7 @@ export function* getConversationSaga({ payload }: any) {
       messageService.getConversation,
       payload
     );
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(SetCurrentConversation(data.content));
     }
   } catch (err: any) {
@@ -76,7 +76,7 @@ export function* theoDoiGetConversationSaga() {
 export function* getMessagesSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.getMessages, payload);
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(SetMessages(data.content));
     }
   } catch (err: any) {
@@ -92,7 +92,7 @@ export function* theoDoiGetMessagesSaga() {
 export function* seenMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.seenMessage, payload);
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(SetCurrentConversation(data.content));
     }
   } catch (err: any) {
@@ -108,7 +108,7 @@ export function* theoDoiSeenMessageSaga() {
 export function* sendMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.sendMessage, payload);
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(SetMessage(data.content));
     }
   } catch (err: any) {

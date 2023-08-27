@@ -1,6 +1,7 @@
 import { call, put, select, takeLatest } from "redux-saga/effects";
 import { postService } from "../../services/PostService";
-import STATUS_CODE from "../../utils/constants/statusCodes";
+import STATUS_CODE from "@/utils/constants/statusCodes";
+
 import {
   CREATE_POST_SAGA,
   DELETE_POST_SAGA,

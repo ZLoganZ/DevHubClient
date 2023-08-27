@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { getStartedService } from "../../services/GetStartedService";
-import STATUS_CODE from "../../utils/constants/statusCodes";
+import STATUS_CODE from "@/utils/constants/statusCodes";
 import {
   CHOOSE_GET_INTEREST_SAGA,
   CHOOSE_GET_STARTED_SAGA,
@@ -13,8 +13,8 @@ import { setShouldFollowers } from "../Slice/GetStartedSlice";
 export function* chooseGetStartedSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseGetStarted, payload);
-  } catch (err: any) {
-    console.log(err.response.data);
+  } catch (err: unknown) {
+    console.log(err);
   }
 }
 
@@ -26,8 +26,8 @@ export function* theoDoiChooseGetStartedSaga() {
 export function* chooseGetInterestSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseInterest, payload);
-  } catch (err: any) {
-    console.log(err.response.data);
+  } catch (err: unknown) {
+    console.log(err);
   }
 }
 
@@ -57,8 +57,8 @@ function* getShouldFollowSaga() {
     if (status === STATUS_CODE.OK) {
       yield put(setShouldFollowers(data.content));
     }
-  } catch (err: any) {
-    console.log(err.response.data);
+  } catch (err: unknown) {
+    console.log(err);
   }
 }
 

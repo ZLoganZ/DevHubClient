@@ -1,6 +1,6 @@
 import { put, takeLatest } from "redux-saga/effects";
 import { setCommunity } from "../Slice/CommunitySlide";
-import STATUS_CODE from "../../utils/constants/statusCodes";
+import STATUS_CODE from "@/utils/constants/statusCodes";
 import { communityService } from "../../services/CommunityService";
 import { GET_COMMUNITY_BY_ID_SAGA } from "../actionSaga/CommunityActionSaga";
 import { setUser } from "../Slice/UserSlice";
@@ -14,8 +14,8 @@ function* getCommunityByIDSaga({ payload }: any) {
       yield put(setCommunity(data.content));
       yield put(setUser(data.content));
     }
-  } catch (err: any) {
-    console.log(err.response.data);
+  } catch (err: unknown) {
+    console.log(err);
   }
 }
 

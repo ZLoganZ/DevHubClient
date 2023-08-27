@@ -1,6 +1,6 @@
-import { put, select, takeLatest } from "redux-saga/effects";
-import { userService } from "../../services/UserService";
-import STATUS_CODE from "../../utils/constants/statusCodes";
+import { put, select, takeLatest } from 'redux-saga/effects';
+import { userService } from '../../services/UserService';
+import STATUS_CODE from '@/utils/constants/statusCodes';
 import {
   FOLLOW_USER_SAGA,
   GET_FOLLOWERS_SAGA,
@@ -8,12 +8,12 @@ import {
   GET_USER_INFO_SAGA,
   REGIS_USER_SAGA,
   UPDATE_USER_SAGA,
-} from "../actionSaga/UserActionSaga";
-import { setRepos, setUser } from "../Slice/UserSlice";
-import { setFollowers } from "../Slice/ActiveListSlice";
-import { setOwnerInfo } from "../Slice/PostSlice";
-import { closeDrawer, setLoading } from "../Slice/DrawerHOCSlice";
-import { setLogin } from "../Slice/AuthSlice";
+} from '../actionSaga/UserActionSaga';
+import { setRepos, setUser } from '../Slice/UserSlice';
+import { setFollowers } from '../Slice/ActiveListSlice';
+import { setOwnerInfo } from '../Slice/PostSlice';
+import { closeDrawer, setLoading } from '../Slice/DrawerHOCSlice';
+import { setLogin } from '../Slice/AuthSlice';
 
 // registerUser Saga
 function* registerUserSaga({ payload }: any) {
