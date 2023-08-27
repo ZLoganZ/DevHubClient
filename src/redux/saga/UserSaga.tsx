@@ -1,6 +1,5 @@
 import { put, select, takeLatest } from "redux-saga/effects";
 import { userService } from "../../services/UserService";
-import { DARK_THEME, TOKEN } from "../../utils/constants/SettingSystem";
 import STATUS_CODE from "../../utils/constants/statusCodes";
 import {
   FOLLOW_USER_SAGA,
@@ -15,7 +14,6 @@ import { setFollowers } from "../Slice/ActiveListSlice";
 import { setOwnerInfo } from "../Slice/PostSlice";
 import { closeDrawer, setLoading } from "../Slice/DrawerHOCSlice";
 import { setLogin } from "../Slice/AuthSlice";
-import { setTheme } from "../Slice/ThemeSlice";
 
 // registerUser Saga
 function* registerUserSaga({ payload }: any) {
@@ -24,10 +22,10 @@ function* registerUserSaga({ payload }: any) {
       payload.userRegister
     );
     if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+      // localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
 
       // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
+      // yield put(setTheme({ theme: DARK_THEME }));
 
       window.location.replace("/");
     }
@@ -48,7 +46,7 @@ function* updateUserSaga({ payload }: any) {
       payload.id,
       payload.userUpdate
     );
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(setOwnerInfo(data.content));
       yield put(setUser(data.content));
       yield put(setLoading(false));
@@ -67,7 +65,7 @@ export function* theoDoiUpdateUserSaga() {
 function* getFollowersSaga() {
   try {
     const { data, status } = yield userService.getFollowers();
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       data.content.followers.forEach((follower: any) => {
         follower.username = follower.lastname + " " + follower.firstname;
       });
@@ -87,7 +85,7 @@ export function* theoDoiGetFollowersSaga() {
 function* getUserInfoSaga() {
   try {
     const { data, status } = yield userService.getUserInfo();
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(setUser(data.content));
     }
   } catch (err: any) {
@@ -103,7 +101,7 @@ export function* theoDoiGetUserInfoSaga() {
 function* followUserSaga({ payload }: any) {
   try {
     const { data, status } = yield userService.followUser(payload);
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       // Do nothing
     }
   } catch (err: any) {
@@ -119,7 +117,7 @@ export function* theoDoiFollowUserSaga() {
 function* getRepositoryGithubSaga() {
   try {
     const { data, status } = yield userService.getRepositoryGithub();
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(setRepos(data.content));
     }
   } catch (err: any) {
