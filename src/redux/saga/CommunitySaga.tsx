@@ -14,7 +14,7 @@ function* getCommunityByIDSaga({ payload }: any) {
       yield put(setCommunity(data.content));
       yield put(setUser(data.content));
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }

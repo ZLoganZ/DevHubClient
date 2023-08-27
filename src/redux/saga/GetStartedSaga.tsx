@@ -13,7 +13,7 @@ import { setShouldFollowers } from "../Slice/GetStartedSlice";
 export function* chooseGetStartedSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseGetStarted, payload);
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -26,7 +26,7 @@ export function* theoDoiChooseGetStartedSaga() {
 export function* chooseGetInterestSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseInterest, payload);
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -57,7 +57,7 @@ function* getShouldFollowSaga() {
     if (status === STATUS_CODE.OK) {
       yield put(setShouldFollowers(data.content));
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }

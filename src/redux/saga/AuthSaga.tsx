@@ -36,7 +36,7 @@ function* LoginSaga({ payload }: any) {
 
       window.location.replace(from);
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -60,7 +60,7 @@ function* LogoutSaga() {
 
       window.location.replace("/login");
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -76,7 +76,7 @@ function* getUserIDSaga() {
     if (status === STATUS_CODE.OK) {
       yield put(setUserID({ userID: data.content }));
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -103,7 +103,7 @@ function* LoginWithGoogleSaga({ payload }: any) {
 
       window.location.replace(from);
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -149,7 +149,7 @@ function* ForgotPasswordSaga({ payload }: any) {
         )}&note=codetrongemailchukhongphaicodenaydaunehihi`,
       });
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -172,7 +172,7 @@ function* VerifyCodeSaga({ payload }: any) {
         )}&note=codetrongemailchukhongphaicodenaydaunehihi`,
       });
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -190,7 +190,7 @@ function* ResetPasswordSaga({ payload }: any) {
 
       navigate("/login");
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.log(err);
   }
 }
@@ -210,7 +210,7 @@ function* CheckVerifyCodeSaga({ payload }: any) {
 
       navigate("/forgot");
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     const { navigate } = yield select((state) => state.functionReducer);
 
     navigate("/forgot");
@@ -233,7 +233,7 @@ function* CheckResetPasswordSaga({ payload }: any) {
 
       navigate("/forgot");
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     const { navigate } = yield select((state) => state.functionReducer);
 
     navigate("/forgot");

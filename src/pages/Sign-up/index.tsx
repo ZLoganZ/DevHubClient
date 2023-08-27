@@ -18,11 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { REGIS_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
 import { useTheme } from "@/components/theme-provider";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const formSchema = z
   .object({
-    firstname: z.string().min(1, { message: "First name is required" }),
-    lastname: z.string().min(1, { message: "Last name is required" }),
+    name: z.string().min(1, { message: "First name is required" }),
+    // lastname: z.string().min(1, { message: "Last name is required" }),
     email: z
       .string()
       .email("Email is invalid")
@@ -55,8 +56,8 @@ const SignUpPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstname: "",
-      lastname: "",
+      name: "",
+      // lastname: "",
       email: "",
       password: "",
       confirm: "",
@@ -102,7 +103,7 @@ const SignUpPage = () => {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="mt-5 formAccount">
                   <div className="mb-4">
-                    <FormField
+                    {/* <FormField
                       name="lastname"
                       control={form.control}
                       render={({ field }) => (
@@ -118,9 +119,9 @@ const SignUpPage = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                     <FormField
-                      name="firstname"
+                      name="name"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem

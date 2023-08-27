@@ -13,7 +13,6 @@ import { setRepos, setUser } from '../Slice/UserSlice';
 import { setFollowers } from '../Slice/ActiveListSlice';
 import { setOwnerInfo } from '../Slice/PostSlice';
 import { closeDrawer, setLoading } from '../Slice/DrawerHOCSlice';
-import { setLogin } from '../Slice/AuthSlice';
 
 // registerUser Saga
 function* registerUserSaga({ payload }: any) {
@@ -22,15 +21,11 @@ function* registerUserSaga({ payload }: any) {
       payload.userRegister
     );
     if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
-
-      // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
+      // localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken))
 
       window.location.replace("/");
     }
   } catch (err: any) {
-    localStorage.removeItem(TOKEN);
     console.log(err.response.data);
   }
 }

@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface State {
-  members: unknown[];
-  followers: unknown;
+  members: any[];
+  followers: any;
 }
 
 const initialState: State = {
@@ -30,7 +30,7 @@ const activeListSlice = createSlice({
       return {
         ...state,
         members: state.members.filter(
-          (memberId: unknown) => memberId !== action.payload
+          (memberId: any) => memberId !== action.payload
         ),
       };
     },

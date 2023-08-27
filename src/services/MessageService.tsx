@@ -9,23 +9,23 @@ export class MessageService extends BaseService {
     return this.get(`/conversations`);
   };
 
-  createConversation = (payload: unknown) => {
+  createConversation = (payload: any) => {
     return this.post(`/conversations`, payload);
   };
 
-  getConversation = (payload: unknown) => {
+  getConversation = (payload: any) => {
     return this.get(`/conversations/${payload}`);
   };
 
-  getMessages = (payload: unknown) => {
+  getMessages = (payload: any) => {
     return this.get(`/${payload}/messages/`);
   };
 
-  seenMessage = (payload: unknown) => {
+  seenMessage = (payload: any) => {
     return this.post(`/conversations/${payload}/seen`, null);
   };
 
-  sendMessage = (payload: unknown) => {
+  sendMessage = (payload: any) => {
     return this.post(`/messages`, payload);
   };
 }

@@ -15,10 +15,10 @@ export class PostService extends BaseService {
   getAllPost = () => {
     return this.get(`/posts`);
   };
-  createPost = (post: unknown) => {
+  createPost = (post: any) => {
     return this.post(`/posts`, post);
   };
-  updatePost = (id: string, post: unknown) => {
+  updatePost = (id: string, post: any) => {
     return this.put(`/posts/${id}`, post);
   };
   deletePost = (id: string) => {

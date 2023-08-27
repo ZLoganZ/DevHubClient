@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface State {
-  conversations: unknown[] | [null];
+  conversations: any[] | [null];
   currentConversation: object | null;
   currentConversationId: string | null;
 
-  message: unknown;
-  messages: unknown[];
+  message: any;
+  messages: any[];
 }
 
 const initialState: State = {

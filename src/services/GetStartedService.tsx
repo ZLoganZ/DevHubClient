@@ -1,4 +1,4 @@
-import { BaseService } from './BaseService';
+import { BaseService } from "./BaseService";
 
 export class GetStartedService extends BaseService {
   constructor() {
@@ -7,13 +7,13 @@ export class GetStartedService extends BaseService {
   chooseGetStarted = (number: number) => {
     return this.post(`/getstarted`, number);
   };
-  chooseInterest = (interest: unknown) => {
+  chooseInterest = (interest: any) => {
     return this.post(`/users/expertise`, interest);
   };
   getShouldFollower = () => {
     return this.get(`/user/shouldFollow`);
   };
-  chooseShouldFollowPeople = (arrPeople: unknown) => {
+  chooseShouldFollowPeople = (arrPeople: any) => {
     return this.post(`/interest`, arrPeople);
   };
 }
