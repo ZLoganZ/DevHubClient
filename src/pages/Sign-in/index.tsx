@@ -26,7 +26,10 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 
 const formSchema = z.object({
-  email: z.string().email().min(1, { message: "Email is required" }),
+  email: z
+    .string()
+    .email("Email is invalid")
+    .min(1, { message: "Email is required" }),
   password: z
     .string()
     .min(1, {

@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider";
 
-import SignInPage from "./pages/Sign-in";
+import SignInPage from "@/pages/Sign-in";
+import SignUpPage from "@/pages/Sign-up";
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
         <Routes>
           <Route index />
           <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
