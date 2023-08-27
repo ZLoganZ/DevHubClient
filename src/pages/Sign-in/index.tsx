@@ -1,10 +1,9 @@
 import { useDispatch } from "react-redux";
 import { useLocation, NavLink } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, ConfigProvider, Form, Input } from "antd";
 
 import StyleTotal from "./cssSignIn";
 import { GetGitHubUrl } from "@/utils/GetGitHubUrl";
@@ -13,30 +12,7 @@ import {
   LOGIN_WITH_GOOGLE_SAGA,
 } from "@/redux/actionSaga/AuthActionSaga";
 import { TOKEN, TOKEN_GITHUB } from "@/utils/constants/SettingSystem";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
-import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .email("Email is invalid")
-    .min(1, { message: "Email is required" }),
-  password: z
-    .string()
-    .min(1, {
-      message: "Password is required",
-    })
-    .max(32),
-});
 
 const SignInPage = () => {
   const dispatch = useDispatch();
@@ -97,32 +73,26 @@ const SignInPage = () => {
     }, 500);
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: any) => {
     console.log(data);
     dispatch(
       LOGIN_SAGA({
         userLogin: data,
       })
     );
+    await new Promise((resolve) => setTimeout(resolve, 5000));
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100vw",
-        background: themeColorSet.colorBg1,
-        color: themeColorSet.colorText2,
+    <ConfigProvider
+      theme={{
+        token: {
+          colorTextBase: themeColorSet.colorText2,
+          colorBgBase: themeColorSet.colorBg2,
+          lineWidth: 0,
+          controlHeight: 40,
+          borderRadius: 0,
+        },
       }}>
       <StyleTotal theme={themeColorSet}>
         <div className="loginForm">
@@ -133,71 +103,62 @@ const SignInPage = () => {
             <h2 className="title">Welcome back!</h2>
           </div>
 
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full"
-              style={{ width: "70%" }}>
-              <FormField
-                name="email"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem className="mb-3">
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="password"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                variant="ghost"
-                className="btn btn-primary w-full h-9 mb-4 mt-3 font-bold"
-                disabled={isLoading}>
-                Login
-              </Button>
-              <NavLink to="/forgot">
-                <span className="forgot flex justify-center align-middle">
-                  Forgot your password?
-                </span>
-              </NavLink>
-            </form>
+          <Form className="w-full" style={{ width: "70%" }} onFinish={onSubmit}>
+            <Form.Item
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your E-mail!",
+                },
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
+                },
+              ]}>
+              <Input placeholder="Email" allowClear />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}>
+              <Input.Password placeholder="Password" />
+            </Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="btn btn-primary w-full h-9 mb-4 mt-3 font-bold">
+              Login
+            </Button>
+            <NavLink to="/forgot">
+              <span className="forgot flex justify-center align-middle">
+                Forgot your password?
+              </span>
+            </NavLink>
           </Form>
           <div className="anotherLogin mt-10">
             <div className="title relative">
-              <span className="absolute">Or</span>
+              <span
+                className="absolute"
+                style={{ color: themeColorSet.colorText2 }}>
+                Or
+              </span>
               <hr />
             </div>
             <div className="loginTool mt-10 w-full">
               <div
-                className="google h-10 rounded-md"
+                className="google h-10"
                 onClick={() => handleSignInWithGoogle()}>
                 <span className="icon mr-2">
                   <img src="./images/google.svg" alt="google" />
                 </span>
                 <span>Continue with Gmail</span>
               </div>
-              <div
-                className="github mt-4 h-10 rounded-md"
-                onClick={() => openPopup()}>
+              <div className="github mt-4 h-10" onClick={() => openPopup()}>
                 <span className="icon mr-2">
                   <img src="./images/github.svg" alt="github" />
                 </span>
@@ -214,7 +175,7 @@ const SignInPage = () => {
           </div>
         </div>
       </StyleTotal>
-    </div>
+    </ConfigProvider>
   );
 };
 
