@@ -1,6 +1,6 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { messageService } from '../../services/MessageService';
-import { STATUS_CODE } from '../../util/constants/SettingSystem';
+import { call, put, select, takeLatest } from "redux-saga/effects";
+import { messageService } from "../../services/MessageService";
+import STATUS_CODE from "../../utils/constants/statusCodes";
 import {
   CREATE_CONVERSATION_SAGA,
   GET_CONVERSATIONS_SAGA,
@@ -8,20 +8,20 @@ import {
   GET_MESSAGES_SAGA,
   SEEN_MESSAGE_SAGA,
   SEND_MESSAGE_SAGA,
-} from '../actionSaga/MessageActionSaga';
+} from "../actionSaga/MessageActionSaga";
 import {
   AddConversations,
   SetConversations,
   SetCurrentConversation,
   SetMessage,
   SetMessages,
-} from '../Slice/ConversationSlice';
+} from "../Slice/ConversationSlice";
 
 // Get conversations Saga
 export function* getConversationsSaga() {
   try {
     const { data, status } = yield call(messageService.getConversations);
-    if (status === STATUS_CODE.SUCCESS) {
+    if (status === STATUS_CODE.OK) {
       yield put(SetConversations(data.content));
     }
   } catch (err: any) {
@@ -36,7 +36,10 @@ export function* theoDoiGetConversationsSaga() {
 // Create conversation Saga
 export function* createConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(messageService.createConversation, payload);
+    const { data, status } = yield call(
+      messageService.createConversation,
+      payload
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(AddConversations(data.content));
       yield put(SetCurrentConversation(data.content));
@@ -53,7 +56,10 @@ export function* theoDoiCreateConversationSaga() {
 // Get conversation Saga
 export function* getConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(messageService.getConversation, payload);
+    const { data, status } = yield call(
+      messageService.getConversation,
+      payload
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(SetCurrentConversation(data.content));
     }

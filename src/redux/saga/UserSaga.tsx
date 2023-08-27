@@ -1,6 +1,7 @@
-import { put, select, takeLatest } from 'redux-saga/effects';
-import { userService } from '../../services/UserService';
-import { DARK_THEME, STATUS_CODE, TOKEN } from '../../util/constants/SettingSystem';
+import { put, select, takeLatest } from "redux-saga/effects";
+import { userService } from "../../services/UserService";
+import { DARK_THEME, TOKEN } from "../../utils/constants/SettingSystem";
+import STATUS_CODE from "../../utils/constants/statusCodes";
 import {
   FOLLOW_USER_SAGA,
   GET_FOLLOWERS_SAGA,
@@ -8,25 +9,27 @@ import {
   GET_USER_INFO_SAGA,
   REGIS_USER_SAGA,
   UPDATE_USER_SAGA,
-} from '../actionSaga/UserActionSaga';
-import { setRepos, setUser } from '../Slice/UserSlice';
-import { setFollowers } from '../Slice/ActiveListSlice';
-import { setOwnerInfo } from '../Slice/PostSlice';
-import { closeDrawer, setLoading } from '../Slice/DrawerHOCSlice';
-import { setLogin } from '../Slice/AuthSlice';
-import { setTheme } from '../Slice/ThemeSlice';
+} from "../actionSaga/UserActionSaga";
+import { setRepos, setUser } from "../Slice/UserSlice";
+import { setFollowers } from "../Slice/ActiveListSlice";
+import { setOwnerInfo } from "../Slice/PostSlice";
+import { closeDrawer, setLoading } from "../Slice/DrawerHOCSlice";
+import { setLogin } from "../Slice/AuthSlice";
+import { setTheme } from "../Slice/ThemeSlice";
 
 // registerUser Saga
 function* registerUserSaga({ payload }: any) {
   try {
-    const { data, status } = yield userService.registerUser(payload.userRegister);
+    const { data, status } = yield userService.registerUser(
+      payload.userRegister
+    );
     if (status === STATUS_CODE.CREATED) {
       localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
-      window.location.replace('/');
+      window.location.replace("/");
     }
   } catch (err: any) {
     localStorage.removeItem(TOKEN);
@@ -41,7 +44,10 @@ export function* theoDoiRegisterUserSaga() {
 // Update User Saga
 function* updateUserSaga({ payload }: any) {
   try {
-    const { data, status } = yield userService.updateUser(payload.id, payload.userUpdate);
+    const { data, status } = yield userService.updateUser(
+      payload.id,
+      payload.userUpdate
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setOwnerInfo(data.content));
       yield put(setUser(data.content));
@@ -63,7 +69,7 @@ function* getFollowersSaga() {
     const { data, status } = yield userService.getFollowers();
     if (status === STATUS_CODE.SUCCESS) {
       data.content.followers.forEach((follower: any) => {
-        follower.username = follower.lastname + ' ' + follower.firstname;
+        follower.username = follower.lastname + " " + follower.firstname;
       });
       yield put(setUser(data.content));
       yield put(setFollowers(data.content));
