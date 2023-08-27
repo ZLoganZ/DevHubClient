@@ -85,7 +85,7 @@ const SignUpPage = () => {
                           message: "Please input your firstname!",
                         },
                       ]}>
-                      <Input placeholder="First name" allowClear></Input>
+                      <Input placeholder="First name" allowClear />
                     </Form.Item>
                   </Form.Item>
                   <Form.Item
@@ -100,7 +100,7 @@ const SignUpPage = () => {
                         message: "The input is not valid E-mail!",
                       },
                     ]}>
-                    <Input placeholder="Email" allowClear></Input>
+                    <Input placeholder="Email" allowClear />
                   </Form.Item>
                   <Form.Item
                     name="password"
@@ -108,6 +108,10 @@ const SignUpPage = () => {
                       {
                         required: true,
                         message: "Please input your password!",
+                      },
+                      {
+                        min: 6,
+                        message: "Password must be at least 6 characters!",
                       },
                     ]}
                     hasFeedback>
