@@ -1,14 +1,12 @@
-"use client";
-
 import { useDispatch } from "react-redux";
 import { useLocation, NavLink } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-
+import StyleTotal from "./cssSignIn";
 import { GetGitHubUrl } from "@/utils/GetGitHubUrl";
 import {
   LOGIN_SAGA,
@@ -20,21 +18,31 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/theme-provider";
 
 const formSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6).max(32),
-  });
+  email: z.string().email().min(1, { message: "Email is required" }),
+  password: z
+    .string()
+    .min(1, {
+      message: "Password is required",
+    })
+    .max(32),
+});
 
 const SignInPage = () => {
   const dispatch = useDispatch();
 
   const location = useLocation();
+
+  const { getTheme } = useTheme();
+
+  const { themeColorSet } = getTheme();
 
   const handleSignInWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -88,7 +96,13 @@ const SignInPage = () => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
+
+  const isLoading = form.formState.isSubmitting;
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
@@ -100,86 +114,98 @@ const SignInPage = () => {
   };
 
   return (
-    <>
-      <div className="loginForm">
-        <div className="welcomeBack mb-12">
-          <div className="icon_logo">
-            <FontAwesomeIcon className="icon" icon={faSnowflake} />
+    <div
+      style={{
+        background: themeColorSet.colorBg2,
+        color: themeColorSet.colorText2,
+      }}>
+      <StyleTotal theme={themeColorSet}>
+        <div className="loginForm">
+          <div className="welcomeBack mb-12">
+            <div className="icon_logo">
+              <FontAwesomeIcon className="icon" icon={faSnowflake} />
+            </div>
+            <h2 className="title">Welcome back!</h2>
           </div>
-          <h2 className="title">Welcome back!</h2>
-        </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Input placeholder="Password" {...field} />
-                </FormItem>
-              )}
-            />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full"
+              style={{ width: "70%" }}>
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="mb-3">
+                    <FormControl>
+                      <Input placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <button
-              type="submit"
-              className="btn btn-primary w-full h-9 mb-4 mt-3 font-bold">
-              Login
-            </button>
-            <NavLink to="/forgot">
-              <span className="forgot flex justify-center align-middle">
-                Forgot your password?
-              </span>
-            </NavLink>
-          </form>
-        </Form>
-        <div className="anotherLogin mt-10">
-          <div className="title relative">
-            <span
-              className="absolute">
-              Or
+              <Button
+                type="submit"
+                variant="ghost"
+                className="btn btn-primary w-full h-9 mb-4 mt-3 font-bold"
+                disabled={isLoading}>
+                Login
+              </Button>
+              <NavLink to="/forgot">
+                <span className="forgot flex justify-center align-middle">
+                  Forgot your password?
+                </span>
+              </NavLink>
+            </form>
+          </Form>
+          <div className="anotherLogin mt-10">
+            <div className="title relative">
+              <span className="absolute">Or</span>
+              <hr />
+            </div>
+            <div className="loginTool mt-10 w-full">
+              <div
+                className="google h-10 rounded-md"
+                onClick={() => handleSignInWithGoogle()}>
+                <span className="icon mr-2">
+                  <img src="./images/google.svg" alt="google" />
+                </span>
+                <span>Continue with Gmail</span>
+              </div>
+              <div
+                className="github mt-4 h-10 rounded-md"
+                onClick={() => openPopup()}>
+                <span className="icon mr-2">
+                  <img src="./images/github.svg" alt="github" />
+                </span>
+                <span>Continue with Github</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="noAccount text-center mt-8">
+            <span>Don't you have an account yet? </span>
+            <span className="signUp ml-1">
+              <NavLink to="/sign-up">Sign up</NavLink>
             </span>
-            <hr />
-          </div>
-          <div className="loginTool mt-10 w-full">
-            <div
-              className="google h-10"
-              onClick={() => handleSignInWithGoogle()}>
-              <span className="icon mr-2">
-                <img src="./images/google.svg" alt="google" />
-              </span>
-              <span>Continue with Gmail</span>
-            </div>
-            <div className="github mt-4 h-10" onClick={() => openPopup()}>
-              <span className="icon mr-2">
-                <img src="./images/github.svg" alt="github" />
-              </span>
-              <span>Continue with Github</span>
-            </div>
           </div>
         </div>
-
-        <div className="noAccount text-center mt-8">
-          <span>Don't you have an account yet? </span>
-          <span className="signUp ml-1">
-            <NavLink to="/register">Sign up</NavLink>
-          </span>
-        </div>
-      </div>
-    </>
+      </StyleTotal>
+    </div>
   );
 };
 

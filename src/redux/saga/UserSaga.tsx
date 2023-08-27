@@ -1,6 +1,6 @@
 import { put, select, takeLatest } from 'redux-saga/effects';
 import { userService } from '../../services/UserService';
-import { DARK_THEME, STATUS_CODE, TOKEN } from '../../util/constants/SettingSystem';
+import STATUS_CODE from '@/utils/constants/statusCodes';
 import {
   FOLLOW_USER_SAGA,
   GET_FOLLOWERS_SAGA,
@@ -14,7 +14,6 @@ import { setFollowers } from '../Slice/ActiveListSlice';
 import { setOwnerInfo } from '../Slice/PostSlice';
 import { closeDrawer, setLoading } from '../Slice/DrawerHOCSlice';
 import { setLogin } from '../Slice/AuthSlice';
-import { setTheme } from '../Slice/ThemeSlice';
 
 // registerUser Saga
 function* registerUserSaga({ payload }: any) {

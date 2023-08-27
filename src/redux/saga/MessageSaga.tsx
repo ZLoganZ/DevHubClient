@@ -1,6 +1,6 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { messageService } from '../../services/MessageService';
-import { STATUS_CODE } from '../../util/constants/SettingSystem';
+import { messageService } from '@/services/MessageService';
+import STATUS_CODE from '@/utils/constants/statusCodes';
 import {
   CREATE_CONVERSATION_SAGA,
   GET_CONVERSATIONS_SAGA,
