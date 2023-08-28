@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { useLocation, NavLink } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
@@ -7,16 +6,16 @@ import { Button, ConfigProvider, Form, Input } from "antd";
 
 import StyleTotal from "./cssSignIn";
 import { GetGitHubUrl } from "@/utils/GetGitHubUrl";
-import {
-  LOGIN_SAGA,
-  LOGIN_WITH_GOOGLE_SAGA,
-} from "@/redux/actionSaga/AuthActionSaga";
 import { TOKEN, TOKEN_GITHUB } from "@/utils/constants/SettingSystem";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/ThemeProvider";
+import { authService } from "@/services/AuthService";
+
+interface IFormData {
+  email: string;
+  password: string;
+}
 
 const SignInPage = () => {
-  const dispatch = useDispatch();
-
   const location = useLocation();
 
   const { getTheme } = useTheme();
@@ -25,11 +24,22 @@ const SignInPage = () => {
 
   const handleSignInWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      dispatch(
-        LOGIN_WITH_GOOGLE_SAGA({
-          token: tokenResponse.access_token,
-        })
+      const { data, status } = await authService.loginWithGoogle(
+        tokenResponse.access_token
       );
+
+      if (status === 200) {
+        // Lưu token vào localStorage
+        localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+
+        const state = location.state as { from: Location };
+        const from = state?.from?.pathname || "/";
+
+        window.location.replace(from);
+      } else {
+        console.log("Login failed");
+        console.error(data);
+      }
     },
   });
 
@@ -73,14 +83,21 @@ const SignInPage = () => {
     }, 500);
   };
 
-  const onSubmit = async (data: any) => {
-    console.log(data);
-    dispatch(
-      LOGIN_SAGA({
-        userLogin: data,
-      })
-    );
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+  const onSubmit = async (formdata: IFormData) => {
+    const { data, status } = await authService.login(formdata);
+
+    if (status === 200) {
+      // Lưu token vào localStorage
+      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+
+      const state = location.state as { from: Location };
+      const from = state?.from?.pathname || "/";
+
+      window.location.replace(from);
+    } else {
+      console.log("Login failed");
+      console.error(data);
+    }
   };
 
   return (

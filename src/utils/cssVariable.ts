@@ -108,3 +108,24 @@ export const flex_center_row = css`
   justify-content: center;
   align-items: center;
 `;
+
+export const custom_scrollBar = css`
+  &::-webkit-scrollbar {
+    width: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: ${(props) => props.theme.colorBg2};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: ${(props) => props.theme.colorBg4};
+  }
+`;

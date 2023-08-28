@@ -1,27 +1,43 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { ConfigProvider, Form, Input } from "antd";
-import { useDispatch } from "react-redux";
 
 import StyleTotal from "./cssSignUp";
-import { REGIS_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/ThemeProvider";
+import { userService } from "@/services/UserService";
+import { TOKEN } from "@/utils/constants/SettingSystem";
+
+interface IFormData {
+  lastname: string;
+  firstname: string;
+  email: string;
+  password: string;
+  confirm: string;
+}
 
 const SignUpPage = () => {
-  const dispatch = useDispatch();
+  const location = useLocation();
 
   const { getTheme } = useTheme();
 
   const { themeColorSet } = getTheme();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    dispatch(
-      REGIS_USER_SAGA({
-        userRegister: data,
-      })
-    );
+  const onSubmit = async (formdata: IFormData) => {
+    const { data, status } = await userService.registerUser(formdata);
+
+    if (status === 200) {
+      // Lưu token vào localStorage
+      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+
+      const state = location.state as { from: Location };
+      const from = state?.from?.pathname || "/";
+
+      window.location.replace(from);
+    } else {
+      console.log("Login failed");
+      console.error(data);
+    }
   };
 
   return (
