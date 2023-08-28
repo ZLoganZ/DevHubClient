@@ -71,7 +71,7 @@ const NewPost = (Props: Props) => {
     quill.current = new Quill("#editor", {
       placeholder: "Add a Content",
       modules: {
-        syntax: true,
+        // syntax: true,
         toolbar: toolbarOptions,
       },
       theme: "snow",

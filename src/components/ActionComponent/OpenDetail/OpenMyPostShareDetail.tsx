@@ -1,20 +1,20 @@
-import { Avatar, ConfigProvider, Input, Popover, Row, Col } from 'antd';
-import React, { useMemo, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import StyleTotal from './cssOpenPostDetail';
-import dataEmoji from '@emoji-mart/data';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import Picker from '@emoji-mart/react';
+import { Avatar, ConfigProvider, Input, Popover, Row, Col } from "antd";
+import React, { useMemo, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import Picker from "@emoji-mart/react";
+
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
   SAVE_REPLY_SAGA,
   SAVE_REPLY_POSTSHARE_SAGA,
-} from '../../../redux/actionSaga/PostActionSaga';
-import { useParams } from 'react-router-dom';
-import MyPostDetail from '../../Form/PostDetail/MyPostDetail';
+} from "@/redux/actionSaga/PostActionSaga";
+import { useParams } from "react-router-dom";
+import StyleTotal from "./cssOpenPostDetail";
+import MyPostDetail from "@/components/Form/PostDetail/MyPostDetail";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface Props {
   post: any;
@@ -26,12 +26,12 @@ const OpenMyPostShareDetail = (Props: Props) => {
 
   const { postID } = useParams();
 
-  // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { getTheme } = useTheme();
+
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [commentContent, setCommentContent] = useState('');
+  const [commentContent, setCommentContent] = useState("");
   const [cursor, setCursor] = useState(0);
 
   const [data, setData] = useState<any>({ isReply: false, idComment: null });
@@ -56,7 +56,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
               contentComment: commentContent,
               idComment: data.idComment,
             },
-          }),
+          })
         );
         setData({ isReply: false, idComment: null });
       } else {
@@ -66,7 +66,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
               contentComment: commentContent,
             },
             id: Props.post?._id,
-          }),
+          })
         );
       }
     } else {
@@ -78,7 +78,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
               contentComment: commentContent,
               idComment: data.idComment,
             },
-          }),
+          })
         );
         setData({ isReply: false, idComment: null });
       } else {
@@ -88,17 +88,17 @@ const OpenMyPostShareDetail = (Props: Props) => {
               contentComment: commentContent,
             },
             id: Props.post?._id,
-          }),
+          })
         );
       }
     }
     setTimeout(() => {
-      setCommentContent('');
+      setCommentContent("");
     }, 1000);
   };
 
   const checkEmpty = () => {
-    if (commentContent === '') {
+    if (commentContent === "") {
       return true;
     } else {
       return false;
@@ -116,7 +116,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
         owner={Props.post?.owner}
       />
     ),
-    [Props.post, data],
+    [Props.post, data]
   );
 
   const memoizedInputComment = useMemo(
@@ -151,55 +151,64 @@ const OpenMyPostShareDetail = (Props: Props) => {
               <Popover
                 placement="right"
                 trigger="click"
-                title={'Emoji'}
+                title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
-                      setCommentContent(commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor));
+                      setCommentContent(
+                        commentContent.slice(0, cursor) +
+                          emoji.native +
+                          commentContent.slice(cursor)
+                      );
                     }}
                   />
-                }
-              >
+                }>
                 <span
                   className="emoji cursor-pointer hover:text-blue-700"
                   style={{
-                    transition: 'all 0.3s',
-                  }}
-                >
-                  <FontAwesomeIcon className="item mr-3 ml-3" size="lg" icon={faFaceSmile} />
+                    transition: "all 0.3s",
+                  }}>
+                  <FontAwesomeIcon
+                    className="item mr-3 ml-3"
+                    size="lg"
+                    icon={faFaceSmile}
+                  />
                 </span>
               </Popover>
-            }
-          ></Input>
+            }></Input>
           <span
             className="sendComment cursor-pointer hover:text-blue-700"
             {...(checkEmpty()
               ? {
                   style: {
-                    color: 'gray',
+                    color: "gray",
                     //hover disabled
-                    cursor: 'not-allowed',
+                    cursor: "not-allowed",
                   },
                 }
-              : { transition: 'all 0.3s' })}
-            onClick={handleSubmitComment}
-          >
+              : { transition: "all 0.3s" })}
+            onClick={handleSubmitComment}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </span>
         </div>
       </div>
     ),
-    [commentContent, cursor],
+    [commentContent, cursor]
   );
 
   return (
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       <StyleTotal theme={themeColorSet}>
         <Row className="py-10">
           <Col offset={3} span={18}>
@@ -207,8 +216,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
               style={{
                 backgroundColor: themeColorSet.colorBg2,
               }}
-              className="rounded-lg"
-            >
+              className="rounded-lg">
               {memoizedComponent}
               {memoizedInputComment}
             </div>

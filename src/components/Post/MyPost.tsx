@@ -395,9 +395,11 @@ const MyPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={{
-                    syntax: true,
-                  }}
+                  modules={
+                    {
+                      // syntax: true,
+                    }
+                  }
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>

@@ -1,29 +1,40 @@
-import { Button, ConfigProvider, Input, message, Popover, Upload, UploadFile } from 'antd';
-import Quill from 'quill';
-import 'react-quill/dist/quill.snow.css';
-import React, { useEffect, useState, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import StyleTotal from './cssEditPostForm';
-import ImageCompress from 'quill-image-compress';
-import dataEmoji from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
-import { useFormik } from 'formik';
-import { UPDATE_POST_SAGA } from '../../../redux/actionSaga/PostActionSaga';
-import { UploadOutlined } from '@ant-design/icons';
-import { callBackSubmitDrawer, setLoading } from '../../../redux/Slice/DrawerHOCSlice';
-import { RcFile } from 'antd/es/upload';
-import { sha1 } from 'crypto-hash';
+import {
+  Button,
+  ConfigProvider,
+  Input,
+  message,
+  Popover,
+  Upload,
+  UploadFile,
+} from "antd";
+import Quill from "quill";
+import "react-quill/dist/quill.snow.css";
+import React, { useEffect, useState, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getTheme } from "../../../util/functions/ThemeFunction";
+import StyleTotal from "./cssEditPostForm";
+import ImageCompress from "quill-image-compress";
+import dataEmoji from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
+import { useFormik } from "formik";
+import { UPDATE_POST_SAGA } from "../../../redux/actionSaga/PostActionSaga";
+import { UploadOutlined } from "@ant-design/icons";
+import {
+  callBackSubmitDrawer,
+  setLoading,
+} from "../../../redux/Slice/DrawerHOCSlice";
+import { RcFile } from "antd/es/upload";
+import { sha1 } from "crypto-hash";
 
-Quill.register('modules/imageCompress', ImageCompress);
+Quill.register("modules/imageCompress", ImageCompress);
 
 var toolbarOptions = [
-  ['bold', 'italic', 'underline', 'clean'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
+  ["bold", "italic", "underline", "clean"],
+  [{ list: "ordered" }, { list: "bullet" }],
   [{ align: [] }],
-  ['link'],
+  ["link"],
 ];
 
 interface PostProps {
@@ -46,44 +57,52 @@ const EditPostForm = (PostProps: PostProps) => {
     if (!file)
       return {
         url: null,
-        status: 'done',
+        status: "done",
       };
 
     const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
-      method: 'POST',
-      body: formData,
-    });
+    formData.append("file", file);
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     const data = await res.json();
     return {
       url: data.secure_url,
-      status: 'done',
+      status: "done",
     };
   };
 
   const handleRemoveImage = async (imageURL: any) => {
-    const nameSplit = imageURL.split('/');
+    const nameSplit = imageURL.split("/");
     const duplicateName = nameSplit.pop();
 
     // Remove .
-    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
+    const public_id = duplicateName?.split(".").slice(0, -1).join(".");
 
     const formData = new FormData();
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id);
+    formData.append("api_key", "235531261932754");
+    formData.append("public_id", public_id);
     const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData,
-    });
+    formData.append("timestamp", timestamp);
+    const signature = await sha1(
+      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
+    );
+    formData.append("signature", signature);
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     const data = await res.json();
     return {
       url: data,
-      status: 'done',
+      status: "done",
     };
   };
 
@@ -96,7 +115,7 @@ const EditPostForm = (PostProps: PostProps) => {
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
-      if (quill.root.innerHTML === '<p><br></p>') {
+      if (quill.root.innerHTML === "<p><br></p>") {
         error();
       } else {
         dispatch(setLoading(true));
@@ -112,7 +131,7 @@ const EditPostForm = (PostProps: PostProps) => {
           UPDATE_POST_SAGA({
             id: PostProps.id,
             postUpdate: values,
-          }),
+          })
         );
       }
     },
@@ -121,7 +140,7 @@ const EditPostForm = (PostProps: PostProps) => {
   const beforeUpload = (file: any) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
-      messageApi.error('Image must smaller than 3MB!');
+      messageApi.error("Image must smaller than 3MB!");
     }
     return isLt2M;
   };
@@ -131,32 +150,32 @@ const EditPostForm = (PostProps: PostProps) => {
 
   useEffect(() => {
     // Tạo quill
-    quill = new Quill('#editorDrawer', {
+    quill = new Quill("#editorDrawer", {
       modules: {
-        syntax: true,
+        // syntax: true,
         toolbar: toolbarOptions,
       },
-      theme: 'snow',
-      scrollingContainer: '#scrolling-container',
+      theme: "snow",
+      scrollingContainer: "#scrolling-container",
     });
-    quill.on('text-change', function () {
+    quill.on("text-change", function () {
       handleQuillChange();
     });
 
     // Ngăn chặn paste text vào quill
     // C1
-    quill.root.addEventListener('paste', (event: any) => {
+    quill.root.addEventListener("paste", (event: any) => {
       event.preventDefault();
-      const text = event.clipboardData.getData('text/plain');
+      const text = event.clipboardData.getData("text/plain");
 
       const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, '<br>')
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        .replace(/ /g, '&nbsp;');
+        .replace(/\n/g, "<br>")
+        .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+        .replace(/ /g, "&nbsp;");
 
       // console.log(textToHTMLWithTabAndSpace);
 
-      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
+      document.execCommand("insertHTML", false, textToHTMLWithTabAndSpace);
     });
 
     setQuill(quill);
@@ -170,19 +189,19 @@ const EditPostForm = (PostProps: PostProps) => {
     quill.root.innerHTML = PostProps.content;
     setQuill(quill);
     // Hiển thị lại title khi PostProps.title thay đổi
-    formik.setFieldValue('title', PostProps.title);
+    formik.setFieldValue("title", PostProps.title);
   }, [PostProps, quill]);
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    formik.setFieldValue('content', text);
+    formik.setFieldValue("content", text);
   };
 
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: 'error',
-      content: 'Please enter the content',
+      type: "error",
+      content: "Please enter the content",
     });
   };
 
@@ -190,9 +209,9 @@ const EditPostForm = (PostProps: PostProps) => {
 
   const nameImage = useMemo(() => {
     if (PostProps.img) {
-      const nameSplit = PostProps.img.split('/');
+      const nameSplit = PostProps.img.split("/");
       const duplicateName = nameSplit.pop();
-      const name = duplicateName.replace(/_[^_]*\./, '.');
+      const name = duplicateName.replace(/_[^_]*\./, ".");
       return name;
     }
     return undefined;
@@ -202,14 +221,14 @@ const EditPostForm = (PostProps: PostProps) => {
   const handleUpload = (info: any) => {
     setIsChanged(isChanged + 1);
     setFile(info?.file?.originFileObj);
-    formik.setFieldValue('linkImage', info.fileList[0].originFileObj);
+    formik.setFieldValue("linkImage", info.fileList[0].originFileObj);
   };
 
   const fileList: UploadFile[] = [
     {
-      uid: '-1',
+      uid: "-1",
       name: nameImage,
-      status: 'done',
+      status: "done",
       url: PostProps.img,
     },
   ];
@@ -223,8 +242,7 @@ const EditPostForm = (PostProps: PostProps) => {
           borderRadius: 0,
           lineWidth: 0,
         },
-      }}
-    >
+      }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
         <div className="newPost px-4 py-3">
@@ -237,8 +255,7 @@ const EditPostForm = (PostProps: PostProps) => {
                 value={formik.values.title}
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
-                onChange={formik.handleChange}
-              ></Input>
+                onChange={formik.handleChange}></Input>
             </div>
             <div className="AddContent mt-4">
               <div id="editorDrawer" />
@@ -249,19 +266,25 @@ const EditPostForm = (PostProps: PostProps) => {
               <Popover
                 placement="top"
                 trigger="click"
-                title={'Members'}
+                title={"Members"}
                 content={
                   <Picker
                     data={dataEmoji}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
-                      quill.insertText(quill.getSelection().index, emoji.native);
+                      quill.insertText(
+                        quill.getSelection().index,
+                        emoji.native
+                      );
                     }}
                   />
-                }
-              >
+                }>
                 <span className="emoji">
-                  <FontAwesomeIcon className="item mr-3 ml-3" size="lg" icon={faFaceSmile} />
+                  <FontAwesomeIcon
+                    className="item mr-3 ml-3"
+                    size="lg"
+                    icon={faFaceSmile}
+                  />
                 </span>
               </Popover>
               <span>
@@ -272,11 +295,15 @@ const EditPostForm = (PostProps: PostProps) => {
                   accept="image/png, image/jpeg, image/jpg"
                   defaultFileList={PostProps.img ? [...fileList] : []}
                   maxCount={1}
-                  customRequest={async ({ file, onSuccess, onError, onProgress }: any) => {
-                    onSuccess('ok');
+                  customRequest={async ({
+                    file,
+                    onSuccess,
+                    onError,
+                    onProgress,
+                  }: any) => {
+                    onSuccess("ok");
                   }}
-                  beforeUpload={beforeUpload}
-                >
+                  beforeUpload={beforeUpload}>
                   <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>
               </span>

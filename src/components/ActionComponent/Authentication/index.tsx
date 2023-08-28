@@ -1,8 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import LoadingLogo from '../../GlobalSetting/LoadingLogo';
-import { CHECK_LOGIN_SAGA } from '../../../redux/actionSaga/AuthActionSaga';
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+
+import LoadingLogo from "@/components/Loading/LoadingLogo";
+import { CHECK_LOGIN_SAGA } from "@/redux/actionSaga/AuthActionSaga";
 
 export const AlreadyAuth = () => {
   const dispatch = useDispatch();

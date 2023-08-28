@@ -1,12 +1,10 @@
-import { Avatar, ConfigProvider, Input, Popover, Modal } from 'antd';
-import React, { useMemo, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import StyleTotal from './cssOpenPostDetailModal';
-import dataEmoji from '@emoji-mart/data';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import Picker from '@emoji-mart/react';
+import { Avatar, ConfigProvider, Input, Popover, Modal } from "antd";
+import React, { useMemo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import Picker from "@emoji-mart/react";
+
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
@@ -14,8 +12,10 @@ import {
   SAVE_REPLY_POSTSHARE_SAGA,
   GET_POSTSHARE_BY_ID_SAGA,
   GET_POST_BY_ID_SAGA,
-} from '../../../redux/actionSaga/PostActionSaga';
-import MyPostDetail from '../../Form/PostDetail/MyPostDetail';
+} from "@/redux/actionSaga/PostActionSaga";
+import StyleTotal from "./cssOpenPostDetailModal";
+import MyPostDetail from "@/components/Form/PostDetail/MyPostDetail";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface PostProps {
   post: any;
@@ -28,12 +28,13 @@ interface PostProps {
 
 const OpenMyPostDetailModal = (PostProps: PostProps) => {
   const dispatch = useDispatch();
-  // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+
+  const { getTheme } = useTheme();
+
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [commentContent, setCommentContent] = useState('');
+  const [commentContent, setCommentContent] = useState("");
   const [cursor, setCursor] = useState(0);
 
   const userInfo = useSelector((state: any) => state.userReducer.userInfo);
@@ -61,7 +62,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   }, [data]);
 
   useEffect(() => {
-    if (!PostProps.visible) setCommentContent('');
+    if (!PostProps.visible) setCommentContent("");
   }, [PostProps.visible]);
 
   const handleSubmitComment = () => {
@@ -71,8 +72,12 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
       contentComment: commentContent,
     };
 
-    const saveCommentAction = postShare ? SAVE_COMMENT_POSTSHARE_SAGA : SAVE_COMMENT_SAGA;
-    const saveReplyAction = postShare ? SAVE_REPLY_POSTSHARE_SAGA : SAVE_REPLY_SAGA;
+    const saveCommentAction = postShare
+      ? SAVE_COMMENT_POSTSHARE_SAGA
+      : SAVE_COMMENT_SAGA;
+    const saveReplyAction = postShare
+      ? SAVE_REPLY_POSTSHARE_SAGA
+      : SAVE_REPLY_SAGA;
 
     if (isReply) {
       dispatch(
@@ -82,7 +87,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
             contentComment: commentContent,
             idComment,
           },
-        }),
+        })
       );
       setData({ isReply: false, idComment: null });
     } else {
@@ -90,15 +95,15 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
         saveCommentAction({
           comment,
           id: post?._id,
-        }),
+        })
       );
     }
 
-    setCommentContent('');
+    setCommentContent("");
   };
 
   const checkEmpty = () => {
-    if (commentContent === '') {
+    if (commentContent === "") {
       return true;
     } else {
       return false;
@@ -116,7 +121,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
         owner={PostProps.owner}
       />
     ),
-    [PostProps.post, PostProps.userInfo, data],
+    [PostProps.post, PostProps.userInfo, data]
   );
 
   const memoizedInputComment = useMemo(
@@ -150,24 +155,36 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
               <Popover
                 placement="right"
                 trigger="click"
-                title={'Emoji'}
+                title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
-                      setCommentContent(commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor));
+                      setCommentContent(
+                        commentContent.slice(0, cursor) +
+                          emoji.native +
+                          commentContent.slice(cursor)
+                      );
                     }}
                   />
-                }
-              >
+                }>
                 <span
                   className="emoji cursor-pointer hover:text-blue-700"
                   style={{
-                    transition: 'all 0.3s',
-                  }}
-                >
-                  <FontAwesomeIcon className="item mr-3 ml-3" size="lg" icon={faFaceSmile} />
+                    transition: "all 0.3s",
+                  }}>
+                  <FontAwesomeIcon
+                    className="item mr-3 ml-3"
+                    size="lg"
+                    icon={faFaceSmile}
+                  />
                 </span>
               </Popover>
             }
@@ -177,35 +194,35 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
             {...(checkEmpty()
               ? {
                   style: {
-                    color: 'gray',
-                    cursor: 'not-allowed',
+                    color: "gray",
+                    cursor: "not-allowed",
                   },
                 }
-              : { transition: 'all 0.3s' })}
-            onClick={handleSubmitComment}
-          >
+              : { transition: "all 0.3s" })}
+            onClick={handleSubmitComment}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </span>
         </div>
       </div>
     ),
-    [commentContent, cursor],
+    [commentContent, cursor]
   );
 
   return (
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       <StyleTotal theme={themeColorSet}>
         <Modal
           centered
-          title={'The post of ' + PostProps.userInfo?.username}
+          title={"The post of " + PostProps.userInfo?.username}
           width={720}
           footer={
             <ConfigProvider>
-              <StyleTotal theme={themeColorSet}>{memoizedInputComment}</StyleTotal>
+              <StyleTotal theme={themeColorSet}>
+                {memoizedInputComment}
+              </StyleTotal>
             </ConfigProvider>
           }
           open={visible}
@@ -214,8 +231,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
             setTimeout(() => {
               PostProps.setVisible(false);
             }, 300);
-          }}
-        >
+          }}>
           {memoizedComponent}
         </Modal>
       </StyleTotal>

@@ -26,7 +26,7 @@ const postSlice = createSlice({
     setAllPost: (state, action) => {
       return {
         ...state,
-        allPost: action.payload.allPostArr,
+        allPost: action.payload.postArr,
       };
     },
     setPostArr: (state, action) => {

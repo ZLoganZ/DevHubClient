@@ -28,7 +28,7 @@ const useAllPostsData = () => {
     },
   });
 
-  return { isLoading, isError, allPost: data?.content?.allPostArr, userInfo: data?.content?.userInfo, isFetching };
+  return { isLoading, isError, allPost: data?.content?.postArr, userInfo: data?.content?.userInfo, isFetching };
 };
 
 const usePostsData = (userID: string) => {

@@ -8,14 +8,7 @@ import {
   faShareNodes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Avatar,
-  Divider,
-  Dropdown,
-  Image,
-  Popover,
-  Space,
-} from "antd";
+import { Avatar, Divider, Dropdown, Image, Popover, Space } from "antd";
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,12 +56,7 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.likes?.length]);
 
   // Like color
-  const [likeColor, setLikeColor] = useState(themeColorSet.colorText1);
-  useEffect(() => {
-    PostProps.post?.isLiked
-      ? setLikeColor("red")
-      : setLikeColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isLiked]);
+  const [likeColor, setLikeColor] = useState("red");
 
   // isLiked
   const [isLiked, setIsLiked] = useState(true);
@@ -87,12 +75,7 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.shares?.length]);
 
   // Share color
-  const [shareColor, setShareColor] = useState(themeColorSet.colorText1);
-  useEffect(() => {
-    PostProps.post?.isShared
-      ? setShareColor("blue")
-      : setShareColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isShared]);
+  const [shareColor, setShareColor] = useState("blue");
 
   // isShared
   const [isShared, setIsShared] = useState(true);
@@ -109,12 +92,7 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.isSaved]);
 
   // Save color
-  const [saveColor, setSaveColor] = useState(themeColorSet.colorText1);
-  useEffect(() => {
-    PostProps.post?.isSaved
-      ? setSaveColor("yellow")
-      : setSaveColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isSaved]);
+  const [saveColor, setSaveColor] = useState("yellow");
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
@@ -265,9 +243,11 @@ const OtherPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={{
-                    syntax: true,
-                  }}
+                  modules={
+                    {
+                      // syntax: true,
+                    }
+                  }
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>
@@ -336,8 +316,13 @@ const OtherPost = (PostProps: PostProps) => {
                 <Avatar
                   className="item"
                   style={{ backgroundColor: "transparent" }}
-                  icon={<FontAwesomeIcon icon={faHeart} color={likeColor} />}
-                  onClick={(e: any) => {
+                  icon={
+                    <FontAwesomeIcon
+                      icon={faHeart}
+                      color={isLiked ? likeColor : themeColorSet.colorText1}
+                    />
+                  }
+                  onClick={() => {
                     if (isLiked) {
                       setLikeNumber(likeNumber - 1);
                       setLikeColor(themeColorSet.colorText1);
@@ -363,8 +348,13 @@ const OtherPost = (PostProps: PostProps) => {
                 <Avatar
                   className="item"
                   style={{ backgroundColor: "transparent" }}
-                  icon={<FontAwesomeIcon icon={faShare} color={shareColor} />}
-                  onClick={(e: any) => {
+                  icon={
+                    <FontAwesomeIcon
+                      icon={faShare}
+                      color={isShared ? shareColor : themeColorSet.colorText1}
+                    />
+                  }
+                  onClick={() => {
                     if (isShared) {
                       setShareNumber(shareNumber - 1);
                       setShareColor(themeColorSet.colorText1);
@@ -415,9 +405,12 @@ const OtherPost = (PostProps: PostProps) => {
                     className="item"
                     style={{ backgroundColor: "transparent" }}
                     icon={
-                      <FontAwesomeIcon icon={faBookmark} color={saveColor} />
+                      <FontAwesomeIcon
+                        icon={faBookmark}
+                        color={isSaved ? saveColor : themeColorSet.colorText1}
+                      />
                     }
-                    onClick={(e: any) => {
+                    onClick={() => {
                       if (isSaved) {
                         setIsSaved(false);
                         setSaveColor(themeColorSet.colorText1);
@@ -435,7 +428,12 @@ const OtherPost = (PostProps: PostProps) => {
                   <Avatar
                     className="item"
                     style={{ backgroundColor: "transparent" }}
-                    icon={<FontAwesomeIcon icon={faShareNodes} />}
+                    icon={
+                      <FontAwesomeIcon
+                        icon={faShareNodes}
+                        color={themeColorSet.colorText1}
+                      />
+                    }
                   />
                 </Space>
               </Space>

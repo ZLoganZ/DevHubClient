@@ -1,12 +1,16 @@
-import { ConfigProvider } from 'antd';
-import React, { useState, useLayoutEffect } from 'react';
-import { messageService } from '../../../services/MessageService';
-import { useDispatch, useSelector } from 'react-redux';
-import GroupChatModal from '../../ChatComponent/GroupChatModal';
-import { closeModal, openModal } from '../../../redux/Slice/ModalHOCSlice';
-import StyleTotal from './cssOpenPostDetailModal';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import { ButtonActiveHover, ButtonCancelHover } from '../../MiniComponent';
+import { ConfigProvider } from "antd";
+import { useDispatch } from "react-redux";
+import { useState, useLayoutEffect } from "react";
+
+import { messageService } from "@/services/MessageService";
+import GroupChatModal from "@/components/ChatComponent/GroupChatModal";
+import { closeModal, openModal } from "@/redux/Slice/ModalHOCSlice";
+import StyleTotal from "./cssOpenPostDetailModal";
+import {
+  ButtonActiveHover,
+  ButtonCancelHover,
+} from "@/components/MiniComponent";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface Props {
   users: [];
@@ -15,25 +19,22 @@ interface Props {
 const OpenGroupModal = (Props: Props) => {
   const dispatch = useDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { getTheme } = useTheme();
+
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  let [membersGroup, SetMembersGroup] = useState<any>();
-  let [name, setGroupName] = useState<any>();
+  const [membersGroup, SetMembersGroup] = useState<any>();
+  const [name, setGroupName] = useState<any>();
 
-  const handleSetName = (newName: any) => {
-    setGroupName(() => {
-      name = newName;
-    });
+  const handleSetName = (newName: string) => {
+    setGroupName(newName);
   };
 
   const handleSetGroupMember = (newMembers: any) => {
-    SetMembersGroup(() => {
-      membersGroup = newMembers;
-    });
+    SetMembersGroup(newMembers);
   };
 
   const onSubmit = () => {
@@ -49,7 +50,7 @@ const OpenGroupModal = (Props: Props) => {
         setIsLoading(false);
         dispatch(closeModal());
       })
-      .catch(() => console.log('error'))
+      .catch(() => console.log("error"))
       .finally(() => {
         setIsLoading(false);
       });
@@ -58,16 +59,21 @@ const OpenGroupModal = (Props: Props) => {
   useLayoutEffect(() => {
     dispatch(
       openModal({
-        title: 'Create a new group chat',
-        component: <GroupChatModal setName={handleSetName} setValue={handleSetGroupMember} users={Props.users} />,
+        title: "Create a new group chat",
+        component: (
+          <GroupChatModal
+            setName={handleSetName}
+            setValue={handleSetGroupMember}
+            users={Props.users}
+          />
+        ),
         footer: (
           <div className="mt-6 flex items-center justify-end gap-x-3">
             <ButtonCancelHover
               onClick={() => {
                 dispatch(closeModal());
               }}
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
             <ButtonActiveHover rounded loading={isLoading} onClick={onSubmit}>
@@ -75,7 +81,7 @@ const OpenGroupModal = (Props: Props) => {
             </ButtonActiveHover>
           </div>
         ),
-      }),
+      })
     );
   }, [isLoading, name, membersGroup]);
 
@@ -83,8 +89,7 @@ const OpenGroupModal = (Props: Props) => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       <StyleTotal theme={themeColorSet}>
         <div></div>
       </StyleTotal>

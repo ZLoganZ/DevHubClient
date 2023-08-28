@@ -74,6 +74,7 @@ export function* getPostByIdSaga({ payload }: any) {
   try {
     const id = payload.id;
     const { data, status } = yield postService.getPostById(id);
+    console.log(data, status)
     if (status === STATUS_CODE.OK) {
       yield put(setPost(data.content));
       yield put(updatePosts(data.content));
