@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-
 import CommentDetail from "@/components/CommentDetail";
 import OtherPost from "@/components/Post/OtherPost";
+import { useState, useEffect } from "react";
 import OtherPostShare from "@/components/Post/OtherPostShare";
 import StyleTotal from "./cssPostDetail";
-import { useTheme } from "@/components/ThemeProvider";
+import { useSelector } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
 
 interface PostProps {
   post: any;
@@ -17,9 +17,8 @@ interface PostProps {
 
 const OtherPostDetail = (Props: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
+  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(

@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import styled from "styled-components";
+import { commonColor } from "@/utils/cssVariable";
 
 const StyleTotal = styled.div`
   .time-message {

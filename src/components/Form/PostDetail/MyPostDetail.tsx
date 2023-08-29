@@ -1,8 +1,8 @@
-import CommentDetail from '../../CommentDetail';
-import { useState, useEffect } from 'react';
-import MyPostShare from '../../Post/MyPostShare';
-import MyPost from '../../Post/MyPost';
-import StyleTotal from './cssPostDetail';
+import CommentDetail from "@/components/CommentDetail";
+import { useState, useEffect } from "react";
+import MyPostShare from "@/components/Post/MyPostShare";
+import MyPost from "@/components/Post/MyPost";
+import StyleTotal from "./cssPostDetail";
 
 interface PostProps {
   post: any;
@@ -14,7 +14,9 @@ interface PostProps {
 }
 
 const MyPostDetail = (Props: PostProps) => {
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(Props.data.idComment);
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
+    Props.data.idComment
+  );
 
   useEffect(() => {
     setSelectedCommentId(Props.data.idComment);
@@ -28,17 +30,20 @@ const MyPostDetail = (Props: PostProps) => {
     <StyleTotal>
       <div className="postDetail">
         {Props.postShare ? (
-          <MyPostShare post={Props.post} userInfo={Props.userInfo} owner={Props.owner} />
+          <MyPostShare
+            post={Props.post}
+            userInfo={Props.userInfo}
+            owner={Props.owner}
+          />
         ) : (
           <MyPost post={Props.post} userInfo={Props.userInfo} />
         )}
         <div
           className="commentTotal px-3 ml-4"
           style={{
-            maxHeight: '30rem',
-            overflow: 'auto',
-          }}
-        >
+            maxHeight: "30rem",
+            overflow: "auto",
+          }}>
           {Props.post?.comments?.map((item: any) => {
             return (
               <div className="px-4" key={item?._id}>
@@ -50,8 +55,7 @@ const MyPostDetail = (Props: PostProps) => {
                     userInfo={Props.userInfo}
                     selectedCommentId={selectedCommentId}
                     onSelectComment={handleSelectComment}
-                    postID={Props.post._id}
-                  >
+                    postID={Props.post._id}>
                     {item.listReply?.map((item: any, index: number) => {
                       return (
                         <CommentDetail

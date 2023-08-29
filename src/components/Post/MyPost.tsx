@@ -13,6 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Avatar,
+  ConfigProvider,
   Divider,
   Dropdown,
   Space,
@@ -25,11 +26,9 @@ import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
-import ReactQuill from "react-quill";
-// import "highlight.js/styles/monokai-sublime.css";
-import "react-quill/dist/quill.bubble.css";
-// import { sha1 } from 'crypto-hash';
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import StyleTotal from "./cssPost";
+import { commonColor } from "@/utils/cssVariable";
 
 import {
   DELETE_POST_SAGA,
@@ -41,14 +40,14 @@ import {
 import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
 import EditPostForm from "@/components/Form/EditPostForm";
 import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import "highlight.js/styles/monokai-sublime.css";
 import PopupInfoUser from "@/components/PopupInfoUser";
 import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-
-import StyleTotal from "./cssPost";
-import { commonColor } from "@/utils/cssVariable";
-import { useTheme } from "@/components/ThemeProvider";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import { sha1 } from "crypto-hash";
 
 interface PostProps {
   post: any;
@@ -63,8 +62,9 @@ const MyPost = (PostProps: PostProps) => {
   const link = PostProps.post.link;
   const dispatch = useDispatch();
 
-  const { getTheme } = useTheme();
-
+  // Lấy theme từ LocalStorage chuyển qua css
+  const { change } = useSelector((state: any) => state.themeReducer);
+  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // ------------------------ Like ------------------------
@@ -82,7 +82,7 @@ const MyPost = (PostProps: PostProps) => {
     PostProps.post?.isLiked
       ? setLikeColor("red")
       : setLikeColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isLiked]);
+  }, [PostProps.post?.isLiked, change]);
 
   // isLiked
   const [isLiked, setIsLiked] = useState(true);
@@ -106,7 +106,7 @@ const MyPost = (PostProps: PostProps) => {
     PostProps.post?.isShared
       ? setShareColor("blue")
       : setShareColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isShared]);
+  }, [PostProps.post?.isShared, change]);
 
   // isShared
   const [isShared, setIsShared] = useState(true);
@@ -128,7 +128,7 @@ const MyPost = (PostProps: PostProps) => {
     PostProps.post?.isSaved
       ? setSaveColor("yellow")
       : setSaveColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isSaved]);
+  }, [PostProps.post?.isSaved, change]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
@@ -165,8 +165,10 @@ const MyPost = (PostProps: PostProps) => {
     formData.append("public_id", public_id);
     const timestamp = String(Date.now());
     formData.append("timestamp", timestamp);
-    // const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    // formData.append('signature', signature);
+    const signature = await sha1(
+      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
+    );
+    formData.append("signature", signature);
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
       {
@@ -300,7 +302,10 @@ const MyPost = (PostProps: PostProps) => {
   const { userID } = useSelector((state: any) => state.authReducer);
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: themeColor,
+      }}>
       {contextHolder}
       <Modal
         title={
@@ -395,11 +400,9 @@ const MyPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={
-                    {
-                      // syntax: true,
-                    }
-                  }
+                  modules={{
+                    syntax: true,
+                  }}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>
@@ -462,7 +465,7 @@ const MyPost = (PostProps: PostProps) => {
                   className="item"
                   style={{ backgroundColor: "transparent" }}
                   icon={<FontAwesomeIcon icon={faHeart} color={likeColor} />}
-                  onClick={() => {
+                  onClick={(e: any) => {
                     if (isLiked) {
                       setLikeNumber(likeNumber - 1);
                       setLikeColor(themeColorSet.colorText1);
@@ -489,7 +492,7 @@ const MyPost = (PostProps: PostProps) => {
                   className="item"
                   style={{ backgroundColor: "transparent" }}
                   icon={<FontAwesomeIcon icon={faShare} color={shareColor} />}
-                  onClick={() => {
+                  onClick={(e: any) => {
                     if (isShared) {
                       setShareNumber(shareNumber - 1);
                       setShareColor(themeColorSet.colorText1);
@@ -542,7 +545,7 @@ const MyPost = (PostProps: PostProps) => {
                     icon={
                       <FontAwesomeIcon icon={faBookmark} color={saveColor} />
                     }
-                    onClick={() => {
+                    onClick={(e: any) => {
                       if (isSaved) {
                         setIsSaved(false);
                         setSaveColor(themeColorSet.colorText1);
@@ -568,7 +571,7 @@ const MyPost = (PostProps: PostProps) => {
           </div>
         </div>
       </StyleTotal>
-    </>
+    </ConfigProvider>
   );
 };
 

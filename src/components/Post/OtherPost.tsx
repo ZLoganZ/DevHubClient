@@ -8,12 +8,21 @@ import {
   faShareNodes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Divider, Dropdown, Image, Popover, Space } from "antd";
+import {
+  Avatar,
+  ConfigProvider,
+  Divider,
+  Dropdown,
+  Image,
+  Popover,
+  Space,
+} from "antd";
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { NavLink } from "react-router-dom";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import StyleTotal from "./cssPost";
 
 import {
   LIKE_POST_SAGA,
@@ -25,11 +34,10 @@ import OpenOtherPostDetailModal from "@/components/ActionComponent/OpenDetail/Op
 import "react-quill/dist/quill.bubble.css";
 import ReactQuill from "react-quill";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-// import 'highlight.js/styles/monokai-sublime.css';
-import StyleTotal from "./cssPost";
+import "highlight.js/styles/monokai-sublime.css";
 import PopupInfoUser from "@/components/PopupInfoUser";
 import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-import { useTheme } from "@/components/ThemeProvider";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 
 interface PostProps {
   post: any;
@@ -43,8 +51,8 @@ const OtherPost = (PostProps: PostProps) => {
   const dispatch = useDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
+  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // ------------------------ Like ------------------------
@@ -56,7 +64,12 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.likes?.length]);
 
   // Like color
-  const [likeColor, setLikeColor] = useState("red");
+  const [likeColor, setLikeColor] = useState(themeColorSet.colorText1);
+  useEffect(() => {
+    PostProps.post?.isLiked
+      ? setLikeColor("red")
+      : setLikeColor(themeColorSet.colorText1);
+  }, [PostProps.post?.isLiked, change]);
 
   // isLiked
   const [isLiked, setIsLiked] = useState(true);
@@ -75,7 +88,12 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.shares?.length]);
 
   // Share color
-  const [shareColor, setShareColor] = useState("blue");
+  const [shareColor, setShareColor] = useState(themeColorSet.colorText1);
+  useEffect(() => {
+    PostProps.post?.isShared
+      ? setShareColor("blue")
+      : setShareColor(themeColorSet.colorText1);
+  }, [PostProps.post?.isShared, change]);
 
   // isShared
   const [isShared, setIsShared] = useState(true);
@@ -92,7 +110,12 @@ const OtherPost = (PostProps: PostProps) => {
   }, [PostProps.post?.isSaved]);
 
   // Save color
-  const [saveColor, setSaveColor] = useState("yellow");
+  const [saveColor, setSaveColor] = useState(themeColorSet.colorText1);
+  useEffect(() => {
+    PostProps.post?.isSaved
+      ? setSaveColor("yellow")
+      : setSaveColor(themeColorSet.colorText1);
+  }, [PostProps.post?.isSaved, change]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
@@ -170,7 +193,10 @@ const OtherPost = (PostProps: PostProps) => {
   const { userID } = useSelector((state: any) => state.authReducer);
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: themeColor,
+      }}>
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
           key={PostProps.post?._id}
@@ -243,11 +269,9 @@ const OtherPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={
-                    {
-                      // syntax: true,
-                    }
-                  }
+                  modules={{
+                    syntax: true,
+                  }}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>
@@ -316,13 +340,8 @@ const OtherPost = (PostProps: PostProps) => {
                 <Avatar
                   className="item"
                   style={{ backgroundColor: "transparent" }}
-                  icon={
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      color={isLiked ? likeColor : themeColorSet.colorText1}
-                    />
-                  }
-                  onClick={() => {
+                  icon={<FontAwesomeIcon icon={faHeart} color={likeColor} />}
+                  onClick={(e: any) => {
                     if (isLiked) {
                       setLikeNumber(likeNumber - 1);
                       setLikeColor(themeColorSet.colorText1);
@@ -348,13 +367,8 @@ const OtherPost = (PostProps: PostProps) => {
                 <Avatar
                   className="item"
                   style={{ backgroundColor: "transparent" }}
-                  icon={
-                    <FontAwesomeIcon
-                      icon={faShare}
-                      color={isShared ? shareColor : themeColorSet.colorText1}
-                    />
-                  }
-                  onClick={() => {
+                  icon={<FontAwesomeIcon icon={faShare} color={shareColor} />}
+                  onClick={(e: any) => {
                     if (isShared) {
                       setShareNumber(shareNumber - 1);
                       setShareColor(themeColorSet.colorText1);
@@ -405,12 +419,9 @@ const OtherPost = (PostProps: PostProps) => {
                     className="item"
                     style={{ backgroundColor: "transparent" }}
                     icon={
-                      <FontAwesomeIcon
-                        icon={faBookmark}
-                        color={isSaved ? saveColor : themeColorSet.colorText1}
-                      />
+                      <FontAwesomeIcon icon={faBookmark} color={saveColor} />
                     }
-                    onClick={() => {
+                    onClick={(e: any) => {
                       if (isSaved) {
                         setIsSaved(false);
                         setSaveColor(themeColorSet.colorText1);
@@ -428,12 +439,7 @@ const OtherPost = (PostProps: PostProps) => {
                   <Avatar
                     className="item"
                     style={{ backgroundColor: "transparent" }}
-                    icon={
-                      <FontAwesomeIcon
-                        icon={faShareNodes}
-                        color={themeColorSet.colorText1}
-                      />
-                    }
+                    icon={<FontAwesomeIcon icon={faShareNodes} />}
                   />
                 </Space>
               </Space>
@@ -441,7 +447,7 @@ const OtherPost = (PostProps: PostProps) => {
           </div>
         </div>
       </StyleTotal>
-    </>
+    </ConfigProvider>
   );
 };
 

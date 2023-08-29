@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import { ConfigProvider, DatePicker, message } from 'antd';
-import StyleTotal from './cssAddExperienceForm';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { closeModal, setHandleSubmit } from '../../../redux/Slice/ModalHOCSlice';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import { ConfigProvider, DatePicker, message } from "antd";
+import StyleTotal from "./cssAddExperienceForm";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
 
 interface EditProps {
   experiences: any;
@@ -16,7 +16,7 @@ interface EditProps {
 
 const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
-const dateFormat = 'MM/YYYY';
+const dateFormat = "MM/YYYY";
 
 const EditExperienceForm = (Props: EditProps) => {
   const dispatch = useDispatch();
@@ -27,40 +27,50 @@ const EditExperienceForm = (Props: EditProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [positionName, setPositionName] = useState(Props.itemCurrent.positionName);
+  const [positionName, setPositionName] = useState(
+    Props.itemCurrent.positionName
+  );
   const [companyName, setCompanyName] = useState(Props.itemCurrent.companyName);
   const [startDate, setStartDate] = useState(Props.itemCurrent.startDate);
   const [endDate, setEndDate] = useState(Props.itemCurrent.endDate);
-  const [pastDate, setPastDate] = useState('');
+  const [pastDate, setPastDate] = useState("");
 
-  const checkUntilNow = Props.itemCurrent.endDate === 'Now';
+  const checkUntilNow = Props.itemCurrent.endDate === "Now";
   const [untilNow, setUntilNow] = useState(checkUntilNow);
 
-  const checkDisablePicker: [boolean, boolean] = checkUntilNow ? [false, true] : [false, false];
-  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>(checkDisablePicker);
+  const checkDisablePicker: [boolean, boolean] = checkUntilNow
+    ? [false, true]
+    : [false, false];
+  const [disablePicker, setDisablePicker] =
+    useState<[boolean, boolean]>(checkDisablePicker);
 
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: 'error',
-      content: 'Please fill in all fields',
+      type: "error",
+      content: "Please fill in all fields",
     });
   };
 
   const experience = {
-    positionName: '',
-    companyName: '',
-    startDate: '',
-    endDate: '',
+    positionName: "",
+    companyName: "",
+    startDate: "",
+    endDate: "",
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
-    if (positionName === '' || companyName === '' || startDate === '' || endDate === '') {
+    if (
+      positionName === "" ||
+      companyName === "" ||
+      startDate === "" ||
+      endDate === ""
+    ) {
       error();
       return;
     } else {
-      let newExperiences = [...Props.experiences];
+      const newExperiences = [...Props.experiences];
       newExperiences[Props.indexCurrent] = experience;
       Props.setExperiences(newExperiences);
       dispatch(closeModal());
@@ -80,13 +90,14 @@ const EditExperienceForm = (Props: EditProps) => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet}>
         <div className="editPositionForm">
           <div className="flex justify-between">
-            <div className="PositionName form__group field" style={{ width: '48%' }}>
+            <div
+              className="PositionName form__group field"
+              style={{ width: "48%" }}>
               <input
                 defaultValue={positionName}
                 pattern="[A-Za-z ]*"
@@ -110,7 +121,9 @@ const EditExperienceForm = (Props: EditProps) => {
                 Position Name
               </label>
             </div>
-            <div className="CompanyName form__group field" style={{ width: '48%' }}>
+            <div
+              className="CompanyName form__group field"
+              style={{ width: "48%" }}>
               <input
                 defaultValue={companyName}
                 pattern="[A-Za-z ]*"
@@ -143,27 +156,32 @@ const EditExperienceForm = (Props: EditProps) => {
               size="large"
               onChange={(value, dateString) => {
                 setStartDate(dateString[0]);
-                untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
+                untilNow ? setEndDate("Now") : setEndDate(dateString[1]);
                 setPastDate(dateString[1]);
               }}
-              defaultValue={[dayjs(startDate, dateFormat), endDate === 'Now' ? dayjs() : dayjs(endDate, dateFormat)]}
+              defaultValue={[
+                dayjs(startDate, dateFormat),
+                endDate === "Now" ? dayjs() : dayjs(endDate, dateFormat),
+              ]}
             />
             <button
-              className={'untilButton ml-8 px-4 py-2 rounded-md' + (untilNow ? ' untilActive' : '')}
+              className={
+                "untilButton ml-8 px-4 py-2 rounded-md" +
+                (untilNow ? " untilActive" : "")
+              }
               onClick={(e) => {
                 if (!untilNow) {
-                  e.currentTarget.classList.add('untilActive');
-                  setEndDate('Now');
+                  e.currentTarget.classList.add("untilActive");
+                  setEndDate("Now");
                   setDisablePicker([false, true]);
                   setUntilNow(true);
                 } else {
-                  e.currentTarget.classList.remove('untilActive');
+                  e.currentTarget.classList.remove("untilActive");
                   setEndDate(pastDate);
                   setDisablePicker([false, false]);
                   setUntilNow(false);
                 }
-              }}
-            >
+              }}>
               Until Now
             </button>
           </div>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { custom_scrollBar } from "@/utils/cssVariable";
+import { commonColor, custom_scrollBar } from "@/utils/cssVariable";
 
 const StyleTotal = styled.div`
   background-color: ${(props) => props.theme.colorBg1};

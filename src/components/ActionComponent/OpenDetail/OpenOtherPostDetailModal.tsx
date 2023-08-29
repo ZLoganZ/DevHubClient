@@ -1,11 +1,13 @@
 import { Avatar, ConfigProvider, Input, Popover, Modal } from "antd";
 import React, { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import OtherPostDetailModal from "@/components/Form/PostDetail/OtherPostDetail";
+import StyleTotal from "./cssOpenPostDetailModal";
+import dataEmoji from "@emoji-mart/data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import Picker from "@emoji-mart/react";
-
-import StyleTotal from "./cssOpenPostDetailModal";
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
@@ -14,8 +16,6 @@ import {
   GET_POSTSHARE_BY_ID_SAGA,
   GET_POST_BY_ID_SAGA,
 } from "@/redux/actionSaga/PostActionSaga";
-import OtherPostDetailModal from "@/components/Form/PostDetail/OtherPostDetail";
-import { useTheme } from "@/components/ThemeProvider";
 
 interface PostProps {
   post: any;
@@ -30,8 +30,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   const dispatch = useDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -161,13 +160,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
                 title={"Emoji"}
                 content={
                   <Picker
-                    data={async () => {
-                      const response = await fetch(
-                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
-                      );
-
-                      return response.json();
-                    }}
+                    data={dataEmoji}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(

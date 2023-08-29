@@ -6,12 +6,13 @@ import {
   faShareNodes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Dropdown, Image, Popover, Space } from "antd";
+import { Avatar, ConfigProvider, Dropdown, Image, Popover, Space } from "antd";
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { NavLink } from "react-router-dom";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import StyleTotal from "./cssPost";
 
 import {
   INCREASE_VIEW_SHARE_SAGA,
@@ -22,9 +23,8 @@ import "react-quill/dist/quill.bubble.css";
 import ReactQuill from "react-quill";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-import StyleTotal from "./cssPost";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { useTheme } from "@/components/ThemeProvider";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 
 interface PostShareProps {
   post: any;
@@ -37,8 +37,8 @@ const PostShare = (PostProps: PostShareProps) => {
   const dispatch = useDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
+  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // ------------------------ Like ------------------------
@@ -55,7 +55,7 @@ const PostShare = (PostProps: PostShareProps) => {
     PostProps.post?.isLiked
       ? setLikeColor("red")
       : setLikeColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isLiked]);
+  }, [PostProps.post?.isLiked, change]);
 
   // isLiked
   const [isLiked, setIsLiked] = useState(true);
@@ -133,7 +133,10 @@ const PostShare = (PostProps: PostShareProps) => {
   const { userID } = useSelector((state: any) => state.authReducer);
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: themeColor,
+      }}>
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
           key={PostProps.post?._id}
@@ -369,7 +372,7 @@ const PostShare = (PostProps: PostShareProps) => {
           </div>
         </div>
       </StyleTotal>
-    </>
+    </ConfigProvider>
   );
 };
 

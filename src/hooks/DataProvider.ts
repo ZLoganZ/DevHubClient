@@ -28,10 +28,10 @@ const useAllPostsData = () => {
     },
   });
 
-  return { isLoading, isError, allPost: data?.content?.postArr, userInfo: data?.content?.userInfo, isFetching };
+  return { isLoading, isError, allPost: data?.content?.allPostArr, userInfo: data?.content?.userInfo, isFetching };
 };
 
-const usePostsData = (userID: string) => {
+const usePostsData = (userID: String) => {
   const dispatch = useDispatch();
   // const postArray = useSelector((state: any) => state.postReducer.postArr);
   // const userInfo = useSelector((state: any) => state.userReducer.userInfo);
@@ -95,7 +95,7 @@ const useCurrentConversationData = (conversationID: any) => {
   return { isLoadingConversation: isLoading, isError, currentConversation: data?.content?.conversation, isFetching };
 };
 
-const useFollowersData = (userID: string) => {
+const useFollowersData = (userID: String) => {
   const dispatch = useDispatch();
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['followers', userID],

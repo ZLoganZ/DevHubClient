@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-
-import LoadingLogo from "@/components/Loading/LoadingLogo";
+import LoadingLogo from "@/components/GlobalSetting/LoadingLogo";
 import { CHECK_LOGIN_SAGA } from "@/redux/actionSaga/AuthActionSaga";
 
 export const AlreadyAuth = () => {

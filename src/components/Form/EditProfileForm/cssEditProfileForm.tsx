@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { commonColor } from '../../../util/cssVariable';
+import styled from "styled-components";
+import { commonColor } from "@/utils/cssVariable";
 
 const StyleTotal = styled.div`
   .ql-editor {

@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
-import { commonColor } from '../../../util/cssVariable';
+import styled, { css } from "styled-components";
+import { commonColor } from "@/utils/cssVariable";
 
 const StyleTotal = styled.div`
   background-color: ${(props) => props.theme.colorBg2};
@@ -10,7 +10,7 @@ const StyleTotal = styled.div`
   }
   .ql-editor {
     font-size: 14px;
-    -webkit-user-modify: 'read-write-plaintext-only';
+    -webkit-user-modify: "read-write-plaintext-only";
     color: ${(props) => props.theme.colorText2};
   }
   .newPostBody {

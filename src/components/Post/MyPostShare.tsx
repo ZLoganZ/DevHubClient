@@ -10,6 +10,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Avatar,
+  ConfigProvider,
   Dropdown,
   Space,
   Modal,
@@ -20,11 +21,11 @@ import {
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "react-quill/dist/quill.bubble.css";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { NavLink } from "react-router-dom";
-
+import { getTheme } from "@/utils/functions/ThemeFunction";
 import StyleTotal from "./cssPost";
+import { commonColor } from "@/utils/cssVariable";
+
 import {
   SHARE_POST_SAGA,
   LIKE_POSTSHARE_SAGA,
@@ -32,11 +33,11 @@ import {
 } from "@/redux/actionSaga/PostActionSaga";
 import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { useTheme } from "@/components/ThemeProvider";
-import { commonColor } from "@/utils/cssVariable";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 
 interface PostShareProps {
   post: any;
@@ -51,8 +52,8 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const dispatch = useDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
+  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // ------------------------ Like ------------------------
@@ -69,7 +70,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
     PostProps.post?.isLiked
       ? setLikeColor("red")
       : setLikeColor(themeColorSet.colorText1);
-  }, [PostProps.post?.isLiked]);
+  }, [PostProps.post?.isLiked, change]);
 
   // isLiked
   const [isLiked, setIsLiked] = useState(true);
@@ -191,7 +192,10 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const { userID } = useSelector((state: any) => state.authReducer);
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: themeColor,
+      }}>
       {contextHolder}
       <Modal
         title={
@@ -455,7 +459,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
           </div>
         </div>
       </StyleTotal>
-    </>
+    </ConfigProvider>
   );
 };
 

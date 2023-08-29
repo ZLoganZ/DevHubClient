@@ -1,21 +1,21 @@
 import { Avatar, ConfigProvider, Input, Popover, Row, Col } from "antd";
 import React, { useMemo, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import OtherPostDetail from "@/components/Form/PostDetail/OtherPostDetail";
+import StyleTotal from "./cssOpenPostDetail";
+import dataEmoji from "@emoji-mart/data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "react-router-dom";
 import Picker from "@emoji-mart/react";
-
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
   SAVE_REPLY_SAGA,
   SAVE_REPLY_POSTSHARE_SAGA,
 } from "@/redux/actionSaga/PostActionSaga";
-import LoadingDetailPost from "@/components/Loading/LoadingDetailPost";
-import OtherPostDetail from "@/components/Form/PostDetail/OtherPostDetail";
-import StyleTotal from "./cssOpenPostDetail";
-import { useTheme } from "@/components/ThemeProvider";
+import { useParams } from "react-router-dom";
+import LoadingDetailPost from "@/components/GlobalSetting/LoadingDetailPost";
 
 interface Props {
   post: any;
@@ -27,8 +27,8 @@ const OpenOtherPostDetail = (Props: Props) => {
 
   const { postID } = useParams();
 
-  const { getTheme } = useTheme();
-
+  // Lấy theme từ LocalStorage chuyển qua css
+  const { change } = useSelector((state: any) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -167,13 +167,7 @@ const OpenOtherPostDetail = (Props: Props) => {
                   title={"Emoji"}
                   content={
                     <Picker
-                      data={async () => {
-                        const response = await fetch(
-                          "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
-                        );
-
-                        return response.json();
-                      }}
+                      data={dataEmoji}
                       onEmojiSelect={(emoji: any) => {
                         setCursor(cursor + emoji.native.length);
                         setCommentContent(

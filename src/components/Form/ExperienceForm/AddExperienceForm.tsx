@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import { ConfigProvider, DatePicker, message } from 'antd';
-import StyleTotal from './cssAddExperienceForm';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { closeModal, setHandleSubmit } from '../../../redux/Slice/ModalHOCSlice';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import { ConfigProvider, DatePicker, message } from "antd";
+import StyleTotal from "./cssAddExperienceForm";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
 
 interface EditProps {
   experiences: any;
@@ -14,7 +14,7 @@ interface EditProps {
 
 const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
-const dateFormat = 'MM/YYYY';
+const dateFormat = "MM/YYYY";
 
 const AddExperienceForm = (Props: EditProps) => {
   const dispatch = useDispatch();
@@ -25,33 +25,41 @@ const AddExperienceForm = (Props: EditProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [positionName, setPositionName] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [pastDate, setPastDate] = useState('');
+  const [positionName, setPositionName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [pastDate, setPastDate] = useState("");
 
   const [untilNow, setUntilNow] = useState(false);
-  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([false, false]);
+  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([
+    false,
+    false,
+  ]);
 
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: 'error',
-      content: 'Please fill in all fields',
+      type: "error",
+      content: "Please fill in all fields",
     });
   };
 
   const experience = {
-    positionName: '',
-    companyName: '',
-    startDate: '',
-    endDate: '',
+    positionName: "",
+    companyName: "",
+    startDate: "",
+    endDate: "",
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
-    if (positionName === '' || companyName === '' || startDate === '' || endDate === '') {
+    if (
+      positionName === "" ||
+      companyName === "" ||
+      startDate === "" ||
+      endDate === ""
+    ) {
       // console.log('positionName', positionName);
       // console.log('companyName', companyName);
       // console.log('startDate', startDate);
@@ -77,13 +85,14 @@ const AddExperienceForm = (Props: EditProps) => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet}>
         <div className="editPositionForm">
           <div className="flex justify-between">
-            <div className="PositionName form__group field" style={{ width: '48%' }}>
+            <div
+              className="PositionName form__group field"
+              style={{ width: "48%" }}>
               <input
                 //   defaultValue={}
                 pattern="[A-Za-z ]*"
@@ -107,7 +116,9 @@ const AddExperienceForm = (Props: EditProps) => {
                 Position Name
               </label>
             </div>
-            <div className="CompanyName form__group field" style={{ width: '48%' }}>
+            <div
+              className="CompanyName form__group field"
+              style={{ width: "48%" }}>
               <input
                 //   defaultValue={}
                 pattern="[A-Za-z ]*"
@@ -138,12 +149,12 @@ const AddExperienceForm = (Props: EditProps) => {
               format={dateFormat}
               disabled={disablePicker}
               disabledDate={(current) => {
-                return current && current > dayjs().endOf('day');
+                return current && current > dayjs().endOf("day");
               }}
               size="large"
               onChange={(value, dateString) => {
                 setStartDate(dateString[0]);
-                untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
+                untilNow ? setEndDate("Now") : setEndDate(dateString[1]);
                 setPastDate(dateString[1]);
               }}
             />
@@ -151,18 +162,17 @@ const AddExperienceForm = (Props: EditProps) => {
               className="untilButton ml-8 px-4 py-2 rounded-md"
               onClick={(e) => {
                 if (!untilNow) {
-                  e.currentTarget.classList.add('untilActive');
-                  setEndDate('Now');
+                  e.currentTarget.classList.add("untilActive");
+                  setEndDate("Now");
                   setDisablePicker([false, true]);
                   setUntilNow(true);
                 } else {
-                  e.currentTarget.classList.remove('untilActive');
+                  e.currentTarget.classList.remove("untilActive");
                   setEndDate(pastDate);
                   setDisablePicker([false, false]);
                   setUntilNow(false);
                 }
-              }}
-            >
+              }}>
               Until Now
             </button>
           </div>

@@ -11,7 +11,7 @@ import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getTheme } from "../../../util/functions/ThemeFunction";
+import { getTheme } from "@/utils/functions/ThemeFunction";
 import StyleTotal from "./cssEditPostForm";
 import ImageCompress from "quill-image-compress";
 import dataEmoji from "@emoji-mart/data";
@@ -19,18 +19,15 @@ import Picker from "@emoji-mart/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
-import { UPDATE_POST_SAGA } from "../../../redux/actionSaga/PostActionSaga";
+import { UPDATE_POST_SAGA } from "@/redux/actionSaga/PostActionSaga";
 import { UploadOutlined } from "@ant-design/icons";
-import {
-  callBackSubmitDrawer,
-  setLoading,
-} from "../../../redux/Slice/DrawerHOCSlice";
+import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
 import { RcFile } from "antd/es/upload";
 import { sha1 } from "crypto-hash";
 
 Quill.register("modules/imageCompress", ImageCompress);
 
-var toolbarOptions = [
+const toolbarOptions = [
   ["bold", "italic", "underline", "clean"],
   [{ list: "ordered" }, { list: "bullet" }],
   [{ align: [] }],
@@ -152,7 +149,7 @@ const EditPostForm = (PostProps: PostProps) => {
     // Tạo quill
     quill = new Quill("#editorDrawer", {
       modules: {
-        // syntax: true,
+        syntax: true,
         toolbar: toolbarOptions,
       },
       theme: "snow",

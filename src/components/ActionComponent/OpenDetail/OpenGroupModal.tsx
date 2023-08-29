@@ -1,16 +1,15 @@
 import { ConfigProvider } from "antd";
-import { useDispatch } from "react-redux";
-import { useState, useLayoutEffect } from "react";
-
+import React, { useState, useLayoutEffect } from "react";
 import { messageService } from "@/services/MessageService";
+import { useDispatch, useSelector } from "react-redux";
 import GroupChatModal from "@/components/ChatComponent/GroupChatModal";
 import { closeModal, openModal } from "@/redux/Slice/ModalHOCSlice";
 import StyleTotal from "./cssOpenPostDetailModal";
+import { getTheme } from "@/utils/ThemeFunction";
 import {
   ButtonActiveHover,
   ButtonCancelHover,
 } from "@/components/MiniComponent";
-import { useTheme } from "@/components/ThemeProvider";
 
 interface Props {
   users: [];
@@ -19,22 +18,25 @@ interface Props {
 const OpenGroupModal = (Props: Props) => {
   const dispatch = useDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { getTheme } = useTheme();
-
+  const { change } = useSelector((state: any) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [membersGroup, SetMembersGroup] = useState<any>();
-  const [name, setGroupName] = useState<any>();
+  let [membersGroup, SetMembersGroup] = useState<any>();
+  let [name, setGroupName] = useState<any>();
 
-  const handleSetName = (newName: string) => {
-    setGroupName(newName);
+  const handleSetName = (newName: any) => {
+    setGroupName(() => {
+      name = newName;
+    });
   };
 
   const handleSetGroupMember = (newMembers: any) => {
-    SetMembersGroup(newMembers);
+    SetMembersGroup(() => {
+      membersGroup = newMembers;
+    });
   };
 
   const onSubmit = () => {

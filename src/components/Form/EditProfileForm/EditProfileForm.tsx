@@ -10,7 +10,7 @@ import {
 import React, { useState, useCallback, useMemo } from "react";
 import StyleTotal from "./cssEditProfileForm";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "../../../util/functions/ThemeFunction";
+import { getTheme } from "@/utils/functions/ThemeFunction";
 import {
   faFacebookF,
   faTwitter,
@@ -18,7 +18,7 @@ import {
   faInstagram,
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
-import { commonColor } from "../../../util/cssVariable";
+import { commonColor } from "@/utils/cssVariable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBriefcase,
@@ -28,26 +28,23 @@ import {
   faStar,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { openModal } from "../../../redux/Slice/ModalHOCSlice";
-import AddTagComponent from "../../AddTagComponent";
-import AddLinkComponent from "../../AddLinkComponent";
-import descArray from "../../GlobalSetting/ItemComponent/Description";
-import { UPDATE_USER_SAGA } from "../../../redux/actionSaga/UserActionSaga";
-import {
-  callBackSubmitDrawer,
-  setLoading,
-} from "../../../redux/Slice/DrawerHOCSlice";
+import { openModal } from "@/redux/Slice/ModalHOCSlice";
+import AddTagComponent from "@/components/AddTagComponent";
+import AddLinkComponent from "@/components/AddLinkComponent";
+import descArray from "@/components/GlobalSetting/ItemComponent/Description";
+import { UPDATE_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
+import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { RcFile } from "antd/es/upload";
 import { sha1 } from "crypto-hash";
-import QuillEdit from "../../QuillEdit/QuillEdit";
+import QuillEdit from "@/components/QuillEdit";
 import "react-quill/dist/quill.bubble.css";
 import ReactQuill, { Value } from "react-quill";
-import AddExperienceForm from "../ExperienceForm/AddExperienceForm";
-import EditExperienceForm from "../ExperienceForm/EditExperienceForm";
-import AddRepositoryForm from "../AddRepositoryForm";
+import AddExperienceForm from "@/components/Form/ExperienceForm/AddExperienceForm";
+import EditExperienceForm from "@/components/Form/ExperienceForm/EditExperienceForm";
+import AddRepositoryForm from "@/components/Form/AddRepositoryForm";
 import GithubColors from "github-colors";
-import { ButtonActiveHover } from "../../MiniComponent";
+import { ButtonActiveHover } from "@/components/MiniComponent";
 
 const EditProfileForm = () => {
   const dispatch = useDispatch();
@@ -83,7 +80,7 @@ const EditProfileForm = () => {
   );
   const [fileCover, setFileCover] = useState<any>(null);
 
-  const [about, setAbout] = useState<String>(userInfo?.about || "");
+  const [about, setAbout] = useState<string>(userInfo?.about || "");
 
   const [experiences, setExperiences] = useState<any>(
     userInfo?.experiences || []
@@ -255,9 +252,9 @@ const EditProfileForm = () => {
   };
 
   const componentNoInfo = (
-    title: String,
-    description: String,
-    buttonContent: String,
+    title: string,
+    description: string,
+    buttonContent: string,
     callBackFunction: React.MouseEventHandler
   ) => {
     return (
@@ -782,11 +779,9 @@ const EditProfileForm = () => {
                   value={about as Value}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={
-                    {
-                      // syntax: true,
-                    }
-                  }
+                  modules={{
+                    syntax: true,
+                  }}
                 />
               </div>
             ) : (

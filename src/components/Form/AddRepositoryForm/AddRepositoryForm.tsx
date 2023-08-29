@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getTheme } from '../../../util/functions/ThemeFunction';
-import { Checkbox, ConfigProvider, Space, Spin } from 'antd';
-import StyleTotal from './cssAddRepositoryForm';
-import { GetGitHubUrl } from '../../../util/functions/GetGithubUrl';
-import { GET_REPOSITORY_SAGA } from '../../../redux/actionSaga/UserActionSaga';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
-import { TOKEN_GITHUB } from '../../../util/constants/SettingSystem';
-import { closeModal, setHandleSubmit } from '../../../redux/Slice/ModalHOCSlice';
-import GithubColors from 'github-colors';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getTheme } from "@/utils/functions/ThemeFunction";
+import { Checkbox, ConfigProvider, Space, Spin } from "antd";
+import StyleTotal from "./cssAddRepositoryForm";
+import { GetGitHubUrl } from "@/utils/GetGithubUrl";
+import { GET_REPOSITORY_SAGA } from "@/redux/actionSaga/UserActionSaga";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCodeFork, faStar } from "@fortawesome/free-solid-svg-icons";
+import { TOKEN_GITHUB } from "@/utils/constants/SettingSystem";
+import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
+import GithubColors from "github-colors";
 
 interface ReposProps {
   repositories: any;
@@ -23,7 +23,9 @@ const AddRepositoryForm = (Props: ReposProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [access_token_github, setAccess_token_github] = useState(localStorage.getItem(TOKEN_GITHUB));
+  const [access_token_github, setAccess_token_github] = useState(
+    localStorage.getItem(TOKEN_GITHUB)
+  );
 
   const openPopup = () => {
     const width = 500; // Width of the pop-up window
@@ -31,7 +33,11 @@ const AddRepositoryForm = (Props: ReposProps) => {
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
 
-    const popup = window.open(GetGitHubUrl(), 'GithubAuth', `width=${width},height=${height},left=${left},top=${top}`);
+    const popup = window.open(
+      GetGitHubUrl(),
+      "GithubAuth",
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
 
     let userData: any = undefined;
 
@@ -45,12 +51,12 @@ const AddRepositoryForm = (Props: ReposProps) => {
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
 
     const pollOAuthStatus = setInterval(() => {
       if (popup?.closed) {
         clearInterval(pollOAuthStatus);
-        window.removeEventListener('message', handleMessage);
+        window.removeEventListener("message", handleMessage);
         !userData && dispatch(closeModal());
       }
     }, 300);
@@ -85,13 +91,19 @@ const AddRepositoryForm = (Props: ReposProps) => {
         key={index}
         style={{
           border: `1px solid ${themeColorSet.colorBg4}`,
-          borderTop: index === 0 ? `1px solid ${themeColorSet.colorBg4}` : 'none',
-          height: '100px',
-        }}
-      >
+          borderTop:
+            index === 0 ? `1px solid ${themeColorSet.colorBg4}` : "none",
+          height: "100px",
+        }}>
         <Space className="left" direction="vertical">
           <div className="top">
-            <span className="name" style={{ fontSize: '1rem', color: themeColorSet.colorText1, fontWeight: '600' }}>
+            <span
+              className="name"
+              style={{
+                fontSize: "1rem",
+                color: themeColorSet.colorText1,
+                fontWeight: "600",
+              }}>
               {item.name}
             </span>
             <span
@@ -99,11 +111,10 @@ const AddRepositoryForm = (Props: ReposProps) => {
               style={{
                 color: themeColorSet.colorText3,
                 border: `1px solid ${themeColorSet.colorBg4}`,
-                fontSize: '0.8rem',
-                padding: '0.1rem 0.5rem',
-              }}
-            >
-              {item.private ? 'Private' : 'Public'}
+                fontSize: "0.8rem",
+                padding: "0.1rem 0.5rem",
+              }}>
+              {item.private ? "Private" : "Public"}
             </span>
           </div>
           <div className="bottom items-center">
@@ -130,8 +141,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
                 controlHeight: 40,
                 colorBorder: themeColorSet.colorText3,
               },
-            }}
-          >
+            }}>
             <Checkbox
               defaultChecked={newRepositories.some((repo: any) => {
                 return repo?.id == item?.id;
@@ -141,12 +151,13 @@ const AddRepositoryForm = (Props: ReposProps) => {
                   newRepositories.push(item);
                 } else {
                   newRepositories.splice(
-                    newRepositories.findIndex((repo: any) => repo?.id == item.id),
-                    1,
+                    newRepositories.findIndex(
+                      (repo: any) => repo?.id == item.id
+                    ),
+                    1
                   );
                 }
-              }}
-            ></Checkbox>
+              }}></Checkbox>
           </ConfigProvider>
         </div>
       </div>
@@ -157,8 +168,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}
-    >
+      }}>
       <StyleTotal theme={themeColorSet}>
         <div className="addRepositories">
           {!access_token_github || repos.length === 0 ? (
@@ -170,16 +180,17 @@ const AddRepositoryForm = (Props: ReposProps) => {
           ) : (
             // Nếu có access_token_github
             <div>
-              <div className="title mt-5" style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
+              <div
+                className="title mt-5"
+                style={{ fontSize: "1.1rem", color: themeColorSet.colorText1 }}>
                 Select the repositories you want to feature
               </div>
               <div
                 className="repositories mt-5 mb-6 px-2"
                 style={{
-                  maxHeight: '402px',
-                  overflow: 'auto',
-                }}
-              >
+                  maxHeight: "402px",
+                  overflow: "auto",
+                }}>
                 {repos.map((item: any, index: number) => {
                   return renderItemRepos(item, index);
                 })}
