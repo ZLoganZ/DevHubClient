@@ -3,14 +3,13 @@ import {
   Button,
   ConfigProvider,
   Input,
-  InputRef,
   message,
   Popover,
   Upload,
 } from "antd";
 import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
@@ -19,7 +18,7 @@ import ImageCompress from "quill-image-compress";
 import Picker from "@emoji-mart/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UploadOutlined } from "@ant-design/icons";
-import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
+import { RcFile } from "antd/es/upload";
 import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 
 import { ButtonActiveHover } from "@/components/MiniComponent";
