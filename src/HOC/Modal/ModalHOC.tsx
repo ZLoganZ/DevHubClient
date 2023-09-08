@@ -1,14 +1,13 @@
-import { ConfigProvider } from "antd";
-import React from "react";
+import { ConfigProvider, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import StyleTotal from "./cssModalHOC";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import { Modal } from "antd";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 import { closeModal } from "@/redux/Slice/ModalHOCSlice";
 import {
   ButtonActiveHover,
   ButtonCancelHover,
 } from "@/components/MiniComponent";
+import StyleTotal from "./cssModalHOC";
 
 const ModalHOC = () => {
   const dispatch = useDispatch();

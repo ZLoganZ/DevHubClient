@@ -1,7 +1,8 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { Button } from "antd";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 import StyleTotal from "./cssMiniComponent";
 
 // ===========================================
@@ -22,7 +23,6 @@ export const ButtonActiveHover = ({
   block,
 }: ButtonActiveHoverProps) => {
   const { change } = useSelector((state: any) => state.themeReducer);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   return (

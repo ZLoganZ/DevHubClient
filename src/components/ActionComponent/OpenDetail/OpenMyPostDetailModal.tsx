@@ -1,12 +1,10 @@
 import { Avatar, ConfigProvider, Input, Popover, Modal } from "antd";
-import React, { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssOpenPostDetailModal";
-import dataEmoji from "@emoji-mart/data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import Picker from "@emoji-mart/react";
+
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
@@ -14,8 +12,10 @@ import {
   SAVE_REPLY_POSTSHARE_SAGA,
   GET_POSTSHARE_BY_ID_SAGA,
   GET_POST_BY_ID_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
 import MyPostDetail from "@/components/Form/PostDetail/MyPostDetail";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssOpenPostDetailModal";
 
 interface PostProps {
   post: any;
@@ -38,7 +38,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
 
   const userInfo = useSelector((state: any) => state.userReducer.userInfo);
 
-  const inputRef = React.useRef<any>(null);
+  const inputRef = useRef<any>(null);
 
   useEffect(() => {
     if (PostProps.postShare) {
@@ -157,7 +157,13 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
                 title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(

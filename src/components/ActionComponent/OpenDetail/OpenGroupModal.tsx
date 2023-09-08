@@ -1,15 +1,16 @@
 import { ConfigProvider } from "antd";
-import React, { useState, useLayoutEffect } from "react";
-import { messageService } from "@/services/MessageService";
+import { useState, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GroupChatModal from "@/components/ChatComponent/GroupChatModal";
-import { closeModal, openModal } from "@/redux/Slice/ModalHOCSlice";
+
 import StyleTotal from "./cssOpenPostDetailModal";
-import { getTheme } from "@/utils/ThemeFunction";
+import { closeModal, openModal } from "@/redux/Slice/ModalHOCSlice";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { messageService } from "@/services/MessageService";
 import {
   ButtonActiveHover,
   ButtonCancelHover,
 } from "@/components/MiniComponent";
+import GroupChatModal from "@/components/Chat/GroupChatModal";
 
 interface Props {
   users: [];

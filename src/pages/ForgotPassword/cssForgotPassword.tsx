@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { commonColor } from "@/utils/cssVariable";
+import styled from 'styled-components';
+import { commonColor } from '@/util/cssVariable';
 
 const StyleTotal = styled.div`
   height: 100vh;

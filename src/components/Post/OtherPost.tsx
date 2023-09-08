@@ -20,24 +20,23 @@ import {
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { NavLink } from "react-router-dom";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssPost";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 import {
   LIKE_POST_SAGA,
   SHARE_POST_SAGA,
   SAVE_POST_SAGA,
   INCREASE_VIEW_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 import OpenOtherPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal";
-import "react-quill/dist/quill.bubble.css";
-import ReactQuill from "react-quill";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import "highlight.js/styles/monokai-sublime.css";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssPost";
 
 interface PostProps {
   post: any;
@@ -269,9 +268,7 @@ const OtherPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={{
-                    syntax: true,
-                  }}
+                  modules={{}}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>

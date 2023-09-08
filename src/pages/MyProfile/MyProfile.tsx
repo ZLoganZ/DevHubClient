@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo } from "react";
-import StyleTotal from "./cssMyProfile";
-import { getTheme } from "@/utils/functions/ThemeFunction";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Avatar,
   Col,
@@ -13,6 +11,9 @@ import {
   Tag,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import ReactQuill from "react-quill";
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSnowflake,
@@ -22,6 +23,7 @@ import {
   faStar,
   faCodeFork,
 } from "@fortawesome/free-solid-svg-icons";
+import GithubColors from "github-colors";
 import {
   faFacebookF,
   faTwitter,
@@ -30,21 +32,21 @@ import {
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 import { NavLink } from "react-router-dom";
-import { commonColor } from "@/utils/cssVariable";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-import MyPost from "@/components/Post/MyPost";
-import NewPost from "@/components/NewPost";
-import { GET_ALL_POST_BY_USERID_SAGA } from "@/redux/actionSaga/PostActionSaga";
-import MyPostShare from "@/components/Post/MyPostShare";
-import { useParams } from "react-router-dom";
-import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
-import EditProfileForm from "@/components/Form/EditProfileForm";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfileComponent";
-import descArray from "@/components/GlobalSetting/ItemComponent/Description";
-import { setIsInProfile } from "@/redux/Slice/PostSlice";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
-import GithubColors from "github-colors";
+
+import descArray from "@/components/GlobalSetting/ItemComponent/Description";
+import NewPost from "@/components/NewPost";
+import EditProfileForm from "@/components/Form/EditProfileForm";
+import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
+import MyPostShare from "@/components/Post/MyPostShare";
+import MyPost from "@/components/Post/MyPost";
+
+import { GET_ALL_POST_BY_USERID_SAGA } from "@/redux/ActionSaga/PostActionSaga";
+import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
+import { setIsInProfile } from "@/redux/Slice/PostSlice";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import StyleTotal from "./cssMyProfile";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
@@ -82,9 +84,9 @@ const MyProfile = () => {
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
   const ownerInfo = useMemo(() => ownerInfoSlice, [ownerInfoSlice]);
 
-  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = React.useState(true);
+  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = useState(true);
 
-  const postArrayRef = React.useRef(postArray);
+  const postArrayRef = useRef(postArray);
 
   const openInNewTab = (url: any) => {
     window.open(url, "_blank", "noreferrer");
@@ -437,9 +439,7 @@ const MyProfile = () => {
                                   value={ownerInfo?.about}
                                   readOnly={true}
                                   theme="bubble"
-                                  modules={{
-                                    syntax: true,
-                                  }}
+                                  modules={{}}
                                 />
                               </div>
                             )}

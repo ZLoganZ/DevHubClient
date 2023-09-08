@@ -1,4 +1,4 @@
-import { BaseService } from "./BaseService";
+import { BaseService } from './BaseService';
 
 export class UserService extends BaseService {
   constructor() {
@@ -6,9 +6,9 @@ export class UserService extends BaseService {
   }
 
   registerUser = (userRegister: any) => {
-    return this.post(`/auth/signup`, userRegister);
+    return this.post(`/users`, userRegister);
   };
-  updateUser = (userID: string, userUpdate: any) => {
+  updateUser = (userID: any, userUpdate: any) => {
     return this.put(`/users/${userID}`, userUpdate);
   };
   getFollowers = () => {
@@ -17,8 +17,8 @@ export class UserService extends BaseService {
   getUserInfo = () => {
     return this.get(`/users/me`);
   };
-  followUser = (userID: string) => {
-    return this.post(`/users/${userID}/follow`, "");
+  followUser = (userID: any) => {
+    return this.post(`/users/${userID}/follow`, '');
   };
   getRepositoryGithub = () => {
     return this.getgithub(`/user/github`);

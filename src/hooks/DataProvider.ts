@@ -1,10 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
-import { setAllPost, setIsInProfile, setOwnerInfo, setPostArr } from '../redux/Slice/PostSlice';
-import { postService } from '../services/PostService';
-import { setUser } from '../redux/Slice/UserSlice';
-import { messageService } from '../services/MessageService';
-import { userService } from '../services/UserService';
+import { useQuery } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
+
+import { setUser } from "@/redux/Slice/UserSlice";
+import {
+  setAllPost,
+  setIsInProfile,
+  setOwnerInfo,
+  setPostArr,
+} from "@/redux/Slice/PostSlice";
+import { postService } from "@/services/PostService";
+import { messageService } from "@/services/MessageService";
+import { userService } from "@/services/UserService";
 
 const useAllPostsData = () => {
   const dispatch = useDispatch();
@@ -12,7 +18,7 @@ const useAllPostsData = () => {
   // const userInfo = useSelector((state: any) => state.userReducer.userInfo);
 
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['allPosts'],
+    queryKey: ["allPosts"],
     queryFn: async () => {
       dispatch(setIsInProfile(false));
       const { data } = await postService.getAllPost();
@@ -28,19 +34,25 @@ const useAllPostsData = () => {
     },
   });
 
-  return { isLoading, isError, allPost: data?.content?.allPostArr, userInfo: data?.content?.userInfo, isFetching };
+  return {
+    isLoading,
+    isError,
+    allPost: data?.content?.allPostArr,
+    userInfo: data?.content?.userInfo,
+    isFetching,
+  };
 };
 
-const usePostsData = (userID: String) => {
+const usePostsData = (userID: string) => {
   const dispatch = useDispatch();
   // const postArray = useSelector((state: any) => state.postReducer.postArr);
   // const userInfo = useSelector((state: any) => state.userReducer.userInfo);
   // const ownerInfo = useSelector((state: any) => state.postReducer.ownerInfo);
 
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['posts', userID],
+    queryKey: ["posts", userID],
     queryFn: async () => {
-      if (userID === 'me') {
+      if (userID === "me") {
         dispatch(setIsInProfile(true));
       } else {
         dispatch(setIsInProfile(false));
@@ -72,19 +84,24 @@ const usePostsData = (userID: String) => {
 
 const useConversationsData = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['conversations'],
+    queryKey: ["conversations"],
     queryFn: async () => {
       const { data } = await messageService.getConversations();
       return data;
     },
   });
 
-  return { isLoadingConversations: isLoading, isError, conversations: data?.content?.conversations, isFetching };
+  return {
+    isLoadingConversations: isLoading,
+    isError,
+    conversations: data?.content?.conversations,
+    isFetching,
+  };
 };
 
 const useCurrentConversationData = (conversationID: any) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['conversation', conversationID],
+    queryKey: ["conversation", conversationID],
     queryFn: async () => {
       const { data } = await messageService.getConversation(conversationID);
       return data;
@@ -92,17 +109,22 @@ const useCurrentConversationData = (conversationID: any) => {
     enabled: !!conversationID,
   });
 
-  return { isLoadingConversation: isLoading, isError, currentConversation: data?.content?.conversation, isFetching };
+  return {
+    isLoadingConversation: isLoading,
+    isError,
+    currentConversation: data?.content?.conversation,
+    isFetching,
+  };
 };
 
-const useFollowersData = (userID: String) => {
+const useFollowersData = (userID: string) => {
   const dispatch = useDispatch();
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['followers', userID],
+    queryKey: ["followers", userID],
     queryFn: async () => {
       const { data } = await userService.getFollowers();
       data.content.followers.forEach((follower: any) => {
-        follower.username = follower.lastname + ' ' + follower.firstname;
+        follower.username = follower.lastname + " " + follower.firstname;
       });
       dispatch(setUser(data.content));
       return data;
@@ -110,12 +132,17 @@ const useFollowersData = (userID: String) => {
     enabled: !!userID,
   });
 
-  return { isLoadingFollowers: isLoading, isError, followers: data?.content?.followers, isFetching };
+  return {
+    isLoadingFollowers: isLoading,
+    isError,
+    followers: data?.content?.followers,
+    isFetching,
+  };
 };
 
 const useMessagesData = (conversationID: any) => {
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
-    queryKey: ['messages', conversationID],
+    queryKey: ["messages", conversationID],
     queryFn: async () => {
       const { data } = await messageService.getMessages(conversationID);
       return data;

@@ -1,5 +1,4 @@
 import { Col, Row, Skeleton, Space } from 'antd';
-import React from 'react';
 
 const LoadingNewFeed = () => {
   return (

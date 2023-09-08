@@ -1,4 +1,4 @@
-import ActiveChannel from "@/utils/ActiveChannel";
+import ActiveChannel from '@/util/functions/ActiveChannel';
 
 const ActiveStatus = () => {
   ActiveChannel();

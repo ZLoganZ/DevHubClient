@@ -1,23 +1,23 @@
-import { BaseService } from "./BaseService";
+import { BaseService } from './BaseService';
 
 export class AuthService extends BaseService {
   constructor() {
     super();
   }
 
-  checkLogin = (token: object) => {
+  checkLogin = (token: any) => {
     return this.post(`/checklogin`, token);
   };
   login = (user: any) => {
     return this.post(`/login`, user);
   };
-  loginWithGoogle = (token: string) => {
+  loginWithGoogle = (token: any) => {
     return this.post(`/auth/googleV2`, token);
   };
-  logout = (token: object) => {
+  logout = (token: any) => {
     return this.post(`/logout`, token);
   };
-  getUserID = () => {
+  getUserID = (token: any) => {
     return this.get(`/getUserID`);
   };
   forgotPassword = (email: string) => {

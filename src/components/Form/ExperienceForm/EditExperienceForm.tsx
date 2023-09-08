@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import { ConfigProvider, DatePicker, message } from "antd";
-import StyleTotal from "./cssAddExperienceForm";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { ConfigProvider, DatePicker, message } from "antd";
+
+import StyleTotal from "./cssAddExperienceForm";
+import { getTheme } from "@/util/functions/ThemeFunction";
 import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
 
 interface EditProps {

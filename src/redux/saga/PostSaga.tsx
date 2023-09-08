@@ -1,6 +1,4 @@
-import { call, put, select, takeLatest } from "redux-saga/effects";
-import { postService } from "../../services/PostService";
-import STATUS_CODE from "@/utils/constants/statusCodes";
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   CREATE_POST_SAGA,
@@ -22,22 +20,20 @@ import {
   INCREASE_VIEW_SHARE_SAGA,
   LIKE_COMMENT_POST_SAGA,
   DISLIKE_COMMENT_POST_SAGA,
-} from "../actionSaga/PostActionSaga";
-import {
-  setOwnerInfo,
-  setPost,
-  setPostArr,
-  updatePosts,
-} from "../Slice/PostSlice";
-import { setUser } from "../Slice/UserSlice";
-import { closeDrawer, setLoading } from "../Slice/DrawerHOCSlice";
+} from '@/redux/ActionSaga/PostActionSaga';
+import { setOwnerInfo, setPost, setPostArr, updatePosts } from '@/redux/Slice/PostSlice';
+import { setUser } from '@/redux/Slice/UserSlice';
+import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
+
+import { postService } from '@/services/PostService';
+import { STATUS_CODE } from '@/util/constants/SettingSystem';
 
 // Get All Post By User ID Saga
 export function* getAllPostByUserIDSaga({ payload }: any) {
   try {
     const id = payload.userId;
     const { data, status } = yield call(postService.getAllPostByUserID, id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(setPostArr(data.content));
       yield put(setOwnerInfo(data.content));
       yield put(setUser(data.content));
@@ -55,7 +51,7 @@ export function* theoDoiGetAllPostByUserIDSaga() {
 export function* getAllPostSaga() {
   try {
     const { data, status } = yield call(postService.getAllPost);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       // yield put(setAllPost(data.content));
       yield put(setPostArr(data.content));
       yield put(setUser(data.content));
@@ -74,8 +70,7 @@ export function* getPostByIdSaga({ payload }: any) {
   try {
     const id = payload.id;
     const { data, status } = yield postService.getPostById(id);
-    console.log(data, status)
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(setPost(data.content));
       yield put(updatePosts(data.content));
       yield put(setUser(data.content));
@@ -94,7 +89,7 @@ export function* getPostShareByIdSaga({ payload }: any) {
   try {
     const id = payload.id;
     const { data, status } = yield postService.getPostShareById(id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(setPost(data.content));
       yield put(updatePosts(data.content));
       yield put(setUser(data.content));
@@ -118,14 +113,12 @@ function* createPostSaga({ payload }: any) {
     };
     const { data, status } = yield postService.createPost(postCreate);
     if (status === STATUS_CODE.CREATED) {
-      const isInProfile: boolean = yield select(
-        (state) => state.postReducer.isInProfile
-      );
+      const isInProfile: boolean = yield select((state) => state.postReducer.isInProfile);
       if (isInProfile) {
         yield put(
           GET_ALL_POST_BY_USERID_SAGA({
-            userId: "me",
-          })
+            userId: 'me',
+          }),
         );
       } else {
         yield put(GET_ALL_POST_SAGA());
@@ -143,15 +136,12 @@ export function* theoDoiCreatePostSaga() {
 // Update Post Saga
 export function* updatePostSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.updatePost(
-      payload.id,
-      payload.postUpdate
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.updatePost(payload.id, payload.postUpdate);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POST_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
       yield put(setLoading(false));
       yield put(closeDrawer({}));
@@ -168,15 +158,12 @@ export function* theoDoiUpdatePostSaga() {
 // Save Comment Saga
 export function* saveCommentSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.saveComment(
-      payload.id,
-      payload.comment
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.saveComment(payload.id, payload.comment);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POST_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -191,15 +178,12 @@ export function* theoDoiSaveCommentSaga() {
 // Save Reply Saga
 export function* saveReplySaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.saveReply(
-      payload.id,
-      payload.reply
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.saveReply(payload.id, payload.reply);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POST_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -215,11 +199,11 @@ export function* theoDoiSaveReplySaga() {
 export function* deletePostSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.deletePost(payload);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_ALL_POST_BY_USERID_SAGA({
-          userId: "me",
-        })
+          userId: 'me',
+        }),
       );
     }
   } catch (err: any) {
@@ -234,15 +218,12 @@ export function* theoDoiDeletePostSaga() {
 // Save comment postshare Saga
 export function* saveCommentPostShareSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.saveCommentPostShare(
-      payload.id,
-      payload.comment
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.saveCommentPostShare(payload.id, payload.comment);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POSTSHARE_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -257,15 +238,12 @@ export function* theoDoiSaveCommentPostShareSaga() {
 // Save Reply PostShare Saga
 export function* saveReplyPostShareSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.saveReplyPostShare(
-      payload.id,
-      payload.reply
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.saveReplyPostShare(payload.id, payload.reply);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POSTSHARE_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -281,11 +259,11 @@ export function* theoDoiSaveReplyPostShareSaga() {
 export function* likePostSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.likePost(payload.id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POST_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -302,15 +280,13 @@ export function* sharePostSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.sharePost(payload.id);
 
-    if (status === STATUS_CODE.OK) {
-      const isInProfile: boolean = yield select(
-        (state) => state.postReducer.isInProfile
-      );
+    if (status === STATUS_CODE.SUCCESS) {
+      const isInProfile: boolean = yield select((state) => state.postReducer.isInProfile);
       if (isInProfile) {
         yield put(
           GET_ALL_POST_BY_USERID_SAGA({
-            userId: "me",
-          })
+            userId: 'me',
+          }),
         );
       }
     }
@@ -327,11 +303,11 @@ export function* theoDoiSharePostSaga() {
 export function* likePostShareSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.likePostShare(payload.id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POSTSHARE_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -347,11 +323,11 @@ export function* theoDoiLikePostShareSaga() {
 export function* savePostSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.savePost(payload.id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(
         GET_POST_BY_ID_SAGA({
           id: payload.id,
-        })
+        }),
       );
     }
   } catch (err: any) {
@@ -367,7 +343,7 @@ export function* theoDoiSavePostSaga() {
 export function* increaseViewPostSaga({ payload }: any) {
   try {
     const { data, status } = yield postService.increaseViewPost(payload.id);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       // yield put(
       //   GET_POST_BY_ID_SAGA({
       //     id: payload.id,
@@ -386,10 +362,8 @@ export function* theoDoiIncreaseViewPostSaga() {
 // Increase View PostShare Saga
 export function* increaseViewPostShareSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.increaseViewPostShare(
-      payload.id
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.increaseViewPostShare(payload.id);
+    if (status === STATUS_CODE.SUCCESS) {
       // yield put(
       //   GET_POSTSHARE_BY_ID_SAGA({
       //     id: payload.id,
@@ -408,10 +382,8 @@ export function* theoDoiIncreaseViewPostShareSaga() {
 // Like comment post Saga
 export function* likeCommentPostSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.likeCommentPost(
-      payload.idComment
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.likeCommentPost(payload.idComment);
+    if (status === STATUS_CODE.SUCCESS) {
       // yield put(
       //   GET_POST_BY_ID_SAGA({
       //     id: payload.postID,
@@ -430,10 +402,8 @@ export function* theoDoiLikeCommentPostSaga() {
 // Dislike comment post Saga
 export function* dislikeCommentPostSaga({ payload }: any) {
   try {
-    const { data, status } = yield postService.dislikeCommentPost(
-      payload.idComment
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield postService.dislikeCommentPost(payload.idComment);
+    if (status === STATUS_CODE.SUCCESS) {
       // yield put(
       //   GET_POST_BY_ID_SAGA({
       //     id: payload.postID,

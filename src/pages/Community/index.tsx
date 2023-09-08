@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import StyleTotal from "./cssCommunity";
-import { getTheme } from "@/utils/functions/ThemeFunction";
+import { format } from "date-fns";
+import { getTheme } from "@/util/functions/ThemeFunction";
 import {
   Avatar,
   Col,
@@ -14,12 +15,12 @@ import {
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileLines, faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { commonColor } from "@/utils/cssVariable";
+
+import { commonColor } from "@/util/cssVariable";
 import MyPost from "@/components/Post/MyPost";
 import NewPost from "@/components/NewPost";
 import MyPostShare from "@/components/Post/MyPostShare";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfileComponent";
-import { format } from "date-fns";
+import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;

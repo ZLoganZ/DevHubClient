@@ -1,6 +1,5 @@
-import { call, put, select, takeLatest } from "redux-saga/effects";
-import { messageService } from "../../services/MessageService";
-import STATUS_CODE from "@/utils/constants/statusCodes";
+import { call, put, takeLatest } from 'redux-saga/effects';
+
 import {
   CREATE_CONVERSATION_SAGA,
   GET_CONVERSATIONS_SAGA,
@@ -8,20 +7,23 @@ import {
   GET_MESSAGES_SAGA,
   SEEN_MESSAGE_SAGA,
   SEND_MESSAGE_SAGA,
-} from "../actionSaga/MessageActionSaga";
+} from '@/redux/ActionSaga/MessageActionSaga';
 import {
   AddConversations,
   SetConversations,
   SetCurrentConversation,
   SetMessage,
   SetMessages,
-} from "../Slice/ConversationSlice";
+} from '@/redux/Slice/ConversationSlice';
+
+import { messageService } from '@/services/MessageService';
+import { STATUS_CODE } from '@/util/constants/SettingSystem';
 
 // Get conversations Saga
 export function* getConversationsSaga() {
   try {
     const { data, status } = yield call(messageService.getConversations);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(SetConversations(data.content));
     }
   } catch (err: any) {
@@ -36,11 +38,8 @@ export function* theoDoiGetConversationsSaga() {
 // Create conversation Saga
 export function* createConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(
-      messageService.createConversation,
-      payload
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield call(messageService.createConversation, payload);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(AddConversations(data.content));
       yield put(SetCurrentConversation(data.content));
     }
@@ -56,11 +55,8 @@ export function* theoDoiCreateConversationSaga() {
 // Get conversation Saga
 export function* getConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(
-      messageService.getConversation,
-      payload
-    );
-    if (status === STATUS_CODE.OK) {
+    const { data, status } = yield call(messageService.getConversation, payload);
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(SetCurrentConversation(data.content));
     }
   } catch (err: any) {
@@ -76,7 +72,7 @@ export function* theoDoiGetConversationSaga() {
 export function* getMessagesSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.getMessages, payload);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(SetMessages(data.content));
     }
   } catch (err: any) {
@@ -92,7 +88,7 @@ export function* theoDoiGetMessagesSaga() {
 export function* seenMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.seenMessage, payload);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(SetCurrentConversation(data.content));
     }
   } catch (err: any) {
@@ -108,7 +104,7 @@ export function* theoDoiSeenMessageSaga() {
 export function* sendMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.sendMessage, payload);
-    if (status === STATUS_CODE.OK) {
+    if (status === STATUS_CODE.SUCCESS) {
       yield put(SetMessage(data.content));
     }
   } catch (err: any) {

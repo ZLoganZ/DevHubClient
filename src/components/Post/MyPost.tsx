@@ -25,10 +25,11 @@ import {
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { sha1 } from "crypto-hash";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import ReactQuill from "react-quill";
 import { NavLink } from "react-router-dom";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssPost";
-import { commonColor } from "@/utils/cssVariable";
+import "react-quill/dist/quill.bubble.css";
 
 import {
   DELETE_POST_SAGA,
@@ -36,18 +37,16 @@ import {
   SHARE_POST_SAGA,
   SAVE_POST_SAGA,
   INCREASE_VIEW_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
 import EditPostForm from "@/components/Form/EditPostForm";
 import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import "highlight.js/styles/monokai-sublime.css";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
-import { sha1 } from "crypto-hash";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import StyleTotal from "./cssPost";
 
 interface PostProps {
   post: any;
@@ -400,9 +399,7 @@ const MyPost = (PostProps: PostProps) => {
                   value={displayContent}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={{
-                    syntax: true,
-                  }}
+                  modules={{}}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>

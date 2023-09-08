@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Quill from "quill";
-import "react-quill/dist/quill.snow.css";
-import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { ConfigProvider } from "antd";
-import StyleTotal from "./cssQuillEdit";
 import ImageCompress from "quill-image-compress";
+import { useDispatch, useSelector } from "react-redux";
+import "react-quill/dist/quill.snow.css";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
+import StyleTotal from "./cssQuillEdit";
 
 Quill.register("modules/imageCompress", ImageCompress);
+
 const toolbarOptions = [
   ["bold", "italic", "underline", "clean"],
   [{ list: "ordered" }, { list: "bullet" }],
@@ -40,7 +42,6 @@ const QuillEdit = (Props: QuillEditProps) => {
     quill = new Quill("#editorDrawer", {
       placeholder: Props.placeholder,
       modules: {
-        syntax: true,
         toolbar: toolbarOptions,
       },
       theme: "snow",

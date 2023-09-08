@@ -1,13 +1,10 @@
 import { Avatar, ConfigProvider, Input, Popover, Modal } from "antd";
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import OtherPostDetailModal from "@/components/Form/PostDetail/OtherPostDetail";
-import StyleTotal from "./cssOpenPostDetailModal";
-import dataEmoji from "@emoji-mart/data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import Picker from "@emoji-mart/react";
+
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
@@ -15,7 +12,10 @@ import {
   SAVE_REPLY_POSTSHARE_SAGA,
   GET_POSTSHARE_BY_ID_SAGA,
   GET_POST_BY_ID_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import OtherPostDetailModal from "@/components/Form/PostDetail/OtherPostDetail";
+import StyleTotal from "./cssOpenPostDetailModal";
 
 interface PostProps {
   post: any;
@@ -51,7 +51,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
 
   const [data, setData] = useState<any>({ isReply: false, idComment: null });
 
-  const inputRef = React.useRef<any>(null);
+  const inputRef = useRef<any>(null);
 
   const handleData = (data: any) => {
     setData(data);
@@ -160,7 +160,13 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
                 title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(

@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import StyleTotal from "./cssForgotPassword";
-import { ConfigProvider } from "antd";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { ConfigProvider } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
 import {
   CHECK_RESET_PASSWORD_SAGA,
   CHECK_VERIFY_CODE_SAGA,
   FORGOT_PASSWORD_SAGA,
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA,
-} from "@/redux/actionSaga/AuthActionSaga";
-import { useNavigate } from "react-router-dom";
+} from '@/redux/ActionSaga/AuthActionSaga';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from './cssForgotPassword';
 
 export const ForgotPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -21,7 +22,7 @@ export const ForgotPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -35,24 +36,18 @@ export const ForgotPassword = () => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}>
+      }}
+    >
       <StyleTotal theme={themeColorSet}>
         <h1>ForgotPassword</h1>
         <label htmlFor="email" className="mr-3">
           Email
         </label>
-        <input
-          type="email"
-          name="email"
-          id="email"
-          onChange={handleChangeEmail}
-        />
+        <input type="email" name="email" id="email" onChange={handleChangeEmail} />
         <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
           Send
         </button>
-        <button
-          className="btnBack mr-3 px-3 py-1"
-          onClick={() => navigate("/login")}>
+        <button className="btnBack mr-3 px-3 py-1" onClick={() => navigate('/login')}>
           Back
         </button>
       </StyleTotal>
@@ -71,25 +66,23 @@ export const ResetPassword = () => {
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
-  const email = params.get("email");
+  const email = params.get('email');
 
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
 
   const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleChangeConfirmPassword = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value);
   };
 
   useEffect(() => {
     if (!email) {
-      navigate("/forgot");
+      navigate('/forgot');
     }
 
     if (email) {
@@ -103,7 +96,7 @@ export const ResetPassword = () => {
         RESET_PASSWORD_SAGA({
           email: email,
           password: password,
-        })
+        }),
       );
     }
   };
@@ -112,33 +105,22 @@ export const ResetPassword = () => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}>
+      }}
+    >
       <StyleTotal theme={themeColorSet}>
         <h1>ResetPassword</h1>
         <label htmlFor="password" className="mr-3">
           Password
         </label>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          onChange={handleChangePassword}
-        />
+        <input type="password" name="password" id="password" onChange={handleChangePassword} />
         <label htmlFor="confirmPassword" className="mr-3">
           Confirm Password
         </label>
-        <input
-          type="password"
-          name="confirmPassword"
-          id="confirmPassword"
-          onChange={handleChangeConfirmPassword}
-        />
+        <input type="password" name="confirmPassword" id="confirmPassword" onChange={handleChangeConfirmPassword} />
         <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
           Next
         </button>
-        <button
-          className="btnBack mr-3 px-3 py-1"
-          onClick={() => navigate("/forgot")}>
+        <button className="btnBack mr-3 px-3 py-1" onClick={() => navigate('/forgot')}>
           Back
         </button>
       </StyleTotal>
@@ -157,9 +139,9 @@ export const VerifyCode = () => {
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
-  const email = params.get("email");
+  const email = params.get('email');
 
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
 
   const handleChangeCode = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
@@ -167,7 +149,7 @@ export const VerifyCode = () => {
 
   useEffect(() => {
     if (!email) {
-      navigate("/forgot");
+      navigate('/forgot');
     }
 
     if (email) {
@@ -176,10 +158,8 @@ export const VerifyCode = () => {
   }, [email]);
 
   const handleSubmit = () => {
-    if (code === params.get("code")) {
-      window.alert(
-        "Lêu lêu, bị lừa rồi đó, đừng nhập code này nữa nha, đọc note kìa!"
-      );
+    if (code === params.get('code')) {
+      window.alert('Lêu lêu, bị lừa rồi đó, đừng nhập code này nữa nha, đọc note kìa!');
     }
     dispatch(VERIFY_CODE_SAGA({ email: email, code: code }));
   };
@@ -188,7 +168,8 @@ export const VerifyCode = () => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}>
+      }}
+    >
       <StyleTotal theme={themeColorSet}>
         <h1>VerifyCode</h1>
         <label htmlFor="code" className="mr-3">
@@ -198,9 +179,7 @@ export const VerifyCode = () => {
         <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
           Next
         </button>
-        <button
-          className="btnBack mr-3 px-3 py-1"
-          onClick={() => navigate("/forgot")}>
+        <button className="btnBack mr-3 px-3 py-1" onClick={() => navigate('/forgot')}>
           Back
         </button>
       </StyleTotal>

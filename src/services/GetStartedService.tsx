@@ -1,10 +1,10 @@
-import { BaseService } from "./BaseService";
+import { BaseService } from './BaseService';
 
 export class GetStartedService extends BaseService {
   constructor() {
     super();
   }
-  chooseGetStarted = (number: number) => {
+  chooseGetStarted = (number: Number) => {
     return this.post(`/getstarted`, number);
   };
   chooseInterest = (interest: any) => {

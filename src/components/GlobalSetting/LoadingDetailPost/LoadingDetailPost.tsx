@@ -1,7 +1,7 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { ConfigProvider, Skeleton } from "antd";
+import { useSelector } from "react-redux";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 import StyleTotal from "./cssLoadingDetailPost";
 
 const LoadingDetailPost = () => {

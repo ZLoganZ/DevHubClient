@@ -1,6 +1,7 @@
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faFacebookF, faTwitter, faGithub, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const contactArrays = [
   {
     key: '0',

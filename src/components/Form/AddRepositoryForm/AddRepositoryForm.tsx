@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import GithubColors from "github-colors";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { Checkbox, ConfigProvider, Space, Spin } from "antd";
-import StyleTotal from "./cssAddRepositoryForm";
-import { GetGitHubUrl } from "@/utils/GetGithubUrl";
-import { GET_REPOSITORY_SAGA } from "@/redux/actionSaga/UserActionSaga";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeFork, faStar } from "@fortawesome/free-solid-svg-icons";
-import { TOKEN_GITHUB } from "@/utils/constants/SettingSystem";
+
+import StyleTotal from "./cssAddRepositoryForm";
+import { GetGitHubUrl } from "@/util/functions/GetGithubUrl";
+import { TOKEN_GITHUB } from "@/util/constants/SettingSystem";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { GET_REPOSITORY_SAGA } from "@/redux/ActionSaga/UserActionSaga";
 import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
-import GithubColors from "github-colors";
 
 interface ReposProps {
   repositories: any;

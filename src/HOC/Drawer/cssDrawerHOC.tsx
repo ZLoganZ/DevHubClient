@@ -1,9 +1,4 @@
-import styled, { css } from "styled-components";
-import {
-  commonColor,
-  flex_center_column,
-  flex_center_row,
-} from "@/utils/cssVariable";
+import styled from 'styled-components';
 
 const StyleTotal = styled.div``;
 

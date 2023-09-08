@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import descArrays from "@/components/GlobalSetting/ItemComponent/Description";
+import { useEffect, useState } from "react";
 import { ConfigProvider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
+
 import StyleTotal from "./cssAddTagComponent";
+import { getTheme } from "@/util/functions/ThemeFunction";
 import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
+import descArrays from "@/components/GlobalSetting/ItemComponent/Description";
 
 const AddTagComponent = (Props: any) => {
   const dispatch = useDispatch();

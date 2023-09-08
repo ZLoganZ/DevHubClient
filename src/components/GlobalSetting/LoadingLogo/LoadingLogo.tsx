@@ -1,10 +1,11 @@
 import Title from "antd/es/typography/Title";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssLoadingLogo";
 import { ConfigProvider } from "antd";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssLoadingLogo";
 
 const LoadingLogo = () => {
   const { change } = useSelector((state: any) => state.themeReducer);

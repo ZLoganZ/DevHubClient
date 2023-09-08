@@ -1,9 +1,5 @@
 import styled from "styled-components";
-import {
-  commonColor,
-  custom_scrollBar,
-  flex_center_row,
-} from "@/utils/cssVariable";
+import { custom_scrollBar, flex_center_row } from "@/util/cssVariable";
 
 const StyleTotal = styled.div`
   height: fit-content;

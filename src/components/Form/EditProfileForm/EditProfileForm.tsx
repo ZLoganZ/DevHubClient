@@ -7,10 +7,8 @@ import {
   Image,
   message,
 } from "antd";
-import React, { useState, useCallback, useMemo } from "react";
-import StyleTotal from "./cssEditProfileForm";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import {
   faFacebookF,
   faTwitter,
@@ -18,7 +16,8 @@ import {
   faInstagram,
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
-import { commonColor } from "@/utils/cssVariable";
+import ReactQuill, { Value } from "react-quill";
+import GithubColors from "github-colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBriefcase,
@@ -28,23 +27,25 @@ import {
   faStar,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { openModal } from "@/redux/Slice/ModalHOCSlice";
-import AddTagComponent from "@/components/AddTagComponent";
-import AddLinkComponent from "@/components/AddLinkComponent";
-import descArray from "@/components/GlobalSetting/ItemComponent/Description";
-import { UPDATE_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
-import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import { RcFile } from "antd/es/upload";
 import { sha1 } from "crypto-hash";
-import QuillEdit from "@/components/QuillEdit";
 import "react-quill/dist/quill.bubble.css";
-import ReactQuill, { Value } from "react-quill";
+
+import QuillEdit from "@/components/QuillEdit";
+import descArray from "@/components/GlobalSetting/ItemComponent/Description";
 import AddExperienceForm from "@/components/Form/ExperienceForm/AddExperienceForm";
 import EditExperienceForm from "@/components/Form/ExperienceForm/EditExperienceForm";
 import AddRepositoryForm from "@/components/Form/AddRepositoryForm";
-import GithubColors from "github-colors";
 import { ButtonActiveHover } from "@/components/MiniComponent";
+import AddTagComponent from "@/components/AddTagComponent";
+import AddLinkComponent from "@/components/AddLinkComponent";
+import { openModal } from "@/redux/Slice/ModalHOCSlice";
+import { UPDATE_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import StyleTotal from "./cssEditProfileForm";
 
 const EditProfileForm = () => {
   const dispatch = useDispatch();
@@ -227,7 +228,7 @@ const EditProfileForm = () => {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(callBackSubmitDrawer(onSubmit));
   }, [
     tags,
@@ -779,9 +780,7 @@ const EditProfileForm = () => {
                   value={about as Value}
                   readOnly={true}
                   theme={"bubble"}
-                  modules={{
-                    syntax: true,
-                  }}
+                  modules={{}}
                 />
               </div>
             ) : (

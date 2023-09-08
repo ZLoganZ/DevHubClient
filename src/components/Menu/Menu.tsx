@@ -10,11 +10,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, ConfigProvider, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssMenu";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssMenu";
 
 const MenuMain = () => {
   const navigate = useNavigate();

@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import contactArrays from "@/components/GlobalSetting/ItemComponent/Contact";
+import { useEffect, useState } from "react";
 import { ConfigProvider, Dropdown, Button, Input, Avatar } from "antd";
+import { faTrashCan, faPlus, faInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DownOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
+
 import StyleTotal from "./cssAddLinkComponent";
 import { closeModal } from "@/redux/Slice/ModalHOCSlice";
-import { DownOutlined } from "@ant-design/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faPlus, faInfo } from "@fortawesome/free-solid-svg-icons";
-import { commonColor } from "@/utils/cssVariable";
-import { ButtonActiveHover } from "../MiniComponent";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import contactArrays from "@/components/GlobalSetting/ItemComponent/Contact";
+import { ButtonActiveHover } from "@/components/MiniComponent";
 
 const AddLinkComponent = (Props: any) => {
   const dispatch = useDispatch();

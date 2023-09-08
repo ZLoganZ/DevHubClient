@@ -1,39 +1,37 @@
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  lazy,
-  Suspense,
-} from "react";
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from "react";
+import { Col, ConfigProvider, Row, Skeleton } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { GET_COMMUNITY_BY_ID_SAGA } from "@/redux/actionSaga/CommunityActionSaga";
+
+import { GET_COMMUNITY_BY_ID_SAGA } from "@/redux/ActionSaga/CommunityActionSaga";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
+import {
+  GET_POSTSHARE_BY_ID_SAGA,
+  GET_POST_BY_ID_SAGA,
+} from "@/redux/ActionSaga/PostActionSaga";
+import OpenOtherPostShareDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail";
+import OpenOtherPostDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetail";
+import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
+import { getTheme } from "@/util/functions/ThemeFunction";
+
 const CommunityAdmin = lazy(() =>
   import("@/pages/Community").then((module) => ({
     default: module.CommunityAdmin,
   }))
 );
+
 const CommunityMember = lazy(() =>
   import("@/pages/Community").then((module) => ({
     default: module.CommunityMember,
   }))
 );
+
 const CommunityNoMember = lazy(() =>
   import("@/pages/Community").then((module) => ({
     default: module.CommunityNoMember,
   }))
 );
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfileComponent";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import { Col, ConfigProvider, Row, Skeleton } from "antd";
-import {
-  GET_POSTSHARE_BY_ID_SAGA,
-  GET_POST_BY_ID_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
-import OpenOtherPostShareDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail";
-import OpenOtherPostDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetail";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
+
 const MyProfile = lazy(() => import("@/pages/MyProfile"));
 const Profile = lazy(() => import("@/pages/Profile"));
 

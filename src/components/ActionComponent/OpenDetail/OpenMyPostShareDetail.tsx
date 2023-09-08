@@ -1,20 +1,19 @@
 import { Avatar, ConfigProvider, Input, Popover, Row, Col } from "antd";
-import React, { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssOpenPostDetail";
-import dataEmoji from "@emoji-mart/data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import Picker from "@emoji-mart/react";
+
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
   SAVE_REPLY_SAGA,
   SAVE_REPLY_POSTSHARE_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
-import { useParams } from "react-router-dom";
+} from "@/redux/ActionSaga/PostActionSaga";
 import MyPostDetail from "@/components/Form/PostDetail/MyPostDetail";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssOpenPostDetail";
 
 interface Props {
   post: any;
@@ -23,8 +22,6 @@ interface Props {
 
 const OpenMyPostShareDetail = (Props: Props) => {
   const dispatch = useDispatch();
-
-  const { postID } = useParams();
 
   // Lấy theme từ LocalStorage chuyển qua css
   const { change } = useSelector((state: any) => state.themeReducer);
@@ -36,7 +33,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
 
   const [data, setData] = useState<any>({ isReply: false, idComment: null });
 
-  const inputRef = React.useRef<any>(null);
+  const inputRef = useRef<any>(null);
 
   useEffect(() => {
     if (data.isReply) inputRef.current.focus();
@@ -154,7 +151,13 @@ const OpenMyPostShareDetail = (Props: Props) => {
                 title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(

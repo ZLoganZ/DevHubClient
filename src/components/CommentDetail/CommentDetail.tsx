@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { Comment } from "@ant-design/compatible";
 import { Avatar, ConfigProvider, Skeleton, Tooltip } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "@/components/Post/cssPost";
-import {
-  DISLIKE_COMMENT_POST_SAGA,
-  LIKE_COMMENT_POST_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
 import Icon, {
   DislikeFilled,
   DislikeOutlined,
   LikeFilled,
   LikeOutlined,
 } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "@/components/Post/cssPost";
+import {
+  DISLIKE_COMMENT_POST_SAGA,
+  LIKE_COMMENT_POST_SAGA,
+} from "@/redux/ActionSaga/PostActionSaga";
 
 interface CommentProps {
   comment: any;

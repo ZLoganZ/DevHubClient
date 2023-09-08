@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { commonColor, custom_scrollBar } from "@/utils/cssVariable";
+import styled from 'styled-components';
+import { commonColor, custom_scrollBar } from '@/util/cssVariable';
 
 const StyleTotal = styled.div`
   .form__group {

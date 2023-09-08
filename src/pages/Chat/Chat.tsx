@@ -1,8 +1,6 @@
 import { ConfigProvider, Space } from "antd";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssChat";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
 import { faSun } from "@fortawesome/free-regular-svg-icons";
@@ -12,19 +10,23 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { NavLink, useParams } from "react-router-dom";
-import ConversationList from "@/components/ChatComponent/ConversationList";
-import EmptyChat from "@/components/ChatComponent/EmptyChat";
-import MessageChat from "@/components/ChatComponent/MessageChat";
+
+import ConversationList from "@/components/Chat/ConversationList";
+import LoadingConversation from "@/components/GlobalSetting/LoadingConversation";
+import EmptyChat from "@/components/Chat/EmptyChat";
+import MessageChat from "@/components/Chat/MessageChat";
+import InputChat from "@/components/Chat/InputChat";
+import SharedMedia from "@/components/Chat/SharedMedia";
+import LoadingChat from "@/components/GlobalSetting/LoadingChat";
+
 import {
   useConversationsData,
   useCurrentConversationData,
   useFollowersData,
 } from "@/hooks/DataProvider";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
-import SharedMedia from "@/components/ChatComponent/SharedMedia";
-import LoadingChat from "@/components/GlobalSetting/LoadingChat";
-import LoadingConversation from "@/components/GlobalSetting/LoadingConversation";
-import InputChat from "@/components/ChatComponent/InputChat";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssChat";
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css

@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import StyleTotal from "./cssProfile";
-import { getTheme } from "@/utils/functions/ThemeFunction";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Avatar,
   Col,
@@ -12,6 +10,7 @@ import {
   Tabs,
   Tag,
 } from "antd";
+import ReactQuill from "react-quill";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,6 +21,8 @@ import {
   faStar,
   faCodeFork,
 } from "@fortawesome/free-solid-svg-icons";
+import GithubColors from "github-colors";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 import {
   faFacebookF,
   faTwitter,
@@ -30,17 +31,18 @@ import {
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 import { NavLink } from "react-router-dom";
-import { commonColor } from "@/utils/cssVariable";
-import { icon } from "@fortawesome/fontawesome-svg-core";
+
 import OtherPost from "@/components/Post/OtherPost";
-import { GET_ALL_POST_BY_USERID_SAGA } from "@/redux/actionSaga/PostActionSaga";
 import OtherPostShare from "@/components/Post/OtherPostShare";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfileComponent";
+import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
 import descArray from "@/components/GlobalSetting/ItemComponent/Description";
+
 import { setIsInProfile } from "@/redux/Slice/PostSlice";
-import { FOLLOW_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
-import ReactQuill from "react-quill";
-import GithubColors from "github-colors";
+import { FOLLOW_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import { GET_ALL_POST_BY_USERID_SAGA } from "@/redux/ActionSaga/PostActionSaga";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import StyleTotal from "./cssProfile";
 
 interface Props {
   userID: any;
@@ -82,9 +84,9 @@ const Profile = (Props: Props) => {
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
   const ownerInfo = useMemo(() => ownerInfoSlice, [ownerInfoSlice]);
 
-  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = React.useState(true);
+  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = useState(true);
 
-  const postArrayRef = React.useRef(postArray);
+  const postArrayRef = useRef(postArray);
 
   useEffect(() => {
     if (!isNotAlreadyChanged) return;
@@ -435,9 +437,7 @@ const Profile = (Props: Props) => {
                                   value={ownerInfo?.about}
                                   readOnly={true}
                                   theme="bubble"
-                                  modules={{
-                                    syntax: true,
-                                  }}
+                                  modules={{}}
                                 />
                               </div>
                             )}

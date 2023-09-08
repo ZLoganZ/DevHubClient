@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Badge,
@@ -12,25 +12,26 @@ import {
   notification,
 } from "antd";
 import type { MenuProps } from "antd";
+import { format } from "date-fns";
 import { Header } from "antd/es/layout/layout";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssHeaders";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
 import Title from "antd/es/typography/Title";
+import { NavLink, useNavigate } from "react-router-dom";
 import Search from "antd/es/transfer/search";
 import { BellOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { DARK_THEME, LIGHT_THEME } from "@/utils/constants/SettingSystem";
+
 import { setTheme } from "@/redux/Slice/ThemeSlice";
-import { NavLink, useNavigate } from "react-router-dom";
-import DayNightSwitch from "../Day&NightSwitch";
-import { LOGOUT_SAGA } from "@/redux/actionSaga/AuthActionSaga";
-import { useConversationsData } from "@/hooks/DataProvider";
-import { pusherClient } from "@/utils/Pusher";
-import { format } from "date-fns";
+import { LOGOUT_SAGA } from "@/redux/ActionSaga/AuthActionSaga";
 import AvatarGroup from "@/components/Avatar/AvatarGroup";
+import DayNightSwitch from "@/components/Day&NightSwitch";
 import AvatarMessage from "@/components/Avatar/AvatarMessage";
+import { DARK_THEME, LIGHT_THEME } from "@/util/constants/SettingSystem";
+import { pusherClient } from "@/util/functions/Pusher";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { useConversationsData } from "@/hooks/DataProvider";
+import StyleTotal from "./cssHeaders";
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -110,12 +111,12 @@ const Headers = () => {
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
 
-  const [countUnseen, setCountUnseen] = React.useState(0);
-  const [countNoti, setCountNoti] = React.useState(0);
+  const [countUnseen, setCountUnseen] = useState(0);
+  const [countNoti, setCountNoti] = useState(0);
 
   const { conversations, isLoadingConversations } = useConversationsData();
 
-  const [messages, setMessages] = React.useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
     if (isLoadingConversations) return;

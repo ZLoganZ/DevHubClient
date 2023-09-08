@@ -9,22 +9,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, ConfigProvider, Dropdown, Image, Popover, Space } from "antd";
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssPost";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 import {
   INCREASE_VIEW_SHARE_SAGA,
   LIKE_POSTSHARE_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 import OpenOtherPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal";
-import "react-quill/dist/quill.bubble.css";
-import ReactQuill from "react-quill";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssPost";
 
 interface PostShareProps {
   post: any;

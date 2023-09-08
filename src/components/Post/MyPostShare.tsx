@@ -21,23 +21,23 @@ import {
 import type { MenuProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { format, isThisWeek, isThisYear, isToday } from "date-fns";
 import { NavLink } from "react-router-dom";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssPost";
-import { commonColor } from "@/utils/cssVariable";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 import {
   SHARE_POST_SAGA,
   LIKE_POSTSHARE_SAGA,
   INCREASE_VIEW_SHARE_SAGA,
-} from "@/redux/actionSaga/PostActionSaga";
+} from "@/redux/ActionSaga/PostActionSaga";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { GET_USER_ID } from "@/redux/actionSaga/AuthActionSaga";
 import PopupInfoUser from "@/components/PopupInfoUser";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import StyleTotal from "./cssPost";
 
 interface PostShareProps {
   post: any;

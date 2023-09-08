@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  BrowserRouter,
   Route,
   Routes,
   useLocation,
@@ -31,7 +30,7 @@ import SelectFollow from "@/pages/SelectFollow";
 import SelectCommunity from "@/pages/SelectCommunity";
 import GetStarted from "@/pages/GetStarted";
 import { CommunityWrapper, PostShareWrapper, PostWrapper, ProfileWrapper } from "@/components/Wrapper";
-import NotFound404 from "./pages/NotFound404";
+import NotFound404 from "@/pages/NotFound404";
 
 const App = () => {
   //Set một số tham số cần thiết trên toàn cục
@@ -47,7 +46,7 @@ const App = () => {
   dispatch(setUseSelector(useSelector));
 
   return (
-    <BrowserRouter>
+    <>
       <ModalHOC />
       <DrawerHOC />
       <ActiveStatus />
@@ -89,7 +88,7 @@ const App = () => {
           <Route path="*" element={<NotFound404 />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   );
 };
 

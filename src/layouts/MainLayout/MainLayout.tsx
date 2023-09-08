@@ -1,13 +1,14 @@
-import React, { useLayoutEffect } from "react";
+import { Content } from "antd/es/layout/layout";
+import { useLayoutEffect } from "react";
 import { ConfigProvider, FloatButton, Layout } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+
 import Headers from "@/components/Headers";
-import Menu from "@/components/Menu";
-import { Content } from "antd/es/layout/layout";
-import { GET_USER_INFO_SAGA } from "@/redux/actionSaga/UserActionSaga";
 import LoadingLogo from "@/components/GlobalSetting/LoadingLogo";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssMainTemplate";
+import Menu from "@/components/Menu";
+import { GET_USER_INFO_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssMainLayout";
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;

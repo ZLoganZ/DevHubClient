@@ -1,36 +1,35 @@
-import React from "react";
-import { useFormik } from "formik";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
-import { Form } from "antd";
-import ConfigProvider from "antd/es/config-provider";
-import Input from "antd/es/input";
-import StyleTotal from "./cssRegister";
+import { ConfigProvider, Form, Input } from "antd";
 import { useDispatch } from "react-redux";
-import { REGIS_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useForm } from "react-hook-form";
 import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
-import { darkThemeSet } from "@/utils/cssVariable";
+
+import { REGIS_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import { darkThemeSet } from "@/util/cssVariable";
+import StyleTotal from "./cssRegister";
 
 const Register = () => {
   const dispatch = useDispatch();
 
-  const formik = useFormik({
-    initialValues: {
+  const form = useForm({
+    defaultValues: {
       firstname: "",
       lastname: "",
       email: "",
       password: "",
       confirm: "",
     },
-    onSubmit: (values) => {
-      dispatch(
-        REGIS_USER_SAGA({
-          userRegister: values,
-        })
-      );
-    },
   });
+
+  const onSubmit = (values: any) => {
+    dispatch(
+      REGIS_USER_SAGA({
+        userRegister: values,
+      })
+    );
+  };
 
   return (
     <ConfigProvider
@@ -66,7 +65,7 @@ const Register = () => {
 
                 <Form
                   className="mt-5 formAccount"
-                  onFinish={formik.handleSubmit}>
+                  onFinish={form.handleSubmit(onSubmit)}>
                   <Form.Item>
                     <Form.Item
                       style={{
@@ -85,7 +84,8 @@ const Register = () => {
                         placeholder="Last name"
                         allowClear
                         prefix={<UserOutlined />}
-                        onChange={formik.handleChange}></Input>
+                        {...form.register("lastname")}
+                      />
                     </Form.Item>
                     <Form.Item
                       style={{
@@ -103,7 +103,8 @@ const Register = () => {
                         placeholder="First name"
                         allowClear
                         prefix={<UserOutlined />}
-                        onChange={formik.handleChange}></Input>
+                        {...form.register("firstname")}
+                      />
                     </Form.Item>
                   </Form.Item>
                   <Form.Item
@@ -122,7 +123,8 @@ const Register = () => {
                       placeholder="Email"
                       allowClear
                       prefix={<MailOutlined />}
-                      onChange={formik.handleChange}></Input>
+                      {...form.register("email")}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="password"
@@ -135,7 +137,8 @@ const Register = () => {
                     hasFeedback>
                     <Input.Password
                       placeholder="Password"
-                      onChange={formik.handleChange}></Input.Password>
+                      {...form.register("password")}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="confirm"
@@ -161,7 +164,8 @@ const Register = () => {
                     ]}>
                     <Input.Password
                       placeholder="Confirm Password"
-                      onChange={formik.handleChange}></Input.Password>
+                      {...form.register("confirm")}
+                    />
                   </Form.Item>
                   <button className="buttonCreate mt-3" type="submit">
                     Create account

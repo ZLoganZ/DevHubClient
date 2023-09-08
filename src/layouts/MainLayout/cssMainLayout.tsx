@@ -1,5 +1,4 @@
-import styled, { css } from "styled-components";
-import {} from "@/utils/cssVariable";
+import styled from 'styled-components';
 
 const StyleTotal = styled.div``;
 

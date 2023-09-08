@@ -9,26 +9,23 @@ import {
 } from "antd";
 import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { sha1 } from "crypto-hash";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssNewPost";
 import ImageCompress from "quill-image-compress";
-import dataEmoji from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
-import { useFormik } from "formik";
-import { CREATE_POST_SAGA } from "@/redux/actionSaga/PostActionSaga";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
-import hljs from "highlight.js/lib/core";
-import javascript from "highlight.js/lib/languages/javascript";
-import "highlight.js/styles/monokai-sublime.css";
-import { commonColor } from "@/utils/cssVariable";
-import { ButtonActiveHover } from "../MiniComponent";
+import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
+
+import { ButtonActiveHover } from "@/components/MiniComponent";
+import { CREATE_POST_SAGA } from "@/redux/ActionSaga/PostActionSaga";
+import { commonColor } from "@/util/cssVariable";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssNewPost";
 
 Quill.register("modules/imageCompress", ImageCompress);
 
@@ -38,12 +35,6 @@ const toolbarOptions = [
   [{ align: [] }],
   ["link"],
 ];
-
-hljs.registerLanguage("javascript", javascript);
-
-hljs.configure({
-  languages: ["javascript", "ruby", "python"],
-});
 
 interface Props {
   userInfo: any;
@@ -69,7 +60,6 @@ const NewPost = (Props: Props) => {
     quill = new Quill("#editor", {
       placeholder: "Add a Content",
       modules: {
-        syntax: true,
         toolbar: toolbarOptions,
       },
       theme: "snow",
@@ -90,7 +80,7 @@ const NewPost = (Props: Props) => {
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    formik.setFieldValue("content", text);
+    form.register("content", { value: text });
   };
 
   // Hàm hiển thị mesage
@@ -101,35 +91,36 @@ const NewPost = (Props: Props) => {
     });
   };
 
-  // Formik
-  const formik = useFormik({
-    initialValues: {
+  const form = useForm({
+    defaultValues: {
       title: "",
       content: "",
-    },
-    onSubmit: async (values, helper) => {
-      if (quill.root.innerHTML === "<p><br></p>") {
-        error();
-      } else {
-        setLoading(true);
-        const result = await handleUploadImage(file);
-        if (result.status === "done") {
-          dispatch(
-            CREATE_POST_SAGA({
-              postCreate: values,
-              linkImage: result.url,
-            })
-          );
-          setLoading(false);
-          quill.root.innerHTML = "<p><br></p>";
-          setRandom(Math.random());
-          setFile(null);
-          formik.resetForm();
-          messageApi.success("Create post successfully");
-        }
-      }
+      linkImage: null,
     },
   });
+
+  const onSubmit = async (values: any) => {
+    if (quill.root.innerHTML === "<p><br></p>") {
+      error();
+    } else {
+      setLoading(true);
+      const result = await handleUploadImage(file);
+      if (result.status === "done") {
+        dispatch(
+          CREATE_POST_SAGA({
+            postCreate: values,
+            linkImage: result.url,
+          })
+        );
+        setLoading(false);
+        quill.root.innerHTML = "<p><br></p>";
+        setRandom(Math.random());
+        setFile(null);
+        form.reset();
+        messageApi.success("Create post successfully");
+      }
+    }
+  };
 
   const [file, setFile]: any = useState(null);
 
@@ -165,7 +156,7 @@ const NewPost = (Props: Props) => {
   };
 
   const handleRemoveImage = async () => {
-    formik.setFieldValue("linkImage", null);
+    form.register("linkImage", { value: null });
     const formData = new FormData();
     const public_id = file.public_id;
     formData.append("api_key", "235531261932754");
@@ -223,12 +214,12 @@ const NewPost = (Props: Props) => {
             </div>
             <div className="AddTitle mt-4 z-10">
               <Input
-                name="title"
                 placeholder="Add a Title"
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
-                onChange={formik.handleChange}></Input>
+                {...form.register("title")}
+              />
             </div>
             <div className="AddContent mt-4">
               <div id="editor" />
@@ -242,7 +233,13 @@ const NewPost = (Props: Props) => {
                 title={"Emoji"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
                       quill.insertText(
@@ -289,7 +286,7 @@ const NewPost = (Props: Props) => {
               <ButtonActiveHover
                 rounded
                 onClick={() => {
-                  formik.handleSubmit();
+                  form.handleSubmit(onSubmit)();
                 }}
                 loading={loading}>
                 <span style={{ color: commonColor.colorWhile1 }}>

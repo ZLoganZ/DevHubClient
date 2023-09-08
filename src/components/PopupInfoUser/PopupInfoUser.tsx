@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { Avatar, ConfigProvider } from "antd";
-import StyleTotal from "./cssPopupInfoUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBriefcase,
   faEllipsis,
   faSnowflake,
 } from "@fortawesome/free-solid-svg-icons";
-import { commonColor } from "@/utils/cssVariable";
-import { FOLLOW_USER_SAGA } from "@/redux/actionSaga/UserActionSaga";
-import { NavLink } from "react-router-dom";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import { FOLLOW_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import StyleTotal from "./cssPopupInfoUser";
 
 const PopupInfoUser = ({ userInfo, isMe }: any) => {
   const dispatch = useDispatch();

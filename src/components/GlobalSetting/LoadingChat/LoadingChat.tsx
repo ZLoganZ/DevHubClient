@@ -1,12 +1,11 @@
-import React from "react";
 import { useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
 import { Skeleton, Space } from "antd";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 
 const LoadingChat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   const { change } = useSelector((state: any) => state.themeReducer);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   return (

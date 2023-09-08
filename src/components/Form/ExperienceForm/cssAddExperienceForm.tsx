@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { commonColor, change_color_autoFill } from "@/utils/cssVariable";
+import styled from 'styled-components';
+import { commonColor, change_color_autoFill } from '@/util/cssVariable';
 
 const StyleTotal = styled.div`
   ${change_color_autoFill}
@@ -76,8 +76,7 @@ const StyleTotal = styled.div`
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px ${(props) =>
-    props.theme.colorBg2} inset !important;
+    -webkit-box-shadow: 0 0 0 30px ${(props) => props.theme.colorBg2} inset !important;
     -webkit-text-fill-color: ${(props) => props.theme.colorText1} !important;
   } */
 `;

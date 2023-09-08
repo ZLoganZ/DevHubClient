@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
-import { postService } from '../services/PostService';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { postService } from "../services/PostService";
+import { useQueryClient } from "@tanstack/react-query";
 
-const updateAllPosts = () => {};
+const useUpdateAllPosts = () => {};
 
-const createPost = () => {
+const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   const { isInProfile } = useSelector((state: any) => state.postReducer);
@@ -18,7 +18,7 @@ const createPost = () => {
     {
       onSuccess(data) {
         if (isInProfile) {
-          queryClient.setQueryData(['allPosts'], (oldData: any) => {
+          queryClient.setQueryData(["allPosts"], (oldData: any) => {
             return {
               ...oldData,
               content: {
@@ -28,12 +28,12 @@ const createPost = () => {
             };
           });
         } else {
-          queryClient.invalidateQueries(['posts']);
+          queryClient.invalidateQueries(["posts"]);
         }
       },
-    },
+    }
   );
   return { mutate, isLoading, isError, isSuccess };
 };
 
-export { updateAllPosts, createPost };
+export { useUpdateAllPosts, useCreatePost };

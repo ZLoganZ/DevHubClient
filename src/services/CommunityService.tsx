@@ -1,10 +1,10 @@
-import { BaseService } from "./BaseService";
+import { BaseService } from './BaseService';
 
 export class CommunityService extends BaseService {
   constructor() {
     super();
   }
-  getCommunityByID = (id: string) => {
+  getCommunityByID = (id: String) => {
     return this.get(`/communities/${id}`);
   };
 }

@@ -1,14 +1,13 @@
-import { ConfigProvider } from "antd";
-import React from "react";
+import { ConfigProvider, Drawer, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssDrawerHOC";
-import { Drawer, Space } from "antd";
+
+import { getTheme } from "@/util/functions/ThemeFunction";
 import { closeDrawer } from "@/redux/Slice/DrawerHOCSlice";
 import {
   ButtonActiveHover,
   ButtonCancelHover,
 } from "@/components/MiniComponent";
+import StyleTotal from "./cssDrawerHOC";
 
 const DrawerHOC = () => {
   const dispatch = useDispatch();

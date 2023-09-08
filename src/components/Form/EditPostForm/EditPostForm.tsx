@@ -9,21 +9,21 @@ import {
 } from "antd";
 import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import StyleTotal from "./cssEditPostForm";
 import ImageCompress from "quill-image-compress";
-import dataEmoji from "@emoji-mart/data";
+import { sha1 } from "crypto-hash";
+import { useForm } from "react-hook-form";
 import Picker from "@emoji-mart/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
-import { useFormik } from "formik";
-import { UPDATE_POST_SAGA } from "@/redux/actionSaga/PostActionSaga";
 import { UploadOutlined } from "@ant-design/icons";
-import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
 import { RcFile } from "antd/es/upload";
-import { sha1 } from "crypto-hash";
+import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
+
+import { UPDATE_POST_SAGA } from "@/redux/ActionSaga/PostActionSaga";
+import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import StyleTotal from "./cssEditPostForm";
 
 Quill.register("modules/imageCompress", ImageCompress);
 
@@ -103,36 +103,35 @@ const EditPostForm = (PostProps: PostProps) => {
     };
   };
 
-  // Formik
-  const formik = useFormik({
-    initialValues: {
+  const form = useForm({
+    defaultValues: {
       title: PostProps.title,
       content: PostProps.content,
       linkImage: null,
     },
-    enableReinitialize: true,
-    onSubmit: async (values) => {
-      if (quill.root.innerHTML === "<p><br></p>") {
-        error();
-      } else {
-        dispatch(setLoading(true));
-        if (isChanged > 0) {
-          if (file) {
-            const result = await handleUploadImage(file);
-            values.linkImage = result.url;
-          }
-          if (PostProps.img) await handleRemoveImage(PostProps.img);
-        }
-        values.linkImage = values.linkImage ? values.linkImage : PostProps.img;
-        dispatch(
-          UPDATE_POST_SAGA({
-            id: PostProps.id,
-            postUpdate: values,
-          })
-        );
-      }
-    },
   });
+
+  const onSubmit = async (values: any) => {
+    if (quill.root.innerHTML === "<p><br></p>") {
+      error();
+    } else {
+      dispatch(setLoading(true));
+      if (isChanged > 0) {
+        if (file) {
+          const result = await handleUploadImage(file);
+          values.linkImage = result.url;
+        }
+        if (PostProps.img) await handleRemoveImage(PostProps.img);
+      }
+      values.linkImage = values.linkImage ? values.linkImage : PostProps.img;
+      dispatch(
+        UPDATE_POST_SAGA({
+          id: PostProps.id,
+          postUpdate: values,
+        })
+      );
+    }
+  };
 
   const beforeUpload = (file: any) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
@@ -149,7 +148,6 @@ const EditPostForm = (PostProps: PostProps) => {
     // Tạo quill
     quill = new Quill("#editorDrawer", {
       modules: {
-        syntax: true,
         toolbar: toolbarOptions,
       },
       theme: "snow",
@@ -178,7 +176,7 @@ const EditPostForm = (PostProps: PostProps) => {
     setQuill(quill);
 
     // Dispatch callback submit lên cho DrawerHOC
-    dispatch(callBackSubmitDrawer(formik.handleSubmit));
+    dispatch(callBackSubmitDrawer(onSubmit));
   }, []);
 
   useEffect(() => {
@@ -186,12 +184,12 @@ const EditPostForm = (PostProps: PostProps) => {
     quill.root.innerHTML = PostProps.content;
     setQuill(quill);
     // Hiển thị lại title khi PostProps.title thay đổi
-    formik.setFieldValue("title", PostProps.title);
+    form.register("title", { value: PostProps.title });
   }, [PostProps, quill]);
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    formik.setFieldValue("content", text);
+    form.register("content", { value: text });
   };
 
   // Hàm hiển thị mesage
@@ -218,7 +216,7 @@ const EditPostForm = (PostProps: PostProps) => {
   const handleUpload = (info: any) => {
     setIsChanged(isChanged + 1);
     setFile(info?.file?.originFileObj);
-    formik.setFieldValue("linkImage", info.fileList[0].originFileObj);
+    form.register("linkImage", { value: info.fileList[0].originFileObj });
   };
 
   const fileList: UploadFile[] = [
@@ -246,13 +244,12 @@ const EditPostForm = (PostProps: PostProps) => {
           <div className="newPostBody">
             <div className="AddTitle mt-4 z-10">
               <Input
-                name="title"
                 placeholder="Add a Title"
                 allowClear
-                value={formik.values.title}
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
-                onChange={formik.handleChange}></Input>
+                {...form.register("title")}
+              />
             </div>
             <div className="AddContent mt-4">
               <div id="editorDrawer" />
@@ -266,7 +263,13 @@ const EditPostForm = (PostProps: PostProps) => {
                 title={"Members"}
                 content={
                   <Picker
-                    data={dataEmoji}
+                    data={async () => {
+                      const response = await fetch(
+                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                      );
+
+                      return response.json();
+                    }}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
                       quill.insertText(

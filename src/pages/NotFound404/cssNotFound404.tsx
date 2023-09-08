@@ -1,5 +1,4 @@
-import styled from "styled-components";
-import { commonColor } from "@/utils/cssVariable";
+import styled from 'styled-components';
 
 const StyleTotal = styled.div`
   .notFound404 {
@@ -43,7 +42,7 @@ const StyleTotal = styled.div`
     }
 
     .notfound .notfound-404 h1 {
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       position: absolute;
       left: 50%;
       top: 50%;
@@ -62,7 +61,7 @@ const StyleTotal = styled.div`
     }
 
     .notfound .notfound-404 h2 {
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       position: absolute;
       left: 0;
       right: 0;
@@ -77,7 +76,7 @@ const StyleTotal = styled.div`
     }
 
     .notfound a {
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       display: inline-block;
       text-transform: uppercase;
       color: #ff005a;

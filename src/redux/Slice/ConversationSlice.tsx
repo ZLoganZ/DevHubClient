@@ -1,16 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 interface State {
-  conversations: any[] | [null];
-  currentConversation: object | null;
-  currentConversationId: string | null;
+  conversations: any;
+  currentConversation: any;
+  currentConversationId: any;
 
   message: any;
-  messages: any[];
+  messages: any;
 }
 
 const initialState: State = {
-  conversations: [null],
+  conversations: null,
   currentConversation: null,
   currentConversationId: null,
 
@@ -19,17 +19,14 @@ const initialState: State = {
 };
 
 const messageSlice = createSlice({
-  name: "conversations",
+  name: 'conversations',
   initialState,
   reducers: {
     SetConversations: (state, action) => {
       return { ...state, conversations: action.payload.conversations };
     },
     AddConversations: (state, action) => {
-      return {
-        ...state,
-        conversations: [...state.conversations, action.payload.conversation],
-      };
+      return { ...state, conversations: [...state.conversations, action.payload.conversation] };
     },
     SetCurrentConversation: (state, action) => {
       return {
@@ -46,11 +43,6 @@ const messageSlice = createSlice({
   },
 });
 
-export const {
-  SetConversations,
-  SetCurrentConversation,
-  SetMessages,
-  AddConversations,
-  SetMessage,
-} = messageSlice.actions;
+export const { SetConversations, SetCurrentConversation, SetMessages, AddConversations, SetMessage } =
+  messageSlice.actions;
 export default messageSlice.reducer;

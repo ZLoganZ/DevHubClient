@@ -1,8 +1,9 @@
-import { ConfigProvider } from "antd";
-import React from "react";
-import { useSelector } from "react-redux";
-import { getTheme } from "@/utils/functions/ThemeFunction";
-import "./Day&NightSwitch.css";
+import { ConfigProvider } from 'antd';
+import React from 'react';
+import { useSelector } from 'react-redux';
+
+import { getTheme } from '@/util/functions/ThemeFunction';
+import './Day&NightSwitch.css';
 
 interface Props {
   checkedChildren?: React.ReactNode;
@@ -20,7 +21,8 @@ const DayNightSwitch = (Props: Props) => {
     <ConfigProvider
       theme={{
         token: themeColor,
-      }}>
+      }}
+    >
       <div className="containerButton inline">
         <div className="switch">
           <label htmlFor="toggle">
