@@ -7,12 +7,15 @@ import StyleTotal from "./cssMiniComponent";
 
 // ===========================================
 
+type ButtonNormalHoverProps = "primary" | "text" | "default" | "dashed";
+
 type ButtonActiveHoverProps = {
   children?: ReactNode;
   onClick?: any;
   loading?: boolean;
   rounded?: boolean;
   block?: boolean;
+  type?: ButtonNormalHoverProps;
 };
 
 export const ButtonActiveHover = ({
@@ -21,6 +24,7 @@ export const ButtonActiveHover = ({
   loading,
   rounded,
   block,
+  type,
 }: ButtonActiveHoverProps) => {
   const { change } = useSelector((state: any) => state.themeReducer);
   const { themeColorSet } = getTheme();
@@ -28,6 +32,7 @@ export const ButtonActiveHover = ({
   return (
     <StyleTotal theme={themeColorSet}>
       <Button
+        type={type}
         className="ButtonActiveHover font-bold px-6 py-2"
         onClick={onClick}
         loading={loading}

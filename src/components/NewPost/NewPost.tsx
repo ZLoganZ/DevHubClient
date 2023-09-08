@@ -3,13 +3,14 @@ import {
   Button,
   ConfigProvider,
   Input,
+  InputRef,
   message,
   Popover,
   Upload,
 } from "antd";
 import Quill from "quill";
 import "react-quill/dist/quill.snow.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
@@ -80,7 +81,7 @@ const NewPost = (Props: Props) => {
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    form.register("content", { value: text });
+    form.setValue("content", text);
   };
 
   // Hàm hiển thị mesage
@@ -116,7 +117,9 @@ const NewPost = (Props: Props) => {
         quill.root.innerHTML = "<p><br></p>";
         setRandom(Math.random());
         setFile(null);
-        form.reset();
+        form.setValue("title", "");
+        form.setValue("content", "");
+        form.setValue("linkImage", null);
         messageApi.success("Create post successfully");
       }
     }
@@ -126,10 +129,11 @@ const NewPost = (Props: Props) => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleUpload = (info: UploadChangeParam<UploadFile<any>>) => {
+  const handleUpload = (info: any) => {
     if (info.fileList.length === 0) return;
 
     setFile(info?.fileList[0]?.originFileObj);
+    form.setValue("linkImage", info?.fileList[0]?.originFileObj);
   };
 
   const handleUploadImage = async (file: RcFile) => {
@@ -156,7 +160,7 @@ const NewPost = (Props: Props) => {
   };
 
   const handleRemoveImage = async () => {
-    form.register("linkImage", { value: null });
+    form.setValue("linkImage", null);
     const formData = new FormData();
     const public_id = file.public_id;
     formData.append("api_key", "235531261932754");
@@ -214,11 +218,15 @@ const NewPost = (Props: Props) => {
             </div>
             <div className="AddTitle mt-4 z-10">
               <Input
+                key={random}
+                name="title"
                 placeholder="Add a Title"
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
-                {...form.register("title")}
+                onChange={(e) => {
+                  form.setValue("title", e.target.value);
+                }}
               />
             </div>
             <div className="AddContent mt-4">
@@ -285,9 +293,7 @@ const NewPost = (Props: Props) => {
             <div className="newPostFooter__right">
               <ButtonActiveHover
                 rounded
-                onClick={() => {
-                  form.handleSubmit(onSubmit)();
-                }}
+                onClick={form.handleSubmit(onSubmit)}
                 loading={loading}>
                 <span style={{ color: commonColor.colorWhile1 }}>
                   {loading ? "Creating.." : "Create"}

@@ -73,7 +73,7 @@ const EditPostForm = (PostProps: PostProps) => {
     };
   };
 
-  const handleRemoveImage = async (imageURL: any) => {
+  const handleRemoveImage = async (imageURL: string) => {
     const nameSplit = imageURL.split("/");
     const duplicateName = nameSplit.pop();
 
@@ -82,7 +82,7 @@ const EditPostForm = (PostProps: PostProps) => {
 
     const formData = new FormData();
     formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
+    formData.append("public_id", public_id!);
     const timestamp = String(Date.now());
     formData.append("timestamp", timestamp);
     const signature = await sha1(
@@ -107,7 +107,7 @@ const EditPostForm = (PostProps: PostProps) => {
     defaultValues: {
       title: PostProps.title,
       content: PostProps.content,
-      linkImage: null,
+      linkImage: PostProps.img,
     },
   });
 
@@ -116,14 +116,14 @@ const EditPostForm = (PostProps: PostProps) => {
       error();
     } else {
       dispatch(setLoading(true));
-      if (isChanged > 0) {
-        if (file) {
-          const result = await handleUploadImage(file);
-          values.linkImage = result.url;
+      if (form.getValues("linkImage") !== PostProps.img) {
+        if (form.getValues("linkImage")) {
+          const result = await handleUploadImage(form.getValues("linkImage"));
+          form.setValue("linkImage", result.url);
         }
         if (PostProps.img) await handleRemoveImage(PostProps.img);
       }
-      values.linkImage = values.linkImage ? values.linkImage : PostProps.img;
+      values.linkImage = form.getValues("linkImage");
       dispatch(
         UPDATE_POST_SAGA({
           id: PostProps.id,
@@ -176,7 +176,7 @@ const EditPostForm = (PostProps: PostProps) => {
     setQuill(quill);
 
     // Dispatch callback submit lên cho DrawerHOC
-    dispatch(callBackSubmitDrawer(onSubmit));
+    dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
   }, []);
 
   useEffect(() => {
@@ -184,12 +184,12 @@ const EditPostForm = (PostProps: PostProps) => {
     quill.root.innerHTML = PostProps.content;
     setQuill(quill);
     // Hiển thị lại title khi PostProps.title thay đổi
-    form.register("title", { value: PostProps.title });
+    form.setValue("title", PostProps.title);
   }, [PostProps, quill]);
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    form.register("content", { value: text });
+    form.setValue("content", text);
   };
 
   // Hàm hiển thị mesage
@@ -199,8 +199,6 @@ const EditPostForm = (PostProps: PostProps) => {
       content: "Please enter the content",
     });
   };
-
-  const [isChanged, setIsChanged] = useState(0);
 
   const nameImage = useMemo(() => {
     if (PostProps.img) {
@@ -212,11 +210,8 @@ const EditPostForm = (PostProps: PostProps) => {
     return undefined;
   }, [PostProps.img]);
 
-  const [file, setFile]: any = useState([]);
   const handleUpload = (info: any) => {
-    setIsChanged(isChanged + 1);
-    setFile(info?.file?.originFileObj);
-    form.register("linkImage", { value: info.fileList[0].originFileObj });
+    form.setValue("linkImage", info?.fileList[0]?.originFileObj);
   };
 
   const fileList: UploadFile[] = [
@@ -244,11 +239,15 @@ const EditPostForm = (PostProps: PostProps) => {
           <div className="newPostBody">
             <div className="AddTitle mt-4 z-10">
               <Input
+                name="title"
                 placeholder="Add a Title"
+                defaultValue={PostProps.title}
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
-                {...form.register("title")}
+                onChange={(e) => {
+                  form.setValue("title", e.target.value);
+                }}
               />
             </div>
             <div className="AddContent mt-4">
