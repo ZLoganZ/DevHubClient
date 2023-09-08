@@ -8,6 +8,7 @@ import { setMembers, addMember, removeMember } from '@/redux/Slice/ActiveListSli
 const ActiveChannel = () => {
   const dispatch = useDispatch();
   const { members } = useSelector((state: any) => state.activeListReducer);
+  
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 
   const login = useSelector((state: any) => state.authReducer.login);

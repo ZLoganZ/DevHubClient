@@ -43,6 +43,7 @@ interface PostShareProps {
   post: any;
   userInfo: any;
   owner: any;
+  detail?: boolean;
 }
 
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -429,7 +430,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
                     : " Comment"}
                 </span>
                 <Avatar
-                  className="item"
+                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
                   style={{ backgroundColor: "transparent" }}
                   icon={
                     <FontAwesomeIcon
@@ -438,7 +439,9 @@ const MyPostShare = (PostProps: PostShareProps) => {
                     />
                   }
                   onClick={() => {
-                    setIsOpenPostDetail(true);
+                    if (!PostProps.detail) {
+                      setIsOpenPostDetail(true);
+                    }
                   }}
                 />
               </Space>

@@ -30,6 +30,7 @@ interface PostShareProps {
   post: any;
   userInfo: any;
   owner: any;
+  detail?: boolean;
 }
 
 const PostShare = (PostProps: PostShareProps) => {
@@ -342,7 +343,7 @@ const PostShare = (PostProps: PostShareProps) => {
                     : " Comment"}
                 </span>
                 <Avatar
-                  className="item"
+                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
                   style={{ backgroundColor: "transparent" }}
                   icon={
                     <FontAwesomeIcon
@@ -351,7 +352,9 @@ const PostShare = (PostProps: PostShareProps) => {
                     />
                   }
                   onClick={() => {
-                    setIsOpenPostDetail(true);
+                    if (!PostProps.detail) {
+                      setIsOpenPostDetail(true);
+                    }
                   }}
                 />
               </Space>

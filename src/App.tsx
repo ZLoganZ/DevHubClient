@@ -1,20 +1,25 @@
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+
 import {
   setDispatch,
   setLocation,
   setNavigate,
   setUseSelector,
 } from "@/redux/Slice/FunctionSlice";
+
 import ModalHOC from "@/HOC/Modal/ModalHOC";
 import DrawerHOC from "@/HOC/Drawer/DrawerHOC";
+
 import ActiveStatus from "@/components/ActionComponent/ActiveStatus";
+import {
+  CommunityWrapper,
+  PostShareWrapper,
+  PostWrapper,
+  ProfileWrapper,
+} from "@/components/Wrapper";
 import { AlreadyAuth, Auth } from "@/components/ActionComponent/Authentication";
+
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import {
@@ -22,15 +27,15 @@ import {
   ResetPassword,
   VerifyCode,
 } from "@/pages/ForgotPassword";
-import MainLayout from "@/layouts/MainLayout";
 import NewsFeed from "@/pages/NewsFeed/NewsFeed";
 import Chat from "@/pages/Chat";
 import SelectInterest from "@/pages/SelectInterest";
 import SelectFollow from "@/pages/SelectFollow";
 import SelectCommunity from "@/pages/SelectCommunity";
 import GetStarted from "@/pages/GetStarted";
-import { CommunityWrapper, PostShareWrapper, PostWrapper, ProfileWrapper } from "@/components/Wrapper";
 import NotFound404 from "@/pages/NotFound404";
+
+import MainLayout from "@/layouts/MainLayout";
 
 const App = () => {
   //Set một số tham số cần thiết trên toàn cục

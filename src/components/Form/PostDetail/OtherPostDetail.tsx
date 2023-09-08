@@ -42,12 +42,14 @@ const OtherPostDetail = (Props: PostProps) => {
             post={Props.post}
             userInfo={Props.userInfo}
             owner={Props.owner}
+            detail={true}
           />
         ) : (
           <OtherPost
             key={Props.post?._id}
             post={Props.post}
             userInfo={Props.userInfo}
+            detail={true}
           />
         )}
         <div

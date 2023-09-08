@@ -41,6 +41,7 @@ import StyleTotal from "./cssPost";
 interface PostProps {
   post: any;
   userInfo: any;
+  detail?: boolean;
 }
 
 // -----------------------------------------------------
@@ -393,7 +394,7 @@ const OtherPost = (PostProps: PostProps) => {
                     : " Comment"}
                 </span>
                 <Avatar
-                  className="item"
+                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
                   style={{ backgroundColor: "transparent" }}
                   icon={
                     <FontAwesomeIcon
@@ -402,7 +403,9 @@ const OtherPost = (PostProps: PostProps) => {
                     />
                   }
                   onClick={() => {
-                    setIsOpenPostDetail(true);
+                    if (!PostProps.detail) {
+                      setIsOpenPostDetail(true);
+                    }
                   }}
                 />
               </Space>

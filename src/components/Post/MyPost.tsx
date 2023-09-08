@@ -51,6 +51,7 @@ import StyleTotal from "./cssPost";
 interface PostProps {
   post: any;
   userInfo: any;
+  detail?: boolean;
 }
 
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -517,7 +518,7 @@ const MyPost = (PostProps: PostProps) => {
                     : " Comment"}
                 </span>
                 <Avatar
-                  className="item"
+                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
                   style={{ backgroundColor: "transparent" }}
                   icon={
                     <FontAwesomeIcon
@@ -526,7 +527,9 @@ const MyPost = (PostProps: PostProps) => {
                     />
                   }
                   onClick={() => {
-                    setIsOpenPostDetail(true);
+                    if (!PostProps.detail) {
+                      setIsOpenPostDetail(true);
+                    }
                   }}
                 />
               </Space>

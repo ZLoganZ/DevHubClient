@@ -42,9 +42,10 @@ const MyPostDetail = (Props: PostProps) => {
             post={Props.post}
             userInfo={Props.userInfo}
             owner={Props.owner}
+            detail={true}
           />
         ) : (
-          <MyPost post={Props.post} userInfo={Props.userInfo} />
+          <MyPost post={Props.post} userInfo={Props.userInfo} detail={true} />
         )}
         <div
           className="commentTotal px-3 ml-4"
