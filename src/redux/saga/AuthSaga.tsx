@@ -9,6 +9,7 @@ import {
   LOGIN_SAGA,
   LOGIN_WITH_GOOGLE_SAGA,
   LOGOUT_SAGA,
+  REGISTER_SAGA,
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA,
 } from '@/redux/ActionSaga/AuthActionSaga';
@@ -43,6 +44,28 @@ function* LoginSaga({ payload }: any) {
 
 export function* theoDoiLoginSaga() {
   yield takeLatest(LOGIN_SAGA, LoginSaga);
+}
+
+// registerUser Saga
+function* RegisterSaga({ payload }: any) {
+  try {
+    const { data, status } = yield authService.registerUser(payload.userRegister);
+    if (status === STATUS_CODE.CREATED) {
+      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+
+      // Lưu theme vào localStorage
+      yield put(setTheme({ theme: DARK_THEME }));
+
+      window.location.replace('/');
+    }
+  } catch (err: any) {
+    localStorage.removeItem(TOKEN);
+    console.log(err.response.data);
+  }
+}
+
+export function* theoDoiRegisterSaga() {
+  yield takeLatest(REGISTER_SAGA, RegisterSaga);
 }
 
 // Logout

@@ -1,16 +1,16 @@
-import { ConfigProvider } from "antd";
-import { useState, useLayoutEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { ConfigProvider } from 'antd';
+import { useState, useLayoutEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import StyleTotal from "./cssOpenPostDetailModal";
-import { closeModal, openModal } from "@/redux/Slice/ModalHOCSlice";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { messageService } from "@/services/MessageService";
+import StyleTotal from './cssOpenPostDetailModal';
+import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { messageService } from '@/services/MessageService';
 import {
   ButtonActiveHover,
-  ButtonCancelHover,
-} from "@/components/MiniComponent";
-import GroupChatModal from "@/components/Chat/GroupChatModal";
+  ButtonCancelHover
+} from '@/components/MiniComponent';
+import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
 
 interface Props {
   users: [];
@@ -53,7 +53,7 @@ const OpenGroupModal = (Props: Props) => {
         setIsLoading(false);
         dispatch(closeModal());
       })
-      .catch(() => console.log("error"))
+      .catch(() => console.log('error'))
       .finally(() => {
         setIsLoading(false);
       });
@@ -62,7 +62,7 @@ const OpenGroupModal = (Props: Props) => {
   useLayoutEffect(() => {
     dispatch(
       openModal({
-        title: "Create a new group chat",
+        title: 'Create a new group chat',
         component: (
           <GroupChatModal
             setName={handleSetName}
@@ -83,7 +83,7 @@ const OpenGroupModal = (Props: Props) => {
               Create
             </ButtonActiveHover>
           </div>
-        ),
+        )
       })
     );
   }, [isLoading, name, membersGroup]);
@@ -91,7 +91,7 @@ const OpenGroupModal = (Props: Props) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div></div>

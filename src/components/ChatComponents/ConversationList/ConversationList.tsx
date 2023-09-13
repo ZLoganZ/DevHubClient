@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { ConfigProvider, Input, Space } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
-import { find } from "lodash";
-import { NavLink, useNavigate } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
+import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ConfigProvider, Input, Space } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
+import { find } from 'lodash';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { SearchOutlined } from '@ant-design/icons';
 
-import StyleTotal from "./cssConversationList";
-import { pusherClient } from "@/util/functions/Pusher";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { messageService } from "@/services/MessageService";
-import OpenGroupModal from "@/components/ActionComponent/OpenDetail/OpenGroupModal";
-import Avatar from "@/components/Avatar/AvatarMessage";
-import ConversationBox from "@/components/Chat/ConversationBox";
+import StyleTotal from './cssConversationList';
+import { pusherClient } from '@/util/functions/Pusher';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { messageService } from '@/services/MessageService';
+import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
+import Avatar from '@/components/Avatar/AvatarMessage';
+import ConversationBox from '@/components/ChatComponents/ConversationBox';
 
 interface ConversationListProps {
   initialItems: any;
@@ -51,7 +51,7 @@ const ConversationList = (Props: ConversationListProps) => {
           if (currentConversation._id === conversation.id) {
             return {
               ...currentConversation,
-              messages: conversation.messages,
+              messages: conversation.messages
             };
           }
 
@@ -106,9 +106,9 @@ const ConversationList = (Props: ConversationListProps) => {
       });
     };
 
-    pusherClient.bind("conversation-update", updateHandler);
-    pusherClient.bind("new-conversation", newHandler);
-    pusherClient.bind("conversation-remove", removeHandler);
+    pusherClient.bind('conversation-update', updateHandler);
+    pusherClient.bind('new-conversation', newHandler);
+    pusherClient.bind('conversation-remove', removeHandler);
   }, [pusherKey]);
 
   const [messages, setMessages] = useState<any[]>(Props.initialItems);
@@ -130,7 +130,7 @@ const ConversationList = (Props: ConversationListProps) => {
     }
   }, [messages]);
 
-  const playNotiMessage = new Audio("/sounds/sound-noti-message.wav");
+  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
 
   useEffect(() => {
     if (!pusherKey) return;
@@ -144,7 +144,7 @@ const ConversationList = (Props: ConversationListProps) => {
             playNotiMessage.play();
             return {
               ...currentConversation,
-              messages: conversation.messages,
+              messages: conversation.messages
             };
           }
 
@@ -159,7 +159,7 @@ const ConversationList = (Props: ConversationListProps) => {
           if (currentConversation._id === conversation.id) {
             return {
               ...currentConversation,
-              messages: conversation.messages,
+              messages: conversation.messages
             };
           }
 
@@ -168,13 +168,13 @@ const ConversationList = (Props: ConversationListProps) => {
       );
     };
 
-    pusherClient.bind("conversation-update-seen", updateHandlerSeen);
-    pusherClient.bind("conversation-update-noti", updateHandler);
+    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
+    pusherClient.bind('conversation-update-noti', updateHandler);
   }, [pusherKey]);
 
   const HandleOnClick = async (item: any) => {
     const { data } = await messageService.createConversation({
-      users: [item, userInfo.id],
+      users: [item, userInfo.id]
     });
     navigate(`/message/${data.content.conversation._id}`);
   };
@@ -192,18 +192,18 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const formatUsername = (username: any) => {
     const MAX_LENGTH = 14; // maximum length of username on one line
-    const words = username.split(" ");
+    const words = username.split(' ');
     const lines = [];
-    let currentLine = "";
+    let currentLine = '';
 
     // add each word to a line, breaking onto new line if line is too long
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
       if (currentLine.length + word.length > MAX_LENGTH) {
         lines.push(currentLine);
-        currentLine = word + " ";
+        currentLine = word + ' ';
       } else {
-        currentLine += word + " ";
+        currentLine += word + ' ';
       }
     }
 
@@ -213,13 +213,13 @@ const ConversationList = (Props: ConversationListProps) => {
     }
 
     // return the formatted username
-    return lines.join("\n");
+    return lines.join('\n');
   };
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {isOpenPostDetail && <OpenGroupModal users={Props.users} />}
@@ -227,9 +227,9 @@ const ConversationList = (Props: ConversationListProps) => {
           <Space
             className="myInfo flex justify-between items-center py-4 px-3"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "12%",
+              height: '12%'
             }}>
             <div className="flex">
               <NavLink to={`/user/${userInfo.id}`}>
@@ -243,7 +243,7 @@ const ConversationList = (Props: ConversationListProps) => {
                     className="name mb-1"
                     style={{
                       color: themeColorSet.colorText1,
-                      fontWeight: 600,
+                      fontWeight: 600
                     }}>
                     {userInfo.username}
                   </div>
@@ -251,7 +251,7 @@ const ConversationList = (Props: ConversationListProps) => {
                 <div
                   className="career"
                   style={{
-                    color: themeColorSet.colorText3,
+                    color: themeColorSet.colorText3
                   }}>
                   UX/UI Designer
                 </div>
@@ -270,15 +270,15 @@ const ConversationList = (Props: ConversationListProps) => {
           <div
             className="searchInput px-3 py-4 w-full flex justify-between items-center"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "11%",
+              height: '11%'
             }}>
             <div className="input flex items-center w-full">
               <div
                 className="iconSearch mr-2"
                 style={{
-                  color: themeColorSet.colorText3,
+                  color: themeColorSet.colorText3
                 }}>
                 <SearchOutlined className="text-2xl" />
               </div>
@@ -287,14 +287,14 @@ const ConversationList = (Props: ConversationListProps) => {
                   token: {
                     lineWidth: 0,
                     controlHeight: 40,
-                    borderRadius: 0,
-                  },
+                    borderRadius: 0
+                  }
                 }}>
                 <Input
                   placeholder="Search"
                   className="mr-4"
                   style={{
-                    width: "90%",
+                    width: '90%'
                   }}
                 />
               </ConfigProvider>
@@ -303,22 +303,22 @@ const ConversationList = (Props: ConversationListProps) => {
           <div
             className="userActive px-3 py-4 w-full"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "27%",
+              height: '27%'
             }}>
             <div
               className="title"
               style={{
                 fontWeight: 600,
-                color: themeColorSet.colorText1,
+                color: themeColorSet.colorText1
               }}>
               People
             </div>
             <div
               className="listUser flex mt-5"
               style={{
-                overflow: "auto",
+                overflow: 'auto'
               }}>
               {Props.users.map((item: any) => {
                 return (
@@ -332,8 +332,8 @@ const ConversationList = (Props: ConversationListProps) => {
                     <div
                       className="name text-center mt-2"
                       style={{
-                        fontSize: "0.9rem",
-                        color: themeColorSet.colorText1,
+                        fontSize: '0.9rem',
+                        color: themeColorSet.colorText1
                       }}>
                       {formatUsername(item.username)}
                     </div>
@@ -345,8 +345,8 @@ const ConversationList = (Props: ConversationListProps) => {
           <div
             className="userChat"
             style={{
-              height: "57%",
-              overflow: "auto",
+              height: '57%',
+              overflow: 'auto'
             }}>
             {items.map(
               (item: any) =>

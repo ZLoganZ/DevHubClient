@@ -1,32 +1,32 @@
-import { ConfigProvider, Space } from "antd";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
-import { faSun } from "@fortawesome/free-regular-svg-icons";
+import { ConfigProvider, Space } from 'antd';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
+import { faSun } from '@fortawesome/free-regular-svg-icons';
 import {
   CommentOutlined,
   SearchOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { NavLink, useParams } from "react-router-dom";
+  SettingOutlined
+} from '@ant-design/icons';
+import { NavLink, useParams } from 'react-router-dom';
 
-import ConversationList from "@/components/Chat/ConversationList";
-import LoadingConversation from "@/components/GlobalSetting/LoadingConversation";
-import EmptyChat from "@/components/Chat/EmptyChat";
-import MessageChat from "@/components/Chat/MessageChat";
-import InputChat from "@/components/Chat/InputChat";
-import SharedMedia from "@/components/Chat/SharedMedia";
-import LoadingChat from "@/components/GlobalSetting/LoadingChat";
+import ConversationList from '@/components/ChatComponents/ConversationList';
+import LoadingConversation from '@/components/GlobalSetting/LoadingConversation';
+import EmptyChat from '@/components/ChatComponents/EmptyChat';
+import MessageChat from '@/components/ChatComponents/MessageChat';
+import InputChat from '@/components/ChatComponents/InputChat';
+import SharedMedia from '@/components/ChatComponents/SharedMedia';
+import LoadingChat from '@/components/GlobalSetting/LoadingChat';
 
 import {
   useConversationsData,
   useCurrentConversationData,
-  useFollowersData,
-} from "@/hooks/DataProvider";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssChat";
+  useFollowersData
+} from '@/hooks/DataProvider';
+import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -57,7 +57,7 @@ const Chat = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {isLoadingConversations || isLoadingFollowers ? (
@@ -67,11 +67,11 @@ const Chat = () => {
             <div
               className="slider flex flex-col justify-between items-center h-screen py-3"
               style={{
-                width: "5%",
-                borderRight: "1px solid",
+                width: '5%',
+                borderRight: '1px solid',
                 borderColor: themeColorSet.colorBg4,
-                position: "fixed",
-                backgroundColor: themeColorSet.colorBg1,
+                position: 'fixed',
+                backgroundColor: themeColorSet.colorBg1
               }}>
               <div className="logo">
                 <NavLink to="/" className="icon_logo">
@@ -98,12 +98,12 @@ const Chat = () => {
             <div
               className="insteadComponent"
               style={{
-                marginLeft: "5%",
-                width: "23%",
-                height: "100vh",
-                position: "fixed",
-                borderRight: "1px solid",
-                borderColor: themeColorSet.colorBg4,
+                marginLeft: '5%',
+                width: '23%',
+                height: '100vh',
+                position: 'fixed',
+                borderRight: '1px solid',
+                borderColor: themeColorSet.colorBg4
               }}>
               <ConversationList
                 key={conversations[0]?.lastMessageAt}
@@ -115,13 +115,13 @@ const Chat = () => {
             <div
               className="chatBox"
               style={{
-                width: isDisplayShare ? "49%" : "72%",
-                marginLeft: "28%",
-                height: "100vh",
-                position: "fixed",
+                width: isDisplayShare ? '49%' : '72%',
+                marginLeft: '28%',
+                height: '100vh',
+                position: 'fixed',
                 backgroundColor: themeColorSet.colorBg1,
-                borderRight: isDisplayShare ? "1px solid" : "none",
-                borderColor: themeColorSet.colorBg4,
+                borderRight: isDisplayShare ? '1px solid' : 'none',
+                borderColor: themeColorSet.colorBg4
               }}>
               {!conversationID ? (
                 <EmptyChat key={Math.random()} />
@@ -129,7 +129,7 @@ const Chat = () => {
                 <LoadingConversation />
               ) : (
                 <>
-                  <div style={{ height: "92%" }}>
+                  <div style={{ height: '92%' }}>
                     <MessageChat
                       // key={conversations[0]?.lastMessageAt}
                       key={conversationID}

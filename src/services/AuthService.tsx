@@ -8,8 +8,11 @@ export class AuthService extends BaseService {
   checkLogin = (token: any) => {
     return this.post(`/checklogin`, token);
   };
+  registerUser = (userRegister: any) => {
+    return this.post(`/auth/signup`, userRegister);
+  };
   login = (user: any) => {
-    return this.post(`/login`, user);
+    return this.post(`/auth/login`, user);
   };
   loginWithGoogle = (token: any) => {
     return this.post(`/auth/googleV2`, token);

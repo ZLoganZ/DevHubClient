@@ -19,9 +19,9 @@ export function* rootSaga() {
     authSaga.theoDoiResetPasswordSaga(),
     authSaga.theoDoiCheckVerifyCodeSaga(),
     authSaga.theoDoiCheckResetPasswordSaga(),
+    authSaga.theoDoiRegisterSaga(),
 
     // userSaga
-    userSaga.theoDoiRegisterUserSaga(),
     userSaga.theoDoiUpdateUserSaga(),
     userSaga.theoDoiGetFollowersSaga(),
     userSaga.theoDoiGetUserInfoSaga(),

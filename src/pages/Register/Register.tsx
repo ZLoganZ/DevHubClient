@@ -1,32 +1,32 @@
-import { UserOutlined, MailOutlined } from "@ant-design/icons";
-import { ConfigProvider, Form, Input } from "antd";
-import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useForm } from "react-hook-form";
-import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
+import { UserOutlined, MailOutlined } from '@ant-design/icons';
+import { ConfigProvider, Form, Input } from 'antd';
+import { useDispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useForm } from 'react-hook-form';
+import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
-import { REGIS_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
-import { darkThemeSet } from "@/util/cssVariable";
-import StyleTotal from "./cssRegister";
+import { darkThemeSet } from '@/util/cssVariable';
+import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
+import StyleTotal from './cssRegister';
 
 const Register = () => {
   const dispatch = useDispatch();
 
   const form = useForm({
     defaultValues: {
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: "",
-      confirm: "",
-    },
+      firstname: '',
+      lastname: '',
+      email: '',
+      password: '',
+      confirm: ''
+    }
   });
 
   const onSubmit = (values: any) => {
     dispatch(
-      REGIS_USER_SAGA({
-        userRegister: values,
+      REGISTER_SAGA({
+        userRegister: values
       })
     );
   };
@@ -38,8 +38,8 @@ const Register = () => {
           colorTextBase: darkThemeSet.colorText2,
           colorBgBase: darkThemeSet.colorBg2,
           lineWidth: 0,
-          controlHeight: 40,
-        },
+          controlHeight: 40
+        }
       }}>
       <StyleTotal className="w-screen h-screen">
         <div className="register relative">
@@ -69,41 +69,45 @@ const Register = () => {
                   <Form.Item>
                     <Form.Item
                       style={{
-                        display: "inline-block",
-                        width: "calc(50% - 8px)",
-                        marginRight: "16px",
+                        display: 'inline-block',
+                        width: 'calc(50% - 8px)',
+                        marginRight: '16px'
                       }}
                       name="lastname"
                       rules={[
                         {
                           required: true,
-                          message: "Please input your lastname!",
-                        },
+                          message: 'Please input your lastname!'
+                        }
                       ]}>
                       <Input
                         placeholder="Last name"
                         allowClear
                         prefix={<UserOutlined />}
-                        {...form.register("lastname")}
+                        onChange={(e) => {
+                          form.setValue('lastname', e.target.value);
+                        }}
                       />
                     </Form.Item>
                     <Form.Item
                       style={{
-                        display: "inline-block",
-                        width: "calc(50% - 8px)",
+                        display: 'inline-block',
+                        width: 'calc(50% - 8px)'
                       }}
                       name="firstname"
                       rules={[
                         {
                           required: true,
-                          message: "Please input your firstname!",
-                        },
+                          message: 'Please input your firstname!'
+                        }
                       ]}>
                       <Input
                         placeholder="First name"
                         allowClear
                         prefix={<UserOutlined />}
-                        {...form.register("firstname")}
+                        onChange={(e) => {
+                          form.setValue('firstname', e.target.value);
+                        }}
                       />
                     </Form.Item>
                   </Form.Item>
@@ -112,18 +116,20 @@ const Register = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your E-mail!",
+                        message: 'Please input your E-mail!'
                       },
                       {
-                        type: "email",
-                        message: "The input is not valid E-mail!",
-                      },
+                        type: 'email',
+                        message: 'The input is not valid E-mail!'
+                      }
                     ]}>
                     <Input
                       placeholder="Email"
                       allowClear
                       prefix={<MailOutlined />}
-                      {...form.register("email")}
+                      onChange={(e) => {
+                        form.setValue('email', e.target.value);
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
@@ -131,40 +137,44 @@ const Register = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your password!",
-                      },
+                        message: 'Please input your password!'
+                      }
                     ]}
                     hasFeedback>
                     <Input.Password
                       placeholder="Password"
-                      {...form.register("password")}
+                      onChange={(e) => {
+                        form.setValue('password', e.target.value);
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
                     name="confirm"
-                    dependencies={["password"]}
+                    dependencies={['password']}
                     hasFeedback
                     rules={[
                       {
                         required: true,
-                        message: "Please confirm your password!",
+                        message: 'Please confirm your password!'
                       },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
-                          if (!value || getFieldValue("password") === value) {
+                          if (!value || getFieldValue('password') === value) {
                             return Promise.resolve();
                           }
                           return Promise.reject(
                             new Error(
-                              "The two passwords that you entered do not match!"
+                              'The two passwords that you entered do not match!'
                             )
                           );
-                        },
-                      }),
+                        }
+                      })
                     ]}>
                     <Input.Password
                       placeholder="Confirm Password"
-                      {...form.register("confirm")}
+                      onChange={(e) => {
+                        form.setValue('confirm', e.target.value);
+                      }}
                     />
                   </Form.Item>
                   <button className="buttonCreate mt-3" type="submit">

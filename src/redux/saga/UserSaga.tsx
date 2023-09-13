@@ -5,44 +5,23 @@ import {
   GET_FOLLOWERS_SAGA,
   GET_REPOSITORY_SAGA,
   GET_USER_INFO_SAGA,
-  REGIS_USER_SAGA,
-  UPDATE_USER_SAGA,
+  UPDATE_USER_SAGA
 } from '@/redux/ActionSaga/UserActionSaga';
 import { setRepos, setUser } from '@/redux/Slice/UserSlice';
 import { setFollowers } from '@/redux/Slice/ActiveListSlice';
 import { setOwnerInfo } from '@/redux/Slice/PostSlice';
 import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
-import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { userService } from '@/services/UserService';
-import { DARK_THEME, STATUS_CODE, TOKEN } from '@/util/constants/SettingSystem';
-
-// registerUser Saga
-function* registerUserSaga({ payload }: any) {
-  try {
-    const { data, status } = yield userService.registerUser(payload.userRegister);
-    if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
-
-      // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
-
-      window.location.replace('/');
-    }
-  } catch (err: any) {
-    localStorage.removeItem(TOKEN);
-    console.log(err.response.data);
-  }
-}
-
-export function* theoDoiRegisterUserSaga() {
-  yield takeLatest(REGIS_USER_SAGA, registerUserSaga);
-}
+import { STATUS_CODE } from '@/util/constants/SettingSystem';
 
 // Update User Saga
 function* updateUserSaga({ payload }: any) {
   try {
-    const { data, status } = yield userService.updateUser(payload.id, payload.userUpdate);
+    const { data, status } = yield userService.updateUser(
+      payload.id,
+      payload.userUpdate
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setOwnerInfo(data.content));
       yield put(setUser(data.content));

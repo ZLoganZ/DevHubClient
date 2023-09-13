@@ -1,21 +1,21 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
-import { ConfigProvider, Form, Input } from "antd";
-import { MailOutlined } from "@ant-design/icons";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useForm } from "react-hook-form";
-import { NavLink, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSnowflake } from '@fortawesome/free-regular-svg-icons';
+import { ConfigProvider, Form, Input } from 'antd';
+import { MailOutlined } from '@ant-design/icons';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useForm } from 'react-hook-form';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import {
   LOGIN_SAGA,
-  LOGIN_WITH_GOOGLE_SAGA,
-} from "@/redux/ActionSaga/AuthActionSaga";
-import { GetGitHubUrl } from "@/util/functions/GetGithubUrl";
-import { TOKEN, TOKEN_GITHUB } from "@/util/constants/SettingSystem";
-import { darkThemeSet } from "@/util/cssVariable";
+  LOGIN_WITH_GOOGLE_SAGA
+} from '@/redux/ActionSaga/AuthActionSaga';
+import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
+import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import { darkThemeSet } from '@/util/cssVariable';
 
-import StyleTotal from "./cssLogin";
+import StyleTotal from './cssLogin';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -26,10 +26,10 @@ const Login = () => {
     onSuccess: async (tokenResponse) => {
       dispatch(
         LOGIN_WITH_GOOGLE_SAGA({
-          token: tokenResponse.access_token,
+          token: tokenResponse.access_token
         })
       );
-    },
+    }
   });
 
   const openPopup = () => {
@@ -40,7 +40,7 @@ const Login = () => {
 
     const popup = window.open(
       GetGitHubUrl(),
-      "GithubAuth",
+      'GithubAuth',
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
@@ -55,34 +55,34 @@ const Login = () => {
 
           // go to home page or redirect to previous page
           const state = location.state as { from: Location };
-          const from = state?.from?.pathname || "/";
+          const from = state?.from?.pathname || '/';
 
           window.location.replace(from);
         }
       }
     };
 
-    window.addEventListener("message", handleMessage);
+    window.addEventListener('message', handleMessage);
 
     const pollOAuthStatus = setInterval(() => {
       if (popup?.closed) {
         clearInterval(pollOAuthStatus);
-        window.removeEventListener("message", handleMessage);
+        window.removeEventListener('message', handleMessage);
       }
     }, 500);
   };
 
   const form = useForm({
     defaultValues: {
-      email: "",
-      password: "",
-    },
+      email: '',
+      password: ''
+    }
   });
 
   const onSubmit = async (values: any) => {
     dispatch(
       LOGIN_SAGA({
-        userLogin: values,
+        userLogin: values
       })
     );
   };
@@ -95,8 +95,8 @@ const Login = () => {
           colorBgBase: darkThemeSet.colorBg2,
           lineWidth: 0,
           controlHeight: 40,
-          borderRadius: 0,
-        },
+          borderRadius: 0
+        }
       }}>
       <StyleTotal>
         <div className="login">
@@ -110,25 +110,27 @@ const Login = () => {
 
             <Form
               className="w-full"
-              style={{ width: "70%" }}
+              style={{ width: '70%' }}
               onFinish={form.handleSubmit(onSubmit)}>
               <Form.Item
                 name="email"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your E-mail!",
+                    message: 'Please input your E-mail!'
                   },
                   {
-                    type: "email",
-                    message: "The input is not valid E-mail!",
-                  },
+                    type: 'email',
+                    message: 'The input is not valid E-mail!'
+                  }
                 ]}>
                 <Input
                   placeholder="Email"
                   allowClear
                   prefix={<MailOutlined />}
-                  {...form.register("email")}
+                  onChange={(e) => {
+                    form.setValue('email', e.target.value);
+                  }}
                 />
               </Form.Item>
               <Form.Item
@@ -136,12 +138,14 @@ const Login = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
-                  },
+                    message: 'Please input your password!'
+                  }
                 ]}>
                 <Input.Password
                   placeholder="Password"
-                  {...form.register("password")}
+                  onChange={(e) => {
+                    form.setValue('password', e.target.value);
+                  }}
                 />
               </Form.Item>
               <button

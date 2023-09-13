@@ -4,6 +4,10 @@ export const LOGIN_SAGA = createAction('LOGIN_SAGA', (data) => ({
   payload: data,
 }));
 
+export const REGISTER_SAGA = createAction('REGIS_USER_SAGA', (data) => ({
+  payload: data,
+}));
+
 export const LOGIN_WITH_GOOGLE_SAGA = createAction('LOGIN_WITH_GOOGLE_SAGA', (data) => ({
   payload: data,
 }));

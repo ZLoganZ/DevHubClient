@@ -1,23 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { find } from "lodash";
-import { NavLink } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { find } from 'lodash';
+import { NavLink } from 'react-router-dom';
 
-import { pusherClient } from "@/util/functions/Pusher";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import useIntersectionObserverNow from "@/hooks/useIntersectionObserverNow";
-import useOtherUser from "@/hooks/useOtherUser";
+import { pusherClient } from '@/util/functions/Pusher';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import useIntersectionObserverNow from '@/hooks/useIntersectionObserverNow';
+import useOtherUser from '@/hooks/useOtherUser';
 import {
   useCurrentConversationData,
-  useMessagesData,
-} from "@/hooks/DataProvider";
-import { messageService } from "@/services/MessageService";
-import Avatar from "@/components/Avatar/AvatarMessage";
-import MessageBox from "@/components/Chat/MessageBox";
-import AvatarGroup from "@/components/Avatar/AvatarGroup";
-import StyleTotal from "./cssMessageChat";
+  useMessagesData
+} from '@/hooks/DataProvider';
+import { messageService } from '@/services/MessageService';
+import Avatar from '@/components/Avatar/AvatarMessage';
+import MessageBox from '@/components/ChatComponents/MessageBox';
+import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import StyleTotal from './cssMessageChat';
 
 interface IParams {
   conversationId: string;
@@ -48,7 +48,7 @@ const MessageChat = (Props: IParams) => {
       return `${currentConversation.users.length} members`;
     }
 
-    return isActive ? "Online" : "Offline";
+    return isActive ? 'Online' : 'Offline';
   }, [currentConversation, isActive]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -90,13 +90,13 @@ const MessageChat = (Props: IParams) => {
       );
     };
 
-    pusherClient.bind("new-message", messageHandler);
-    pusherClient.bind("message-update", updateMessageHandler);
+    pusherClient.bind('new-message', messageHandler);
+    pusherClient.bind('message-update', updateMessageHandler);
 
     return () => {
       pusherClient.unsubscribe(Props.conversationId);
-      pusherClient.unbind("new-message", messageHandler);
-      pusherClient.unbind("message-update", updateMessageHandler);
+      pusherClient.unbind('new-message', messageHandler);
+      pusherClient.unbind('message-update', updateMessageHandler);
     };
   }, [Props.conversationId]);
 
@@ -104,13 +104,13 @@ const MessageChat = (Props: IParams) => {
 
   const scrollToBottom = (type: ScrollBehavior) => {
     if (bottomRef?.current)
-      bottomRef?.current?.scrollIntoView({ behavior: type, block: "end" });
+      bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
   };
 
   useEffect(() => {
     if (messagesState.length === 0) return;
-    if (count > 0) scrollToBottom("smooth");
-    if (count === 0) scrollToBottom("auto");
+    if (count > 0) scrollToBottom('smooth');
+    if (count === 0) scrollToBottom('auto');
     setCount(count + 1);
   }, [messagesState.length]);
 
@@ -135,9 +135,9 @@ const MessageChat = (Props: IParams) => {
           <div
             className="header flex justify-between items-center py-6 px-6"
             style={{
-              height: "13%",
-              borderBottom: "1px solid",
-              borderColor: themeColorSet.colorBg4,
+              height: '13%',
+              borderBottom: '1px solid',
+              borderColor: themeColorSet.colorBg4
             }}>
             <div className="flex gap-3 items-center">
               {currentConversation.isGroup ? (
@@ -162,7 +162,7 @@ const MessageChat = (Props: IParams) => {
                   className="text-sm"
                   style={{
                     color: styleStatus,
-                    fontWeight: 400,
+                    fontWeight: 400
                   }}>
                   {statusText}
                 </div>
@@ -181,8 +181,8 @@ const MessageChat = (Props: IParams) => {
           <div
             className="body px-3"
             style={{
-              height: "88%",
-              overflow: "auto",
+              height: '88%',
+              overflow: 'auto'
             }}>
             <div className="flex-1 overflow-y-auto">
               {messagesState?.length !== 0 &&
