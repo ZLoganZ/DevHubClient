@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
 import './Day&NightSwitch.css';
 
 interface Props {
@@ -14,15 +15,14 @@ interface Props {
 
 const DayNightSwitch = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       <div className="containerButton inline">
         <div className="switch">
           <label htmlFor="toggle">

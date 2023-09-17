@@ -1,9 +1,9 @@
-import { Avatar, ConfigProvider, Input, Popover, Modal } from "antd";
-import { useMemo, useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import Picker from "@emoji-mart/react";
+import { Avatar, ConfigProvider, Input, Popover, Modal } from 'antd';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import Picker from '@emoji-mart/react';
 
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
@@ -11,11 +11,12 @@ import {
   SAVE_REPLY_SAGA,
   SAVE_REPLY_POSTSHARE_SAGA,
   GET_POSTSHARE_BY_ID_SAGA,
-  GET_POST_BY_ID_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import OtherPostDetailModal from "@/components/Form/PostDetail/OtherPostDetail";
-import StyleTotal from "./cssOpenPostDetailModal";
+  GET_POST_BY_ID_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import OtherPostDetailModal from '@/components/Form/PostDetail/OtherPostDetail';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssOpenPostDetailModal';
 
 interface PostProps {
   post: any;
@@ -27,16 +28,18 @@ interface PostProps {
 }
 
 const OpenOtherPostDetailModal = (PostProps: PostProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
-  const [commentContent, setCommentContent] = useState("");
+  const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
 
   const [visible, setVisible] = useState(PostProps.visible);
@@ -62,14 +65,14 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   }, [data]);
 
   useEffect(() => {
-    if (!PostProps.visible) setCommentContent("");
+    if (!PostProps.visible) setCommentContent('');
   }, [PostProps.visible]);
 
   const handleSubmitComment = () => {
     const { postShare, post } = PostProps;
     const { isReply, idComment } = data;
     const comment = {
-      contentComment: commentContent,
+      contentComment: commentContent
     };
 
     const saveCommentAction = postShare
@@ -85,8 +88,8 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
           id: post?._id,
           reply: {
             contentComment: commentContent,
-            idComment,
-          },
+            idComment
+          }
         })
       );
       setData({ isReply: false, idComment: null });
@@ -94,16 +97,16 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
       dispatch(
         saveCommentAction({
           comment,
-          id: post?._id,
+          id: post?._id
         })
       );
     }
 
-    setCommentContent("");
+    setCommentContent('');
   };
 
   const checkEmpty = () => {
-    if (commentContent === "") {
+    if (commentContent === '') {
       return true;
     } else {
       return false;
@@ -127,7 +130,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   const memoizedInputComment = useMemo(
     () => (
       <div className="commentInput text-right flex items-center">
-        <Avatar className="mr-2" size={40} src={userInfo?.userImage} />
+        <Avatar className="mr-2" size={40} src={userInfo.user_image} />
         <div className="input w-full">
           <Input
             ref={inputRef}
@@ -149,7 +152,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
               setCursor(cursor || 0);
             }}
             style={{
-              borderColor: themeColorSet.colorText3,
+              borderColor: themeColorSet.colorText3
             }}
             maxLength={150}
             onPressEnter={handleSubmitComment}
@@ -157,12 +160,12 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
               <Popover
                 placement="right"
                 trigger="click"
-                title={"Emoji"}
+                title={'Emoji'}
                 content={
                   <Picker
                     data={async () => {
                       const response = await fetch(
-                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
                       );
 
                       return response.json();
@@ -180,7 +183,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
                 <span
                   className="emoji cursor-pointer hover:text-blue-700"
                   style={{
-                    transition: "all 0.3s",
+                    transition: 'all 0.3s'
                   }}>
                   <FontAwesomeIcon
                     className="item mr-3 ml-3"
@@ -195,11 +198,11 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
             {...(checkEmpty()
               ? {
                   style: {
-                    color: "gray",
-                    cursor: "not-allowed",
-                  },
+                    color: 'gray',
+                    cursor: 'not-allowed'
+                  }
                 }
-              : { transition: "all 0.3s" })}
+              : { transition: 'all 0.3s' })}
             onClick={handleSubmitComment}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </span>
@@ -212,12 +215,12 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <Modal
           centered
-          title={"The post of " + PostProps.userInfo?.username}
+          title={'The post of ' + PostProps.userInfo?.username}
           width={720}
           footer={
             <ConfigProvider>

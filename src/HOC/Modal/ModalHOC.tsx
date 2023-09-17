@@ -1,24 +1,25 @@
-import { ConfigProvider, Modal } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { ConfigProvider, Modal } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { closeModal } from "@/redux/Slice/ModalHOCSlice";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import {
   ButtonActiveHover,
-  ButtonCancelHover,
-} from "@/components/MiniComponent";
-import StyleTotal from "./cssModalHOC";
+  ButtonCancelHover
+} from '@/components/MiniComponent';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssModalHOC';
 
 const ModalHOC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Modal
   const { visible, ComponentContentModal, footer, title, handleSubmit } =
-    useSelector((state: any) => state.modalHOCReducer);
+    useSelector((state: RootState) => state.modalHOCReducer);
 
   const onClose = () => {
     dispatch(closeModal());
@@ -27,7 +28,7 @@ const ModalHOC = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div>
@@ -41,7 +42,7 @@ const ModalHOC = () => {
               footer === true ? (
                 <div className="flex justify-end">
                   <span className="mr-4">
-                    {" "}
+                    {' '}
                     <ButtonCancelHover
                       onClick={() => {
                         onClose();
@@ -51,8 +52,8 @@ const ModalHOC = () => {
                   </span>
 
                   <ButtonActiveHover
-                    onClick={(e: any) => {
-                      handleSubmit(e);
+                    onClick={() => {
+                      handleSubmit();
                     }}
                     rounded>
                     Save

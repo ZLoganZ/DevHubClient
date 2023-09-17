@@ -1,21 +1,22 @@
-import { useState, useEffect, useRef } from "react";
-import Quill from "quill";
-import { ConfigProvider } from "antd";
-import ImageCompress from "quill-image-compress";
-import { useDispatch, useSelector } from "react-redux";
-import "react-quill/dist/quill.snow.css";
+import { useState, useEffect, useRef } from 'react';
+import Quill from 'quill';
+import { ConfigProvider } from 'antd';
+import ImageCompress from 'quill-image-compress';
+import { useDispatch, useSelector } from 'react-redux';
+import 'react-quill/dist/quill.snow.css';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
-import StyleTotal from "./cssQuillEdit";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssQuillEdit';
 
-Quill.register("modules/imageCompress", ImageCompress);
+Quill.register('modules/imageCompress', ImageCompress);
 
 const toolbarOptions = [
-  ["bold", "italic", "underline", "clean"],
-  [{ list: "ordered" }, { list: "bullet" }],
+  ['bold', 'italic', 'underline', 'clean'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
   [{ align: [] }],
-  ["link"],
+  ['link']
 ];
 
 interface QuillEditProps {
@@ -25,10 +26,10 @@ interface QuillEditProps {
 }
 
 const QuillEdit = (Props: QuillEditProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const searchRef = useRef<any>(null);
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -39,15 +40,15 @@ const QuillEdit = (Props: QuillEditProps) => {
 
   useEffect(() => {
     // Tạo quill
-    quill = new Quill("#editorDrawer", {
+    quill = new Quill('#editorDrawer', {
       placeholder: Props.placeholder,
       modules: {
-        toolbar: toolbarOptions,
+        toolbar: toolbarOptions
       },
-      theme: "snow",
-      scrollingContainer: "#scrolling-container",
+      theme: 'snow',
+      scrollingContainer: '#scrolling-container'
     });
-    quill.on("text-change", function () {
+    quill.on('text-change', function () {
       if (searchRef.current) {
         clearTimeout(searchRef.current);
       }
@@ -58,16 +59,16 @@ const QuillEdit = (Props: QuillEditProps) => {
 
     // Ngăn chặn paste text vào quill
     // C1
-    quill.root.addEventListener("paste", (event: any) => {
+    quill.root.addEventListener('paste', (event: any) => {
       event.preventDefault();
-      const text = event.clipboardData.getData("text/plain");
+      const text = event.clipboardData.getData('text/plain');
 
       const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, "<br>")
-        .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
-        .replace(/ /g, "&nbsp;");
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        .replace(/ /g, '&nbsp;');
 
-      document.execCommand("insertHTML", false, textToHTMLWithTabAndSpace);
+      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
     });
 
     setQuill(quill);
@@ -81,9 +82,9 @@ const QuillEdit = (Props: QuillEditProps) => {
 
   // Kiểm tra nội dung của value để set callback
   const handleQuillChangeValue = () => {
-    const HTML = new DOMParser().parseFromString(value, "text/html").body
+    const HTML = new DOMParser().parseFromString(value, 'text/html').body
       .innerText;
-    if (HTML === "") Props.callbackFunction("");
+    if (HTML === '') Props.callbackFunction('');
     else Props.callbackFunction(value);
     dispatch(closeModal());
   };
@@ -101,7 +102,7 @@ const QuillEdit = (Props: QuillEditProps) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div id="editorDrawer" />

@@ -11,9 +11,10 @@ import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
   SAVE_REPLY_SAGA,
-  SAVE_REPLY_POSTSHARE_SAGA,
+  SAVE_REPLY_POSTSHARE_SAGA
 } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 interface Props {
   post: any;
@@ -21,10 +22,10 @@ interface Props {
 }
 
 const OpenMyPostDetail = (Props: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -51,19 +52,19 @@ const OpenMyPostDetail = (Props: Props) => {
             id: Props.post?._id,
             reply: {
               contentComment: commentContent,
-              idComment: data.idComment,
-            },
-          }),
+              idComment: data.idComment
+            }
+          })
         );
         setData({ isReply: false, idComment: null });
       } else {
         dispatch(
           SAVE_COMMENT_POSTSHARE_SAGA({
             comment: {
-              contentComment: commentContent,
+              contentComment: commentContent
             },
-            id: Props.post?._id,
-          }),
+            id: Props.post?._id
+          })
         );
       }
     } else {
@@ -73,19 +74,19 @@ const OpenMyPostDetail = (Props: Props) => {
             id: Props.post?._id,
             reply: {
               contentComment: commentContent,
-              idComment: data.idComment,
-            },
-          }),
+              idComment: data.idComment
+            }
+          })
         );
         setData({ isReply: false, idComment: null });
       } else {
         dispatch(
           SAVE_COMMENT_SAGA({
             comment: {
-              contentComment: commentContent,
+              contentComment: commentContent
             },
-            id: Props.post?._id,
-          }),
+            id: Props.post?._id
+          })
         );
       }
     }
@@ -113,7 +114,7 @@ const OpenMyPostDetail = (Props: Props) => {
         owner={Props.post?.owner}
       />
     ),
-    [Props.post, data],
+    [Props.post, data]
   );
 
   const memoizedInputComment = useMemo(
@@ -141,7 +142,7 @@ const OpenMyPostDetail = (Props: Props) => {
             }}
             onPressEnter={handleSubmitComment}
             style={{
-              borderColor: themeColorSet.colorText3,
+              borderColor: themeColorSet.colorText3
             }}
             maxLength={150}
             addonAfter={
@@ -152,63 +153,67 @@ const OpenMyPostDetail = (Props: Props) => {
                 content={
                   <Picker
                     data={async () => {
-                      const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
+                      const response = await fetch(
+                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
+                      );
 
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);
-                      setCommentContent(commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor));
+                      setCommentContent(
+                        commentContent.slice(0, cursor) +
+                          emoji.native +
+                          commentContent.slice(cursor)
+                      );
                     }}
                   />
-                }
-              >
+                }>
                 <span
                   className="emoji cursor-pointer hover:text-blue-700"
                   style={{
-                    transition: 'all 0.3s',
-                  }}
-                >
-                  <FontAwesomeIcon className="item mr-3 ml-3" size="lg" icon={faFaceSmile} />
+                    transition: 'all 0.3s'
+                  }}>
+                  <FontAwesomeIcon
+                    className="item mr-3 ml-3"
+                    size="lg"
+                    icon={faFaceSmile}
+                  />
                 </span>
               </Popover>
-            }
-          ></Input>
+            }></Input>
           <span
             className="sendComment cursor-pointer hover:text-blue-700"
             {...(checkEmpty()
               ? {
                   style: {
                     color: 'gray',
-                    cursor: 'not-allowed',
-                  },
+                    cursor: 'not-allowed'
+                  }
                 }
               : { transition: 'all 0.3s' })}
-            onClick={handleSubmitComment}
-          >
+            onClick={handleSubmitComment}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </span>
         </div>
       </div>
     ),
-    [commentContent, cursor],
+    [commentContent, cursor]
   );
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       <StyleTotal theme={themeColorSet}>
         <Row className="py-4">
           <Col offset={3} span={18}>
             <div
               style={{
-                backgroundColor: themeColorSet.colorBg2,
+                backgroundColor: themeColorSet.colorBg2
               }}
-              className="rounded-lg"
-            >
+              className="rounded-lg">
               {memoizedComponent}
               {memoizedInputComment}
             </div>

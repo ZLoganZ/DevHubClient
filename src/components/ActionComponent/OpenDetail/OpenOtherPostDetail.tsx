@@ -1,20 +1,21 @@
-import { Avatar, ConfigProvider, Input, Popover, Row, Col } from "antd";
-import React, { useMemo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import Picker from "@emoji-mart/react";
+import { Avatar, ConfigProvider, Input, Popover, Row, Col } from 'antd';
+import React, { useMemo, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import Picker from '@emoji-mart/react';
 
 import {
   SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
   SAVE_REPLY_SAGA,
-  SAVE_REPLY_POSTSHARE_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import LoadingDetailPost from "@/components/GlobalSetting/LoadingDetailPost";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import OtherPostDetail from "@/components/Form/PostDetail/OtherPostDetail";
-import StyleTotal from "./cssOpenPostDetail";
+  SAVE_REPLY_POSTSHARE_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import LoadingDetailPost from '@/components/GlobalSetting/LoadingDetailPost';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import OtherPostDetail from '@/components/Form/PostDetail/OtherPostDetail';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssOpenPostDetail';
 
 interface Props {
   post: any;
@@ -22,14 +23,14 @@ interface Props {
 }
 
 const OpenOtherPostDetail = (Props: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [commentContent, setCommentContent] = useState("");
+  const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
 
   const [data, setData] = useState<any>({ isReply: false, idComment: null });
@@ -52,8 +53,8 @@ const OpenOtherPostDetail = (Props: Props) => {
             id: Props.post?._id,
             reply: {
               contentComment: commentContent,
-              idComment: data.idComment,
-            },
+              idComment: data.idComment
+            }
           })
         );
         setData({ isReply: false, idComment: null });
@@ -61,9 +62,9 @@ const OpenOtherPostDetail = (Props: Props) => {
         dispatch(
           SAVE_COMMENT_POSTSHARE_SAGA({
             comment: {
-              contentComment: commentContent,
+              contentComment: commentContent
             },
-            id: Props.post?._id,
+            id: Props.post?._id
           })
         );
       }
@@ -74,8 +75,8 @@ const OpenOtherPostDetail = (Props: Props) => {
             id: Props.post?._id,
             reply: {
               contentComment: commentContent,
-              idComment: data.idComment,
-            },
+              idComment: data.idComment
+            }
           })
         );
         setData({ isReply: false, idComment: null });
@@ -83,20 +84,20 @@ const OpenOtherPostDetail = (Props: Props) => {
         dispatch(
           SAVE_COMMENT_SAGA({
             comment: {
-              contentComment: commentContent,
+              contentComment: commentContent
             },
-            id: Props.post?._id,
+            id: Props.post?._id
           })
         );
       }
     }
     setTimeout(() => {
-      setCommentContent("");
+      setCommentContent('');
     }, 1000);
   };
 
   const checkEmpty = () => {
-    if (commentContent === "") {
+    if (commentContent === '') {
       return true;
     } else {
       return false;
@@ -154,19 +155,19 @@ const OpenOtherPostDetail = (Props: Props) => {
               }}
               onPressEnter={handleSubmitComment}
               style={{
-                borderColor: themeColorSet.colorText3,
+                borderColor: themeColorSet.colorText3
               }}
               maxLength={150}
               addonAfter={
                 <Popover
                   placement="right"
                   trigger="click"
-                  title={"Emoji"}
+                  title={'Emoji'}
                   content={
                     <Picker
                       data={async () => {
                         const response = await fetch(
-                          "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
                         );
 
                         return response.json();
@@ -184,7 +185,7 @@ const OpenOtherPostDetail = (Props: Props) => {
                   <span
                     className="emoji cursor-pointer hover:text-blue-700"
                     style={{
-                      transition: "all 0.3s",
+                      transition: 'all 0.3s'
                     }}>
                     <FontAwesomeIcon
                       className="item mr-3 ml-3"
@@ -199,12 +200,12 @@ const OpenOtherPostDetail = (Props: Props) => {
               {...(checkEmpty()
                 ? {
                     style: {
-                      color: "gray",
+                      color: 'gray',
                       //hover disabled
-                      cursor: "not-allowed",
-                    },
+                      cursor: 'not-allowed'
+                    }
                   }
-                : { transition: "all 0.3s" })}
+                : { transition: 'all 0.3s' })}
               onClick={handleSubmitComment}>
               <FontAwesomeIcon icon={faPaperPlane} />
             </span>
@@ -220,14 +221,14 @@ const OpenOtherPostDetail = (Props: Props) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <Row className="py-7">
           <Col offset={3} span={18}>
             <div
               style={{
-                backgroundColor: themeColorSet.colorBg2,
+                backgroundColor: themeColorSet.colorBg2
               }}
               className="rounded-lg">
               {memoizedComponent}

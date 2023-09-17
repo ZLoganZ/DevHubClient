@@ -1,13 +1,14 @@
-import { ReactNode } from "react";
-import { useSelector } from "react-redux";
-import { Button } from "antd";
+import { ReactNode } from 'react';
+import { useSelector } from 'react-redux';
+import { Button } from 'antd';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssMiniComponent";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from './cssMiniComponent';
+import { RootState } from '@/redux/configStore';
 
 // ===========================================
 
-type ButtonNormalHoverProps = "primary" | "text" | "default" | "dashed";
+type ButtonNormalHoverProps = 'primary' | 'text' | 'default' | 'dashed';
 
 type ButtonActiveHoverProps = {
   children?: ReactNode;
@@ -24,9 +25,9 @@ export const ButtonActiveHover = ({
   loading,
   rounded,
   block,
-  type,
+  type
 }: ButtonActiveHoverProps) => {
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   return (
@@ -37,9 +38,9 @@ export const ButtonActiveHover = ({
         onClick={onClick}
         loading={loading}
         style={{
-          height: "100%",
-          borderRadius: rounded ? "1.5rem" : "0",
-          width: block ? "100%" : "auto",
+          height: '100%',
+          borderRadius: rounded ? '1.5rem' : '0',
+          width: block ? '100%' : 'auto'
         }}>
         {children}
       </Button>
@@ -64,9 +65,9 @@ type ButtonCancelHoverProps = {
 export const ButtonCancelHover = ({
   children,
   onClick,
-  disabled,
+  disabled
 }: ButtonCancelHoverProps) => {
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (
@@ -74,7 +75,7 @@ export const ButtonCancelHover = ({
       <Button
         className="ButtonCancelHover font-bold px-6 py-2 rounded-3xl"
         onClick={onClick}
-        style={{ height: "100%" }}
+        style={{ height: '100%' }}
         disabled={disabled}>
         {children}
       </Button>

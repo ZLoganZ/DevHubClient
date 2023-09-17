@@ -1,4 +1,4 @@
-import { put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   CHECK_LOGIN_SAGA,
@@ -11,18 +11,23 @@ import {
   LOGOUT_SAGA,
   REGISTER_SAGA,
   RESET_PASSWORD_SAGA,
-  VERIFY_CODE_SAGA,
+  VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
 import { setLogin, setUserID } from '@/redux/Slice/AuthSlice';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { authService } from '@/services/AuthService';
-import { DARK_THEME, STATUS_CODE, TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import {
+  DARK_THEME,
+  STATUS_CODE,
+  TOKEN,
+  TOKEN_GITHUB
+} from '@/util/constants/SettingSystem';
 
 // LoginSaga
 function* LoginSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.login(payload.userLogin);
+    const { data, status } = yield call(authService.login, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
       localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
@@ -46,10 +51,10 @@ export function* theoDoiLoginSaga() {
   yield takeLatest(LOGIN_SAGA, LoginSaga);
 }
 
-// registerUser Saga
+// register Saga
 function* RegisterSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.registerUser(payload.userRegister);
+    const { data, status } = yield call(authService.register, payload);
     if (status === STATUS_CODE.CREATED) {
       localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
 
@@ -74,9 +79,9 @@ function* LogoutSaga() {
     const token = localStorage.getItem(TOKEN);
 
     const userAuth = {
-      accessToken: token,
+      accessToken: token!
     };
-    const { data, status } = yield authService.logout(userAuth);
+    const { status } = yield call(authService.logout, userAuth);
     if (status === STATUS_CODE.SUCCESS) {
       localStorage.removeItem(TOKEN);
       localStorage.removeItem(TOKEN_GITHUB);
@@ -95,11 +100,7 @@ export function* theoDoiLogoutSaga() {
 // Get User ID
 function* getUserIDSaga() {
   try {
-    const token = localStorage.getItem(TOKEN);
-    const userAuth = {
-      accessToken: token,
-    };
-    const { data, status } = yield authService.getUserID(userAuth);
+    const { data, status } = yield call(authService.getUserID);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setUserID({ userID: data.content }));
     }
@@ -115,7 +116,7 @@ export function* theoDoiGetUserIDSaga() {
 // Login with Google
 function* LoginWithGoogleSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.loginWithGoogle(payload);
+    const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
       localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
@@ -144,9 +145,9 @@ function* CheckLoginSaga() {
   try {
     const token = localStorage.getItem(TOKEN);
     const userAuth = {
-      accessToken: token,
+      accessToken: token!
     };
-    const { data, status } = yield authService.checkLogin(userAuth);
+    const { status } = yield call(authService.checkLogin, userAuth);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setLogin({ login: true }));
     } else {
@@ -165,15 +166,15 @@ export function* theoDoiCheckLoginSaga() {
 // Forgot Password Saga
 function* ForgotPasswordSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.forgotPassword(payload);
+    const { status } = yield call(authService.forgotPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
       const { navigate } = yield select((state) => state.functionReducer);
 
       navigate({
         pathname: '/verify',
         search: `?email=${payload.email}&code=${Math.floor(
-          Math.random() * 1000000,
-        )}&note=codetrongemailchukhongphaicodenaydaunehihi`,
+          Math.random() * 1000000
+        )}&note=codetrongemailchukhongphaicodenaydaunehihi`
       });
     }
   } catch (err: any) {
@@ -188,15 +189,15 @@ export function* theoDoiForgotPasswordSaga() {
 // Verify Code Saga
 function* VerifyCodeSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.verifyCode(payload);
+    const { status } = yield call(authService.verifyCode, payload);
     if (status === STATUS_CODE.SUCCESS) {
       const { navigate } = yield select((state) => state.functionReducer);
 
       navigate({
         pathname: '/reset',
         search: `?email=${payload.email}&code=${Math.floor(
-          Math.random() * 1000000,
-        )}&note=codetrongemailchukhongphaicodenaydaunehihi`,
+          Math.random() * 1000000
+        )}&note=codetrongemailchukhongphaicodenaydaunehihi`
       });
     }
   } catch (err: any) {
@@ -211,7 +212,7 @@ export function* theoDoiVerifyCodeSaga() {
 // Reset Password Saga
 function* ResetPasswordSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.resetPassword(payload);
+    const { status } = yield call(authService.resetPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
       const { navigate } = yield select((state) => state.functionReducer);
 
@@ -229,7 +230,7 @@ export function* theoDoiResetPasswordSaga() {
 // Check Verify Code Saga
 function* CheckVerifyCodeSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.checkVerifyCode(payload);
+    const { status } = yield call(authService.checkVerifyCode, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {
@@ -252,7 +253,7 @@ export function* theoDoiCheckVerifyCodeSaga() {
 // Check Reset Password Saga
 function* CheckResetPasswordSaga({ payload }: any) {
   try {
-    const { data, status } = yield authService.checkResetPassword(payload);
+    const { status } = yield call(authService.checkResetPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {

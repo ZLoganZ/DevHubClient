@@ -4,7 +4,7 @@ import {
   CHOOSE_GET_INTEREST_SAGA,
   CHOOSE_GET_STARTED_SAGA,
   CHOOSE_SHOULD_FOLLOW_SAGA,
-  GET_SHOULD_FOLLOWERS_SAGA,
+  GET_SHOULD_FOLLOWERS_SAGA
 } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { setShouldFollowers } from '@/redux/Slice/GetStartedSlice';
 
@@ -40,7 +40,9 @@ export function* theoDoiChooseGetInterestSaga() {
 // Choose Should Followers Saga
 function* chooseShouldFollowerSaga({ payload }: any) {
   try {
-    const { data, status } = yield getStartedService.chooseShouldFollowPeople(payload);
+    const { data, status } = yield getStartedService.chooseShouldFollowPeople(
+      payload
+    );
   } catch (err: any) {
     console.log(err.response.data);
   }

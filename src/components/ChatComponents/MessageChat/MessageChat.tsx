@@ -7,16 +7,14 @@ import { NavLink } from 'react-router-dom';
 
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import useIntersectionObserverNow from '@/hooks/useIntersectionObserverNow';
-import useOtherUser from '@/hooks/useOtherUser';
-import {
-  useCurrentConversationData,
-  useMessagesData
-} from '@/hooks/DataProvider';
+import { useIntersectionObserverNow } from '@/hooks';
+import { useOtherUser } from '@/hooks';
+import { useCurrentConversationData, useMessagesData } from '@/hooks';
 import { messageService } from '@/services/MessageService';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import { RootState } from '@/redux/configStore';
 import StyleTotal from './cssMessageChat';
 
 interface IParams {
@@ -27,10 +25,12 @@ interface IParams {
 
 const MessageChat = (Props: IParams) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const { members } = useSelector((state: any) => state.activeListReducer);
+  const { members } = useSelector(
+    (state: RootState) => state.activeListReducer
+  );
 
   const { currentConversation, isLoadingConversation } =
     useCurrentConversationData(Props.conversationId);

@@ -1,26 +1,27 @@
-import { ConfigProvider, Skeleton } from "antd";
-import { useSelector } from "react-redux";
+import { ConfigProvider, Skeleton } from 'antd';
+import { useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssLoadingDetailPost";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from './cssLoadingDetailPost';
+import { RootState } from '@/redux/configStore';
 
 const LoadingDetailPost = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div
           className="loadingPostDetail px-4 py-3"
           style={{
-            maxHeight: "78vh",
-            overflow: "auto",
+            maxHeight: '78vh',
+            overflow: 'auto'
           }}>
           <div className="header w-1/4">
             <Skeleton active avatar paragraph={{ rows: 1 }} />

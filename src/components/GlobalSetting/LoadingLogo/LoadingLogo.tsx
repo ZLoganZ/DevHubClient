@@ -1,27 +1,28 @@
-import Title from "antd/es/typography/Title";
-import { ConfigProvider } from "antd";
-import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
+import Title from 'antd/es/typography/Title';
+import { ConfigProvider } from 'antd';
+import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssLoadingLogo";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from './cssLoadingLogo';
+import { RootState } from '@/redux/configStore';
 
 const LoadingLogo = () => {
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div
           className="flex justify-center items-center h-screen w-screen"
           style={{
-            backgroundColor: themeColorSet.colorBg2,
+            backgroundColor: themeColorSet.colorBg2
           }}>
           <FontAwesomeIcon
             className="iconLogo text-3xl"
@@ -35,7 +36,7 @@ const LoadingLogo = () => {
             style={{
               color: themeColorSet.colorText1,
               marginBottom: 0,
-              cursor: "default",
+              cursor: 'default'
             }}>
             DevHub
           </Title>

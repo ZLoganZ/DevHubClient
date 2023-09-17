@@ -1,11 +1,12 @@
-import { useSelector } from "react-redux";
-import { Skeleton, Space } from "antd";
+import { useSelector } from 'react-redux';
+import { Skeleton, Space } from 'antd';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
 
 const LoadingChat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   return (
@@ -13,11 +14,11 @@ const LoadingChat = () => {
       <div
         className="slider flex flex-col justify-between items-center h-screen py-3"
         style={{
-          width: "5%",
-          borderRight: "1px solid",
+          width: '5%',
+          borderRight: '1px solid',
           borderColor: themeColorSet.colorBg4,
-          position: "fixed",
-          backgroundColor: themeColorSet.colorBg1,
+          position: 'fixed',
+          backgroundColor: themeColorSet.colorBg1
         }}>
         <div className="logo">
           <Skeleton.Button active size="large" shape="circle" />
@@ -36,42 +37,42 @@ const LoadingChat = () => {
       <div
         className="insteadComponent"
         style={{
-          marginLeft: "5%",
-          width: "23%",
-          height: "100vh",
-          position: "fixed",
-          borderRight: "1px solid",
-          borderColor: themeColorSet.colorBg4,
+          marginLeft: '5%',
+          width: '23%',
+          height: '100vh',
+          position: 'fixed',
+          borderRight: '1px solid',
+          borderColor: themeColorSet.colorBg4
         }}>
         <div
           className="searchChat h-screen"
           style={{
-            backgroundColor: themeColorSet.colorBg1,
+            backgroundColor: themeColorSet.colorBg1
           }}>
           <div
             className="flex items-center w-full px-3 py-4"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "12%",
+              height: '12%'
             }}>
             <Skeleton avatar paragraph={{ rows: 0 }} active />
           </div>
           <div
             className="searchInput px-3 py-4 w-full flex justify-between items-center"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "11%",
+              height: '11%'
             }}>
             <Skeleton.Button active size="large" block />
           </div>
           <div
             className="userActive px-3 py-4 w-full"
             style={{
-              borderBottom: "1px solid",
+              borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4,
-              height: "20%",
+              height: '20%'
             }}>
             <div className="listUser grid grid-cols-5 mt-5 ">
               <Skeleton.Button active size="large" shape="circle" />
@@ -93,18 +94,18 @@ const LoadingChat = () => {
       <div
         className="chatBox flex flex-col items-center px-4 py-6"
         style={{
-          width: "92%",
-          marginLeft: "28%",
-          height: "100vh",
-          position: "fixed",
+          width: '92%',
+          marginLeft: '28%',
+          height: '100vh',
+          position: 'fixed',
           backgroundColor: themeColorSet.colorBg1,
-          borderRight: "1px solid",
-          borderColor: themeColorSet.colorBg4,
+          borderRight: '1px solid',
+          borderColor: themeColorSet.colorBg4
         }}>
         <div
           style={{
             height: 500,
-            width: "100%",
+            width: '100%'
           }}>
           <Skeleton className="mt-8" active />
           <Skeleton className="mt-8" active />

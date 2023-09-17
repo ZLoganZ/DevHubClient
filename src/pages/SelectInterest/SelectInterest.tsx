@@ -8,14 +8,15 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { CHOOSE_GET_INTEREST_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
 import StyleTotal from './cssSelectInterest';
 
 const SelectInterest = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   let navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -25,25 +26,28 @@ const SelectInterest = () => {
   const error = () => {
     messageApi.open({
       type: 'error',
-      content: 'Please choose at least 5 interest to get started',
+      content: 'Please choose at least 5 interest to get started'
     });
   };
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet}>
         <div className="flex justify-center w-full h-full selectInterest">
           <div className="content w-1/2 pt-10 h-full relative">
             <div>
-              <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+              <span
+                className="mr-3"
+                style={{ color: themeColorSet.colorText2 }}>
                 Step 03:
               </span>
-              <span style={{ color: themeColorSet.colorText3 }}>Select interest</span>
+              <span style={{ color: themeColorSet.colorText3 }}>
+                Select interest
+              </span>
             </div>
             <div className="slide w-full flex justify-between mt-2">
               <span
@@ -51,59 +55,52 @@ const SelectInterest = () => {
                   width: '19.4%',
                   height: '2px',
                   backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block',
-                }}
-              ></span>
+                  display: 'inline-block'
+                }}></span>
               <span
                 style={{
                   width: '19.4%',
                   height: '2px',
                   backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block',
-                }}
-              ></span>
+                  display: 'inline-block'
+                }}></span>
               <span
                 style={{
                   width: '19.4%',
                   height: '2px',
                   backgroundColor: commonColor.colorBlue1,
-                  display: 'inline-block',
-                }}
-              ></span>
+                  display: 'inline-block'
+                }}></span>
               <span
                 style={{
                   width: '19.4%',
                   height: '2px',
                   backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block',
-                }}
-              ></span>
+                  display: 'inline-block'
+                }}></span>
               <span
                 style={{
                   width: '19.4%',
                   height: '2px',
                   backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block',
-                }}
-              ></span>
+                  display: 'inline-block'
+                }}></span>
             </div>
             <div
               className="textMax mt-4"
               style={{
                 fontSize: '1.8rem',
                 fontWeight: '600',
-                color: themeColorSet.colorText1,
-              }}
-            >
+                color: themeColorSet.colorText1
+              }}>
               Select your interest
             </div>
             <div
               className="textMin mt-5"
               style={{
                 fontSize: '1rem',
-                color: themeColorSet.colorText3,
-              }}
-            >
+                color: themeColorSet.colorText3
+              }}>
               Choose at least 5 interest to get started
             </div>
             <div className="interest mt-7">
@@ -122,8 +119,7 @@ const SelectInterest = () => {
                         addArray.push(item.title);
                         return;
                       }
-                    }}
-                  >
+                    }}>
                     {item.title}
                   </div>
                 ))}
@@ -139,12 +135,11 @@ const SelectInterest = () => {
                   }
                   dispatch(
                     CHOOSE_GET_INTEREST_SAGA({
-                      des: addArray,
-                    }),
+                      des: addArray
+                    })
                   );
                   navigate('/select-community');
-                }}
-              >
+                }}>
                 Next
               </ButtonActiveHover>
             </div>

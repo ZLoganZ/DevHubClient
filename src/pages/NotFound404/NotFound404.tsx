@@ -3,11 +3,12 @@ import { ConfigProvider } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
 import StyleTotal from './cssNotFound404';
 
 const NotFound404 = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -16,9 +17,8 @@ const NotFound404 = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       <StyleTotal theme={themeColorSet}>
         <div className="notFound404">
           <div id="notfound">

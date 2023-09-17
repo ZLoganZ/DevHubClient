@@ -1,17 +1,18 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ConfigProvider, Input, Popover, Space } from "antd";
-import { useState } from "react";
-import Picker from "@emoji-mart/react";
-import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ConfigProvider, Input, Popover, Space } from 'antd';
+import { useState } from 'react';
+import Picker from '@emoji-mart/react';
+import { useSelector } from 'react-redux';
 import {
   faFaceSmile,
   faMicrophone,
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
+  faPaperclip
+} from '@fortawesome/free-solid-svg-icons';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { messageService } from "@/services/MessageService";
-import UploadComponent from "@/components/UploadComponent";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { messageService } from '@/services/MessageService';
+import UploadComponent from '@/components/UploadComponent';
+import { RootState } from '@/redux/configStore';
 
 interface Props {
   conversationID: string;
@@ -19,33 +20,33 @@ interface Props {
 
 const InputChat = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
 
   const handleSubmit = async (data: any) => {
     if (!Props.conversationID) return;
     if (!data) return;
-    setMessage("");
+    setMessage('');
     await messageService.sendMessage({
       conversationID: Props.conversationID,
-      body: data,
+      body: data
     });
   };
 
   const handleUpload = async (error: any, result: any, widget: any) => {
     if (error) {
       widget.close({
-        quiet: true,
+        quiet: true
       });
       return;
     }
 
     await messageService.sendMessage({
       conversationID: Props.conversationID,
-      image: result?.info?.secure_url,
+      image: result?.info?.secure_url
     });
   };
 
@@ -54,22 +55,22 @@ const InputChat = (Props: Props) => {
       <div
         className="footer flex justify-between items-center"
         style={{
-          height: "8%",
+          height: '8%'
         }}>
         <div
           className="iconEmoji text-center"
           style={{
-            width: "5%",
+            width: '5%'
           }}>
           <Popover
             placement="top"
             trigger="click"
-            title={"Emoji"}
+            title={'Emoji'}
             content={
               <Picker
                 data={async () => {
                   const response = await fetch(
-                    "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                    'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
                   );
 
                   return response.json();
@@ -96,14 +97,14 @@ const InputChat = (Props: Props) => {
         <div
           className="input"
           style={{
-            width: "100%",
+            width: '100%'
           }}>
           <ConfigProvider
             theme={{
               token: {
                 controlHeight: 32,
-                lineWidth: 0,
-              },
+                lineWidth: 0
+              }
             }}>
             <Input
               allowClear
@@ -134,7 +135,7 @@ const InputChat = (Props: Props) => {
         <Space
           className="extension flex justify-center items-center"
           style={{
-            width: "12%",
+            width: '12%'
           }}>
           <UploadComponent onUpload={handleUpload}>
             <div className="upload">

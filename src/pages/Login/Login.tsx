@@ -14,11 +14,13 @@ import {
 import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
 import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
+import { AppDispatch } from '@/redux/configStore';
+import { UserLoginType } from '@/types';
 
 import StyleTotal from './cssLogin';
 
 const Login = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const location = useLocation();
 
@@ -79,12 +81,8 @@ const Login = () => {
     }
   });
 
-  const onSubmit = async (values: any) => {
-    dispatch(
-      LOGIN_SAGA({
-        userLogin: values
-      })
-    );
+  const onSubmit = async (values: UserLoginType) => {
+    dispatch(LOGIN_SAGA(values));
   };
 
   return (

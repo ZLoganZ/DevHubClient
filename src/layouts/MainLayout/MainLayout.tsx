@@ -1,25 +1,28 @@
-import { Content } from "antd/es/layout/layout";
-import { useLayoutEffect } from "react";
-import { ConfigProvider, FloatButton, Layout } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { Content } from 'antd/es/layout/layout';
+import { useLayoutEffect } from 'react';
+import { ConfigProvider, FloatButton, Layout } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Headers from "@/components/Headers";
-import LoadingLogo from "@/components/GlobalSetting/LoadingLogo";
-import Menu from "@/components/Menu";
-import { GET_USER_INFO_SAGA } from "@/redux/ActionSaga/UserActionSaga";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssMainLayout";
+import Headers from '@/components/Headers';
+import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
+import Menu from '@/components/Menu';
+import { GET_USER_INFO_SAGA } from '@/redux/ActionSaga/UserActionSaga';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssMainLayout';
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;
 }
 
 const MainLayout = (props: PropsMainTemplate) => {
-  const dispatch = useDispatch();
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const dispatch = useDispatch<AppDispatch>();
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -31,14 +34,14 @@ const MainLayout = (props: PropsMainTemplate) => {
     return <LoadingLogo />;
   }
 
-  document.title = "DevHub";
+  document.title = 'DevHub';
 
   const { Component } = props;
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal className="abcdef" theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
@@ -46,14 +49,14 @@ const MainLayout = (props: PropsMainTemplate) => {
           <Headers />
           <Layout hasSider style={{ backgroundColor: themeColorSet.colorBg1 }}>
             <Menu />
-            <Content style={{ marginLeft: "5rem", marginTop: "5rem" }}>
+            <Content style={{ marginLeft: '5rem', marginTop: '5rem' }}>
               <div
                 style={{
-                  backgroundImage: "url(/images/ProfilePage/cover.jpg)",
-                  backgroundAttachment: "fixed",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
+                  backgroundImage: 'url(/images/ProfilePage/cover.jpg)',
+                  backgroundAttachment: 'fixed',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
                 }}>
                 <Component />
               </div>

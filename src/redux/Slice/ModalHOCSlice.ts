@@ -3,9 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   title: '',
   visible: false,
-  ComponentContentModal: <p>default</p>,
-  footer: <p>default</p>,
-  handleSubmit: () => {},
+  ComponentContentModal: null,
+  footer: null,
+  handleSubmit: () => {}
 };
 
 const modalHOCSlide = createSlice({
@@ -18,22 +18,22 @@ const modalHOCSlide = createSlice({
         title: action.payload.title,
         visible: true,
         ComponentContentModal: action.payload.component,
-        footer: action.payload.footer,
+        footer: action.payload.footer
       };
     },
     closeModal: (state) => {
       return {
         ...state,
-        visible: false,
+        visible: false
       };
     },
     setHandleSubmit: (state, action) => {
       return {
         ...state,
-        handleSubmit: action.payload,
+        handleSubmit: action.payload
       };
-    },
-  },
+    }
+  }
 });
 
 export const { openModal, closeModal, setHandleSubmit } = modalHOCSlide.actions;

@@ -5,9 +5,9 @@ import {
   faEllipsis,
   faHeart,
   faShare,
-  faShareNodes,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  faShareNodes
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Avatar,
   ConfigProvider,
@@ -15,28 +15,29 @@ import {
   Dropdown,
   Image,
   Popover,
-  Space,
-} from "antd";
-import type { MenuProps } from "antd";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
-import { NavLink } from "react-router-dom";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
+  Space
+} from 'antd';
+import type { MenuProps } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
+import { NavLink } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.bubble.css';
 
 import {
   LIKE_POST_SAGA,
   SHARE_POST_SAGA,
   SAVE_POST_SAGA,
-  INCREASE_VIEW_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
-import OpenOtherPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal";
-import PopupInfoUser from "@/components/PopupInfoUser";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssPost";
+  INCREASE_VIEW_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
+import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
+import PopupInfoUser from '@/components/PopupInfoUser';
+import { useIntersectionObserver } from '@/hooks';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssPost';
 
 interface PostProps {
   post: any;
@@ -48,10 +49,10 @@ interface PostProps {
 
 const OtherPost = (PostProps: PostProps) => {
   const link = PostProps.post.link;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -67,7 +68,7 @@ const OtherPost = (PostProps: PostProps) => {
   const [likeColor, setLikeColor] = useState(themeColorSet.colorText1);
   useEffect(() => {
     PostProps.post?.isLiked
-      ? setLikeColor("red")
+      ? setLikeColor('red')
       : setLikeColor(themeColorSet.colorText1);
   }, [PostProps.post?.isLiked, change]);
 
@@ -91,7 +92,7 @@ const OtherPost = (PostProps: PostProps) => {
   const [shareColor, setShareColor] = useState(themeColorSet.colorText1);
   useEffect(() => {
     PostProps.post?.isShared
-      ? setShareColor("blue")
+      ? setShareColor('blue')
       : setShareColor(themeColorSet.colorText1);
   }, [PostProps.post?.isShared, change]);
 
@@ -113,19 +114,19 @@ const OtherPost = (PostProps: PostProps) => {
   const [saveColor, setSaveColor] = useState(themeColorSet.colorText1);
   useEffect(() => {
     PostProps.post?.isSaved
-      ? setSaveColor("yellow")
+      ? setSaveColor('yellow')
       : setSaveColor(themeColorSet.colorText1);
   }, [PostProps.post?.isSaved, change]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
-      return format(date, "p"); // Display only time for today
+      return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, "iiii, p"); // Display full day of the week and time for this week
+      return format(date, 'iiii, p'); // Display full day of the week and time for this week
     } else if (isThisYear(date)) {
-      return format(date, "eeee, MMMM d • p"); // Display full day of the week, date, and time for this year
+      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
     } else {
-      return format(date, "eeee, MMMM d, yyyy • p"); // Display full day of the week, date, year, and time for other cases
+      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
     }
   };
 
@@ -134,9 +135,9 @@ const OtherPost = (PostProps: PostProps) => {
   const date = formatDateTime(createdAt);
 
   // post setting
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div className="item flex items-center px-4 py-2">
           <FontAwesomeIcon className="icon" icon={faUpRightFromSquare} />
@@ -144,9 +145,9 @@ const OtherPost = (PostProps: PostProps) => {
         </div>
       ),
       onClick: () => {
-        window.open(`/post/${PostProps.post?._id}`, "_blank")?.focus();
-      },
-    },
+        window.open(`/post/${PostProps.post?._id}`, '_blank')?.focus();
+      }
+    }
   ];
 
   // Open OtherPostDetailModal
@@ -155,8 +156,8 @@ const OtherPost = (PostProps: PostProps) => {
   // Read more, read less
 
   function removeCode(htmlString: any): any {
-    const doc = new DOMParser().parseFromString(htmlString, "text/html");
-    const elements = doc.getElementsByClassName("ql-syntax");
+    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+    const elements = doc.getElementsByClassName('ql-syntax');
     while (elements.length > 0) elements[0].remove();
     return doc.body.innerHTML;
   }
@@ -166,7 +167,7 @@ const OtherPost = (PostProps: PostProps) => {
   const displayContent =
     expanded || PostProps.post?.content?.length <= 250
       ? PostProps.post?.content
-      : removeCode(PostProps.post?.content)?.slice(0, 250) + "...";
+      : removeCode(PostProps.post?.content)?.slice(0, 250) + '...';
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
@@ -178,7 +179,7 @@ const OtherPost = (PostProps: PostProps) => {
   const onIntersect = () => {
     dispatch(
       INCREASE_VIEW_SAGA({
-        id: PostProps.post?._id,
+        id: PostProps.post?._id
       })
     );
   };
@@ -190,12 +191,12 @@ const OtherPost = (PostProps: PostProps) => {
     dispatch(GET_USER_ID());
   }, []);
 
-  const { userID } = useSelector((state: any) => state.authReducer);
+  const { userID } = useSelector((state: RootState) => state.authReducer);
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
@@ -206,7 +207,7 @@ const OtherPost = (PostProps: PostProps) => {
           setVisible={setIsOpenPostDetail}
         />
       )}
-      <StyleTotal theme={themeColorSet} className={"rounded-lg mb-4"}>
+      <StyleTotal theme={themeColorSet} className={'rounded-lg mb-4'}>
         <div ref={postRef} className="post px-4 py-3">
           <div className="postHeader flex justify-between items-center">
             <div className="postHeader__left">
@@ -215,7 +216,7 @@ const OtherPost = (PostProps: PostProps) => {
                 <div className="name ml-2">
                   <Popover
                     overlayInnerStyle={{
-                      border: `1px solid ${themeColorSet.colorBg3}`,
+                      border: `1px solid ${themeColorSet.colorBg3}`
                     }}
                     mouseEnterDelay={0.7}
                     content={
@@ -249,7 +250,7 @@ const OtherPost = (PostProps: PostProps) => {
                 <Dropdown
                   menu={{ items }}
                   placement="bottomRight"
-                  trigger={["click"]}>
+                  trigger={['click']}>
                   <FontAwesomeIcon size="lg" icon={faEllipsis} />
                 </Dropdown>
               </div>
@@ -268,12 +269,12 @@ const OtherPost = (PostProps: PostProps) => {
                 <ReactQuill
                   value={displayContent}
                   readOnly={true}
-                  theme={"bubble"}
+                  theme={'bubble'}
                   modules={{}}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>
-                    {expanded ? "Read less" : "Read more"}
+                    {expanded ? 'Read less' : 'Read more'}
                   </a>
                 )}
               </div>
@@ -282,7 +283,7 @@ const OtherPost = (PostProps: PostProps) => {
                   <Image
                     src={PostProps.post.url}
                     alt=""
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                   />
                 </div>
               ) : link ? (
@@ -290,7 +291,7 @@ const OtherPost = (PostProps: PostProps) => {
                   href={link.linkAddress}
                   target="_blank"
                   style={{
-                    color: themeColorSet.colorText2,
+                    color: themeColorSet.colorText2
                   }}>
                   <div
                     className="contentLink flex mt-5 px-3 py-3 cursor-pointer"
@@ -300,15 +301,15 @@ const OtherPost = (PostProps: PostProps) => {
                         className="mb-2"
                         style={{
                           fontWeight: 600,
-                          color: themeColorSet.colorText1,
+                          color: themeColorSet.colorText1
                         }}>
                         {link.title?.length > 100
-                          ? link.title.slice(0, 100) + "..."
+                          ? link.title.slice(0, 100) + '...'
                           : link.title}
                       </div>
                       <div>
                         {link.description?.length > 100
-                          ? link.description.slice(0, 100) + "..."
+                          ? link.description.slice(0, 100) + '...'
                           : link.description}
                       </div>
                     </div>
@@ -317,7 +318,7 @@ const OtherPost = (PostProps: PostProps) => {
                       alt=""
                       className="w-1/5"
                       style={{
-                        maxWidth: "120px",
+                        maxWidth: '120px'
                       }}
                     />
                   </div>
@@ -333,11 +334,11 @@ const OtherPost = (PostProps: PostProps) => {
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {likeNumber}
-                  {likeNumber > 1 ? " Likes" : " Like"}
+                  {likeNumber > 1 ? ' Likes' : ' Like'}
                 </span>
                 <Avatar
                   className="item"
-                  style={{ backgroundColor: "transparent" }}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={<FontAwesomeIcon icon={faHeart} color={likeColor} />}
                   onClick={(e: any) => {
                     if (isLiked) {
@@ -346,12 +347,12 @@ const OtherPost = (PostProps: PostProps) => {
                       setIsLiked(false);
                     } else {
                       setLikeNumber(likeNumber + 1);
-                      setLikeColor("red");
+                      setLikeColor('red');
                       setIsLiked(true);
                     }
                     dispatch(
                       LIKE_POST_SAGA({
-                        id: PostProps.post?._id,
+                        id: PostProps.post?._id
                       })
                     );
                   }}
@@ -360,11 +361,11 @@ const OtherPost = (PostProps: PostProps) => {
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {shareNumber}
-                  {shareNumber > 1 ? " Shares" : " Share"}
+                  {shareNumber > 1 ? ' Shares' : ' Share'}
                 </span>
                 <Avatar
                   className="item"
-                  style={{ backgroundColor: "transparent" }}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={<FontAwesomeIcon icon={faShare} color={shareColor} />}
                   onClick={(e: any) => {
                     if (isShared) {
@@ -373,12 +374,12 @@ const OtherPost = (PostProps: PostProps) => {
                       setIsShared(false);
                     } else {
                       setShareNumber(shareNumber + 1);
-                      setShareColor("blue");
+                      setShareColor('blue');
                       setIsShared(true);
                     }
                     dispatch(
                       SHARE_POST_SAGA({
-                        id: PostProps.post?._id,
+                        id: PostProps.post?._id
                       })
                     );
                   }}
@@ -390,12 +391,12 @@ const OtherPost = (PostProps: PostProps) => {
                 <span>
                   {PostProps.post?.comments?.length}
                   {PostProps.post?.comments?.length > 1
-                    ? " Comments"
-                    : " Comment"}
+                    ? ' Comments'
+                    : ' Comment'}
                 </span>
                 <Avatar
-                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
-                  style={{ backgroundColor: "transparent" }}
+                  className={`${PostProps.detail ? 'cursor-default' : 'item'}`}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={
                     <FontAwesomeIcon
                       icon={faComment}
@@ -411,13 +412,13 @@ const OtherPost = (PostProps: PostProps) => {
               </Space>
               <Space className="like" direction="vertical" align="center">
                 <span>
-                  {PostProps.post.views}{" "}
-                  {PostProps.post.views > 1 ? "Views" : "View"}
+                  {PostProps.post.views}{' '}
+                  {PostProps.post.views > 1 ? 'Views' : 'View'}
                 </span>
                 <Space>
                   <Avatar
                     className="item"
-                    style={{ backgroundColor: "transparent" }}
+                    style={{ backgroundColor: 'transparent' }}
                     icon={
                       <FontAwesomeIcon icon={faBookmark} color={saveColor} />
                     }
@@ -427,18 +428,18 @@ const OtherPost = (PostProps: PostProps) => {
                         setSaveColor(themeColorSet.colorText1);
                       } else {
                         setIsSaved(true);
-                        setSaveColor("yellow");
+                        setSaveColor('yellow');
                       }
                       dispatch(
                         SAVE_POST_SAGA({
-                          id: PostProps.post?._id,
+                          id: PostProps.post?._id
                         })
                       );
                     }}
                   />
                   <Avatar
                     className="item"
-                    style={{ backgroundColor: "transparent" }}
+                    style={{ backgroundColor: 'transparent' }}
                     icon={<FontAwesomeIcon icon={faShareNodes} />}
                   />
                 </Space>

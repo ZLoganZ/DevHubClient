@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   API_KEY,
+  CLIENT_ID,
   DOMAIN_NAME,
   TOKEN,
   TOKEN_GITHUB
@@ -15,7 +16,8 @@ export class BaseService {
       withCredentials: true,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY)
+        'x-api-key': localStorage.getItem(API_KEY),
+        'x-client-id': localStorage.getItem(CLIENT_ID)
       }
     });
   }
@@ -27,7 +29,8 @@ export class BaseService {
       withCredentials: true,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY)
+        'x-api-key': localStorage.getItem(API_KEY),
+        'x-client-id': localStorage.getItem(CLIENT_ID)
       }
     });
   }
@@ -38,7 +41,8 @@ export class BaseService {
       withCredentials: true,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY)
+        'x-api-key': localStorage.getItem(API_KEY),
+        'x-client-id': localStorage.getItem(CLIENT_ID)
       }
     });
   }
@@ -49,7 +53,8 @@ export class BaseService {
       withCredentials: true,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY)
+        'x-api-key': localStorage.getItem(API_KEY),
+        'x-client-id': localStorage.getItem(CLIENT_ID)
       }
     });
   }
@@ -61,7 +66,8 @@ export class BaseService {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem(TOKEN),
         access_token_github: localStorage.getItem(TOKEN_GITHUB),
-        'x-api-key': localStorage.getItem(API_KEY)
+        'x-api-key': localStorage.getItem(API_KEY),
+        'x-client-id': localStorage.getItem(CLIENT_ID)
       }
     });
   }

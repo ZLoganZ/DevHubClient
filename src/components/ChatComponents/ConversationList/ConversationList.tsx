@@ -14,6 +14,7 @@ import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
+import { RootState } from '@/redux/configStore';
 
 interface ConversationListProps {
   initialItems: any;
@@ -24,15 +25,19 @@ interface ConversationListProps {
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
-  const { members } = useSelector((state: any) => state.activeListReducer);
+  const { members } = useSelector(
+    (state: RootState) => state.activeListReducer
+  );
 
   const [items, setItems] = useState(Props.initialItems);
 
@@ -182,7 +187,7 @@ const ConversationList = (Props: ConversationListProps) => {
   // Open OtherPostDetailModal
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
 
-  const { visible } = useSelector((state: any) => state.modalHOCReducer);
+  const { visible } = useSelector((state: RootState) => state.modalHOCReducer);
 
   useEffect(() => {
     if (!visible && isOpenPostDetail) {
@@ -245,7 +250,7 @@ const ConversationList = (Props: ConversationListProps) => {
                       color: themeColorSet.colorText1,
                       fontWeight: 600
                     }}>
-                    {userInfo.username}
+                    {userInfo.lastname}
                   </div>
                 </NavLink>
                 <div

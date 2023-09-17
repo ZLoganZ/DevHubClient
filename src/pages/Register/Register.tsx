@@ -8,10 +8,13 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
+import { UserRegisterType } from '@/types';
+import { AppDispatch } from '@/redux/configStore';
+
 import StyleTotal from './cssRegister';
 
 const Register = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm({
     defaultValues: {
@@ -23,12 +26,8 @@ const Register = () => {
     }
   });
 
-  const onSubmit = (values: any) => {
-    dispatch(
-      REGISTER_SAGA({
-        userRegister: values
-      })
-    );
+  const onSubmit = (values: UserRegisterType) => {
+    dispatch(REGISTER_SAGA(values));
   };
 
   return (

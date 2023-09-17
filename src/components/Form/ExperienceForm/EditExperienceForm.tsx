@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import { ConfigProvider, DatePicker, message } from "antd";
+import { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { ConfigProvider, DatePicker, message } from 'antd';
 
-import StyleTotal from "./cssAddExperienceForm";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
+import StyleTotal from './cssAddExperienceForm';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 interface EditProps {
   experiences: any;
@@ -17,14 +18,14 @@ interface EditProps {
 
 const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
-const dateFormat = "MM/YYYY";
+const dateFormat = 'MM/YYYY';
 
 const EditExperienceForm = (Props: EditProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -34,9 +35,9 @@ const EditExperienceForm = (Props: EditProps) => {
   const [companyName, setCompanyName] = useState(Props.itemCurrent.companyName);
   const [startDate, setStartDate] = useState(Props.itemCurrent.startDate);
   const [endDate, setEndDate] = useState(Props.itemCurrent.endDate);
-  const [pastDate, setPastDate] = useState("");
+  const [pastDate, setPastDate] = useState('');
 
-  const checkUntilNow = Props.itemCurrent.endDate === "Now";
+  const checkUntilNow = Props.itemCurrent.endDate === 'Now';
   const [untilNow, setUntilNow] = useState(checkUntilNow);
 
   const checkDisablePicker: [boolean, boolean] = checkUntilNow
@@ -48,25 +49,25 @@ const EditExperienceForm = (Props: EditProps) => {
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: "error",
-      content: "Please fill in all fields",
+      type: 'error',
+      content: 'Please fill in all fields'
     });
   };
 
   const experience = {
-    positionName: "",
-    companyName: "",
-    startDate: "",
-    endDate: "",
+    positionName: '',
+    companyName: '',
+    startDate: '',
+    endDate: ''
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
     if (
-      positionName === "" ||
-      companyName === "" ||
-      startDate === "" ||
-      endDate === ""
+      positionName === '' ||
+      companyName === '' ||
+      startDate === '' ||
+      endDate === ''
     ) {
       error();
       return;
@@ -90,7 +91,7 @@ const EditExperienceForm = (Props: EditProps) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet}>
@@ -98,7 +99,7 @@ const EditExperienceForm = (Props: EditProps) => {
           <div className="flex justify-between">
             <div
               className="PositionName form__group field"
-              style={{ width: "48%" }}>
+              style={{ width: '48%' }}>
               <input
                 defaultValue={positionName}
                 pattern="[A-Za-z ]*"
@@ -124,7 +125,7 @@ const EditExperienceForm = (Props: EditProps) => {
             </div>
             <div
               className="CompanyName form__group field"
-              style={{ width: "48%" }}>
+              style={{ width: '48%' }}>
               <input
                 defaultValue={companyName}
                 pattern="[A-Za-z ]*"
@@ -157,27 +158,27 @@ const EditExperienceForm = (Props: EditProps) => {
               size="large"
               onChange={(value, dateString) => {
                 setStartDate(dateString[0]);
-                untilNow ? setEndDate("Now") : setEndDate(dateString[1]);
+                untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
                 setPastDate(dateString[1]);
               }}
               defaultValue={[
                 dayjs(startDate, dateFormat),
-                endDate === "Now" ? dayjs() : dayjs(endDate, dateFormat),
+                endDate === 'Now' ? dayjs() : dayjs(endDate, dateFormat)
               ]}
             />
             <button
               className={
-                "untilButton ml-8 px-4 py-2 rounded-md" +
-                (untilNow ? " untilActive" : "")
+                'untilButton ml-8 px-4 py-2 rounded-md' +
+                (untilNow ? ' untilActive' : '')
               }
               onClick={(e) => {
                 if (!untilNow) {
-                  e.currentTarget.classList.add("untilActive");
-                  setEndDate("Now");
+                  e.currentTarget.classList.add('untilActive');
+                  setEndDate('Now');
                   setDisablePicker([false, true]);
                   setUntilNow(true);
                 } else {
-                  e.currentTarget.classList.remove("untilActive");
+                  e.currentTarget.classList.remove('untilActive');
                   setEndDate(pastDate);
                   setDisablePicker([false, false]);
                   setUntilNow(false);

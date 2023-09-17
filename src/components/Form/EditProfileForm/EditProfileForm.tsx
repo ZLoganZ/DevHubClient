@@ -5,59 +5,62 @@ import {
   Avatar,
   Upload,
   Image,
-  message,
-} from "antd";
-import { useState, useCallback, useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+  message
+} from 'antd';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   faFacebookF,
   faTwitter,
   faGithub,
   faInstagram,
-  faLinkedin,
-} from "@fortawesome/free-brands-svg-icons";
-import ReactQuill, { Value } from "react-quill";
-import GithubColors from "github-colors";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  faLinkedin
+} from '@fortawesome/free-brands-svg-icons';
+import ReactQuill, { Value } from 'react-quill';
+import GithubColors from 'github-colors';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBriefcase,
   faCodeFork,
   faEdit,
   faPlus,
   faStar,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-import { RcFile } from "antd/es/upload";
-import { sha1 } from "crypto-hash";
-import "react-quill/dist/quill.bubble.css";
+  faTrash
+} from '@fortawesome/free-solid-svg-icons';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import { RcFile } from 'antd/es/upload';
+import { sha1 } from 'crypto-hash';
+import 'react-quill/dist/quill.bubble.css';
 
-import QuillEdit from "@/components/QuillEdit";
-import descArray from "@/components/GlobalSetting/ItemComponent/Description";
-import AddExperienceForm from "@/components/Form/ExperienceForm/AddExperienceForm";
-import EditExperienceForm from "@/components/Form/ExperienceForm/EditExperienceForm";
-import AddRepositoryForm from "@/components/Form/AddRepositoryForm";
-import { ButtonActiveHover } from "@/components/MiniComponent";
-import AddTagComponent from "@/components/AddTagComponent";
-import AddLinkComponent from "@/components/AddLinkComponent";
-import { openModal } from "@/redux/Slice/ModalHOCSlice";
-import { UPDATE_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
-import { callBackSubmitDrawer, setLoading } from "@/redux/Slice/DrawerHOCSlice";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { commonColor } from "@/util/cssVariable";
-import StyleTotal from "./cssEditProfileForm";
+import QuillEdit from '@/components/QuillEdit';
+import descArray from '@/components/GlobalSetting/ItemComponent/Description';
+import AddExperienceForm from '@/components/Form/ExperienceForm/AddExperienceForm';
+import EditExperienceForm from '@/components/Form/ExperienceForm/EditExperienceForm';
+import AddRepositoryForm from '@/components/Form/AddRepositoryForm';
+import { ButtonActiveHover } from '@/components/MiniComponent';
+import AddTagComponent from '@/components/AddTagComponent';
+import AddLinkComponent from '@/components/AddLinkComponent';
+import { openModal } from '@/redux/Slice/ModalHOCSlice';
+import { UPDATE_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
+import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { commonColor } from '@/util/cssVariable';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssEditProfileForm';
 
 const EditProfileForm = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const userInfo = useSelector((state: any) => state.postReducer.ownerInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.postReducer.ownerInfo
+  );
 
   const [tags, setTags] = useState(userInfo?.tags);
 
@@ -67,21 +70,21 @@ const EditProfileForm = () => {
 
   const [lastname, setLastName] = useState(userInfo?.lastname);
 
-  const [alias, setAlias] = useState(userInfo?.alias || "");
+  const [alias, setAlias] = useState(userInfo?.alias || '');
 
-  const [location, setLocation] = useState(userInfo?.location || "");
+  const [location, setLocation] = useState(userInfo?.location || '');
 
   const [avatar, setAvatar] = useState(
-    userInfo?.userImage || "/images/TimeLinePage/avatar.jpg"
+    userInfo.user_image || '/images/TimeLinePage/avatar.jpg'
   );
   const [fileAvatar, setFileAvatar] = useState<any>(null);
 
   const [cover, setCover] = useState(
-    userInfo?.coverImage || "/images/ProfilePage/cover.jpg"
+    userInfo.cover_image || '/images/ProfilePage/cover.jpg'
   );
   const [fileCover, setFileCover] = useState<any>(null);
 
-  const [about, setAbout] = useState<string>(userInfo?.about || "");
+  const [about, setAbout] = useState<string>(userInfo?.about || '');
 
   const [experiences, setExperiences] = useState<any>(
     userInfo?.experiences || []
@@ -92,12 +95,12 @@ const EditProfileForm = () => {
   );
 
   const initialAvatar = useMemo(() => {
-    return userInfo?.userImage || null;
-  }, [userInfo?.userImage]);
+    return userInfo.user_image || null;
+  }, [userInfo.user_image]);
 
   const initialCover = useMemo(() => {
-    return userInfo?.coverImage || null;
-  }, [userInfo?.coverImage]);
+    return userInfo.cover_image || null;
+  }, [userInfo.cover_image]);
 
   const handleChangeAvatar = useCallback((image: any) => {
     setAvatar(URL.createObjectURL(image));
@@ -113,57 +116,57 @@ const EditProfileForm = () => {
     if (!file)
       return {
         url: null,
-        status: "done",
+        status: 'done'
       };
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj",
+      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
       {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
       }
     );
     const data = await res.json();
     return {
       url: data.secure_url,
-      status: "done",
+      status: 'done'
     };
   };
 
   const handleRemoveImage = async (imageURL: any) => {
-    const nameSplit = imageURL.split("/");
+    const nameSplit = imageURL.split('/');
     const duplicateName = nameSplit.pop();
 
     // Remove .
-    const public_id = duplicateName?.split(".").slice(0, -1).join(".");
+    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
 
     const formData = new FormData();
-    formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
+    formData.append('api_key', '235531261932754');
+    formData.append('public_id', public_id);
     const timestamp = String(Date.now());
-    formData.append("timestamp", timestamp);
+    formData.append('timestamp', timestamp);
     const signature = await sha1(
       `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
     );
-    formData.append("signature", signature);
+    formData.append('signature', signature);
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
+      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
       {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
       }
     );
     const data = await res.json();
     return {
       url: data,
-      status: "done",
+      status: 'done'
     };
   };
 
   const openInNewTab = (url: any) => {
-    window.open(url, "_blank", "noreferrer");
+    window.open(url, '_blank', 'noreferrer');
   };
 
   const handleChangeFirstName = (e: any) => {
@@ -199,12 +202,12 @@ const EditProfileForm = () => {
     const formData = new FormData();
     if (fileAvatar) {
       const res = await handleUploadImage(fileAvatar);
-      formData.append("userImage", res.url);
+      formData.append('userImage', res.url);
       if (initialAvatar) await handleRemoveImage(initialAvatar);
     }
     if (fileCover) {
       const res = await handleUploadImage(fileCover);
-      formData.append("coverImage", res.url);
+      formData.append('coverImage', res.url);
       if (initialCover) await handleRemoveImage(initialCover);
     }
     dispatch(
@@ -213,17 +216,17 @@ const EditProfileForm = () => {
         userUpdate: {
           lastname,
           firstname,
-          username: lastname + " " + firstname,
+          username: lastname + ' ' + firstname,
           alias,
           location,
-          userImage: fileAvatar ? formData.get("userImage") : undefined,
-          coverImage: fileCover ? formData.get("coverImage") : undefined,
+          userImage: fileAvatar ? formData.get('userImage') : undefined,
+          coverImage: fileCover ? formData.get('coverImage') : undefined,
           tags,
           contacts: links,
           about,
           experiences,
-          repositories,
-        },
+          repositories
+        }
       })
     );
   };
@@ -241,13 +244,13 @@ const EditProfileForm = () => {
     location,
     about,
     experiences,
-    repositories,
+    repositories
   ]);
 
   const beforeUpload = (file: any) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
-      messageApi.error("Image must smaller than 3MB!");
+      messageApi.error('Image must smaller than 3MB!');
     }
     return isLt2M;
   };
@@ -263,9 +266,9 @@ const EditProfileForm = () => {
         <div
           className="title mb-3"
           style={{
-            fontSize: "1.1rem",
+            fontSize: '1.1rem',
             fontWeight: 600,
-            color: themeColorSet.colorText1,
+            color: themeColorSet.colorText1
           }}>
           {title}
         </div>
@@ -274,7 +277,7 @@ const EditProfileForm = () => {
         </div>
         <div className="mt-4">
           <ButtonActiveHover onClick={callBackFunction}>
-            {" "}
+            {' '}
             {buttonContent}
           </ButtonActiveHover>
         </div>
@@ -302,7 +305,7 @@ const EditProfileForm = () => {
             onClick={() => {
               dispatch(
                 openModal({
-                  title: "Add Experiences",
+                  title: 'Add Experiences',
                   component: (
                     <EditExperienceForm
                       key={Math.random()}
@@ -312,7 +315,7 @@ const EditProfileForm = () => {
                       indexCurrent={index}
                     />
                   ),
-                  footer: true,
+                  footer: true
                 })
               );
             }}>
@@ -350,7 +353,7 @@ const EditProfileForm = () => {
         className="renderRepositoryIem mb-5"
         style={{
           borderBottom: `1px solid ${themeColorSet.colorBg4}`,
-          width: "48%",
+          width: '48%'
         }}
         href={item.url}
         target="_blank">
@@ -358,7 +361,7 @@ const EditProfileForm = () => {
           <span>
             <img
               className="iconRepos inline"
-              style={{ color: "red" }}
+              style={{ color: 'red' }}
               src="/images/Common/repos.svg"
             />
           </span>
@@ -367,7 +370,7 @@ const EditProfileForm = () => {
             style={{
               color: commonColor.colorBlue3,
               fontWeight: 600,
-              fontSize: "1.1rem",
+              fontSize: '1.1rem'
             }}>
             {item.name}
           </span>
@@ -376,10 +379,10 @@ const EditProfileForm = () => {
             style={{
               color: themeColorSet.colorText3,
               border: `1px solid ${themeColorSet.colorBg4}`,
-              fontSize: "0.8rem",
-              padding: "0.1rem 0.5rem",
+              fontSize: '0.8rem',
+              padding: '0.1rem 0.5rem'
             }}>
-            {item.private ? "Private" : "Public"}
+            {item.private ? 'Private' : 'Public'}
           </span>
         </div>
         <div
@@ -411,7 +414,7 @@ const EditProfileForm = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {contextHolder}
@@ -422,7 +425,7 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1rem",
+                fontSize: '1rem'
               }}>
               Update Profile Cover Image
             </div>
@@ -436,9 +439,9 @@ const EditProfileForm = () => {
                 className="coverImage rounded-xl"
                 src={cover}
                 style={{
-                  objectFit: "cover",
-                  maxHeight: "18rem",
-                  width: "100%",
+                  objectFit: 'cover',
+                  maxHeight: '18rem',
+                  width: '100%'
                 }}></Image>
               <Space className="coverButton absolute bottom-8 right-5">
                 <Upload
@@ -459,7 +462,7 @@ const EditProfileForm = () => {
                   className="btnRemove px-4 py-2"
                   style={{
                     backgroundColor: commonColor.colorRed1,
-                    fontWeight: 600,
+                    fontWeight: 600
                   }}>
                   <span style={{ color: commonColor.colorWhile1 }}>Remove</span>
                 </button>
@@ -472,10 +475,10 @@ const EditProfileForm = () => {
                 src={avatar}
                 alt="avatar"
                 style={{
-                  width: "7rem",
-                  height: "7rem",
-                  borderRadius: "50%",
-                  objectFit: "cover",
+                  width: '7rem',
+                  height: '7rem',
+                  borderRadius: '50%',
+                  objectFit: 'cover'
                 }}
               />
             </div>
@@ -483,9 +486,9 @@ const EditProfileForm = () => {
               <div
                 className="mb-2"
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: '1.2rem',
                   fontWeight: 600,
-                  color: themeColorSet.colorText1,
+                  color: themeColorSet.colorText1
                 }}>
                 Set profile photo
               </div>
@@ -507,7 +510,7 @@ const EditProfileForm = () => {
           <section className="addLinks mt-3">
             {links?.map((item: any, index: any) => {
               switch (item.key) {
-                case "0":
+                case '0':
                   return (
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
@@ -518,7 +521,7 @@ const EditProfileForm = () => {
                       icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
                     />
                   );
-                case "1":
+                case '1':
                   return (
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
@@ -529,7 +532,7 @@ const EditProfileForm = () => {
                       icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                     />
                   );
-                case "2":
+                case '2':
                   return (
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
@@ -540,7 +543,7 @@ const EditProfileForm = () => {
                       icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                     />
                   );
-                case "3":
+                case '3':
                   return (
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
@@ -551,7 +554,7 @@ const EditProfileForm = () => {
                       icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
                     />
                   );
-                case "4":
+                case '4':
                   return (
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
@@ -571,7 +574,7 @@ const EditProfileForm = () => {
               onClick={() => {
                 dispatch(
                   openModal({
-                    title: "Update Social Links",
+                    title: 'Update Social Links',
                     component: (
                       <AddLinkComponent
                         key={Math.random()}
@@ -579,14 +582,14 @@ const EditProfileForm = () => {
                         links={links}
                       />
                     ),
-                    footer: false,
+                    footer: false
                   })
                 );
               }}
               style={{
                 color: themeColorSet.colorText3,
-                border: "1px solid",
-                borderColor: themeColorSet.colorBg4,
+                border: '1px solid',
+                borderColor: themeColorSet.colorBg4
               }}>
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add Links
@@ -598,14 +601,14 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1.2rem",
+                fontSize: '1.2rem'
               }}>
               Information
             </div>
             <div className="line1 flex justify-between items-center mb-5">
               <div
                 className="LastName form__group field"
-                style={{ width: "48%" }}>
+                style={{ width: '48%' }}>
                 <input
                   defaultValue={userInfo?.lastname}
                   pattern="[A-Za-z ]*"
@@ -624,7 +627,7 @@ const EditProfileForm = () => {
               </div>
               <div
                 className="firstName form__group field"
-                style={{ width: "48%" }}>
+                style={{ width: '48%' }}>
                 <input
                   defaultValue={userInfo?.firstname}
                   pattern="[A-Za-z ]*"
@@ -643,7 +646,7 @@ const EditProfileForm = () => {
               </div>
             </div>
             <div className="line2 flex justify-between items-center">
-              <div className="alias form__group field" style={{ width: "48%" }}>
+              <div className="alias form__group field" style={{ width: '48%' }}>
                 <input
                   defaultValue={userInfo?.alias}
                   type="input"
@@ -661,7 +664,7 @@ const EditProfileForm = () => {
               </div>
               <div
                 className="location form__group field"
-                style={{ width: "48%" }}>
+                style={{ width: '48%' }}>
                 <input
                   defaultValue={userInfo?.location}
                   pattern="[A-Za-z ]*"
@@ -687,7 +690,7 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1.2rem",
+                fontSize: '1.2rem'
               }}>
               Expertise
             </div>
@@ -700,8 +703,8 @@ const EditProfileForm = () => {
                       key={index}
                       color={themeColorSet.colorBg1}
                       style={{
-                        border: "none",
-                        color: themeColorSet.colorText1,
+                        border: 'none',
+                        color: themeColorSet.colorText1
                       }}>
                       {item.svg} &nbsp;
                       {item.title}
@@ -713,13 +716,13 @@ const EditProfileForm = () => {
               <button
                 className="addTags mt-2 px-4 py-1 cursor-pointer"
                 style={{
-                  border: "1px solid",
-                  borderColor: themeColorSet.colorBg4,
+                  border: '1px solid',
+                  borderColor: themeColorSet.colorBg4
                 }}
                 onClick={() => {
                   dispatch(
                     openModal({
-                      title: "Add Tags",
+                      title: 'Add Tags',
                       component: (
                         <AddTagComponent
                           key={Math.random()}
@@ -727,7 +730,7 @@ const EditProfileForm = () => {
                           tags={tags}
                         />
                       ),
-                      footer: true,
+                      footer: true
                     })
                   );
                 }}>
@@ -742,7 +745,7 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1.2rem",
+                fontSize: '1.2rem'
               }}>
               About
               {about && (
@@ -751,7 +754,7 @@ const EditProfileForm = () => {
                   onClick={() => {
                     dispatch(
                       openModal({
-                        title: "Add About",
+                        title: 'Add About',
                         component: (
                           <QuillEdit
                             key={Math.random()}
@@ -760,7 +763,7 @@ const EditProfileForm = () => {
                             callbackFunction={handleChangeAbout}
                           />
                         ),
-                        footer: true,
+                        footer: true
                       })
                     );
                   }}>
@@ -779,20 +782,20 @@ const EditProfileForm = () => {
                 <ReactQuill
                   value={about as Value}
                   readOnly={true}
-                  theme={"bubble"}
+                  theme={'bubble'}
                   modules={{}}
                 />
               </div>
             ) : (
               // About không có nội dung
               componentNoInfo(
-                "Share something about yourself",
-                "Use Markdown to share more about who you are with the developer community on Showwcase.",
-                "Add About",
+                'Share something about yourself',
+                'Use Markdown to share more about who you are with the developer community on Showwcase.',
+                'Add About',
                 () => {
                   dispatch(
                     openModal({
-                      title: "Add About",
+                      title: 'Add About',
                       component: (
                         <QuillEdit
                           key={Math.random()}
@@ -801,7 +804,7 @@ const EditProfileForm = () => {
                           callbackFunction={handleChangeAbout}
                         />
                       ),
-                      footer: true,
+                      footer: true
                     })
                   );
                 }
@@ -814,7 +817,7 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1.2rem",
+                fontSize: '1.2rem'
               }}>
               Experiences
               {/* Hiển thị nút thêm nếu như có từ 1 experience trở lên */}
@@ -823,7 +826,7 @@ const EditProfileForm = () => {
                   onClick={() => {
                     dispatch(
                       openModal({
-                        title: "Add About",
+                        title: 'Add About',
                         component: (
                           <AddExperienceForm
                             key={Math.random()}
@@ -831,7 +834,7 @@ const EditProfileForm = () => {
                             setExperiences={setExperiences}
                           />
                         ),
-                        footer: true,
+                        footer: true
                       })
                     );
                   }}>
@@ -846,13 +849,13 @@ const EditProfileForm = () => {
             {experiences.length === 0 ? (
               // Nếu không có experience nào
               componentNoInfo(
-                "Share a timeline of your Positions",
-                "Add your professional history so others know you’ve put your skills to good use.",
-                "Add Positions",
+                'Share a timeline of your Positions',
+                'Add your professional history so others know you’ve put your skills to good use.',
+                'Add Positions',
                 () => {
                   dispatch(
                     openModal({
-                      title: "Add Experiences",
+                      title: 'Add Experiences',
                       component: (
                         <AddExperienceForm
                           key={Math.random()}
@@ -860,7 +863,7 @@ const EditProfileForm = () => {
                           setExperiences={setExperiences}
                         />
                       ),
-                      footer: true,
+                      footer: true
                     })
                   );
                 }
@@ -898,7 +901,7 @@ const EditProfileForm = () => {
               style={{
                 color: themeColorSet.colorText1,
                 fontWeight: 600,
-                fontSize: "1.2rem",
+                fontSize: '1.2rem'
               }}>
               Repositories
               {
@@ -908,7 +911,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       dispatch(
                         openModal({
-                          title: "Feature Repositories",
+                          title: 'Feature Repositories',
                           component: (
                             <AddRepositoryForm
                               key={Math.random()}
@@ -916,7 +919,7 @@ const EditProfileForm = () => {
                               setRepositories={setRepositories}
                             />
                           ),
-                          footer: true,
+                          footer: true
                         })
                       );
                     }}>
@@ -933,13 +936,13 @@ const EditProfileForm = () => {
             {/* Nếu không có repository nào */}
             {repositories.length === 0 ? (
               componentNoInfo(
-                "Highlight your top Repositories",
-                "Showwcase integrates with Github to help you pull your top repositories right into your profile. If you’ve got something to show, get it in!",
-                "Feature Repositories",
+                'Highlight your top Repositories',
+                'Showwcase integrates with Github to help you pull your top repositories right into your profile. If you’ve got something to show, get it in!',
+                'Feature Repositories',
                 () => {
                   dispatch(
                     openModal({
-                      title: "Feature Repositories",
+                      title: 'Feature Repositories',
                       component: (
                         <AddRepositoryForm
                           key={Math.random()}
@@ -947,7 +950,7 @@ const EditProfileForm = () => {
                           setRepositories={setRepositories}
                         />
                       ),
-                      footer: true,
+                      footer: true
                     })
                   );
                 }

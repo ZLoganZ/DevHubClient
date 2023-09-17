@@ -1,16 +1,17 @@
-import GithubColors from "github-colors";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Checkbox, ConfigProvider, Space, Spin } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCodeFork, faStar } from "@fortawesome/free-solid-svg-icons";
+import GithubColors from 'github-colors';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Checkbox, ConfigProvider, Space, Spin } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
-import StyleTotal from "./cssAddRepositoryForm";
-import { GetGitHubUrl } from "@/util/functions/GetGithubUrl";
-import { TOKEN_GITHUB } from "@/util/constants/SettingSystem";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { GET_REPOSITORY_SAGA } from "@/redux/ActionSaga/UserActionSaga";
-import { closeModal, setHandleSubmit } from "@/redux/Slice/ModalHOCSlice";
+import StyleTotal from './cssAddRepositoryForm';
+import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
+import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { GET_REPOSITORY_SAGA } from '@/redux/ActionSaga/UserActionSaga';
+import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 interface ReposProps {
   repositories: any;
@@ -18,9 +19,9 @@ interface ReposProps {
 }
 
 const AddRepositoryForm = (Props: ReposProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -36,7 +37,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
 
     const popup = window.open(
       GetGitHubUrl(),
-      "GithubAuth",
+      'GithubAuth',
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
@@ -52,12 +53,12 @@ const AddRepositoryForm = (Props: ReposProps) => {
       }
     };
 
-    window.addEventListener("message", handleMessage);
+    window.addEventListener('message', handleMessage);
 
     const pollOAuthStatus = setInterval(() => {
       if (popup?.closed) {
         clearInterval(pollOAuthStatus);
-        window.removeEventListener("message", handleMessage);
+        window.removeEventListener('message', handleMessage);
         !userData && dispatch(closeModal());
       }
     }, 300);
@@ -65,7 +66,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
 
   const newRepositories = [...Props.repositories];
 
-  const handleChangeRepositories = (e: any) => {
+  const handleChangeRepositories = () => {
     Props.setRepositories(newRepositories);
     dispatch(closeModal());
   };
@@ -82,7 +83,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
     }
   }, [access_token_github]);
 
-  const { repos } = useSelector((state: any) => state.userReducer);
+  const { repos } = useSelector((state: RootState) => state.userReducer);
 
   const renderItemRepos = (item: any, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
@@ -93,17 +94,17 @@ const AddRepositoryForm = (Props: ReposProps) => {
         style={{
           border: `1px solid ${themeColorSet.colorBg4}`,
           borderTop:
-            index === 0 ? `1px solid ${themeColorSet.colorBg4}` : "none",
-          height: "100px",
+            index === 0 ? `1px solid ${themeColorSet.colorBg4}` : 'none',
+          height: '100px'
         }}>
         <Space className="left" direction="vertical">
           <div className="top">
             <span
               className="name"
               style={{
-                fontSize: "1rem",
+                fontSize: '1rem',
                 color: themeColorSet.colorText1,
-                fontWeight: "600",
+                fontWeight: '600'
               }}>
               {item.name}
             </span>
@@ -112,10 +113,10 @@ const AddRepositoryForm = (Props: ReposProps) => {
               style={{
                 color: themeColorSet.colorText3,
                 border: `1px solid ${themeColorSet.colorBg4}`,
-                fontSize: "0.8rem",
-                padding: "0.1rem 0.5rem",
+                fontSize: '0.8rem',
+                padding: '0.1rem 0.5rem'
               }}>
-              {item.private ? "Private" : "Public"}
+              {item.private ? 'Private' : 'Public'}
             </span>
           </div>
           <div className="bottom items-center">
@@ -140,8 +141,8 @@ const AddRepositoryForm = (Props: ReposProps) => {
             theme={{
               token: {
                 controlHeight: 40,
-                colorBorder: themeColorSet.colorText3,
-              },
+                colorBorder: themeColorSet.colorText3
+              }
             }}>
             <Checkbox
               defaultChecked={newRepositories.some((repo: any) => {
@@ -168,7 +169,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div className="addRepositories">
@@ -183,16 +184,16 @@ const AddRepositoryForm = (Props: ReposProps) => {
             <div>
               <div
                 className="title mt-5"
-                style={{ fontSize: "1.1rem", color: themeColorSet.colorText1 }}>
+                style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
                 Select the repositories you want to feature
               </div>
               <div
                 className="repositories mt-5 mb-6 px-2"
                 style={{
-                  maxHeight: "402px",
-                  overflow: "auto",
+                  maxHeight: '402px',
+                  overflow: 'auto'
                 }}>
-                {repos.map((item: any, index: number) => {
+                {repos.map((item, index) => {
                   return renderItemRepos(item, index);
                 })}
               </div>

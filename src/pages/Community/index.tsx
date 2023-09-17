@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import StyleTotal from "./cssCommunity";
-import { format } from "date-fns";
-import { getTheme } from "@/util/functions/ThemeFunction";
+import { useEffect } from 'react';
+import StyleTotal from './cssCommunity';
+import { format } from 'date-fns';
+import { getTheme } from '@/util/functions/ThemeFunction';
 import {
   Avatar,
   Col,
@@ -10,31 +10,32 @@ import {
   Empty,
   Row,
   Space,
-  Tabs,
-} from "antd";
-import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileLines, faCalendar } from "@fortawesome/free-solid-svg-icons";
+  Tabs
+} from 'antd';
+import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileLines, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
-import { commonColor } from "@/util/cssVariable";
-import MyPost from "@/components/Post/MyPost";
-import NewPost from "@/components/NewPost";
-import MyPostShare from "@/components/Post/MyPostShare";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
+import { commonColor } from '@/util/cssVariable';
+import MyPost from '@/components/Post/MyPost';
+import NewPost from '@/components/NewPost';
+import MyPostShare from '@/components/Post/MyPostShare';
+import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth'
     });
   }, []);
 
@@ -42,12 +43,14 @@ export const CommunityAdmin = () => {
     (state: any) => state.communityReducer.community
   );
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {!community ? (
@@ -62,15 +65,15 @@ export const CommunityAdmin = () => {
                     backgroundImage: `url("${
                       community?.coverImage || `/images/ProfilePage/cover.jpg`
                     }")`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
                   }}></div>
                 <div className="avatar rounded-full overflow-hidden object-fill flex">
                   <img
                     src={
                       community?.communityImage ||
-                      "/images/DefaultAvatar/default_avatar.png"
+                      '/images/DefaultAvatar/default_avatar.png'
                     }
                     alt="avt"
                   />
@@ -103,7 +106,7 @@ export const CommunityAdmin = () => {
                         <span className="ml-2">
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -186,9 +189,9 @@ export const CommunityAdmin = () => {
                       <div
                         className="seeMore block mb-3 hover:underline cursor-pointer"
                         style={{
-                          transition: "all .5s",
+                          transition: 'all .5s',
                           color: commonColor.colorBlue3,
-                          fontWeight: 600,
+                          fontWeight: 600
                         }}>
                         See More
                       </div>
@@ -197,10 +200,10 @@ export const CommunityAdmin = () => {
                         style={{ color: themeColorSet.colorText3 }}>
                         <FontAwesomeIcon className="icon" icon={faCalendar} />
                         <span className="ml-2">
-                          Created{" "}
+                          Created{' '}
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -258,13 +261,13 @@ export const CommunityAdmin = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + " " + item.firstname}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -295,14 +298,14 @@ export const CommunityAdmin = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {" "}
-                                  {item.lastname + " " + item.firstname}
+                                  {' '}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -322,7 +325,7 @@ export const CommunityAdmin = () => {
                         {community.rules.map((item: any, index: number) => {
                           return (
                             <Panel
-                              header={index + 1 + ". " + item.title}
+                              header={index + 1 + '. ' + item.title}
                               key={index}>
                               <p>{item.content}</p>
                             </Panel>
@@ -354,14 +357,14 @@ export const CommunityAdmin = () => {
                                   <span
                                     style={{
                                       fontWeight: 600,
-                                      color: themeColorSet.colorText1,
+                                      color: themeColorSet.colorText1
                                     }}>
-                                    {" "}
-                                    {item.lastname + " " + item.firstname}
+                                    {' '}
+                                    {item.lastname + ' ' + item.firstname}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>
-                                    {item.email.split("@")[0]}
+                                    {item.email.split('@')[0]}
                                   </span>
                                 </Space>
                               </div>
@@ -383,14 +386,14 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth'
     });
   }, []);
 
@@ -398,12 +401,14 @@ export const CommunityMember = () => {
     (state: any) => state.communityReducer.community
   );
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {!community ? (
@@ -418,15 +423,15 @@ export const CommunityMember = () => {
                     backgroundImage: `url("${
                       community?.coverImage || `/images/ProfilePage/cover.jpg`
                     }")`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
                   }}></div>
                 <div className="avatar rounded-full overflow-hidden object-fill flex">
                   <img
                     src={
                       community?.communityImage ||
-                      "/images/DefaultAvatar/default_avatar.png"
+                      '/images/DefaultAvatar/default_avatar.png'
                     }
                     alt="avt"
                   />
@@ -459,7 +464,7 @@ export const CommunityMember = () => {
                         <span className="ml-2">
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -542,9 +547,9 @@ export const CommunityMember = () => {
                       <div
                         className="seeMore block mb-3 hover:underline cursor-pointer"
                         style={{
-                          transition: "all .5s",
+                          transition: 'all .5s',
                           color: commonColor.colorBlue3,
-                          fontWeight: 600,
+                          fontWeight: 600
                         }}>
                         See More
                       </div>
@@ -553,10 +558,10 @@ export const CommunityMember = () => {
                         style={{ color: themeColorSet.colorText3 }}>
                         <FontAwesomeIcon className="icon" icon={faCalendar} />
                         <span className="ml-2">
-                          Created{" "}
+                          Created{' '}
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -614,13 +619,13 @@ export const CommunityMember = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + " " + item.firstname}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -651,14 +656,14 @@ export const CommunityMember = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {" "}
-                                  {item.lastname + " " + item.firstname}
+                                  {' '}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -678,7 +683,7 @@ export const CommunityMember = () => {
                         {community.rules.map((item: any, index: number) => {
                           return (
                             <Panel
-                              header={index + 1 + ". " + item.title}
+                              header={index + 1 + '. ' + item.title}
                               key={index}>
                               <p>{item.content}</p>
                             </Panel>
@@ -710,14 +715,14 @@ export const CommunityMember = () => {
                                   <span
                                     style={{
                                       fontWeight: 600,
-                                      color: themeColorSet.colorText1,
+                                      color: themeColorSet.colorText1
                                     }}>
-                                    {" "}
-                                    {item.lastname + " " + item.firstname}
+                                    {' '}
+                                    {item.lastname + ' ' + item.firstname}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>
-                                    {item.email.split("@")[0]}
+                                    {item.email.split('@')[0]}
                                   </span>
                                 </Space>
                               </div>
@@ -739,14 +744,14 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth'
     });
   }, []);
 
@@ -754,12 +759,14 @@ export const CommunityNoMember = () => {
     (state: any) => state.communityReducer.community
   );
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {!community ? (
@@ -774,15 +781,15 @@ export const CommunityNoMember = () => {
                     backgroundImage: `url("${
                       community?.coverImage || `/images/ProfilePage/cover.jpg`
                     }")`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
                   }}></div>
                 <div className="avatar rounded-full overflow-hidden object-fill flex">
                   <img
                     src={
                       community?.communityImage ||
-                      "/images/DefaultAvatar/default_avatar.png"
+                      '/images/DefaultAvatar/default_avatar.png'
                     }
                     alt="avt"
                   />
@@ -815,7 +822,7 @@ export const CommunityNoMember = () => {
                         <span className="ml-2">
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -898,9 +905,9 @@ export const CommunityNoMember = () => {
                       <div
                         className="seeMore block mb-3 hover:underline cursor-pointer"
                         style={{
-                          transition: "all .5s",
+                          transition: 'all .5s',
                           color: commonColor.colorBlue3,
-                          fontWeight: 600,
+                          fontWeight: 600
                         }}>
                         See More
                       </div>
@@ -909,10 +916,10 @@ export const CommunityNoMember = () => {
                         style={{ color: themeColorSet.colorText3 }}>
                         <FontAwesomeIcon className="icon" icon={faCalendar} />
                         <span className="ml-2">
-                          Created{" "}
+                          Created{' '}
                           {format(
                             new Date(community.createdAt),
-                            "MMM, d, yyyy"
+                            'MMM, d, yyyy'
                           )}
                         </span>
                       </div>
@@ -970,13 +977,13 @@ export const CommunityNoMember = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + " " + item.firstname}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -1007,14 +1014,14 @@ export const CommunityNoMember = () => {
                                 <span
                                   style={{
                                     fontWeight: 600,
-                                    color: themeColorSet.colorText1,
+                                    color: themeColorSet.colorText1
                                   }}>
-                                  {" "}
-                                  {item.lastname + " " + item.firstname}
+                                  {' '}
+                                  {item.lastname + ' ' + item.firstname}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
-                                  {item.email.split("@")[0]}
+                                  {item.email.split('@')[0]}
                                 </span>
                               </Space>
                             </div>
@@ -1034,7 +1041,7 @@ export const CommunityNoMember = () => {
                         {community.rules.map((item: any, index: number) => {
                           return (
                             <Panel
-                              header={index + 1 + ". " + item.title}
+                              header={index + 1 + '. ' + item.title}
                               key={index}>
                               <p>{item.content}</p>
                             </Panel>
@@ -1066,14 +1073,14 @@ export const CommunityNoMember = () => {
                                   <span
                                     style={{
                                       fontWeight: 600,
-                                      color: themeColorSet.colorText1,
+                                      color: themeColorSet.colorText1
                                     }}>
-                                    {" "}
-                                    {item.lastname + " " + item.firstname}
+                                    {' '}
+                                    {item.lastname + ' ' + item.firstname}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>
-                                    {item.email.split("@")[0]}
+                                    {item.email.split('@')[0]}
                                   </span>
                                 </Space>
                               </div>

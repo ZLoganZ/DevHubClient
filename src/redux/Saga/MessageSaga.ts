@@ -6,14 +6,14 @@ import {
   GET_CONVERSATION_SAGA,
   GET_MESSAGES_SAGA,
   SEEN_MESSAGE_SAGA,
-  SEND_MESSAGE_SAGA,
+  SEND_MESSAGE_SAGA
 } from '@/redux/ActionSaga/MessageActionSaga';
 import {
   AddConversations,
   SetConversations,
   SetCurrentConversation,
   SetMessage,
-  SetMessages,
+  SetMessages
 } from '@/redux/Slice/ConversationSlice';
 
 import { messageService } from '@/services/MessageService';
@@ -38,7 +38,10 @@ export function* theoDoiGetConversationsSaga() {
 // Create conversation Saga
 export function* createConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(messageService.createConversation, payload);
+    const { data, status } = yield call(
+      messageService.createConversation,
+      payload
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(AddConversations(data.content));
       yield put(SetCurrentConversation(data.content));
@@ -55,7 +58,10 @@ export function* theoDoiCreateConversationSaga() {
 // Get conversation Saga
 export function* getConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(messageService.getConversation, payload);
+    const { data, status } = yield call(
+      messageService.getConversation,
+      payload
+    );
     if (status === STATUS_CODE.SUCCESS) {
       yield put(SetCurrentConversation(data.content));
     }

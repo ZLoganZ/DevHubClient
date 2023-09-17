@@ -1,8 +1,9 @@
-import { ConfigProvider, Input, Select } from "antd";
-import { useSelector } from "react-redux";
+import { ConfigProvider, Input, Select } from 'antd';
+import { useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssGroupChatModal";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
+import StyleTotal from './cssGroupChatModal';
 
 interface GroupChatModalProps {
   users: any;
@@ -12,7 +13,7 @@ interface GroupChatModalProps {
 
 const GroupChatModal = (Props: GroupChatModalProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (
@@ -21,8 +22,8 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
         token: {
           ...themeColor,
           controlHeight: 40,
-          colorBorder: themeColorSet.colorBg4,
-        },
+          colorBorder: themeColorSet.colorBg4
+        }
       }}>
       <StyleTotal>
         <div className="space-y-12">
@@ -32,7 +33,7 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
             </p>
             <div className="mt-10 flex flex-col gap-y-8">
               <Input
-                style={{ boxShadow: "none" }}
+                style={{ boxShadow: 'none' }}
                 placeholder={`Group's name`}
                 allowClear
                 onChange={(event) => {
@@ -45,7 +46,7 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
                 options={Props.users.map((user: any) => ({
                   label: user.username,
                   value: user.username,
-                  id: user._id,
+                  id: user._id
                 }))}
                 onChange={(value, options) => {
                   options.forEach((option: any, index: any) => {

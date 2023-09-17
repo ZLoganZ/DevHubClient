@@ -5,35 +5,36 @@ import {
   Input,
   message,
   Popover,
-  Upload,
-} from "antd";
-import Quill from "quill";
-import "react-quill/dist/quill.snow.css";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
-import { sha1 } from "crypto-hash";
-import ImageCompress from "quill-image-compress";
-import Picker from "@emoji-mart/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { UploadOutlined } from "@ant-design/icons";
-import { RcFile } from "antd/es/upload";
-import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
+  Upload
+} from 'antd';
+import Quill from 'quill';
+import 'react-quill/dist/quill.snow.css';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { NavLink } from 'react-router-dom';
+import { sha1 } from 'crypto-hash';
+import ImageCompress from 'quill-image-compress';
+import Picker from '@emoji-mart/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { UploadOutlined } from '@ant-design/icons';
+import { RcFile } from 'antd/es/upload';
+import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
-import { ButtonActiveHover } from "@/components/MiniComponent";
-import { CREATE_POST_SAGA } from "@/redux/ActionSaga/PostActionSaga";
-import { commonColor } from "@/util/cssVariable";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssNewPost";
+import { ButtonActiveHover } from '@/components/MiniComponent';
+import { CREATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
+import { commonColor } from '@/util/cssVariable';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssNewPost';
 
-Quill.register("modules/imageCompress", ImageCompress);
+Quill.register('modules/imageCompress', ImageCompress);
 
 const toolbarOptions = [
-  ["bold", "italic", "underline", "clean"],
-  [{ list: "ordered" }, { list: "bullet" }],
+  ['bold', 'italic', 'underline', 'clean'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
   [{ align: [] }],
-  ["link"],
+  ['link']
 ];
 
 interface Props {
@@ -43,11 +44,11 @@ interface Props {
 //===================================================
 
 const NewPost = (Props: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -57,22 +58,22 @@ const NewPost = (Props: Props) => {
   let [quill, setQuill]: any = useState(null);
 
   useEffect(() => {
-    quill = new Quill("#editor", {
-      placeholder: "Add a Content",
+    quill = new Quill('#editor', {
+      placeholder: 'Add a Content',
       modules: {
-        toolbar: toolbarOptions,
+        toolbar: toolbarOptions
       },
-      theme: "snow",
+      theme: 'snow'
     });
-    quill.on("text-change", function () {
+    quill.on('text-change', function () {
       handleQuillChange();
     });
     // Ngăn chặn paste text vào quill
     // C1
-    quill.root.addEventListener("paste", (event: any) => {
+    quill.root.addEventListener('paste', (event: any) => {
       event.preventDefault();
-      const text = event.clipboardData.getData("text/plain");
-      document.execCommand("insertHTML", false, text);
+      const text = event.clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
     });
 
     setQuill(quill);
@@ -80,46 +81,46 @@ const NewPost = (Props: Props) => {
 
   const handleQuillChange = () => {
     const text = quill.root.innerHTML;
-    form.setValue("content", text);
+    form.setValue('content', text);
   };
 
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: "error",
-      content: "Please enter the content",
+      type: 'error',
+      content: 'Please enter the content'
     });
   };
 
   const form = useForm({
     defaultValues: {
-      title: "",
-      content: "",
-      linkImage: null,
-    },
+      title: '',
+      content: '',
+      linkImage: null
+    }
   });
 
   const onSubmit = async (values: any) => {
-    if (quill.root.innerHTML === "<p><br></p>") {
+    if (quill.root.innerHTML === '<p><br></p>') {
       error();
     } else {
       setLoading(true);
       const result = await handleUploadImage(file);
-      if (result.status === "done") {
+      if (result.status === 'done') {
         dispatch(
           CREATE_POST_SAGA({
             postCreate: values,
-            linkImage: result.url,
+            linkImage: result.url
           })
         );
         setLoading(false);
-        quill.root.innerHTML = "<p><br></p>";
+        quill.root.innerHTML = '<p><br></p>';
         setRandom(Math.random());
         setFile(null);
-        form.setValue("title", "");
-        form.setValue("content", "");
-        form.setValue("linkImage", null);
-        messageApi.success("Create post successfully");
+        form.setValue('title', '');
+        form.setValue('content', '');
+        form.setValue('linkImage', null);
+        messageApi.success('Create post successfully');
       }
     }
   };
@@ -132,49 +133,49 @@ const NewPost = (Props: Props) => {
     if (info.fileList.length === 0) return;
 
     setFile(info?.fileList[0]?.originFileObj);
-    form.setValue("linkImage", info?.fileList[0]?.originFileObj);
+    form.setValue('linkImage', info?.fileList[0]?.originFileObj);
   };
 
   const handleUploadImage = async (file: RcFile) => {
     if (!file)
       return {
         url: null,
-        status: "done",
+        status: 'done'
       };
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj",
+      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
       {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
       }
     );
     const data = await res.json();
     return {
       url: data.secure_url,
-      status: "done",
+      status: 'done'
     };
   };
 
   const handleRemoveImage = async () => {
-    form.setValue("linkImage", null);
+    form.setValue('linkImage', null);
     const formData = new FormData();
     const public_id = file.public_id;
-    formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
+    formData.append('api_key', '235531261932754');
+    formData.append('public_id', public_id);
     const timestamp = String(Date.now());
-    formData.append("timestamp", timestamp);
+    formData.append('timestamp', timestamp);
     const signature = await sha1(
       `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
     );
-    formData.append("signature", signature);
+    formData.append('signature', signature);
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
+      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
       {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
       }
     );
     const data = await res.json();
@@ -188,8 +189,8 @@ const NewPost = (Props: Props) => {
           ...themeColor,
           controlHeight: 40,
           borderRadius: 0,
-          lineWidth: 0,
-        },
+          lineWidth: 0
+        }
       }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
@@ -206,7 +207,7 @@ const NewPost = (Props: Props) => {
                 src={
                   Props.userInfo?.userImage
                     ? Props.userInfo?.userImage
-                    : "./images/DefaultAvatar/default_avatar.png"
+                    : './images/DefaultAvatar/default_avatar.png'
                 }
               />
               <div className="name font-bold ml-2">
@@ -224,7 +225,7 @@ const NewPost = (Props: Props) => {
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
                 onChange={(e) => {
-                  form.setValue("title", e.target.value);
+                  form.setValue('title', e.target.value);
                 }}
               />
             </div>
@@ -237,12 +238,12 @@ const NewPost = (Props: Props) => {
               <Popover
                 placement="top"
                 trigger="click"
-                title={"Emoji"}
+                title={'Emoji'}
                 content={
                   <Picker
                     data={async () => {
                       const response = await fetch(
-                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
+                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
                       );
 
                       return response.json();
@@ -273,9 +274,9 @@ const NewPost = (Props: Props) => {
                     file,
                     onSuccess,
                     onError,
-                    onProgress,
+                    onProgress
                   }: any) => {
-                    onSuccess("ok");
+                    onSuccess('ok');
                   }}
                   data={(file) => {
                     return {};
@@ -295,7 +296,7 @@ const NewPost = (Props: Props) => {
                 onClick={form.handleSubmit(onSubmit)}
                 loading={loading}>
                 <span style={{ color: commonColor.colorWhile1 }}>
-                  {loading ? "Creating.." : "Create"}
+                  {loading ? 'Creating..' : 'Create'}
                 </span>
               </ButtonActiveHover>
             </div>

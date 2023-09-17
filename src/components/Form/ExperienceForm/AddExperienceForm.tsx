@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
+import { AppDispatch, RootState } from '@/redux/configStore';
 import StyleTotal from './cssAddExperienceForm';
 
 interface EditProps {
@@ -18,11 +19,11 @@ dayjs.extend(customParseFormat);
 const dateFormat = 'MM/YYYY';
 
 const AddExperienceForm = (Props: EditProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -33,13 +34,16 @@ const AddExperienceForm = (Props: EditProps) => {
   const [pastDate, setPastDate] = useState('');
 
   const [untilNow, setUntilNow] = useState(false);
-  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([false, false]);
+  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([
+    false,
+    false
+  ]);
 
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
       type: 'error',
-      content: 'Please fill in all fields',
+      content: 'Please fill in all fields'
     });
   };
 
@@ -47,12 +51,17 @@ const AddExperienceForm = (Props: EditProps) => {
     positionName: '',
     companyName: '',
     startDate: '',
-    endDate: '',
+    endDate: ''
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
-    if (positionName === '' || companyName === '' || startDate === '' || endDate === '') {
+    if (
+      positionName === '' ||
+      companyName === '' ||
+      startDate === '' ||
+      endDate === ''
+    ) {
       // console.log('positionName', positionName);
       // console.log('companyName', companyName);
       // console.log('startDate', startDate);
@@ -77,14 +86,15 @@ const AddExperienceForm = (Props: EditProps) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       {contextHolder}
       <StyleTotal theme={themeColorSet}>
         <div className="editPositionForm">
           <div className="flex justify-between">
-            <div className="PositionName form__group field" style={{ width: '48%' }}>
+            <div
+              className="PositionName form__group field"
+              style={{ width: '48%' }}>
               <input
                 //   defaultValue={}
                 pattern="[A-Za-z ]*"
@@ -108,7 +118,9 @@ const AddExperienceForm = (Props: EditProps) => {
                 Position Name
               </label>
             </div>
-            <div className="CompanyName form__group field" style={{ width: '48%' }}>
+            <div
+              className="CompanyName form__group field"
+              style={{ width: '48%' }}>
               <input
                 //   defaultValue={}
                 pattern="[A-Za-z ]*"
@@ -162,8 +174,7 @@ const AddExperienceForm = (Props: EditProps) => {
                   setDisablePicker([false, false]);
                   setUntilNow(false);
                 }
-              }}
-            >
+              }}>
               Until Now
             </button>
           </div>

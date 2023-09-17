@@ -1,11 +1,12 @@
-import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
-import MyPostShare from "@/components/Post/MyPostShare";
-import CommentDetail from "@/components/CommentDetail";
-import MyPost from "@/components/Post/MyPost";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "./cssPostDetail";
+import MyPostShare from '@/components/Post/MyPostShare';
+import CommentDetail from '@/components/CommentDetail';
+import MyPost from '@/components/Post/MyPost';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
+import StyleTotal from './cssPostDetail';
 
 interface PostProps {
   post: any;
@@ -18,7 +19,7 @@ interface PostProps {
 
 const MyPostDetail = (Props: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
@@ -50,8 +51,8 @@ const MyPostDetail = (Props: PostProps) => {
         <div
           className="commentTotal px-3 ml-4"
           style={{
-            maxHeight: "30rem",
-            overflow: "auto",
+            maxHeight: '30rem',
+            overflow: 'auto'
           }}>
           {Props.post?.comments?.map((item: any) => {
             return (

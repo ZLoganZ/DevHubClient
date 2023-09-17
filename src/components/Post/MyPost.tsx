@@ -8,9 +8,9 @@ import {
   faShare,
   faShareNodes,
   faTrash,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Avatar,
   ConfigProvider,
@@ -20,33 +20,34 @@ import {
   Modal,
   notification,
   Popover,
-  Image,
-} from "antd";
-import type { MenuProps } from "antd";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { sha1 } from "crypto-hash";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
-import ReactQuill from "react-quill";
-import { NavLink } from "react-router-dom";
-import "react-quill/dist/quill.bubble.css";
+  Image
+} from 'antd';
+import type { MenuProps } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { sha1 } from 'crypto-hash';
+import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
+import ReactQuill from 'react-quill';
+import { NavLink } from 'react-router-dom';
+import 'react-quill/dist/quill.bubble.css';
 
 import {
   DELETE_POST_SAGA,
   LIKE_POST_SAGA,
   SHARE_POST_SAGA,
   SAVE_POST_SAGA,
-  INCREASE_VIEW_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
-import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
-import EditPostForm from "@/components/Form/EditPostForm";
-import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-import PopupInfoUser from "@/components/PopupInfoUser";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { commonColor } from "@/util/cssVariable";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import StyleTotal from "./cssPost";
+  INCREASE_VIEW_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
+import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
+import EditPostForm from '@/components/Form/EditPostForm';
+import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
+import PopupInfoUser from '@/components/PopupInfoUser';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { commonColor } from '@/util/cssVariable';
+import { useIntersectionObserver } from '@/hooks';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssPost';
 
 interface PostProps {
   post: any;
@@ -54,16 +55,16 @@ interface PostProps {
   detail?: boolean;
 }
 
-type NotificationType = "success" | "info" | "warning" | "error";
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 // -----------------------------------------------------
 
 const MyPost = (PostProps: PostProps) => {
   const link = PostProps.post.link;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -80,7 +81,7 @@ const MyPost = (PostProps: PostProps) => {
 
   useEffect(() => {
     PostProps.post?.isLiked
-      ? setLikeColor("red")
+      ? setLikeColor('red')
       : setLikeColor(themeColorSet.colorText1);
   }, [PostProps.post?.isLiked, change]);
 
@@ -104,7 +105,7 @@ const MyPost = (PostProps: PostProps) => {
   const [shareColor, setShareColor] = useState(themeColorSet.colorText1);
   useEffect(() => {
     PostProps.post?.isShared
-      ? setShareColor("blue")
+      ? setShareColor('blue')
       : setShareColor(themeColorSet.colorText1);
   }, [PostProps.post?.isShared, change]);
 
@@ -126,19 +127,19 @@ const MyPost = (PostProps: PostProps) => {
   const [saveColor, setSaveColor] = useState(themeColorSet.colorText1);
   useEffect(() => {
     PostProps.post?.isSaved
-      ? setSaveColor("yellow")
+      ? setSaveColor('yellow')
       : setSaveColor(themeColorSet.colorText1);
   }, [PostProps.post?.isSaved, change]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
-      return format(date, "p"); // Display only time for today
+      return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, "iiii, p"); // Display full day of the week and time for this week
+      return format(date, 'iiii, p'); // Display full day of the week and time for this week
     } else if (isThisYear(date)) {
-      return format(date, "eeee, MMMM d • p"); // Display full day of the week, date, and time for this year
+      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
     } else {
-      return format(date, "eeee, MMMM d, yyyy • p"); // Display full day of the week, date, year, and time for other cases
+      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
     }
   };
 
@@ -154,32 +155,32 @@ const MyPost = (PostProps: PostProps) => {
   };
 
   const handleRemoveImage = async (imageURL: any) => {
-    const nameSplit = imageURL.split("/");
+    const nameSplit = imageURL.split('/');
     const duplicateName = nameSplit.pop();
 
     // Remove .
-    const public_id = duplicateName?.split(".").slice(0, -1).join(".");
+    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
 
     const formData = new FormData();
-    formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
+    formData.append('api_key', '235531261932754');
+    formData.append('public_id', public_id);
     const timestamp = String(Date.now());
-    formData.append("timestamp", timestamp);
+    formData.append('timestamp', timestamp);
     const signature = await sha1(
       `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
     );
-    formData.append("signature", signature);
+    formData.append('signature', signature);
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
+      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
       {
-        method: "POST",
-        body: formData,
+        method: 'POST',
+        body: formData
       }
     );
     const data = await res.json();
     return {
       url: data,
-      status: "done",
+      status: 'done'
     };
   };
 
@@ -187,11 +188,11 @@ const MyPost = (PostProps: PostProps) => {
     if (PostProps.post?.url) await handleRemoveImage(PostProps.post?.url);
     dispatch(
       DELETE_POST_SAGA({
-        id: PostProps.post?._id,
+        id: PostProps.post?._id
       })
     );
     setIsModalOpen(false);
-    openNotificationWithIcon("success");
+    openNotificationWithIcon('success');
   };
 
   const handleCancel = () => {
@@ -199,9 +200,9 @@ const MyPost = (PostProps: PostProps) => {
   };
 
   // post setting
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div className="item flex items-center px-4 py-2">
           <FontAwesomeIcon className="icon" icon={faUpRightFromSquare} />
@@ -209,11 +210,11 @@ const MyPost = (PostProps: PostProps) => {
         </div>
       ),
       onClick: () => {
-        window.open(`/post/${PostProps.post?._id}`, "_blank")?.focus();
-      },
+        window.open(`/post/${PostProps.post?._id}`, '_blank')?.focus();
+      }
     },
     {
-      key: "2",
+      key: '2',
       label: (
         <div className="item flex items-center px-4 py-2">
           <FontAwesomeIcon className="icon" icon={faPenToSquare} />
@@ -223,7 +224,7 @@ const MyPost = (PostProps: PostProps) => {
       onClick: () => {
         dispatch(
           openDrawer({
-            title: "Edit Post",
+            title: 'Edit Post',
             component: (
               <EditPostForm
                 key={Math.random()}
@@ -232,13 +233,13 @@ const MyPost = (PostProps: PostProps) => {
                 content={PostProps.post?.content}
                 img={PostProps.post?.url}
               />
-            ),
+            )
           })
         );
-      },
+      }
     },
     {
-      key: "3",
+      key: '3',
       label: (
         <div key="3" className="item flex items-center px-4 py-2">
           <FontAwesomeIcon className="icon" icon={faTrash} />
@@ -247,16 +248,16 @@ const MyPost = (PostProps: PostProps) => {
       ),
       onClick: () => {
         showModal();
-      },
-    },
+      }
+    }
   ];
 
   // Notification delete post
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type: NotificationType) => {
     api[type]({
-      message: "Delete Successfully",
-      placement: "bottomRight",
+      message: 'Delete Successfully',
+      placement: 'bottomRight'
     });
   };
 
@@ -264,8 +265,8 @@ const MyPost = (PostProps: PostProps) => {
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
 
   function removeCode(htmlString: any): any {
-    const doc = new DOMParser().parseFromString(htmlString, "text/html");
-    const elements = doc.getElementsByClassName("ql-syntax");
+    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+    const elements = doc.getElementsByClassName('ql-syntax');
     while (elements.length > 0) elements[0].remove();
     return doc.body.innerHTML;
   }
@@ -275,7 +276,7 @@ const MyPost = (PostProps: PostProps) => {
   const displayContent =
     expanded || PostProps.post?.content?.length <= 250
       ? PostProps.post?.content
-      : removeCode(PostProps.post?.content)?.slice(0, 250) + "...";
+      : removeCode(PostProps.post?.content)?.slice(0, 250) + '...';
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
@@ -287,7 +288,7 @@ const MyPost = (PostProps: PostProps) => {
   const onIntersect = () => {
     dispatch(
       INCREASE_VIEW_SAGA({
-        id: PostProps.post?._id,
+        id: PostProps.post?._id
       })
     );
   };
@@ -299,12 +300,12 @@ const MyPost = (PostProps: PostProps) => {
     dispatch(GET_USER_ID());
   }, []);
 
-  const { userID } = useSelector((state: any) => state.authReducer);
+  const { userID } = useSelector((state: RootState) => state.authReducer);
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       {contextHolder}
       <Modal
@@ -323,14 +324,14 @@ const MyPost = (PostProps: PostProps) => {
         onCancel={handleCancel}
         okButtonProps={{
           style: {
-            backgroundColor: commonColor.colorBlue1,
-          },
+            backgroundColor: commonColor.colorBlue1
+          }
         }}
         cancelButtonProps={{
           style: {
             color: themeColorSet.colorText1,
-            backgroundColor: themeColorSet.colorBg3,
-          },
+            backgroundColor: themeColorSet.colorBg3
+          }
         }}>
         <p>You will not be able to recover files after deletion!</p>
       </Modal>
@@ -343,7 +344,7 @@ const MyPost = (PostProps: PostProps) => {
           setVisible={setIsOpenPostDetail}
         />
       )}
-      <StyleTotal theme={themeColorSet} className={"rounded-lg mb-4"}>
+      <StyleTotal theme={themeColorSet} className={'rounded-lg mb-4'}>
         <div ref={postRef} className="post px-4 py-3">
           <div className="postHeader flex justify-between items-center">
             <div className="postHeader__left">
@@ -352,7 +353,7 @@ const MyPost = (PostProps: PostProps) => {
                 <div className="name ml-2">
                   <Popover
                     overlayInnerStyle={{
-                      border: `1px solid ${themeColorSet.colorBg3}`,
+                      border: `1px solid ${themeColorSet.colorBg3}`
                     }}
                     mouseEnterDelay={0.7}
                     content={
@@ -386,7 +387,7 @@ const MyPost = (PostProps: PostProps) => {
                 <Dropdown
                   menu={{ items }}
                   placement="bottomRight"
-                  trigger={["click"]}>
+                  trigger={['click']}>
                   <FontAwesomeIcon size="lg" icon={faEllipsis} />
                 </Dropdown>
               </div>
@@ -399,12 +400,12 @@ const MyPost = (PostProps: PostProps) => {
                 <ReactQuill
                   value={displayContent}
                   readOnly={true}
-                  theme={"bubble"}
+                  theme={'bubble'}
                   modules={{}}
                 />
                 {PostProps.post?.content?.length > 250 && (
                   <a onClick={toggleExpanded}>
-                    {expanded ? "Read less" : "Read more"}
+                    {expanded ? 'Read less' : 'Read more'}
                   </a>
                 )}
               </div>
@@ -413,7 +414,7 @@ const MyPost = (PostProps: PostProps) => {
                   <Image
                     src={PostProps.post.url}
                     alt=""
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                   />
                 </div>
               ) : link ? (
@@ -421,7 +422,7 @@ const MyPost = (PostProps: PostProps) => {
                   href={link.linkAddress}
                   target="_blank"
                   style={{
-                    color: themeColorSet.colorText2,
+                    color: themeColorSet.colorText2
                   }}>
                   <div
                     className="contentLink flex mt-5 px-3 py-3 cursor-pointer"
@@ -431,15 +432,15 @@ const MyPost = (PostProps: PostProps) => {
                         className="mb-2"
                         style={{
                           fontWeight: 600,
-                          color: themeColorSet.colorText1,
+                          color: themeColorSet.colorText1
                         }}>
                         {link.title?.length > 100
-                          ? link.title.slice(0, 100) + "..."
+                          ? link.title.slice(0, 100) + '...'
                           : link.title}
                       </div>
                       <div>
                         {link.description?.length > 100
-                          ? link.description.slice(0, 100) + "..."
+                          ? link.description.slice(0, 100) + '...'
                           : link.description}
                       </div>
                     </div>
@@ -457,11 +458,11 @@ const MyPost = (PostProps: PostProps) => {
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {likeNumber}
-                  {likeNumber > 1 ? " Likes" : " Like"}
+                  {likeNumber > 1 ? ' Likes' : ' Like'}
                 </span>
                 <Avatar
                   className="item"
-                  style={{ backgroundColor: "transparent" }}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={<FontAwesomeIcon icon={faHeart} color={likeColor} />}
                   onClick={(e: any) => {
                     if (isLiked) {
@@ -470,12 +471,12 @@ const MyPost = (PostProps: PostProps) => {
                       setIsLiked(false);
                     } else {
                       setLikeNumber(likeNumber + 1);
-                      setLikeColor("red");
+                      setLikeColor('red');
                       setIsLiked(true);
                     }
                     dispatch(
                       LIKE_POST_SAGA({
-                        id: PostProps.post?._id,
+                        id: PostProps.post?._id
                       })
                     );
                   }}
@@ -484,11 +485,11 @@ const MyPost = (PostProps: PostProps) => {
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {shareNumber}
-                  {shareNumber > 1 ? " Shares" : " Share"}
+                  {shareNumber > 1 ? ' Shares' : ' Share'}
                 </span>
                 <Avatar
                   className="item"
-                  style={{ backgroundColor: "transparent" }}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={<FontAwesomeIcon icon={faShare} color={shareColor} />}
                   onClick={(e: any) => {
                     if (isShared) {
@@ -497,12 +498,12 @@ const MyPost = (PostProps: PostProps) => {
                       setIsShared(false);
                     } else {
                       setShareNumber(shareNumber + 1);
-                      setShareColor("blue");
+                      setShareColor('blue');
                       setIsShared(true);
                     }
                     dispatch(
                       SHARE_POST_SAGA({
-                        id: PostProps.post?._id,
+                        id: PostProps.post?._id
                       })
                     );
                   }}
@@ -514,12 +515,12 @@ const MyPost = (PostProps: PostProps) => {
                 <span>
                   {PostProps.post?.comments?.length}
                   {PostProps.post?.comments?.length > 1
-                    ? " Comments"
-                    : " Comment"}
+                    ? ' Comments'
+                    : ' Comment'}
                 </span>
                 <Avatar
-                  className={`${PostProps.detail ? "cursor-default" : "item"}`}
-                  style={{ backgroundColor: "transparent" }}
+                  className={`${PostProps.detail ? 'cursor-default' : 'item'}`}
+                  style={{ backgroundColor: 'transparent' }}
                   icon={
                     <FontAwesomeIcon
                       icon={faComment}
@@ -535,13 +536,13 @@ const MyPost = (PostProps: PostProps) => {
               </Space>
               <Space className="like" direction="vertical" align="center">
                 <span>
-                  {PostProps.post.views}{" "}
-                  {PostProps.post.views > 1 ? "Views" : "View"}
+                  {PostProps.post.views}{' '}
+                  {PostProps.post.views > 1 ? 'Views' : 'View'}
                 </span>
                 <Space>
                   <Avatar
                     className="item"
-                    style={{ backgroundColor: "transparent" }}
+                    style={{ backgroundColor: 'transparent' }}
                     icon={
                       <FontAwesomeIcon icon={faBookmark} color={saveColor} />
                     }
@@ -551,18 +552,18 @@ const MyPost = (PostProps: PostProps) => {
                         setSaveColor(themeColorSet.colorText1);
                       } else {
                         setIsSaved(true);
-                        setSaveColor("yellow");
+                        setSaveColor('yellow');
                       }
                       dispatch(
                         SAVE_POST_SAGA({
-                          id: PostProps.post?._id,
+                          id: PostProps.post?._id
                         })
                       );
                     }}
                   />
                   <Avatar
                     className="item"
-                    style={{ backgroundColor: "transparent" }}
+                    style={{ backgroundColor: 'transparent' }}
                     icon={<FontAwesomeIcon icon={faShareNodes} />}
                   />
                 </Space>

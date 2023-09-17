@@ -1,24 +1,25 @@
-import { ConfigProvider, Drawer, Space } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { ConfigProvider, Drawer, Space } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { closeDrawer } from "@/redux/Slice/DrawerHOCSlice";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { closeDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import {
   ButtonActiveHover,
-  ButtonCancelHover,
-} from "@/components/MiniComponent";
-import StyleTotal from "./cssDrawerHOC";
+  ButtonCancelHover
+} from '@/components/MiniComponent';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssDrawerHOC';
 
 const DrawerHOC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Drawer
   const { visible, ComponentContentDrawer, callBackSubmit, title, loading } =
-    useSelector((state: any) => state.drawerHOCReducer);
+    useSelector((state: RootState) => state.drawerHOCReducer);
 
   const onClose = () => {
     dispatch(closeDrawer({}));
@@ -27,7 +28,7 @@ const DrawerHOC = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         <div>
@@ -37,7 +38,7 @@ const DrawerHOC = () => {
             onClose={onClose}
             open={visible}
             footer={
-              <div style={{ textAlign: "right" }}>
+              <div style={{ textAlign: 'right' }}>
                 <Space>
                   <ButtonCancelHover onClick={onClose} disabled={loading}>
                     Cancel

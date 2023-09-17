@@ -11,15 +11,16 @@ import {
   ButtonCancelHover
 } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 interface Props {
   users: [];
 }
 
 const OpenGroupModal = (Props: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -1,45 +1,46 @@
-import { useEffect, useMemo, useRef, useState, lazy, Suspense } from "react";
-import { Col, ConfigProvider, Row, Skeleton } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
+import { Col, ConfigProvider, Row, Skeleton } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { GET_COMMUNITY_BY_ID_SAGA } from "@/redux/ActionSaga/CommunityActionSaga";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
+import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
+import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import {
   GET_POSTSHARE_BY_ID_SAGA,
-  GET_POST_BY_ID_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import OpenOtherPostShareDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail";
-import OpenOtherPostDetail from "@/components/ActionComponent/OpenDetail/OpenOtherPostDetail";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
-import { getTheme } from "@/util/functions/ThemeFunction";
+  GET_POST_BY_ID_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
+import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
+import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import { getTheme } from '@/util/functions/ThemeFunction';
 
 const CommunityAdmin = lazy(() =>
-  import("@/pages/Community").then((module) => ({
-    default: module.CommunityAdmin,
+  import('@/pages/Community').then((module) => ({
+    default: module.CommunityAdmin
   }))
 );
 
 const CommunityMember = lazy(() =>
-  import("@/pages/Community").then((module) => ({
-    default: module.CommunityMember,
+  import('@/pages/Community').then((module) => ({
+    default: module.CommunityMember
   }))
 );
 
 const CommunityNoMember = lazy(() =>
-  import("@/pages/Community").then((module) => ({
-    default: module.CommunityNoMember,
+  import('@/pages/Community').then((module) => ({
+    default: module.CommunityNoMember
   }))
 );
 
-const MyProfile = lazy(() => import("@/pages/MyProfile"));
-const Profile = lazy(() => import("@/pages/Profile"));
+const MyProfile = lazy(() => import('@/pages/MyProfile'));
+const Profile = lazy(() => import('@/pages/Profile'));
 
 export const CommunityWrapper = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -49,29 +50,31 @@ export const CommunityWrapper = () => {
     dispatch(GET_COMMUNITY_BY_ID_SAGA(communityID));
   }, []);
 
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
   const role = useMemo(() => {
     if (userInfo.role) {
-      if (userInfo.role === "ADMIN") return "ADMIN";
-      else if (userInfo.role === "MEMBER") return "MEMBER";
-      else return "NO_MEMBER";
+      if (userInfo.role.includes('0101')) return 'ADMIN';
+      else if (userInfo.role.includes('0000')) return 'MEMBER';
+      else return 'NO_MEMBER';
     }
   }, [userInfo]);
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <div
         style={{
-          backgroundColor: themeColorSet.colorBg1,
+          backgroundColor: themeColorSet.colorBg1
         }}>
         <Suspense fallback={<LoadingProfileComponent />}>
-          {role === "ADMIN" ? (
+          {role === 'ADMIN' ? (
             <CommunityAdmin />
-          ) : role === "MEMBER" ? (
+          ) : role === 'MEMBER' ? (
             <CommunityMember />
-          ) : role === "NO_MEMBER" ? (
+          ) : role === 'NO_MEMBER' ? (
             <CommunityNoMember />
           ) : (
             <LoadingProfileComponent />
@@ -84,14 +87,16 @@ export const CommunityWrapper = () => {
 
 export const PostShareWrapper = () => {
   const { postID } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const postSlice = useSelector((state: any) => state.postReducer.post);
-  const userInfoSlice = useSelector((state: any) => state.userReducer.userInfo);
+  const postSlice = useSelector((state: RootState) => state.postReducer.post);
+  const userInfoSlice = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   const post = useMemo(() => postSlice, [postSlice]);
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
@@ -103,7 +108,7 @@ export const PostShareWrapper = () => {
   useEffect(() => {
     dispatch(
       GET_POSTSHARE_BY_ID_SAGA({
-        id: postID,
+        id: postID
       })
     );
   }, []);
@@ -124,11 +129,11 @@ export const PostShareWrapper = () => {
     return (
       <ConfigProvider
         theme={{
-          token: themeColor,
+          token: themeColor
         }}>
         <div
           style={{
-            backgroundColor: themeColorSet.colorBg1,
+            backgroundColor: themeColorSet.colorBg1
           }}>
           <Row className="py-10">
             <Col offset={3} span={18}>
@@ -165,26 +170,24 @@ export const PostShareWrapper = () => {
     );
   } else {
     return (
-      <OpenOtherPostShareDetail
-        key={post._id}
-        post={post}
-        userInfo={userInfo}
-      />
+      <OpenOtherPostShareDetail key={post.id} post={post} userInfo={userInfo} />
     );
   }
 };
 
 export const PostWrapper = () => {
   const { postID } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const postSlice = useSelector((state: any) => state.postReducer.post);
-  const userInfoSlice = useSelector((state: any) => state.userReducer.userInfo);
+  const postSlice = useSelector((state: RootState) => state.postReducer.post);
+  const userInfoSlice = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   const post = useMemo(() => postSlice, [postSlice]);
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
@@ -196,7 +199,7 @@ export const PostWrapper = () => {
   useEffect(() => {
     dispatch(
       GET_POST_BY_ID_SAGA({
-        id: postID,
+        id: postID
       })
     );
   }, []);
@@ -217,11 +220,11 @@ export const PostWrapper = () => {
     return (
       <ConfigProvider
         theme={{
-          token: themeColor,
+          token: themeColor
         }}>
         <div
           style={{
-            backgroundColor: themeColorSet.colorBg1,
+            backgroundColor: themeColorSet.colorBg1
           }}>
           <Row className="py-10">
             <Col offset={3} span={18}>
@@ -258,19 +261,19 @@ export const PostWrapper = () => {
     );
   } else {
     return (
-      <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />
+      <OpenOtherPostDetail key={post.id} post={post} userInfo={userInfo} />
     );
   }
 };
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -284,21 +287,21 @@ export const ProfileWrapper = () => {
 
   const path = location.pathname;
 
-  if (path === "/me") navigate(`/user/${userIDFromStore}`);
+  if (path === '/me') navigate(`/user/${userIDFromStore}`);
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
         <Suspense fallback={<LoadingProfileComponent />}>
           {!userIDFromStore ? (
             <LoadingProfileComponent />
-          ) : userID === "me" || userID === userIDFromStore ? (
+          ) : userID === 'me' || userID === userIDFromStore ? (
             <MyProfile key={userID} />
           ) : (
-            <Profile key={userID} userID={userID} />
+            <Profile key={userID} userID={userID!} />
           )}
         </Suspense>
       </div>

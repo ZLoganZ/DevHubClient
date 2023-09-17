@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { Comment } from "@ant-design/compatible";
-import { Avatar, ConfigProvider, Skeleton, Tooltip } from "antd";
+import { useState } from 'react';
+import { Comment } from '@ant-design/compatible';
+import { Avatar, ConfigProvider, Skeleton, Tooltip } from 'antd';
 import Icon, {
   DislikeFilled,
   DislikeOutlined,
   LikeFilled,
-  LikeOutlined,
-} from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+  LikeOutlined
+} from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import StyleTotal from "@/components/Post/cssPost";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleTotal from '@/components/Post/cssPost';
 import {
   DISLIKE_COMMENT_POST_SAGA,
-  LIKE_COMMENT_POST_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
+  LIKE_COMMENT_POST_SAGA
+} from '@/redux/ActionSaga/PostActionSaga';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 interface CommentProps {
   comment: any;
@@ -29,8 +30,8 @@ interface CommentProps {
 
 const CommentDetail = (Props: CommentProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
-  const dispatch = useDispatch();
+  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const dispatch = useDispatch<AppDispatch>();
 
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
@@ -42,41 +43,41 @@ const CommentDetail = (Props: CommentProps) => {
   const [action, setAction] = useState(
     Props.comment?.isLiked || Props.comment?.isDisliked
       ? Props.comment?.isLiked
-        ? "liked"
-        : "disliked"
-      : ""
+        ? 'liked'
+        : 'disliked'
+      : ''
   );
 
   const like = () => {
-    if (action === "liked") {
+    if (action === 'liked') {
       setLike((prev: number) => prev - 1);
-      setAction("");
+      setAction('');
     } else {
       setLike((prev: number) => prev + 1);
-      if (action === "disliked") setDislike((prev: any) => prev - 1);
-      setAction("liked");
+      if (action === 'disliked') setDislike((prev: any) => prev - 1);
+      setAction('liked');
     }
     dispatch(
       LIKE_COMMENT_POST_SAGA({
         idComment: Props.comment._id,
-        postID: Props.postID,
+        postID: Props.postID
       })
     );
   };
 
   const dislike = () => {
-    if (action === "disliked") {
+    if (action === 'disliked') {
       setDislike((prev: number) => prev - 1);
-      setAction("");
+      setAction('');
     } else {
       setDislike((prev: number) => prev + 1);
-      if (action === "liked") setLike((prev: any) => prev - 1);
-      setAction("disliked");
+      if (action === 'liked') setLike((prev: any) => prev - 1);
+      setAction('disliked');
     }
     dispatch(
       DISLIKE_COMMENT_POST_SAGA({
         idComment: Props.comment._id,
-        postID: Props.postID,
+        postID: Props.postID
       })
     );
   };
@@ -86,7 +87,7 @@ const CommentDetail = (Props: CommentProps) => {
       Props.selectedCommentId === Props.comment._id ? null : Props.comment._id;
     Props.onData({
       isReply: selectedCommentId ? true : false,
-      idComment: selectedCommentId,
+      idComment: selectedCommentId
     });
     Props.onSelectComment(selectedCommentId);
   };
@@ -97,34 +98,34 @@ const CommentDetail = (Props: CommentProps) => {
         <Icon
           type="like"
           component={
-            action === "liked"
+            action === 'liked'
               ? (LikeFilled as React.ForwardRefExoticComponent<any>)
               : (LikeOutlined as React.ForwardRefExoticComponent<any>)
           }
           onClick={like}
           style={{
-            fontSize: "0.9rem",
+            fontSize: '0.9rem'
           }}
         />
       </Tooltip>
-      <span style={{ paddingLeft: 8, cursor: "auto" }}>{likes}</span>
+      <span style={{ paddingLeft: 8, cursor: 'auto' }}>{likes}</span>
     </span>,
     <span key="comment-basic-dislike">
       <Tooltip title="Dislike">
         <Icon
           type="dislike"
           component={
-            action === "disliked"
+            action === 'disliked'
               ? (DislikeFilled as React.ForwardRefExoticComponent<any>)
               : (DislikeOutlined as React.ForwardRefExoticComponent<any>)
           }
           onClick={dislike}
           style={{
-            fontSize: "0.9rem",
+            fontSize: '0.9rem'
           }}
         />
       </Tooltip>
-      <span style={{ paddingLeft: 8, cursor: "auto" }}>{dislikes}</span>
+      <span style={{ paddingLeft: 8, cursor: 'auto' }}>{dislikes}</span>
     </span>,
     {
       ...(Props.isReply ? (
@@ -137,30 +138,30 @@ const CommentDetail = (Props: CommentProps) => {
           {...(Props.selectedCommentId === Props.comment._id
             ? {
                 style: {
-                  color: "#1890ff",
-                  fontWeight: "bold",
-                  fontSize: "0.9rem",
-                },
+                  color: '#1890ff',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem'
+                }
               }
             : {
                 style: {
-                  color: "#D4D4D4A6",
-                  fontWeight: "normal",
-                  fontSize: "0.9rem",
-                },
+                  color: '#D4D4D4A6',
+                  fontWeight: 'normal',
+                  fontSize: '0.9rem'
+                }
               })}>
           <span style={{ color: themeColorSet.colorText3 }}>
-            {Props.selectedCommentId === Props.comment._id ? "Cancel" : "Reply"}
+            {Props.selectedCommentId === Props.comment._id ? 'Cancel' : 'Reply'}
           </span>
         </span>
-      )),
-    },
+      ))
+    }
   ];
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
         {!Props.comment?.user?.username ? (
@@ -173,7 +174,7 @@ const CommentDetail = (Props: CommentProps) => {
                   style={{
                     fontWeight: 600,
                     color: themeColorSet.colorText1,
-                    fontSize: "0.85rem",
+                    fontSize: '0.85rem'
                   }}>
                   {Props.comment?.user?.username}
                 </div>
@@ -187,7 +188,7 @@ const CommentDetail = (Props: CommentProps) => {
                   />
                 ) : (
                   <Avatar
-                    style={{ backgroundColor: "#87d068" }}
+                    style={{ backgroundColor: '#87d068' }}
                     icon="user"
                     alt={Props.comment?.user?.username}
                   />

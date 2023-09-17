@@ -1,23 +1,24 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { Avatar, ConfigProvider } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Avatar, ConfigProvider } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBriefcase,
   faEllipsis,
-  faSnowflake,
-} from "@fortawesome/free-solid-svg-icons";
+  faSnowflake
+} from '@fortawesome/free-solid-svg-icons';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { commonColor } from "@/util/cssVariable";
-import { FOLLOW_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
-import StyleTotal from "./cssPopupInfoUser";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { commonColor } from '@/util/cssVariable';
+import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssPopupInfoUser';
 
 const PopupInfoUser = ({ userInfo, isMe }: any) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -26,10 +27,10 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet} className="flex justify-center">
-        <div className="popupInfoUser flex" style={{ width: "95%" }}>
+        <div className="popupInfoUser flex" style={{ width: '95%' }}>
           <NavLink to={`/user/${userInfo?.id}`}>
             <div className="popupInfoUser__avatar mr-5 mt-3">
               <Avatar size={70} src={userInfo?.userImage} />
@@ -42,7 +43,7 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
                 style={{
                   color: themeColorSet.colorText1,
                   fontWeight: 600,
-                  fontSize: "1.3rem",
+                  fontSize: '1.3rem'
                 }}>
                 {userInfo.username}
               </div>
@@ -57,16 +58,16 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
             </div>
             <div className="follow mt-5">
               <span className="follower item mr-2">
-                <span className="mr-1">{userInfo.followers?.length}</span>{" "}
-                {userInfo.followers?.length > 1 ? "Followers" : "Follower"}
+                <span className="mr-1">{userInfo.followers?.length}</span>{' '}
+                {userInfo.followers?.length > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className="following item mr-2">
-                <span className="mr-1">{userInfo.following?.length}</span>{" "}
-                {userInfo.following?.length > 1 ? "Followings" : "Following"}
+                <span className="mr-1">{userInfo.following?.length}</span>{' '}
+                {userInfo.following?.length > 1 ? 'Followings' : 'Following'}
               </span>
               <span className="post mr-2">
-                <span className="mr-1">{userInfo.posts?.length}</span>{" "}
-                {userInfo.posts?.length > 1 ? "Posts" : "Post"}
+                <span className="mr-1">{userInfo.posts?.length}</span>{' '}
+                {userInfo.posts?.length > 1 ? 'Posts' : 'Post'}
               </span>
             </div>
             <div className="experience mt-5 mb-5">
@@ -99,7 +100,7 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
                       setIsFollowing(!isFollowing);
                     }}>
                     <span style={{ color: commonColor.colorWhile1 }}>
-                      {isFollowing ? "Following" : "Follow"}
+                      {isFollowing ? 'Following' : 'Follow'}
                     </span>
                   </button>
                 </div>
@@ -110,7 +111,7 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
           </div>
         </div>

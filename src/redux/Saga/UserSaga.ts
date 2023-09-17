@@ -19,7 +19,6 @@ import { STATUS_CODE } from '@/util/constants/SettingSystem';
 function* updateUserSaga({ payload }: any) {
   try {
     const { data, status } = yield userService.updateUser(
-      payload.id,
       payload.userUpdate
     );
     if (status === STATUS_CODE.SUCCESS) {
@@ -40,7 +39,7 @@ export function* theoDoiUpdateUserSaga() {
 // Get Followers Saga
 function* getFollowersSaga() {
   try {
-    const { data, status } = yield userService.getFollowers();
+    const { data, status } = yield userService.getFollowers('');
     if (status === STATUS_CODE.SUCCESS) {
       data.content.followers.forEach((follower: any) => {
         follower.username = follower.lastname + ' ' + follower.firstname;

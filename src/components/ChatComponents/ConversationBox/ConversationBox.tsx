@@ -1,11 +1,12 @@
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
-import { format, isThisWeek, isThisYear, isToday } from "date-fns";
+import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 
-import AvatarGroup from "@/components/Avatar/AvatarGroup";
-import Avatar from "@/components/Avatar/AvatarMessage";
-import useOtherUser from "@/hooks/useOtherUser";
-import { getTheme } from "@/util/functions/ThemeFunction";
+import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import Avatar from '@/components/Avatar/AvatarMessage';
+import { useOtherUser } from '@/hooks';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
 
 interface ConversationBoxProps {
   data: any;
@@ -14,9 +15,11 @@ interface ConversationBoxProps {
 
 const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   const lastMessage = useMemo(() => {
@@ -42,22 +45,22 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   }, [lastMessage, userID]);
 
   const lastMessageText = useMemo(() => {
-    if (lastMessage?.image) return "Sent an image";
+    if (lastMessage?.image) return 'Sent an image';
 
     if (lastMessage?.body) return lastMessage.body;
 
-    return "Start a conversation";
+    return 'Start a conversation';
   }, [lastMessage, userID]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
-      return format(date, "p"); // Display only time for today
+      return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, "iiii, p"); // Display full day of the week and time for this week
+      return format(date, 'iiii, p'); // Display full day of the week and time for this week
     } else if (isThisYear(date)) {
-      return format(date, "eeee, MMMM d • p"); // Display full day of the week, date, and time for this year
+      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
     } else {
-      return format(date, "eeee, MMMM d, yyyy • p"); // Display full day of the week, date, year, and time for other cases
+      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
     }
   };
 
@@ -67,7 +70,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
       style={{
         backgroundColor: Props.selected
           ? themeColorSet.colorBg2
-          : themeColorSet.colorBg1,
+          : themeColorSet.colorBg1
       }}>
       {Props.data.isGroup ? (
         <AvatarGroup key={Props.data._id} users={Props.data.users} />
@@ -82,7 +85,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
             <p
               className={`text-md font-medium`}
               style={{
-                color: themeColorSet.colorText1,
+                color: themeColorSet.colorText1
               }}>
               <span style={{ color: themeColorSet.colorText1 }}>
                 {Props.data.name || otherUser.username}
@@ -104,7 +107,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
             className={`truncate text-sm ${
               hasSeen
                 ? themeColorSet.colorText1
-                : themeColorSet.colorText1 + " shadow-xl font-extrabold"
+                : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
             }`}>
             <span style={{ color: themeColorSet.colorText2 }}>
               {isOwn ? `You: ${lastMessageText}` : lastMessageText}

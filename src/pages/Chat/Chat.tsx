@@ -23,22 +23,23 @@ import {
   useConversationsData,
   useCurrentConversationData,
   useFollowersData
-} from '@/hooks/DataProvider';
+} from '@/hooks';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
 import StyleTotal from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { conversationID } = useParams();
 
-  const { userID } = useSelector((state: any) => state.authReducer);
+  const { userID } = useSelector((state: RootState) => state.authReducer);
 
   useEffect(() => {
     dispatch(GET_USER_ID());
@@ -46,7 +47,7 @@ const Chat = () => {
 
   const { conversations, isLoadingConversations } = useConversationsData();
 
-  const { followers, isLoadingFollowers } = useFollowersData(userID);
+  const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
   const { isLoadingConversation } = useCurrentConversationData(
     conversationID ? conversationID : undefined

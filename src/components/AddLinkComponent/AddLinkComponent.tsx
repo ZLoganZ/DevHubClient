@@ -1,22 +1,23 @@
-import { useEffect, useState } from "react";
-import { ConfigProvider, Dropdown, Button, Input, Avatar } from "antd";
-import { faTrashCan, faPlus, faInfo } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DownOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from 'react';
+import { ConfigProvider, Dropdown, Button, Input, Avatar } from 'antd';
+import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { DownOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
 
-import StyleTotal from "./cssAddLinkComponent";
-import { closeModal } from "@/redux/Slice/ModalHOCSlice";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { commonColor } from "@/util/cssVariable";
-import contactArrays from "@/components/GlobalSetting/ItemComponent/Contact";
-import { ButtonActiveHover } from "@/components/MiniComponent";
+import StyleTotal from './cssAddLinkComponent';
+import { closeModal } from '@/redux/Slice/ModalHOCSlice';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { commonColor } from '@/util/cssVariable';
+import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
+import { ButtonActiveHover } from '@/components/MiniComponent';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 const AddLinkComponent = (Props: any) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -44,19 +45,19 @@ const AddLinkComponent = (Props: any) => {
       contactArray[parseInt(addTooltipsTemp[index].key)].label
     ) {
       switch (e.key) {
-        case "0":
+        case '0':
           addTooltipsTemp[index].tooltip = contactArray[0].label;
           break;
-        case "1":
+        case '1':
           addTooltipsTemp[index].tooltip = contactArray[1].label;
           break;
-        case "2":
+        case '2':
           addTooltipsTemp[index].tooltip = contactArray[2].label;
           break;
-        case "3":
+        case '3':
           addTooltipsTemp[index].tooltip = contactArray[3].label;
           break;
-        case "4":
+        case '4':
           addTooltipsTemp[index].tooltip = contactArray[4].label;
           break;
       }
@@ -137,8 +138,8 @@ const AddLinkComponent = (Props: any) => {
         token: {
           ...themeColor,
           colorBorder: themeColorSet.colorBg4,
-          controlHeight: 40,
-        },
+          controlHeight: 40
+        }
       }}>
       <StyleTotal theme={themeColorSet}>
         <div className="flex flex-col mt-7">
@@ -149,22 +150,22 @@ const AddLinkComponent = (Props: any) => {
                   items: contactArray,
                   onClick: (e) => {
                     handleDropClick(e, index);
-                  },
+                  }
                 }}
-                trigger={["click"]}>
+                trigger={['click']}>
                 <a onClick={(e) => e.preventDefault()}>
                   <Button
                     className="flex items-center"
                     style={{
-                      color: themeColorSet.colorText1,
+                      color: themeColorSet.colorText1
                     }}>
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
                       className="item"
                       icon={contactArray[parseInt(item.key)].icon}
-                      size={"small"}
+                      size={'small'}
                     />
-                    <DownOutlined style={{ fontSize: "0.8rem" }} />
+                    <DownOutlined style={{ fontSize: '0.8rem' }} />
                   </Button>
                 </a>
               </Dropdown>
@@ -180,18 +181,18 @@ const AddLinkComponent = (Props: any) => {
                 style={{
                   height: 38,
                   backgroundColor: themeColorSet.colorBg2,
-                  border: "1px solid",
+                  border: '1px solid',
                   borderColor: themeColorSet.colorBg4,
                   color: themeColorSet.colorText1,
-                  borderRadius: 8,
+                  borderRadius: 8
                 }}
               />
               <Input
                 key={index}
                 className={
                   addTooltips[index].state
-                    ? "w-full ml-2 pl-2 inputlink"
-                    : "w-full ml-2 pl-2 inputlink hidden"
+                    ? 'w-full ml-2 pl-2 inputlink'
+                    : 'w-full ml-2 pl-2 inputlink hidden'
                 }
                 inputMode="text"
                 value={addTooltips[index]?.tooltip}
@@ -206,10 +207,10 @@ const AddLinkComponent = (Props: any) => {
                 style={{
                   height: 38,
                   backgroundColor: themeColorSet.colorBg2,
-                  border: "1px solid",
+                  border: '1px solid',
                   borderColor: themeColorSet.colorBg4,
                   color: themeColorSet.colorText1,
-                  borderRadius: 8,
+                  borderRadius: 8
                 }}
               />
 
@@ -217,8 +218,8 @@ const AddLinkComponent = (Props: any) => {
                 className="icon-edit-tooltip ml-3"
                 shape="circle"
                 style={{
-                  border: "none",
-                  backgroundColor: themeColorSet.colorBg3,
+                  border: 'none',
+                  backgroundColor: themeColorSet.colorBg3
                 }}
                 onClick={() => {
                   handleShowTooltip(index);
@@ -226,13 +227,13 @@ const AddLinkComponent = (Props: any) => {
                 size="small">
                 <FontAwesomeIcon
                   icon={faInfo}
-                  style={{ color: commonColor.colorBlue2, fontSize: "1rem" }}
+                  style={{ color: commonColor.colorBlue2, fontSize: '1rem' }}
                 />
               </Button>
 
               <Button
                 className="icon-trash"
-                style={{ border: "none" }}
+                style={{ border: 'none' }}
                 onClick={() => {
                   handleDelete(index);
                 }}>
@@ -245,20 +246,20 @@ const AddLinkComponent = (Props: any) => {
             onClick={() => {
               setAddLinkArr([
                 ...addLinkArr,
-                { key: "0", tooltip: "Facebook", link: "" },
+                { key: '0', tooltip: 'Facebook', link: '' }
               ]);
               addLinkArrTemp = [
                 ...addLinkArr,
-                { key: "0", tooltip: "Facebook", link: "" },
+                { key: '0', tooltip: 'Facebook', link: '' }
               ];
 
               setAddTooltips([
                 ...addTooltips,
-                { key: "0", tooltip: "Facebook", state: false },
+                { key: '0', tooltip: 'Facebook', state: false }
               ]);
               addTooltipsTemp = [
                 ...addTooltips,
-                { key: "0", tooltip: "Facebook", state: false },
+                { key: '0', tooltip: 'Facebook', state: false }
               ];
             }}>
             <FontAwesomeIcon icon={faPlus} className="mr-2" />

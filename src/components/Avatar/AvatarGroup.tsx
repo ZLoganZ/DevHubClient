@@ -1,13 +1,19 @@
 import { Image } from 'antd';
 import { useSelector } from 'react-redux';
 
+import { RootState } from '@/redux/configStore';
+
 interface AvatarProps {
   users?: any;
 }
 
 const AvatarGroup = (Props: AvatarProps) => {
-  const { members } = useSelector((state: any) => state.activeListReducer);
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const { members } = useSelector(
+    (state: RootState) => state.activeListReducer
+  );
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   const slicedUsers = Props.users.slice(0, 3);
   const isActive = Props.users?.map((user: any) => {
@@ -18,7 +24,7 @@ const AvatarGroup = (Props: AvatarProps) => {
   const positionMap = {
     0: 'top-0 left-[12px]',
     1: 'bottom-0',
-    2: 'bottom-0 right-0',
+    2: 'bottom-0 right-0'
   };
 
   return (
@@ -28,8 +34,7 @@ const AvatarGroup = (Props: AvatarProps) => {
           key={user.id}
           className={`absolute inline-block rounded-full overflow-hidden h-[21px] w-[21px] ${
             positionMap[index as keyof typeof positionMap]
-          }`}
-        >
+          }`}>
           <Image
             preview={false}
             src={user?.userImage || './images/DefaultAvatar/default_avatar.png'}
@@ -37,7 +42,7 @@ const AvatarGroup = (Props: AvatarProps) => {
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
+              objectFit: 'cover'
             }}
           />
         </div>

@@ -1,11 +1,12 @@
-import { Skeleton, Space } from "antd";
-import { useSelector } from "react-redux";
+import { Skeleton, Space } from 'antd';
+import { useSelector } from 'react-redux';
 
-import { getTheme } from "@/util/functions/ThemeFunction";
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { RootState } from '@/redux/configStore';
 
 const LoadingConversation = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   return (
@@ -17,45 +18,45 @@ const LoadingConversation = () => {
       <div
         className="shared"
         style={{
-          width: "23%",
-          height: "100vh",
-          marginLeft: "77%",
-          position: "fixed",
-          backgroundColor: themeColorSet.colorBg1,
+          width: '23%',
+          height: '100vh',
+          marginLeft: '77%',
+          position: 'fixed',
+          backgroundColor: themeColorSet.colorBg1
         }}>
         <div
           className="extension px-3 flex items-center"
           style={{
-            height: "12%",
-            borderBottom: "1px solid",
-            borderColor: themeColorSet.colorBg4,
+            height: '12%',
+            borderBottom: '1px solid',
+            borderColor: themeColorSet.colorBg4
           }}>
           <div className="flex justify-center items-center w-full">
             <div
               className="setting text-center"
               style={{
-                width: "25%",
+                width: '25%'
               }}>
               <Skeleton.Button active size="large" shape="circle" />
             </div>
             <div
               className="notification text-center"
               style={{
-                width: "25%",
+                width: '25%'
               }}>
               <Skeleton.Button active size="large" shape="circle" />
             </div>
             <div
               className="warning text-center"
               style={{
-                width: "25%",
+                width: '25%'
               }}>
               <Skeleton.Button active size="large" shape="circle" />
             </div>
             <div
               className="logout text-center"
               style={{
-                width: "25%",
+                width: '25%'
               }}>
               <Skeleton.Button active size="large" shape="circle" />
             </div>

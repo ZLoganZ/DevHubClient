@@ -8,67 +8,65 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 const RenderPeopleItem = ({ item }: any) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [follow, setFollow] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
-      }}
-    >
+        token: themeColor
+      }}>
       <div>
         <div className="peopleItem flex justify-between items-center mt-5 p-2">
           <div
             className="peopleImage p-3"
             style={{
-              width: '10%',
-            }}
-          >
+              width: '10%'
+            }}>
             <img
-              src={item.userImage || './images/DefaultAvatar/default_avatar.png'}
+              src={
+                item.userImage || './images/DefaultAvatar/default_avatar.png'
+              }
               alt=""
               style={{
-                borderRadius: '50%',
+                borderRadius: '50%'
               }}
             />
           </div>
           <div
             className="peopleInfo"
             style={{
-              width: '75%',
-            }}
-          >
+              width: '75%'
+            }}>
             <Space className="top mb-2">
               <span
                 className="name"
                 style={{
                   color: themeColorSet.colorText1,
                   fontSize: '1.1rem',
-                  fontWeight: '600',
-                }}
-              >
+                  fontWeight: '600'
+                }}>
                 {item.username}
               </span>
               <span
                 className="icon"
                 style={{
-                  color: themeColorSet.colorText3,
-                }}
-              >
+                  color: themeColorSet.colorText3
+                }}>
                 {item.verified ? (
                   <CheckCircleOutlined
                     style={{
                       color: commonColor.colorBlue1,
-                      fontSize: '1rem',
+                      fontSize: '1rem'
                     }}
                   />
                 ) : (
@@ -78,9 +76,8 @@ const RenderPeopleItem = ({ item }: any) => {
               <span
                 className="alias"
                 style={{
-                  color: themeColorSet.colorText3,
-                }}
-              >
+                  color: themeColorSet.colorText3
+                }}>
                 {item.email.slice(0, item.email.indexOf('@'))}
               </span>
             </Space>
@@ -88,12 +85,13 @@ const RenderPeopleItem = ({ item }: any) => {
               className="bottom"
               style={{
                 color: themeColorSet.colorText3,
-                fontSize: '0.9rem',
-              }}
-            >
+                fontSize: '0.9rem'
+              }}>
               {item?.experiences.length > 0
                 ? item?.experiences.length > 1
-                  ? item?.experiences[0].positionName + ' & ' + item?.experiences[1].positionName
+                  ? item?.experiences[0].positionName +
+                    ' & ' +
+                    item?.experiences[1].positionName
                   : item?.experiences[0].positionName
                 : ''}
             </div>
@@ -101,16 +99,14 @@ const RenderPeopleItem = ({ item }: any) => {
           <div
             className="followBtn text-center"
             style={{
-              width: '10%',
-            }}
-          >
+              width: '10%'
+            }}>
             <ButtonActiveHover
               rounded
               onClick={() => {
                 setFollow(!follow);
                 dispatch(FOLLOW_USER_SAGA(item._id));
-              }}
-            >
+              }}>
               {' '}
               {!follow ? 'Follow' : 'Following'}
             </ButtonActiveHover>
@@ -119,7 +115,7 @@ const RenderPeopleItem = ({ item }: any) => {
         <Divider
           style={{
             height: '2px',
-            backgroundColor: themeColorSet.colorBg2,
+            backgroundColor: themeColorSet.colorBg2
           }}
         />
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Col,
@@ -8,118 +8,95 @@ import {
   Row,
   Space,
   Tabs,
-  Tag,
-} from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import ReactQuill from "react-quill";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-import { useParams } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  Tag
+} from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactQuill from 'react-quill';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSnowflake,
   faFileLines,
   faLocationDot,
   faBriefcase,
   faStar,
-  faCodeFork,
-} from "@fortawesome/free-solid-svg-icons";
-import GithubColors from "github-colors";
+  faCodeFork
+} from '@fortawesome/free-solid-svg-icons';
+import GithubColors from 'github-colors';
 import {
   faFacebookF,
   faTwitter,
   faGithub,
   faInstagram,
-  faLinkedin,
-} from "@fortawesome/free-brands-svg-icons";
-import { NavLink } from "react-router-dom";
-import "react-quill/dist/quill.bubble.css";
+  faLinkedin
+} from '@fortawesome/free-brands-svg-icons';
+import { NavLink } from 'react-router-dom';
+import 'react-quill/dist/quill.bubble.css';
 
-import descArray from "@/components/GlobalSetting/ItemComponent/Description";
-import NewPost from "@/components/NewPost";
-import EditProfileForm from "@/components/Form/EditProfileForm";
-import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
-import MyPostShare from "@/components/Post/MyPostShare";
-import MyPost from "@/components/Post/MyPost";
+import descArray from '@/components/GlobalSetting/ItemComponent/Description';
+import NewPost from '@/components/NewPost';
+import EditProfileForm from '@/components/Form/EditProfileForm';
+import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
+import MyPostShare from '@/components/Post/MyPostShare';
+import MyPost from '@/components/Post/MyPost';
 
-import { GET_ALL_POST_BY_USERID_SAGA } from "@/redux/ActionSaga/PostActionSaga";
-import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
-import { setIsInProfile } from "@/redux/Slice/PostSlice";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { commonColor } from "@/util/cssVariable";
-import StyleTotal from "./cssMyProfile";
+import { GET_ALL_POST_BY_USERID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
+import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
+import { setIsInProfile } from '@/redux/Slice/PostSlice';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { commonColor } from '@/util/cssVariable';
+import { usePostsData } from '@/hooks';
+import { RepositoryType } from '@/types';
+import { AppDispatch, RootState } from '@/redux/configStore';
+
+import StyleTotal from './cssMyProfile';
 
 const MyProfile = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { userID } = useParams<{ userID: string }>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
     dispatch(
       GET_ALL_POST_BY_USERID_SAGA({
-        userId: userID,
+        userId: userID
       })
     );
     dispatch(setIsInProfile(true));
   }, []);
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, []);
-
-  const postArraySlice = useSelector((state: any) => state.postReducer.postArr);
-  const userInfoSlice = useSelector((state: any) => state.userReducer.userInfo);
-  const ownerInfoSlice = useSelector(
-    (state: any) => state.postReducer.ownerInfo
-  );
-
-  const postArray = useMemo(() => postArraySlice, [postArraySlice]);
-  const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
-  const ownerInfo = useMemo(() => ownerInfoSlice, [ownerInfoSlice]);
-
-  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = useState(true);
-
-  const postArrayRef = useRef(postArray);
-
-  const openInNewTab = (url: any) => {
-    window.open(url, "_blank", "noreferrer");
+  const openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noreferrer');
   };
 
   useEffect(() => {
-    document.title = isNotAlreadyChanged
-      ? "DevHub"
-      : `${ownerInfo?.username} | DevHub`;
-  }, [isNotAlreadyChanged]);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  const { isLoading, postArray, userInfo, ownerInfo, isFetching } =
+    usePostsData('me');
 
   useEffect(() => {
-    if (!isNotAlreadyChanged) return;
+    document.title = isLoading ? 'DevHub' : `${userInfo?.lastname} | DevHub`;
+  }, [isLoading]);
 
-    setIsNotAlreadyChanged(postArrayRef.current === postArray);
-  }, [isNotAlreadyChanged, postArray]);
-
-  useEffect(() => {
-    if (!isNotAlreadyChanged) {
-      postArrayRef.current = postArray;
-    }
-  }, [isNotAlreadyChanged, postArray]);
-
-  // const { isLoading, isError, postArray, userInfo, ownerInfo, isFetching } = usePostsData('me');
-
-  const renderRepositoryIem = (item: any, index: any) => {
+  const renderRepositoryIem = (item: RepositoryType) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <a
         className="renderRepositoryIem mb-5"
         style={{
           borderBottom: `1px solid ${themeColorSet.colorBg4}`,
-          width: "48%",
+          width: '48%'
         }}
         href={item.url}
         target="_blank">
@@ -127,7 +104,7 @@ const MyProfile = () => {
           <span>
             <img
               className="iconRepos inline"
-              style={{ color: "red" }}
+              style={{ color: 'red' }}
               src="/images/Common/repos.svg"
             />
           </span>
@@ -136,7 +113,7 @@ const MyProfile = () => {
             style={{
               color: commonColor.colorBlue3,
               fontWeight: 600,
-              fontSize: "1.1rem",
+              fontSize: '1.1rem'
             }}>
             {item.name}
           </span>
@@ -145,10 +122,10 @@ const MyProfile = () => {
             style={{
               color: themeColorSet.colorText3,
               border: `1px solid ${themeColorSet.colorBg4}`,
-              fontSize: "0.8rem",
-              padding: "0.1rem 0.5rem",
+              fontSize: '0.8rem',
+              padding: '0.1rem 0.5rem'
             }}>
-            {item.private ? "Private" : "Public"}
+            {item.private ? 'Private' : 'Public'}
           </span>
         </div>
         <div
@@ -180,10 +157,10 @@ const MyProfile = () => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {!postArray || !userInfo || !ownerInfo || isNotAlreadyChanged ? (
+        {!postArray || !userInfo || !ownerInfo || isLoading || isFetching ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -193,24 +170,23 @@ const MyProfile = () => {
                   className="cover w-full h-80 rounded-br-lg rounded-bl-lg"
                   style={{
                     backgroundImage: `url("${
-                      ownerInfo?.coverImage || `/images/ProfilePage/cover.jpg`
+                      ownerInfo.cover_image || `/images/ProfilePage/cover.jpg`
                     }")`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
                   }}></div>
                 <div className="avatar rounded-full overflow-hidden object-cover flex">
                   <Image
                     src={
-                      ownerInfo?.userImage
-                        ? ownerInfo?.userImage
-                        : "./images/DefaultAvatar/default_avatar.png"
+                      ownerInfo.user_image ||
+                      './images/DefaultAvatar/default_avatar.png'
                     }
                     alt="avt"
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
                     }}
                   />
                 </div>
@@ -221,20 +197,21 @@ const MyProfile = () => {
                     <div
                       className="text-2xl font-bold"
                       style={{ color: themeColorSet.colorText1 }}>
-                      {ownerInfo.username}
+                      {ownerInfo.lastname}
                     </div>
                     <div className="position mt-2">
                       <FontAwesomeIcon className="icon" icon={faSnowflake} />
                       <span
                         style={{ color: themeColorSet.colorText3 }}
                         className="ml-2">
-                        {ownerInfo?.experiences?.length > 0
-                          ? ownerInfo?.experiences?.length > 1
-                            ? ownerInfo?.experiences[0].positionName +
-                              " & " +
-                              ownerInfo?.experiences[1].positionName
-                            : ownerInfo?.experiences[0].positionName
-                          : "No job position"}
+                        {ownerInfo.experiences &&
+                        ownerInfo.experiences.length > 0
+                          ? ownerInfo.experiences.length > 1
+                            ? ownerInfo.experiences[0].position_name +
+                              ' & ' +
+                              ownerInfo.experiences[1].position_name
+                            : ownerInfo.experiences[0].position_name
+                          : 'No job position'}
                       </span>
                     </div>
                     <div className="viewResume mt-2">
@@ -252,10 +229,10 @@ const MyProfile = () => {
                           onClick={() => {
                             dispatch(
                               openDrawer({
-                                title: "Edit Profile",
+                                title: 'Edit Profile',
                                 component: (
                                   <EditProfileForm key={Math.random()} />
-                                ),
+                                )
                               })
                             );
                           }}>
@@ -267,31 +244,31 @@ const MyProfile = () => {
                 </Row>
                 <div className="id_address_join">
                   <span className="id item mr-2">
-                    @{ownerInfo.alias ? ownerInfo.alias : "user"}
+                    @{ownerInfo.alias || 'user'}
                   </span>
                   <span className="address item mr-2">
                     <FontAwesomeIcon
                       className="icon mr-2"
                       icon={faLocationDot}
                     />
-                    {ownerInfo.location ? ownerInfo.location : "Global"}
+                    {ownerInfo.location || 'Global'}
                   </span>
                   <span className="join">
                     <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
-                    Joined {ownerInfo.dayJoined}
+                    Joined {ownerInfo.created_at}
                   </span>
                 </div>
                 <Col span={18} className="mt-5">
                   <div className="tags flex flex-wrap">
                     {descArray.map((item, index) => {
-                      if (ownerInfo?.tags?.indexOf(item.title) !== -1) {
+                      if (ownerInfo.tags.indexOf(item.title) !== -1) {
                         return (
                           <Tag
                             className="item mx-2 my-2 px-4 py-1"
                             key={index}
                             color={themeColorSet.colorBg2}
                             style={{
-                              border: "none",
+                              border: 'none'
                             }}>
                             {item.svg} &nbsp;
                             <span style={{ color: themeColorSet.colorText1 }}>
@@ -306,43 +283,43 @@ const MyProfile = () => {
                 </Col>
                 <div className="follow mt-5">
                   <span className="follower item mr-2">
-                    <span className="mr-1">{ownerInfo.followers.length}</span>{" "}
-                    {ownerInfo.followers.length > 1 ? "Followers" : "Follower"}
+                    <span className="mr-1">{ownerInfo.followers.length}</span>{' '}
+                    {ownerInfo.followers.length > 1 ? 'Followers' : 'Follower'}
                   </span>
                   <span className="following item mr-2">
-                    <span className="mr-1">{ownerInfo.following.length}</span>{" "}
+                    <span className="mr-1">{ownerInfo.following.length}</span>{' '}
                     {ownerInfo.following.length > 1
-                      ? "Followings"
-                      : "Following"}
+                      ? 'Followings'
+                      : 'Following'}
                   </span>
                   <span className="post mr-2">
-                    <span className="mr-1">{ownerInfo.posts.length}</span>{" "}
-                    {ownerInfo.posts.length > 1 ? "Posts" : "Post"}
+                    <span className="mr-1">{ownerInfo.posts.length}</span>{' '}
+                    {ownerInfo.posts.length > 1 ? 'Posts' : 'Post'}
                   </span>
                 </div>
                 <div className="experience mt-5">
-                  {ownerInfo?.experiences?.map((item: any) => (
+                  {ownerInfo.experiences.map((item) => (
                     <div className="item mt-2">
                       <FontAwesomeIcon
                         className="icon mr-2"
                         icon={faBriefcase}
                         style={{ color: commonColor.colorBlue1 }}
                       />
-                      <span className="company mr-2">{item.companyName}</span>
+                      <span className="company mr-2">{item.company_name}</span>
                       <span className="position mr-2">
-                        {item.positionName} |
+                        {item.position_name} |
                       </span>
                       <span className="date">
-                        {item.startDate} ~ {item.endDate}
+                        {item.start_date} ~ {item.end_date}
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="contact mt-5">
                   <Space>
-                    {ownerInfo?.contacts?.map((item: any, index: any) => {
+                    {ownerInfo.contacts.map((item) => {
                       switch (item.key) {
-                        case "0":
+                        case '0':
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -355,7 +332,7 @@ const MyProfile = () => {
                               }
                             />
                           );
-                        case "1":
+                        case '1':
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -366,7 +343,7 @@ const MyProfile = () => {
                               icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                             />
                           );
-                        case "2":
+                        case '2':
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -377,7 +354,7 @@ const MyProfile = () => {
                               icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                             />
                           );
-                        case "3":
+                        case '3':
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -390,7 +367,7 @@ const MyProfile = () => {
                               }
                             />
                           );
-                        case "4":
+                        case '4':
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -412,12 +389,12 @@ const MyProfile = () => {
                     defaultActiveKey="2"
                     items={[
                       {
-                        key: "1",
-                        label: "Introduction",
+                        key: '1',
+                        label: 'Introduction',
                         children: (
                           <div className="mt-10 mb-20">
-                            {!ownerInfo?.about &&
-                              ownerInfo?.repositories.length === 0 && (
+                            {!ownerInfo.about &&
+                              ownerInfo.repositories.length === 0 && (
                                 <div className="w-8/12 mb-10">
                                   <Empty
                                     image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -425,49 +402,47 @@ const MyProfile = () => {
                                   />
                                 </div>
                               )}
-                            {ownerInfo?.about && (
+                            {ownerInfo.about && (
                               <div className="w-8/12">
                                 <div
                                   style={{
                                     color: themeColorSet.colorText1,
                                     fontWeight: 600,
-                                    fontSize: "1.2rem",
+                                    fontSize: '1.2rem'
                                   }}>
                                   About
                                 </div>
                                 <ReactQuill
-                                  value={ownerInfo?.about}
+                                  value={ownerInfo.about}
                                   readOnly={true}
                                   theme="bubble"
                                   modules={{}}
                                 />
                               </div>
                             )}
-                            {ownerInfo?.repositories.length !== 0 && (
+                            {ownerInfo.repositories.length !== 0 && (
                               <div className="w-8/12 mt-5">
                                 <div
                                   style={{
                                     color: themeColorSet.colorText1,
                                     fontWeight: 600,
-                                    fontSize: "1.2rem",
+                                    fontSize: '1.2rem'
                                   }}>
                                   Repositories
                                 </div>
                                 <div className="flex flex-wrap justify-between mt-5">
-                                  {ownerInfo?.repositories.map(
-                                    (item: any, index: any) => {
-                                      return renderRepositoryIem(item, index);
-                                    }
-                                  )}
+                                  {ownerInfo.repositories.map((item) => {
+                                    return renderRepositoryIem(item);
+                                  })}
                                 </div>
                               </div>
                             )}
                           </div>
-                        ),
+                        )
                       },
                       {
-                        key: "2",
-                        label: "Posts",
+                        key: '2',
+                        label: 'Posts',
                         children: (
                           <div className="mt-5">
                             <div className="w-8/12">
@@ -482,20 +457,20 @@ const MyProfile = () => {
                                 />
                               </div>
                             )}
-                            {postArray.map((item: any, index: number) => {
+                            {postArray.map((item) => {
                               return (
                                 <div className="w-8/12">
-                                  {item.PostShared && (
+                                  {item.type === 'Share' && (
                                     <MyPostShare
-                                      key={item._id}
+                                      key={item.id}
                                       post={item}
                                       userInfo={ownerInfo}
-                                      owner={item.owner}
+                                      owner={item.post_attributes.owner_post}
                                     />
                                   )}
-                                  {!item.PostShared && (
+                                  {item.type === 'Post' && (
                                     <MyPost
-                                      key={item._id}
+                                      key={item.id}
                                       post={item}
                                       userInfo={ownerInfo}
                                     />
@@ -504,26 +479,26 @@ const MyProfile = () => {
                               );
                             })}
                           </div>
-                        ),
+                        )
                       },
                       {
-                        key: "3",
-                        label: "Show",
+                        key: '3',
+                        label: 'Show',
                         children: <div>Show</div>,
-                        disabled: true,
+                        disabled: true
                       },
                       {
-                        key: "4",
-                        label: "Seri",
+                        key: '4',
+                        label: 'Seri',
                         children: <div>Seri</div>,
-                        disabled: true,
+                        disabled: true
                       },
                       {
-                        key: "5",
-                        label: "Guestbook",
+                        key: '5',
+                        label: 'Guestbook',
                         children: <div>Guestbook</div>,
-                        disabled: true,
-                      },
+                        disabled: true
+                      }
                     ]}
                   />
                 </div>

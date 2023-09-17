@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -9,44 +9,47 @@ import {
   Empty,
   Row,
   Space,
-  notification,
-} from "antd";
-import type { MenuProps } from "antd";
-import { format } from "date-fns";
-import { Header } from "antd/es/layout/layout";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSnowflake } from "@fortawesome/free-solid-svg-icons";
-import Title from "antd/es/typography/Title";
-import { NavLink, useNavigate } from "react-router-dom";
-import Search from "antd/es/transfer/search";
-import { BellOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
+  notification
+} from 'antd';
+import type { MenuProps } from 'antd';
+import { format } from 'date-fns';
+import { Header } from 'antd/es/layout/layout';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
+import Title from 'antd/es/typography/Title';
+import { NavLink, useNavigate } from 'react-router-dom';
+import Search from 'antd/es/transfer/search';
+import { BellOutlined, CommentOutlined, UserOutlined } from '@ant-design/icons';
 
-import { setTheme } from "@/redux/Slice/ThemeSlice";
-import { LOGOUT_SAGA } from "@/redux/ActionSaga/AuthActionSaga";
-import AvatarGroup from "@/components/Avatar/AvatarGroup";
-import DayNightSwitch from "@/components/Day&NightSwitch";
-import AvatarMessage from "@/components/Avatar/AvatarMessage";
-import { DARK_THEME, LIGHT_THEME } from "@/util/constants/SettingSystem";
-import { pusherClient } from "@/util/functions/Pusher";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { useConversationsData } from "@/hooks/DataProvider";
-import StyleTotal from "./cssHeaders";
+import { setTheme } from '@/redux/Slice/ThemeSlice';
+import { LOGOUT_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
+import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import DayNightSwitch from '@/components/Day&NightSwitch';
+import AvatarMessage from '@/components/Avatar/AvatarMessage';
+import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
+import { pusherClient } from '@/util/functions/Pusher';
+import { getTheme } from '@/util/functions/ThemeFunction';
+import { useConversationsData } from '@/hooks';
+import { AppDispatch, RootState } from '@/redux/configStore';
+import StyleTotal from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: any) => state.themeReducer);
+  const { change } = useSelector((state: RootState) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   const { algorithm } = getTheme();
 
-  const switchTheme = localStorage.getItem("theme")
-    ? localStorage.getItem("theme") === "dark"
+  const switchTheme = localStorage.getItem('theme')
+    ? localStorage.getItem('theme') === 'dark'
     : true;
-  const userInfo = useSelector((state: any) => state.userReducer.userInfo);
+  const userInfo = useSelector(
+    (state: RootState) => state.userReducer.userInfo
+  );
 
   // Switch theme
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const onChange = (checked: boolean) => {
     if (checked) {
       dispatch(setTheme({ theme: DARK_THEME }));
@@ -59,53 +62,53 @@ const Headers = () => {
     dispatch(LOGOUT_SAGA());
   };
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <NavLink to={`/user/${userInfo?.id}`}>
           <div
             className="myInfo flex items-center py-1 px-1"
             style={{
-              height: "12%",
+              height: '12%'
             }}>
             <div className="avatar relative">
-              <Avatar key={userInfo.id} src={userInfo.userImage} />
+              <Avatar key={userInfo.id} src={userInfo.user_image} />
             </div>
             <div className="name_career">
               <div
                 className="name ml-4"
                 style={{
                   color: themeColorSet.colorText1,
-                  fontWeight: 600,
+                  fontWeight: 600
                 }}>
-                {userInfo.username}
+                {userInfo.lastname}
               </div>
             </div>
           </div>
         </NavLink>
-      ),
+      )
     },
     {
-      key: "2",
+      key: '2',
       label: (
         <Button className="w-full h-full " onClick={handleLogout}>
           Log Out
         </Button>
-      ),
-    },
+      )
+    }
   ];
 
-  const itemsNoti: MenuProps["items"] = [
+  const itemsNoti: MenuProps['items'] = [
     {
-      key: "-1",
+      key: '-1',
       label: (
         <Empty
           className="cursor-default px-40"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
-      ),
-    },
+      )
+    }
   ];
 
   const [api, contextHolder] = notification.useNotification();
@@ -147,22 +150,22 @@ const Headers = () => {
     return userInfo?.id;
   }, [userInfo]);
 
-  const playNotiMessage = new Audio("/sounds/sound-noti-message.wav");
+  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
 
   const popupNotification = (message: any, conversation: any) => {
     api.open({
       message:
         message.sender.username +
-        " " +
-        format(new Date(message.createdAt), "p"),
-      description: message.body ? message.body : "Sent an image",
+        ' ' +
+        format(new Date(message.createdAt), 'p'),
+      description: message.body ? message.body : 'Sent an image',
       duration: 5,
       icon: conversation.isGroup ? (
         <AvatarGroup key={conversation._id} users={conversation.users} />
       ) : (
         <AvatarMessage key={conversation._id} user={message.sender} />
       ),
-      placement: "bottomRight",
+      placement: 'bottomRight',
       btn: (
         <Button
           type="primary"
@@ -172,7 +175,7 @@ const Headers = () => {
           }}>
           Go to message
         </Button>
-      ),
+      )
     });
   };
 
@@ -192,7 +195,7 @@ const Headers = () => {
             );
             return {
               ...currentConversation,
-              messages: conversation.messages,
+              messages: conversation.messages
             };
           }
 
@@ -207,7 +210,7 @@ const Headers = () => {
           if (currentConversation._id === conversation.id) {
             return {
               ...currentConversation,
-              messages: conversation.messages,
+              messages: conversation.messages
             };
           }
 
@@ -216,8 +219,8 @@ const Headers = () => {
       );
     };
 
-    pusherClient.bind("conversation-update-seen", updateHandlerSeen);
-    pusherClient.bind("conversation-update-noti", updateHandler);
+    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
+    pusherClient.bind('conversation-update-noti', updateHandler);
   }, [pusherKey]);
 
   return (
@@ -226,8 +229,8 @@ const Headers = () => {
         algorithm: algorithm,
         token: {
           ...themeColor,
-          controlHeight: 38,
-        },
+          controlHeight: 38
+        }
       }}>
       <StyleTotal theme={themeColorSet}>
         {contextHolder}
@@ -235,12 +238,12 @@ const Headers = () => {
           className="header"
           style={{
             backgroundColor: themeColorSet.colorBg2,
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             zIndex: 1000,
-            width: "100%",
-            height: "5rem",
+            width: '100%',
+            height: '5rem'
           }}>
           <Row align="middle">
             <Col span={16} offset={4}>
@@ -283,7 +286,7 @@ const Headers = () => {
                     </NavLink>
                     <Dropdown
                       menu={{ items: itemsNoti }}
-                      trigger={["click"]}
+                      trigger={['click']}
                       placement="bottom">
                       <Badge count={countNoti}>
                         <Avatar
@@ -294,11 +297,11 @@ const Headers = () => {
                     </Dropdown>
                     <Dropdown
                       menu={{ items }}
-                      trigger={["click"]}
+                      trigger={['click']}
                       placement="bottom"
                       arrow
                       destroyPopupOnHide
-                      overlayStyle={{ paddingTop: "0.5rem" }}>
+                      overlayStyle={{ paddingTop: '0.5rem' }}>
                       <Avatar
                         className="avatarButton cursor-pointer"
                         icon={<UserOutlined />}
