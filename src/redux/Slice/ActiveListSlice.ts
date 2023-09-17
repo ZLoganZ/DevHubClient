@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { UserLoginType } from '@/types';
+
 interface State {
-  members: any;
-  followers: any;
+  members: string[];
+  followers: UserLoginType[];
 }
 
 const initialState: State = {
-  members: null,
-  followers: null,
+  members: [],
+  followers: []
 };
 
 const activeListSlice = createSlice({
@@ -17,29 +19,32 @@ const activeListSlice = createSlice({
     setMembers: (state, action) => {
       return {
         ...state,
-        members: action.payload,
+        members: action.payload
       };
     },
     addMember: (state, action) => {
       return {
         ...state,
-        members: [...state.members, action.payload],
+        members: [...state.members, action.payload]
       };
     },
     removeMember: (state, action) => {
       return {
         ...state,
-        members: state.members.filter((memberId: any) => memberId !== action.payload),
+        members: state.members.filter(
+          (memberId: any) => memberId !== action.payload
+        )
       };
     },
     setFollowers: (state, action) => {
       return {
         ...state,
-        followers: action.payload.followers,
+        followers: action.payload.followers
       };
-    },
-  },
+    }
+  }
 });
 
-export const { setMembers, addMember, removeMember, setFollowers } = activeListSlice.actions;
+export const { setMembers, addMember, removeMember, setFollowers } =
+  activeListSlice.actions;
 export default activeListSlice.reducer;

@@ -1,3 +1,7 @@
+import { FollowResponseType, UserInfoResponseType } from './../types/index';
+import { AxiosResponse } from 'axios';
+
+import { UpdateUserResponseType, UpdateUserType } from '@/types';
 import { BaseService } from './BaseService';
 
 export class UserService extends BaseService {
@@ -5,19 +9,25 @@ export class UserService extends BaseService {
     super();
   }
 
-  updateUser = (userUpdate: any) => {
+  updateUser = (
+    userUpdate: UpdateUserType
+  ): Promise<AxiosResponse<UpdateUserResponseType>> => {
     return this.put(`/users/update`, userUpdate);
   };
-  getFollowers = (userID: string) => {
+  getFollowers = (
+    userID: string
+  ): Promise<AxiosResponse<FollowResponseType>> => {
     return this.get(`/users/followers/${userID}`);
   };
-  getFollowing = (userID: string) => {
+  getFollowing = (
+    userID: string
+  ): Promise<AxiosResponse<FollowResponseType>> => {
     return this.get(`/users/following/${userID}`);
   };
-  getShouldFollow = () => {
+  getShouldFollow = (): Promise<AxiosResponse<FollowResponseType[]>> => {
     return this.get(`/users/shouldfollow`);
   };
-  getUserInfo = () => {
+  getUserInfo = (): Promise<AxiosResponse<UserInfoResponseType>> => {
     return this.get(`/users/me`);
   };
   followUser = (userID: string) => {

@@ -8,6 +8,7 @@ import {
   addMember,
   removeMember
 } from '@/redux/Slice/ActiveListSlice';
+import { AppDispatch, RootState } from '@/redux/configStore';
 
 const ActiveChannel = () => {
   const dispatch = useDispatch<AppDispatch>();

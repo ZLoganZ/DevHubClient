@@ -16,15 +16,21 @@ import {
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { AppDispatch, RootState } from '@/redux/configStore';
+import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
 interface PostProps {
-  post: any;
-  userInfo: any;
-  postShare?: any;
-  owner?: any;
+  post: PostType;
+  userInfo: UserInfoType;
+  postShare?: boolean;
+  owner?: UserInfoType;
   visible?: boolean;
   setVisible?: any;
+}
+
+interface Data {
+  isReply: boolean;
+  idComment: number | null;
 }
 
 const OpenMyPostDetailModal = (PostProps: PostProps) => {
@@ -41,21 +47,21 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
     (state: RootState) => state.userReducer.userInfo
   );
 
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<any>();
 
   useEffect(() => {
     if (PostProps.postShare) {
-      dispatch(GET_POSTSHARE_BY_ID_SAGA({ id: PostProps.post._id }));
+      dispatch(GET_POSTSHARE_BY_ID_SAGA({ id: PostProps.post.id }));
     } else {
-      dispatch(GET_POST_BY_ID_SAGA({ id: PostProps.post._id }));
+      dispatch(GET_POST_BY_ID_SAGA({ id: PostProps.post.id }));
     }
   }, []);
 
-  const [data, setData] = useState<any>({ isReply: false, idComment: null });
+  const [data, setData] = useState<Data>({ isReply: false, idComment: null });
 
   const [visible, setVisible] = useState(PostProps.visible);
 
-  const handleData = (data: any) => {
+  const handleData = (data: Data) => {
     setData(data);
   };
 
@@ -84,7 +90,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
     if (isReply) {
       dispatch(
         saveReplyAction({
-          id: post?._id,
+          id: post.id,
           reply: {
             contentComment: commentContent,
             idComment
@@ -96,7 +102,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
       dispatch(
         saveCommentAction({
           comment,
-          id: post?._id
+          id: post.id
         })
       );
     }

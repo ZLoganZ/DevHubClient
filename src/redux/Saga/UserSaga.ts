@@ -1,4 +1,4 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
 import {
   FOLLOW_USER_SAGA,
@@ -18,9 +18,7 @@ import { STATUS_CODE } from '@/util/constants/SettingSystem';
 // Update User Saga
 function* updateUserSaga({ payload }: any) {
   try {
-    const { data, status } = yield userService.updateUser(
-      payload.userUpdate
-    );
+    const { data, status } = yield call(userService.updateUser, payload);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setOwnerInfo(data.content));
       yield put(setUser(data.content));
@@ -39,7 +37,7 @@ export function* theoDoiUpdateUserSaga() {
 // Get Followers Saga
 function* getFollowersSaga() {
   try {
-    const { data, status } = yield userService.getFollowers('');
+    const { data, status } = yield call(userService.getFollowers, '');
     if (status === STATUS_CODE.SUCCESS) {
       data.content.followers.forEach((follower: any) => {
         follower.username = follower.lastname + ' ' + follower.firstname;
@@ -59,7 +57,7 @@ export function* theoDoiGetFollowersSaga() {
 // Get User Info Saga
 function* getUserInfoSaga() {
   try {
-    const { data, status } = yield userService.getUserInfo();
+    const { data, status } = yield call(userService.getUserInfo);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setUser(data.content));
     }
@@ -75,7 +73,7 @@ export function* theoDoiGetUserInfoSaga() {
 // Follow User Saga
 function* followUserSaga({ payload }: any) {
   try {
-    const { data, status } = yield userService.followUser(payload);
+    const { status } = yield call(userService.followUser, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     }
@@ -91,7 +89,7 @@ export function* theoDoiFollowUserSaga() {
 // get Repository Github Saga
 function* getRepositoryGithubSaga() {
   try {
-    const { data, status } = yield userService.getRepositoryGithub();
+    const { data, status } = yield call(userService.getRepositoryGithub);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(setRepos(data.content));
     }

@@ -8,7 +8,12 @@ import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
 import { AppDispatch, RootState } from '@/redux/configStore';
 
-const AddTagComponent = (Props: any) => {
+interface Props {
+  tags: string[];
+  callback: (tags: string[]) => void;
+}
+
+const AddTagComponent = (Props: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -18,7 +23,7 @@ const AddTagComponent = (Props: any) => {
 
   const descArray = [...descArrays];
 
-  const [addTagArr, setAddTagArr] = useState<any>([...Props.tags]);
+  const [addTagArr, setAddTagArr] = useState([...Props.tags]);
 
   let addTagArrTemp = [...addTagArr];
 
@@ -42,16 +47,14 @@ const AddTagComponent = (Props: any) => {
             <span
               key={index}
               className={
-                addTagArr?.indexOf(item.title) !== -1
+                addTagArr.indexOf(item.title) !== -1
                   ? 'itemAddTag mx-2 my-2 px-4 py-2 active'
                   : 'itemAddTag mx-2 my-2 px-4 py-2'
               }
-              onClick={(e) => {
+              onClick={() => {
                 if (addTagArr?.includes(item.title)) {
                   //   addTagArr.splice(addTagArr.indexOf(item.title), 1);
-                  setAddTagArr(
-                    addTagArrTemp.filter((i: any) => i !== item.title)
-                  );
+                  setAddTagArr(addTagArrTemp.filter((i) => i !== item.title));
                   return;
                 } else {
                   //   addTagArr.push(item.title);

@@ -1,13 +1,7 @@
 import { AxiosResponse } from 'axios';
 
-import { PostType, UserInfoType } from '@/types';
+import { PostResponseType, PostsResponseType } from '@/types';
 import { BaseService } from './BaseService';
-
-type PostsType = {
-  userInfo?: UserInfoType;
-  content?: PostType[];
-  ownerInfo?: UserInfoType;
-};
 
 export class PostService extends BaseService {
   constructor() {
@@ -16,16 +10,19 @@ export class PostService extends BaseService {
 
   getAllPostByUserID = (
     id: String | null
-  ): Promise<AxiosResponse<PostsType>> => {
+  ): Promise<AxiosResponse<PostsResponseType>> => {
     return this.get(`/${id}/posts`);
   };
-  getAllPost = (): Promise<AxiosResponse<PostsType>> => {
+  getAllPost = (): Promise<AxiosResponse<PostsResponseType>> => {
     return this.get(`/posts/all`);
   };
   createPost = (post: any) => {
     return this.post(`/posts`, post);
   };
-  updatePost = (id: string, post: any) => {
+  updatePost = (
+    id: string,
+    post: any
+  ): Promise<AxiosResponse<PostResponseType>> => {
     return this.put(`/posts/update/${id}`, post);
   };
   deletePost = ({ id }: any) => {
@@ -61,10 +58,10 @@ export class PostService extends BaseService {
       replyContent
     );
   };
-  getPostById = (id: string) => {
+  getPostById = (id: string): Promise<AxiosResponse<PostResponseType>> => {
     return this.get(`/posts/find/${id}`);
   };
-  getPostShareById = (id: string) => {
+  getPostShareById = (id: string): Promise<AxiosResponse<PostResponseType>> => {
     return this.get(`/postshares/${id}`);
   };
   increaseViewPost = (id: string) => {

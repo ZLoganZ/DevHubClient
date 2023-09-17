@@ -40,7 +40,8 @@ const initialState: State = {
         notifications: [],
         followers: [],
         following: [],
-        is_following: false
+        is_following: false,
+        role: []
       },
       title: undefined,
       content: undefined,
@@ -76,7 +77,8 @@ const initialState: State = {
     notifications: [],
     followers: [],
     following: [],
-    is_following: false
+    is_following: false,
+    role: []
   },
 
   isOpenPostDetail: false,

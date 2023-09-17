@@ -34,7 +34,8 @@ const initialState: UserInfoState = {
     notifications: [],
     followers: [],
     following: [],
-    is_following: false
+    is_following: false,
+    role: []
   },
   repos: []
 };

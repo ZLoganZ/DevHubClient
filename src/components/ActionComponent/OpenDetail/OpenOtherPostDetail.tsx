@@ -15,11 +15,17 @@ import LoadingDetailPost from '@/components/GlobalSetting/LoadingDetailPost';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import OtherPostDetail from '@/components/Form/PostDetail/OtherPostDetail';
 import { AppDispatch, RootState } from '@/redux/configStore';
+import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetail';
 
 interface Props {
-  post: any;
-  userInfo: any;
+  post: PostType;
+  userInfo: UserInfoType;
+}
+
+interface Data {
+  isReply: boolean;
+  idComment: number | null;
 }
 
 const OpenOtherPostDetail = (Props: Props) => {
@@ -33,24 +39,24 @@ const OpenOtherPostDetail = (Props: Props) => {
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
 
-  const [data, setData] = useState<any>({ isReply: false, idComment: null });
+  const [data, setData] = useState<Data>({ isReply: false, idComment: null });
 
-  const inputRef = React.useRef<any>(null);
+  const inputRef = React.useRef<any>();
 
   useEffect(() => {
     if (data.isReply) inputRef.current.focus();
   }, [data]);
 
-  const handleData = (data: any) => {
+  const handleData = (data: Data) => {
     setData(data);
   };
 
   const handleSubmitComment = () => {
-    if (Props.post?.postShare) {
+    if (Props.post?.type === 'Share') {
       if (data.isReply) {
         dispatch(
           SAVE_REPLY_POSTSHARE_SAGA({
-            id: Props.post?._id,
+            id: Props.post.id,
             reply: {
               contentComment: commentContent,
               idComment: data.idComment
@@ -64,7 +70,7 @@ const OpenOtherPostDetail = (Props: Props) => {
             comment: {
               contentComment: commentContent
             },
-            id: Props.post?._id
+            id: Props.post.id
           })
         );
       }
@@ -72,7 +78,7 @@ const OpenOtherPostDetail = (Props: Props) => {
       if (data.isReply) {
         dispatch(
           SAVE_REPLY_SAGA({
-            id: Props.post?._id,
+            id: Props.post.id,
             reply: {
               contentComment: commentContent,
               idComment: data.idComment
@@ -86,7 +92,7 @@ const OpenOtherPostDetail = (Props: Props) => {
             comment: {
               contentComment: commentContent
             },
-            id: Props.post?._id
+            id: Props.post.id
           })
         );
       }
@@ -106,16 +112,16 @@ const OpenOtherPostDetail = (Props: Props) => {
 
   let memoizedComponent: JSX.Element;
 
-  if (Props.post?._id) {
+  if (Props.post.id) {
     memoizedComponent = useMemo(
       () => (
         <OtherPostDetail
           onData={handleData}
           post={Props.post}
-          userInfo={Props.post?.user}
+          userInfo={Props.post.post_attributes.user}
           data={data}
-          postShare={Props.post?.PostShared}
-          owner={Props.post?.owner}
+          postShare={Props.post.type === 'Share'}
+          owner={Props.post.post_attributes.owner_post}
         />
       ),
       [Props.post, data]
@@ -129,11 +135,11 @@ const OpenOtherPostDetail = (Props: Props) => {
 
   let memoizedInputComment: JSX.Element;
 
-  if (Props.post?._id) {
+  if (Props.post.id) {
     memoizedInputComment = useMemo(
       () => (
         <div className=" commentInput text-right flex items-center px-4 pb-5 mt-4">
-          <Avatar className="mr-2" size={40} src={Props.userInfo?.userImage} />
+          <Avatar className="mr-2" size={40} src={Props.userInfo.user_image} />
           <div className="input w-full">
             <Input
               ref={inputRef}

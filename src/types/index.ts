@@ -72,9 +72,11 @@ export type ContactType = {
   key: string;
   tooltip: string;
   link: string;
+  state?: boolean;
 };
 
 export type UserInfoType = {
+  username?: string;
   id: string;
   email: string;
   role: string[];
@@ -102,8 +104,8 @@ export type UserInfoType = {
 
 export type FollowType = {
   user: UserInfoType;
-  follower: UserInfoType[];
-  following: UserInfoType[];
+  followers: UserInfoType[];
+  followings: UserInfoType[];
 };
 
 type TypeofPost = 'Post' | 'Share';
@@ -149,4 +151,34 @@ export type CommentType = {
 
   likes: LikeType[];
   numlike: number;
+};
+
+export type UserInfoResponseType = {
+  message: string;
+  status: number;
+  metadata: UserInfoType;
+};
+
+export type UpdateUserResponseType = {
+  message: string;
+  status: number;
+  metadata: UserInfoType;
+};
+
+export type FollowResponseType = {
+  message: string;
+  status: number;
+  metadata: FollowType;
+};
+
+export type PostsResponseType = {
+  message: string;
+  status: number;
+  metadata: PostType[];
+};
+
+export type PostResponseType = {
+  message: string;
+  status: number;
+  metadata: PostType;
 };

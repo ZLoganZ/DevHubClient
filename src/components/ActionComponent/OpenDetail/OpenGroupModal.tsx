@@ -12,9 +12,10 @@ import {
 } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
 import { AppDispatch, RootState } from '@/redux/configStore';
+import { UserInfoType } from '@/types';
 
 interface Props {
-  users: [];
+  users: UserInfoType[];
 }
 
 const OpenGroupModal = (Props: Props) => {
@@ -26,19 +27,15 @@ const OpenGroupModal = (Props: Props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  let [membersGroup, SetMembersGroup] = useState<any>();
-  let [name, setGroupName] = useState<any>();
+  let [membersGroup, SetMembersGroup] = useState<UserInfoType[]>();
+  let [name, setGroupName] = useState<string>();
 
-  const handleSetName = (newName: any) => {
-    setGroupName(() => {
-      name = newName;
-    });
+  const handleSetName = (newName: string) => {
+    setGroupName(newName);
   };
 
-  const handleSetGroupMember = (newMembers: any) => {
-    SetMembersGroup(() => {
-      membersGroup = newMembers;
-    });
+  const handleSetGroupMember = (newMembers: []) => {
+    SetMembersGroup(newMembers);
   };
 
   const onSubmit = () => {

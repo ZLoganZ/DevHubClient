@@ -12,8 +12,14 @@ import { commonColor } from '@/util/cssVariable';
 import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { AppDispatch, RootState } from '@/redux/configStore';
+import { ContactType } from '@/types';
 
-const AddLinkComponent = (Props: any) => {
+interface Props {
+  links: ContactType[];
+  callback: (links: ContactType[]) => void;
+}
+
+const AddLinkComponent = (Props: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -34,12 +40,12 @@ const AddLinkComponent = (Props: any) => {
   let addTooltipsTemp = addTooltips.map((obj) => ({ ...obj }));
 
   //save
-  const [save, setSave] = useState<boolean>(false);
+  const [save, setSave] = useState(false);
 
   const handleSubmit = () => {
     Props.callback(addLinkArr);
   };
-  const handleDropClick = (e: any, index: any) => {
+  const handleDropClick = (e: any, index: number) => {
     if (
       addTooltipsTemp[index].tooltip ===
       contactArray[parseInt(addTooltipsTemp[index].key)].label
@@ -76,7 +82,7 @@ const AddLinkComponent = (Props: any) => {
     // }
   };
 
-  const handleDelete = (index: any) => {
+  const handleDelete = (index: number) => {
     addLinkArrTemp.splice(index, 1);
     setAddLinkArr(addLinkArrTemp);
 
@@ -84,7 +90,10 @@ const AddLinkComponent = (Props: any) => {
     setAddTooltips(addTooltipsTemp);
   };
 
-  const handleEnterLink = (e: any, index: any, key: any) => {
+  const handleEnterLink = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (isValidLink(e.target.value)) {
       addLinkArrTemp[index].link = e.target.value;
       // addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
@@ -104,7 +113,7 @@ const AddLinkComponent = (Props: any) => {
     }
   };
 
-  const handleAddLink = (link: any, key: any) => {
+  const handleAddLink = (link: string, key: string) => {
     if (!link) return false;
     if (
       link.startsWith(contactArray[parseInt(key)].linkDefault) &&
@@ -117,12 +126,11 @@ const AddLinkComponent = (Props: any) => {
 
   const handleClickSubmit = () => {
     addLinkArrTemp = addLinkArrTemp.filter(
-      (item: any) =>
-        isValidLink(item.link) && handleAddLink(item.link, item.key)
+      (item) => isValidLink(item.link) && handleAddLink(item.link, item.key)
     );
   };
 
-  function handleShowTooltip(index: any) {
+  function handleShowTooltip(index: number) {
     addTooltipsTemp[index].state = !addTooltipsTemp[index].state;
     setAddTooltips(addTooltipsTemp);
   }
@@ -143,7 +151,7 @@ const AddLinkComponent = (Props: any) => {
       }}>
       <StyleTotal theme={themeColorSet}>
         <div className="flex flex-col mt-7">
-          {addLinkArrTemp.map((item: any, index: any) => (
+          {addLinkArrTemp.map((item, index) => (
             <div className="flex flex-row items-center mb-4">
               <Dropdown
                 menu={{
@@ -176,7 +184,7 @@ const AddLinkComponent = (Props: any) => {
                 defaultValue={addLinkArr[index]?.link}
                 inputMode="url"
                 onChange={(e) => {
-                  handleEnterLink(e, index, item.key);
+                  handleEnterLink(e, index);
                 }}
                 style={{
                   height: 38,
@@ -255,11 +263,11 @@ const AddLinkComponent = (Props: any) => {
 
               setAddTooltips([
                 ...addTooltips,
-                { key: '0', tooltip: 'Facebook', state: false }
+                { key: '0', tooltip: 'Facebook', state: false, link: '' }
               ]);
               addTooltipsTemp = [
                 ...addTooltips,
-                { key: '0', tooltip: 'Facebook', state: false }
+                { key: '0', tooltip: 'Facebook', state: false, link: '' }
               ];
             }}>
             <FontAwesomeIcon icon={faPlus} className="mr-2" />

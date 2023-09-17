@@ -6,7 +6,6 @@ import { setUser } from '@/redux/Slice/UserSlice';
 import {
   setAllPost,
   setIsInProfile,
-  setOwnerInfo,
   setPostArr
 } from '@/redux/Slice/PostSlice';
 import { postService } from '@/services/PostService';
@@ -147,6 +146,29 @@ export const useOtherUser = (conversation: any) => {
   return otherUser;
 };
 
+export const useUserInfo = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      const { data } = await userService.getUserInfo();
+      return data;
+    },
+    staleTime: Infinity,
+    onSuccess(data) {
+      dispatch(setUser(data.metadata));
+    }
+  });
+
+  return {
+    isLoading,
+    isError,
+    userInfo: data?.metadata,
+    isFetching
+  };
+};
+
 /**
  * The `useAllPostsData` function is a custom hook that fetches all posts data, sets the loading and
  * error states, and returns the fetched data along with additional information.
@@ -169,8 +191,7 @@ export const useAllPostsData = () => {
     },
     staleTime: Infinity,
     onSuccess(data) {
-      dispatch(setAllPost(data.content));
-      dispatch(setUser(data.content));
+      dispatch(setAllPost(data.metadata));
     },
     onError(err) {
       console.log(err);
@@ -180,8 +201,7 @@ export const useAllPostsData = () => {
   return {
     isLoading,
     isError,
-    allPost: data?.content,
-    userInfo: data?.userInfo,
+    allPost: data?.metadata,
     isFetching,
     refetchPosts: refetch
   };
@@ -217,9 +237,7 @@ export const usePostsData = (userID: string) => {
     enabled: !!userID,
     staleTime: Infinity,
     onSuccess(data) {
-      dispatch(setPostArr(data.content));
-      dispatch(setUser(data.content));
-      dispatch(setOwnerInfo(data.content));
+      dispatch(setPostArr(data.metadata));
     },
     onError(err) {
       console.log(err);
@@ -229,9 +247,7 @@ export const usePostsData = (userID: string) => {
   return {
     isLoading,
     isError,
-    postArray: data?.content,
-    userInfo: data?.userInfo,
-    ownerInfo: data?.ownerInfo,
+    postArray: data?.metadata,
     isFetching
   };
 };
@@ -307,15 +323,13 @@ export const useCurrentConversationData = (
  * - `isFetching` is a boolean that indicates whether the query is currently fetching.
  */
 export const useFollowersData = (userID: string) => {
-  const dispatch = useDispatch<AppDispatch>();
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['followers', userID],
     queryFn: async () => {
       const { data } = await userService.getFollowers(userID);
-      data.content.followers.forEach((follower: any) => {
+      data.metadata.followers.forEach((follower) => {
         follower.username = follower.lastname + ' ' + follower.firstname;
       });
-      dispatch(setUser(data.content));
       return data;
     },
     enabled: !!userID
@@ -324,7 +338,7 @@ export const useFollowersData = (userID: string) => {
   return {
     isLoadingFollowers: isLoading,
     isError,
-    followers: data?.content?.followers,
+    followers: data?.metadata.followers,
     isFetching
   };
 };
