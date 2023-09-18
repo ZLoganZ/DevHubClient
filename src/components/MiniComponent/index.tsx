@@ -1,10 +1,9 @@
 import { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
 import { Button } from 'antd';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import StyleTotal from './cssMiniComponent';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 // ===========================================
 
@@ -27,7 +26,7 @@ export const ButtonActiveHover = ({
   block,
   type
 }: ButtonActiveHoverProps) => {
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   return (
@@ -67,7 +66,7 @@ export const ButtonCancelHover = ({
   onClick,
   disabled
 }: ButtonCancelHoverProps) => {
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

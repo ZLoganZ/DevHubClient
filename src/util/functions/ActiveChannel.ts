@@ -11,14 +11,14 @@ import {
 import { AppDispatch, RootState } from '@/redux/configStore';
 
 const ActiveChannel = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { members } = useSelector(
     (state: RootState) => state.activeListReducer
   );
 
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 
-  const login = useSelector((state: RootState) => state.authReducer.login);
+  const login = useAppSelector((state) => state.authReducer.login);
 
   useEffect(() => {
     if (!login) return;

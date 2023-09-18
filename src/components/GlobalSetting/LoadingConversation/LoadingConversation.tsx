@@ -1,12 +1,11 @@
 import { Skeleton, Space } from 'antd';
-import { useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 const LoadingConversation = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   return (

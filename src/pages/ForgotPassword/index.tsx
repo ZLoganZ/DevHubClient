@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   CHECK_RESET_PASSWORD_SAGA,
@@ -11,16 +10,16 @@ import {
   VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssForgotPassword';
 
 export const ForgotPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -64,11 +63,11 @@ export const ForgotPassword = () => {
 
 export const ResetPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const search = window.location.search;
@@ -150,11 +149,11 @@ export const ResetPassword = () => {
 
 export const VerifyCode = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const search = window.location.search;

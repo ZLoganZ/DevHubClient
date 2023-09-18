@@ -1,6 +1,5 @@
 import { ConfigProvider, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { faSun } from '@fortawesome/free-regular-svg-icons';
@@ -26,20 +25,20 @@ import {
 } from '@/hooks';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { conversationID } = useParams();
 
-  const { userID } = useSelector((state: RootState) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.authReducer);
 
   useEffect(() => {
     dispatch(GET_USER_ID());

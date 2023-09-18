@@ -10,7 +10,6 @@ import {
 import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import ImageCompress from 'quill-image-compress';
 import { sha1 } from 'crypto-hash';
 import { useForm } from 'react-hook-form';
@@ -23,7 +22,7 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { UPDATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssEditPostForm';
 
 Quill.register('modules/imageCompress', ImageCompress);
@@ -43,11 +42,11 @@ interface PostProps {
 }
 
 const EditPostForm = (PostProps: PostProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

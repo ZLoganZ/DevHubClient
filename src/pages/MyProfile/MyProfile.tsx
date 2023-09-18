@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Avatar,
   Col,
@@ -10,7 +10,6 @@ import {
   Tabs,
   Tag
 } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 import ReactQuill from 'react-quill';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { useParams } from 'react-router-dom';
@@ -48,17 +47,17 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { usePostsData } from '@/hooks';
 import { RepositoryType } from '@/types';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import StyleTotal from './cssMyProfile';
 
 const MyProfile = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { userID } = useParams<{ userID: string }>();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

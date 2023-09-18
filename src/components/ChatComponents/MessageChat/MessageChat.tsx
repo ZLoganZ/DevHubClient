@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { find } from 'lodash';
@@ -14,7 +13,7 @@ import { messageService } from '@/services/MessageService';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 import StyleTotal from './cssMessageChat';
 
 interface IParams {
@@ -25,12 +24,10 @@ interface IParams {
 
 const MessageChat = (Props: IParams) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const { members } = useSelector(
-    (state: RootState) => state.activeListReducer
-  );
+  const { members } = useAppSelector((state) => state.activeListReducer);
 
   const { currentConversation, isLoadingConversation } =
     useCurrentConversationData(Props.conversationId);

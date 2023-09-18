@@ -1,6 +1,5 @@
 import { ConfigProvider } from 'antd';
 import { useState, useLayoutEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import StyleTotal from './cssOpenPostDetailModal';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
@@ -11,7 +10,7 @@ import {
   ButtonCancelHover
 } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { UserInfoType } from '@/types';
 
 interface Props {
@@ -19,9 +18,9 @@ interface Props {
 }
 
 const OpenGroupModal = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

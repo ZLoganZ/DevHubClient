@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 
 import StyleTotal from './cssAddTagComponent';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 interface Props {
   tags: string[];
@@ -14,10 +13,10 @@ interface Props {
 }
 
 const AddTagComponent = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

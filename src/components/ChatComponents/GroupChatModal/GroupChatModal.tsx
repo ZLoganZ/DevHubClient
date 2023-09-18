@@ -1,8 +1,7 @@
 import { ConfigProvider, Input, Select } from 'antd';
-import { useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 import StyleTotal from './cssGroupChatModal';
 
 interface GroupChatModalProps {
@@ -13,7 +12,7 @@ interface GroupChatModalProps {
 
 const GroupChatModal = (Props: GroupChatModalProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

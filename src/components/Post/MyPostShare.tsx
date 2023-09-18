@@ -20,7 +20,6 @@ import {
 } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
@@ -37,7 +36,7 @@ import PopupInfoUser from '@/components/PopupInfoUser';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { useIntersectionObserver } from '@/hooks';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssPost';
 
 interface PostShareProps {
@@ -51,10 +50,10 @@ type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 const MyPostShare = (PostProps: PostShareProps) => {
   const link = PostProps.post.link;
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -191,7 +190,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
     dispatch(GET_USER_ID());
   }, []);
 
-  const { userID } = useSelector((state: RootState) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.authReducer);
 
   return (
     <ConfigProvider

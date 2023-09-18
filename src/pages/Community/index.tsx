@@ -12,7 +12,6 @@ import {
   Space,
   Tabs
 } from 'antd';
-import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileLines, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
@@ -21,14 +20,14 @@ import MyPost from '@/components/Post/MyPost';
 import NewPost from '@/components/NewPost';
 import MyPostShare from '@/components/Post/MyPostShare';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -39,13 +38,9 @@ export const CommunityAdmin = () => {
     });
   }, []);
 
-  const community = useSelector(
-    (state: any) => state.communityReducer.community
-  );
+  const community = useAppSelector((state) => state.communityReducer.community);
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   return (
     <ConfigProvider
@@ -386,7 +381,7 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -744,7 +739,7 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { useMemo } from 'react';
 import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 
@@ -6,7 +5,7 @@ import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 interface ConversationBoxProps {
   data: any;
@@ -15,11 +14,9 @@ interface ConversationBoxProps {
 
 const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   const lastMessage = useMemo(() => {

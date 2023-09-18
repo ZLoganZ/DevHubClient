@@ -1,10 +1,8 @@
-import { useSelector } from 'react-redux';
-
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 const EmptyChat = () => {
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
   return (
     <div

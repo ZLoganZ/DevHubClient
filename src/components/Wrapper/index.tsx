@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import { Col, ConfigProvider, Row, Skeleton } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
@@ -12,7 +11,7 @@ import {
 import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
 import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
 
 const CommunityAdmin = lazy(() =>
@@ -37,10 +36,10 @@ const MyProfile = lazy(() => import('@/pages/MyProfile'));
 const Profile = lazy(() => import('@/pages/Profile'));
 
 export const CommunityWrapper = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -50,9 +49,7 @@ export const CommunityWrapper = () => {
     dispatch(GET_COMMUNITY_BY_ID_SAGA(communityID));
   }, []);
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
   const role = useMemo(() => {
     if (userInfo.role) {
       if (userInfo.role.includes('0101')) return 'ADMIN';
@@ -87,16 +84,14 @@ export const CommunityWrapper = () => {
 
 export const PostShareWrapper = () => {
   const { postID } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const postSlice = useSelector((state: RootState) => state.postReducer.post);
-  const userInfoSlice = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const postSlice = useAppSelector((state) => state.postReducer.post);
+  const userInfoSlice = useAppSelector((state) => state.userReducer.userInfo);
 
   const post = useMemo(() => postSlice, [postSlice]);
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
@@ -177,17 +172,15 @@ export const PostShareWrapper = () => {
 
 export const PostWrapper = () => {
   const { postID } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const postSlice = useSelector((state: RootState) => state.postReducer.post);
-  const userInfoSlice = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const postSlice = useAppSelector((state) => state.postReducer.post);
+  const userInfoSlice = useAppSelector((state) => state.userReducer.userInfo);
 
   const post = useMemo(() => postSlice, [postSlice]);
   const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
@@ -268,17 +261,17 @@ export const PostWrapper = () => {
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userID: userIDFromStore } = useSelector(
-    (state: any) => state.authReducer
+  const { userID: userIDFromStore } = useAppSelector(
+    (state) => state.authReducer
   );
 
   useEffect(() => {

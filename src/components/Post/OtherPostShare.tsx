@@ -10,7 +10,6 @@ import { Avatar, ConfigProvider, Dropdown, Image, Popover, Space } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
-import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
@@ -24,7 +23,7 @@ import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/Op
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { useIntersectionObserver } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssPost';
 
 interface PostShareProps {
@@ -36,10 +35,10 @@ interface PostShareProps {
 
 const PostShare = (PostProps: PostShareProps) => {
   const link = PostProps.post.link;
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -132,7 +131,7 @@ const PostShare = (PostProps: PostShareProps) => {
     dispatch(GET_USER_ID());
   }, []);
 
-  const { userID } = useSelector((state: RootState) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.authReducer);
 
   return (
     <ConfigProvider

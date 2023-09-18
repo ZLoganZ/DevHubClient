@@ -1,6 +1,5 @@
 import GithubColors from 'github-colors';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Checkbox, ConfigProvider, Space, Spin } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +10,7 @@ import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { GET_REPOSITORY_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 interface ReposProps {
   repositories: any;
@@ -19,9 +18,9 @@ interface ReposProps {
 }
 
 const AddRepositoryForm = (Props: ReposProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -83,7 +82,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
     }
   }, [access_token_github]);
 
-  const { repos } = useSelector((state: RootState) => state.userReducer);
+  const { repos } = useAppSelector((state) => state.userReducer);
 
   const renderItemRepos = (item: any, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;

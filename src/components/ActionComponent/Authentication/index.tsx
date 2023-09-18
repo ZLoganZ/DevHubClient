@@ -1,17 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { CHECK_LOGIN_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 
 export const AlreadyAuth = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
 
-  const login = useSelector((state: RootState) => state.authReducer.login);
+  const login = useAppSelector((state) => state.authReducer.login);
 
   useEffect(() => {
     if (login !== null) return;
@@ -31,11 +30,11 @@ export const AlreadyAuth = () => {
 };
 
 export const Auth = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
 
-  const login = useSelector((state: RootState) => state.authReducer.login);
+  const login = useAppSelector((state) => state.authReducer.login);
 
   useEffect(() => {
     if (login !== null) return;

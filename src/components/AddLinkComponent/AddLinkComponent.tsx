@@ -3,7 +3,6 @@ import { ConfigProvider, Dropdown, Button, Input, Avatar } from 'antd';
 import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
 
 import StyleTotal from './cssAddLinkComponent';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
@@ -11,7 +10,7 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
 import { ButtonActiveHover } from '@/components/MiniComponent';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { ContactType } from '@/types';
 
 interface Props {
@@ -20,10 +19,10 @@ interface Props {
 }
 
 const AddLinkComponent = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

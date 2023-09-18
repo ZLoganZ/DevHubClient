@@ -1,9 +1,8 @@
 import { ConfigProvider } from 'antd';
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 import './Day&NightSwitch.css';
 
 interface Props {
@@ -15,7 +14,7 @@ interface Props {
 
 const DayNightSwitch = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
 
   return (

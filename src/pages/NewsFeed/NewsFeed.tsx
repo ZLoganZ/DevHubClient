@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { Col, ConfigProvider, Dropdown, MenuProps, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +13,7 @@ import LoadingNewFeed from '@/components/GlobalSetting/LoadingNewFeed';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { useAllPostsData } from '@/hooks';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import StyleTotal from './cssNewsFeed';
 
@@ -84,10 +83,10 @@ const community = [
 ];
 
 const NewFeed = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

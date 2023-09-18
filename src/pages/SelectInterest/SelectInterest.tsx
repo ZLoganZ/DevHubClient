@@ -1,5 +1,4 @@
 import { ConfigProvider, message } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import descArray from '@/components/GlobalSetting/ItemComponent/Description';
@@ -8,15 +7,15 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { CHOOSE_GET_INTEREST_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssSelectInterest';
 
 const SelectInterest = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   let navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

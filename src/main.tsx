@@ -5,7 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 
-import store from '@/redux/configStore';
+import { store } from '@/redux/configStore';
 import App from '@/App.tsx';
 import './index.css';
 

@@ -12,24 +12,21 @@ import { Avatar, ConfigProvider, Menu } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import StyleTotal from './cssMenu';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 const MenuMain = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
   const [key, setKey] = useState('');
 
   // Hover menu

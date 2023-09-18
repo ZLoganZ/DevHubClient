@@ -1,6 +1,5 @@
 import { Avatar, ConfigProvider, Input, Popover, Row, Col } from 'antd';
 import { useMemo, useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
@@ -13,7 +12,7 @@ import {
 } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetail';
 
@@ -28,10 +27,10 @@ interface Data {
 }
 
 const OpenMyPostShareDetail = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

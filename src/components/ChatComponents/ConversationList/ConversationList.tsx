@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ConfigProvider, Input, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +13,7 @@ import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 interface ConversationListProps {
   initialItems: any;
@@ -25,19 +24,15 @@ interface ConversationListProps {
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
-  const { members } = useSelector(
-    (state: RootState) => state.activeListReducer
-  );
+  const { members } = useAppSelector((state) => state.activeListReducer);
 
   const [items, setItems] = useState(Props.initialItems);
 
@@ -187,7 +182,7 @@ const ConversationList = (Props: ConversationListProps) => {
   // Open OtherPostDetailModal
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
 
-  const { visible } = useSelector((state: RootState) => state.modalHOCReducer);
+  const { visible } = useAppSelector((state) => state.modalHOCReducer);
 
   useEffect(() => {
     if (!visible && isOpenPostDetail) {

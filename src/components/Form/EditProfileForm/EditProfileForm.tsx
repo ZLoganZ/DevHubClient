@@ -8,7 +8,6 @@ import {
   message
 } from 'antd';
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   faFacebookF,
   faTwitter,
@@ -45,22 +44,20 @@ import { UPDATE_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssEditProfileForm';
 
 const EditProfileForm = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const userInfo = useSelector(
-    (state: RootState) => state.postReducer.ownerInfo
-  );
+  const userInfo = useAppSelector((state) => state.postReducer.ownerInfo);
 
   const [tags, setTags] = useState(userInfo?.tags);
 

@@ -18,7 +18,7 @@ import communityReducer from './Slice/CommunitySlide';
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     userReducer,
     authReducer,
@@ -38,8 +38,6 @@ const store = configureStore({
 
 // Hàm run nhận vào 1 generator function
 sagaMiddleware.run(rootSaga);
-
-export default store;
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

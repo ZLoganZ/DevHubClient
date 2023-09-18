@@ -10,7 +10,6 @@ import {
 import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { sha1 } from 'crypto-hash';
@@ -25,7 +24,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { CREATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssNewPost';
 
 Quill.register('modules/imageCompress', ImageCompress);
@@ -44,11 +43,11 @@ interface Props {
 //===================================================
 
 const NewPost = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

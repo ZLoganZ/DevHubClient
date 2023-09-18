@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import Quill from 'quill';
 import { ConfigProvider } from 'antd';
 import ImageCompress from 'quill-image-compress';
-import { useDispatch, useSelector } from 'react-redux';
 import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssQuillEdit';
 
 Quill.register('modules/imageCompress', ImageCompress);
@@ -26,10 +25,10 @@ interface QuillEditProps {
 }
 
 const QuillEdit = (Props: QuillEditProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const searchRef = useRef<any>(null);
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { setUser } from '@/redux/Slice/UserSlice';
 import {
@@ -12,6 +12,9 @@ import { postService } from '@/services/PostService';
 import { messageService } from '@/services/MessageService';
 import { userService } from '@/services/UserService';
 import { AppDispatch, RootState } from '@/redux/configStore';
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 /**
  * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
@@ -124,9 +127,7 @@ export const useIntersectionObserverNow = (
  * @returns The function `useOtherUser` returns the information of the other user in a conversation.
  */
 export const useOtherUser = (conversation: any) => {
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const otherUser = useMemo(() => {
     const currentUser = userInfo?.id;
@@ -147,7 +148,7 @@ export const useOtherUser = (conversation: any) => {
 };
 
 export const useUserInfo = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
@@ -180,7 +181,7 @@ export const useUserInfo = () => {
  * - `isFetching` is a boolean that indicates whether the query is currently fetching.
  */
 export const useAllPostsData = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPosts'],
@@ -221,7 +222,7 @@ export const useAllPostsData = () => {
  * - `isFetching` is a boolean that indicates whether the query is currently fetching.
  */
 export const usePostsData = (userID: string) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
@@ -383,7 +384,7 @@ export const useUpdateAllPosts = () => {
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
-  const { isInProfile } = useSelector((state: RootState) => state.postReducer);
+  const { isInProfile } = useAppSelector((state) => state.postReducer);
 
   const { mutate, isLoading, isError, isSuccess } = useMutation(
     async (newPost: any) => {

@@ -14,7 +14,6 @@ import {
 import type { MenuProps } from 'antd';
 import { format } from 'date-fns';
 import { Header } from 'antd/es/layout/layout';
-import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import Title from 'antd/es/typography/Title';
@@ -31,12 +30,12 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useConversationsData } from '@/hooks';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   const { algorithm } = getTheme();
@@ -44,12 +43,10 @@ const Headers = () => {
   const switchTheme = localStorage.getItem('theme')
     ? localStorage.getItem('theme') === 'dark'
     : true;
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   // Switch theme
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const onChange = (checked: boolean) => {
     if (checked) {
       dispatch(setTheme({ theme: DARK_THEME }));

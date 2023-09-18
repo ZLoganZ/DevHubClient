@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import {
@@ -7,6 +6,8 @@ import {
   setNavigate,
   setUseSelector
 } from '@/redux/Slice/FunctionSlice';
+
+import { useAppDispatch, useAppSelector } from './hooks';
 
 import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
@@ -37,11 +38,9 @@ import NotFound404 from '@/pages/NotFound404';
 
 import MainLayout from '@/layouts/MainLayout';
 
-import { AppDispatch } from '@/redux/configStore';
-
 const App = () => {
   //Set một số tham số cần thiết trên toàn cục
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   dispatch(setDispatch(dispatch));
 
   const navigate = useNavigate();
@@ -50,7 +49,7 @@ const App = () => {
   const location = useLocation();
   dispatch(setLocation(location));
 
-  dispatch(setUseSelector(useSelector));
+  dispatch(setUseSelector(useAppSelector));
 
   return (
     <>

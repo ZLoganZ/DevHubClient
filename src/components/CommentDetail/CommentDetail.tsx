@@ -7,7 +7,6 @@ import Icon, {
   LikeFilled,
   LikeOutlined
 } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import StyleTotal from '@/components/Post/cssPost';
@@ -15,7 +14,7 @@ import {
   DISLIKE_COMMENT_POST_SAGA,
   LIKE_COMMENT_POST_SAGA
 } from '@/redux/ActionSaga/PostActionSaga';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 interface CommentProps {
   comment: any;
@@ -30,8 +29,8 @@ interface CommentProps {
 
 const CommentDetail = (Props: CommentProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
-  const dispatch = useDispatch<AppDispatch>();
+  const { change } = useAppSelector((state) => state.themeReducer);
+  const dispatch = useAppDispatch();
 
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();

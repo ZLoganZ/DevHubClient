@@ -1,14 +1,13 @@
 import { Content } from 'antd/es/layout/layout';
 import { useLayoutEffect } from 'react';
 import { ConfigProvider, FloatButton, Layout } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Headers from '@/components/Headers';
 import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
 import Menu from '@/components/Menu';
 import { GET_USER_INFO_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssMainLayout';
 
 interface PropsMainTemplate {
@@ -16,13 +15,11 @@ interface PropsMainTemplate {
 }
 
 const MainLayout = (props: PropsMainTemplate) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

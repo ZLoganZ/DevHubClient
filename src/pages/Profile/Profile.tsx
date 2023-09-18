@@ -11,7 +11,6 @@ import {
   Tag
 } from 'antd';
 import ReactQuill from 'react-quill';
-import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSnowflake,
@@ -44,7 +43,7 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { usePostsData } from '@/hooks';
 import { RepositoryType } from '@/types';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import StyleTotal from './cssProfile';
 
@@ -53,12 +52,12 @@ interface Props {
 }
 
 const Profile = (Props: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { userID } = Props;
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -1,6 +1,5 @@
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import { ConfigProvider, Form, Input } from 'antd';
-import { useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useForm } from 'react-hook-form';
@@ -9,12 +8,12 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { UserRegisterType } from '@/types';
-import { AppDispatch } from '@/redux/configStore';
+import { useAppDispatch } from '@/hooks';
 
 import StyleTotal from './cssRegister';
 
 const Register = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const form = useForm({
     defaultValues: {

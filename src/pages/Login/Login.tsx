@@ -5,7 +5,6 @@ import { MailOutlined } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 import {
   LOGIN_SAGA,
@@ -14,13 +13,13 @@ import {
 import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
 import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
-import { AppDispatch } from '@/redux/configStore';
+import { useAppDispatch } from '@/hooks';
 import { UserLoginType } from '@/types';
 
 import StyleTotal from './cssLogin';
 
 const Login = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
 

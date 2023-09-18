@@ -1,14 +1,13 @@
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Space } from 'antd';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import {  RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 import StyleTotal from './cssSelectCommunity';
 
 const SelectCommunity = () => {
@@ -131,7 +130,7 @@ const SelectCommunity = () => {
   ];
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

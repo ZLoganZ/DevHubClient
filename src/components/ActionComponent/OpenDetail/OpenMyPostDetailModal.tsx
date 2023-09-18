@@ -1,6 +1,5 @@
 import { Avatar, ConfigProvider, Input, Popover, Modal } from 'antd';
 import { useMemo, useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
@@ -15,7 +14,7 @@ import {
 } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
@@ -34,18 +33,16 @@ interface Data {
 }
 
 const OpenMyPostDetailModal = (PostProps: PostProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const inputRef = useRef<any>();
 

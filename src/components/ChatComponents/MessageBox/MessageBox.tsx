@@ -1,12 +1,11 @@
 import { Image } from 'antd';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 
 import StyleTotal from './cssMessageBox';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 interface MessageBoxProps {
   data: any;
@@ -14,12 +13,11 @@ interface MessageBoxProps {
 }
 
 const MessageBox = (Props: MessageBoxProps) => {
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
+
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const isOwn = userInfo.id === Props.data.sender._id;
   const seenList = (Props.data.seen || [])

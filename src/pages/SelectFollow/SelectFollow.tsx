@@ -1,6 +1,5 @@
 import { ConfigProvider } from 'antd';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
@@ -9,15 +8,15 @@ import RenderPeopleItem from './RenderPeopleItem';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { GET_SHOULD_FOLLOWERS_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssSelectFollow';
 
 const SelectFollow = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   let navigate = useNavigate();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -26,8 +25,8 @@ const SelectFollow = () => {
     dispatch(GET_SHOULD_FOLLOWERS_SAGA());
   }, []);
 
-  const peopleArray = useSelector(
-    (state: RootState) => state.getStartedReducer.arrayShouldFollowers
+  const peopleArray = useAppSelector(
+    (state) => state.getStartedReducer.arrayShouldFollowers
   );
 
   return (

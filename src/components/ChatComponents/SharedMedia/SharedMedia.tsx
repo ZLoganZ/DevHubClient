@@ -8,29 +8,26 @@ import {
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
-import { useSelector } from 'react-redux';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleTotal from './cssSharedMedia';
 import { useCurrentConversationData } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { pusherClient } from '@/util/functions/Pusher';
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
 
 interface SharedMediaProps {
   conversationId: any;
 }
 
 const SharedMedia = (Props: SharedMediaProps) => {
-  const { change } = useSelector((state: RootState) => state.themeReducer);
+  const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
   const { isLoadingConversation, currentConversation } =
     useCurrentConversationData(Props.conversationId);
 
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const pusherKey = useMemo(() => {
     return userInfo?.id;
