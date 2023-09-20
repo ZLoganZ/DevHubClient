@@ -7,7 +7,7 @@ import {
   Image,
   message
 } from 'antd';
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, ChangeEvent } from 'react';
 import {
   faFacebookF,
   faTwitter,
@@ -37,14 +37,15 @@ import AddExperienceForm from '@/components/Form/ExperienceForm/AddExperienceFor
 import EditExperienceForm from '@/components/Form/ExperienceForm/EditExperienceForm';
 import AddRepositoryForm from '@/components/Form/AddRepositoryForm';
 import { ButtonActiveHover } from '@/components/MiniComponent';
-import AddTagComponent from '@/components/AddTagComponent';
-import AddLinkComponent from '@/components/AddLinkComponent';
+import AddTags from '@/components/AddTags';
+import AddContacts from '@/components/AddContacts';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import { UPDATE_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { ContactType, ExperienceType, RepositoryType } from '@/types';
 import StyleTotal from './cssEditProfileForm';
 
 const EditProfileForm = () => {
@@ -61,33 +62,31 @@ const EditProfileForm = () => {
 
   const [tags, setTags] = useState(userInfo?.tags);
 
-  const [links, setLinks] = useState<any>(userInfo?.contacts || []);
+  const [contacts, setLinks] = useState(userInfo.contacts || []);
 
-  const [firstname, setFirstName] = useState(userInfo?.firstname);
+  // const [firstname, setFirstName] = useState(userInfo.firstname);
 
-  const [lastname, setLastName] = useState(userInfo?.lastname);
+  const [name, setLastName] = useState(userInfo.name);
 
-  const [alias, setAlias] = useState(userInfo?.alias || '');
+  const [alias, setAlias] = useState(userInfo.alias || '');
 
-  const [location, setLocation] = useState(userInfo?.location || '');
+  const [location, setLocation] = useState(userInfo.location || '');
 
   const [avatar, setAvatar] = useState(
     userInfo.user_image || '/images/TimeLinePage/avatar.jpg'
   );
-  const [fileAvatar, setFileAvatar] = useState<any>(null);
+  const [fileAvatar, setFileAvatar] = useState(null);
 
   const [cover, setCover] = useState(
     userInfo.cover_image || '/images/ProfilePage/cover.jpg'
   );
-  const [fileCover, setFileCover] = useState<any>(null);
+  const [fileCover, setFileCover] = useState(null);
 
-  const [about, setAbout] = useState<string>(userInfo?.about || '');
+  const [about, setAbout] = useState(userInfo.about || '');
 
-  const [experiences, setExperiences] = useState<any>(
-    userInfo?.experiences || []
-  );
+  const [experiences, setExperiences] = useState(userInfo?.experiences || []);
 
-  const [repositories, setRepositories] = useState<any>(
+  const [repositories, setRepositories] = useState(
     userInfo?.repositories || []
   );
 
@@ -132,7 +131,7 @@ const EditProfileForm = () => {
     };
   };
 
-  const handleRemoveImage = async (imageURL: any) => {
+  const handleRemoveImage = async (imageURL: string) => {
     const nameSplit = imageURL.split('/');
     const duplicateName = nameSplit.pop();
 
@@ -141,7 +140,7 @@ const EditProfileForm = () => {
 
     const formData = new FormData();
     formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id);
+    formData.append('public_id', public_id!);
     const timestamp = String(Date.now());
     formData.append('timestamp', timestamp);
     const signature = await sha1(
@@ -162,35 +161,35 @@ const EditProfileForm = () => {
     };
   };
 
-  const openInNewTab = (url: any) => {
+  const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const handleChangeFirstName = (e: any) => {
-    setFirstName(e.target.value);
-  };
+  // const handleChangeFirstName = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setFirstName(e.target.value);
+  // };
 
-  const handleChangeLastName = (e: any) => {
+  const handleChangeLastName = (e: ChangeEvent<HTMLInputElement>) => {
     setLastName(e.target.value);
   };
 
-  const handleChangeTags = (tags: any) => {
+  const handleChangeTags = (tags: string[]) => {
     setTags(tags);
   };
 
-  const handleChangeLinks = (links: any) => {
-    setLinks(links);
+  const handleChangeLinks = (contacts: ContactType[]) => {
+    setLinks(contacts);
   };
 
-  const handleChangeAlias = (e: any) => {
+  const handleChangeAlias = (e: ChangeEvent<HTMLInputElement>) => {
     setAlias(e.target.value);
   };
 
-  const handleChangeLocation = (e: any) => {
+  const handleChangeLocation = (e: ChangeEvent<HTMLInputElement>) => {
     setLocation(e.target.value);
   };
 
-  const handleChangeAbout = (value: any) => {
+  const handleChangeAbout = (value: string) => {
     setAbout(value);
   };
 
@@ -209,17 +208,19 @@ const EditProfileForm = () => {
     }
     dispatch(
       UPDATE_USER_SAGA({
-        id: userInfo?.id,
+        id: userInfo._id,
         userUpdate: {
-          lastname,
-          firstname,
-          username: lastname + ' ' + firstname,
+          name: name /* + ' ' + firstname */,
           alias,
           location,
-          userImage: fileAvatar ? formData.get('userImage') : undefined,
-          coverImage: fileCover ? formData.get('coverImage') : undefined,
+          user_image: fileAvatar
+            ? formData.get('userImage')?.toString()!
+            : undefined,
+          cover_image: fileCover
+            ? formData.get('coverImage')?.toString()!
+            : undefined,
           tags,
-          contacts: links,
+          contacts: contacts,
           about,
           experiences,
           repositories
@@ -232,9 +233,9 @@ const EditProfileForm = () => {
     dispatch(callBackSubmitDrawer(onSubmit));
   }, [
     tags,
-    firstname,
-    lastname,
-    links,
+    // firstname,
+    name,
+    contacts,
     fileAvatar,
     fileCover,
     alias,
@@ -282,7 +283,7 @@ const EditProfileForm = () => {
     );
   };
 
-  const renderExperience = (item: any, index: any) => {
+  const renderExperience = (item: ExperienceType, index: number) => {
     return (
       <div className="item mt-2 flex">
         <div style={{ color: themeColorSet.colorText1 }}>
@@ -291,10 +292,12 @@ const EditProfileForm = () => {
             icon={faBriefcase}
             style={{ color: commonColor.colorBlue1 }}
           />
-          <span className="company mr-2 font-semibold">{item.companyName}</span>
-          <span className="position mr-2">{item.positionName} |</span>
+          <span className="company mr-2 font-semibold">
+            {item.company_name}
+          </span>
+          <span className="position mr-2">{item.position_name} |</span>
           <span className="date">
-            {item.startDate} ~ {item.endDate}
+            {item.start_date} ~ {item.end_date}
           </span>
         </div>
         <div className="ml-2">
@@ -326,9 +329,7 @@ const EditProfileForm = () => {
           <span
             onClick={() => {
               setExperiences(
-                experiences.filter(
-                  (item: any, indexFilter: any) => indexFilter !== index
-                )
+                experiences.filter((item, indexFilter) => indexFilter !== index)
               );
             }}>
             <FontAwesomeIcon
@@ -343,7 +344,7 @@ const EditProfileForm = () => {
     );
   };
 
-  const renderRepositoryIem = (item: any, index: any) => {
+  const renderRepositoryIem = (item: RepositoryType) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <a
@@ -505,7 +506,7 @@ const EditProfileForm = () => {
             </Space>
           </section>
           <section className="addLinks mt-3">
-            {links?.map((item: any, index: any) => {
+            {contacts.map((item) => {
               switch (item.key) {
                 case '0':
                   return (
@@ -573,10 +574,10 @@ const EditProfileForm = () => {
                   openModal({
                     title: 'Update Social Links',
                     component: (
-                      <AddLinkComponent
+                      <AddContacts
                         key={Math.random()}
                         callback={handleChangeLinks}
-                        links={links}
+                        contacts={contacts}
                       />
                     ),
                     footer: false
@@ -607,26 +608,26 @@ const EditProfileForm = () => {
                 className="LastName form__group field"
                 style={{ width: '48%' }}>
                 <input
-                  defaultValue={userInfo?.lastname}
+                  defaultValue={userInfo.name}
                   pattern="[A-Za-z ]*"
                   type="input"
                   className="form__field"
-                  placeholder="Last Name"
-                  name="lastname"
-                  id="lastname"
+                  placeholder="User Name"
+                  name="name"
+                  id="name"
                   required
                   onChange={handleChangeLastName}
                   autoComplete="off"
                 />
-                <label htmlFor="lastname" className="form__label">
+                <label htmlFor="name" className="form__label">
                   Last Name
                 </label>
               </div>
-              <div
+              {/* <div
                 className="firstName form__group field"
                 style={{ width: '48%' }}>
                 <input
-                  defaultValue={userInfo?.firstname}
+                  defaultValue={userInfo.firstname}
                   pattern="[A-Za-z ]*"
                   type="input"
                   className="form__field"
@@ -640,12 +641,12 @@ const EditProfileForm = () => {
                 <label htmlFor="firstname" className="form__label">
                   First Name
                 </label>
-              </div>
+              </div> */}
             </div>
             <div className="line2 flex justify-between items-center">
               <div className="alias form__group field" style={{ width: '48%' }}>
                 <input
-                  defaultValue={userInfo?.alias}
+                  defaultValue={userInfo.alias}
                   type="input"
                   className="form__field"
                   placeholder="ex: johndoe"
@@ -663,7 +664,7 @@ const EditProfileForm = () => {
                 className="location form__group field"
                 style={{ width: '48%' }}>
                 <input
-                  defaultValue={userInfo?.location}
+                  defaultValue={userInfo.location}
                   pattern="[A-Za-z ]*"
                   type="input"
                   className="form__field"
@@ -693,7 +694,7 @@ const EditProfileForm = () => {
             </div>
             <div className="tags flex flex-wrap">
               {descArray.map((item, index) => {
-                if (tags?.indexOf(item.title) !== -1) {
+                if (tags.indexOf(item.title) !== -1) {
                   return (
                     <Tag
                       className="item mx-2 my-2 px-4 py-1"
@@ -721,7 +722,7 @@ const EditProfileForm = () => {
                     openModal({
                       title: 'Add Tags',
                       component: (
-                        <AddTagComponent
+                        <AddTags
                           key={Math.random()}
                           callback={handleChangeTags}
                           tags={tags}
@@ -868,7 +869,7 @@ const EditProfileForm = () => {
             ) : (
               // Nếu có experience
               <div className="mt-5 ml-3">
-                {experiences.map((item: any, index: any) => {
+                {experiences.map((item, index) => {
                   return renderExperience(item, index);
                 })}
               </div>
@@ -955,8 +956,8 @@ const EditProfileForm = () => {
             ) : (
               // Nếu có repository
               <div className="flex flex-wrap justify-between mt-5">
-                {repositories.map((item: any, index: any) => {
-                  return renderRepositoryIem(item, index);
+                {repositories.map((item) => {
+                  return renderRepositoryIem(item);
                 })}
               </div>
             )}

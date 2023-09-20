@@ -19,10 +19,10 @@ const MessageBox = (Props: MessageBoxProps) => {
 
   const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
-  const isOwn = userInfo.id === Props.data.sender._id;
+  const isOwn = userInfo._id === Props.data.sender._id;
   const seenList = (Props.data.seen || [])
     .filter((user: any) => user._id !== Props.data?.sender?._id)
-    .map((user: any) => user.lastname + ' ' + user.firstname)
+    .map((user: any) => user.name)
     .join(', ');
 
   const container = `flex gap-3 p-4 ${isOwn && 'justify-end'}`;
@@ -64,7 +64,7 @@ const MessageBox = (Props: MessageBoxProps) => {
                 style={{
                   color: themeColorSet.colorText1
                 }}>
-                {Props.data.sender.lastname + ' ' + Props.data.sender.firstname}
+                {Props.data.sender.name}
               </div>
             </div>
             <div className={message}>

@@ -27,7 +27,7 @@ const MainLayout = (props: PropsMainTemplate) => {
     dispatch(GET_USER_INFO_SAGA());
   }, []);
 
-  if (!userInfo) {
+  if (!userInfo.name) {
     return <LoadingLogo />;
   }
 

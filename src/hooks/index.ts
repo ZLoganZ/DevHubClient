@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-import { setUser } from '@/redux/Slice/UserSlice';
 import {
   setAllPost,
+  setAllPostNewsfeed,
   setIsInProfile,
   setPostArr
 } from '@/redux/Slice/PostSlice';
@@ -12,6 +12,11 @@ import { postService } from '@/services/PostService';
 import { messageService } from '@/services/MessageService';
 import { userService } from '@/services/UserService';
 import { AppDispatch, RootState } from '@/redux/configStore';
+import {
+  ApplyPostDefaults,
+  ApplyPostsDefaults,
+  ApplyUserDefaults
+} from '@/util/functions/ApplyDefaults';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -120,7 +125,7 @@ export const useIntersectionObserverNow = (
 
 /**
  * The `useOtherUser` function returns the information of the other user in a conversation, including
- * their username.
+ * their name.
  * @param {any} conversation - The `conversation` parameter is an object that represents a
  * conversation. It likely contains information about the users involved in the conversation, such as
  * their IDs and usernames.
@@ -130,43 +135,71 @@ export const useOtherUser = (conversation: any) => {
   const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const otherUser = useMemo(() => {
-    const currentUser = userInfo?.id;
+    const currentUser = userInfo._id;
 
     const otherUser = conversation?.users?.filter(
       (user: any) => user._id !== currentUser
     );
 
-    const otherUserInfo = {
-      ...otherUser[0],
-      username: otherUser[0].lastname + ' ' + otherUser[0].firstname
-    };
-
-    return otherUserInfo;
+    return otherUser[0];
   }, [userInfo, conversation.users]);
 
   return otherUser;
 };
 
+/**
+ * The `useUserInfo` function is a custom hook that fetches user information and returns the loading
+ * state, error state, user info data, and fetching state.
+ * @returns The `useUserInfo` function returns an object with the following properties:
+ * - `isLoadingUserInfo` is a boolean that indicates whether the data is still loading.
+ * - `isErrorUserInfo` is a boolean that indicates whether there is an error.
+ * - `userInfo` is an object that contains information about the user.
+ * - `isFetchingUserInfo` is a boolean that indicates whether the query is currently fetching.
+ */
 export const useUserInfo = () => {
-  const dispatch = useAppDispatch();
-
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
       const { data } = await userService.getUserInfo();
       return data;
     },
-    staleTime: Infinity,
-    onSuccess(data) {
-      dispatch(setUser(data.metadata));
-    }
+    staleTime: Infinity
   });
 
   return {
-    isLoading,
-    isError,
-    userInfo: data?.metadata,
-    isFetching
+    isLoadingUserInfo: isLoading,
+    isErrorUserInfo: isError,
+    userInfo: ApplyUserDefaults(data?.metadata!),
+    isFetchingUserInfo: isFetching
+  };
+};
+
+/**
+ * The `useOtherUserInfo` function is a custom hook that fetches and returns information about a user
+ * other than the current user.
+ * @param {string} userID - The `userID` parameter is a string that represents the unique identifier of
+ * the user whose information we want to fetch.
+ * @returns The function `useOtherUserInfo` returns an object with the following properties:
+ * - `isLoadingOtherUserInfo` is a boolean that indicates whether the data is still loading.
+ * - `isErrorOtherUserInfo` is a boolean that indicates whether there is an error.
+ * - `otherUserInfo` is an object that contains information about the other user.
+ * - `isFetchingOtherUserInfo` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useOtherUserInfo = (userID: string) => {
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['otherUserInfo', userID],
+    queryFn: async () => {
+      const { data } = await userService.getUserInfoByID(userID);
+      return data;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingOtherUserInfo: isLoading,
+    isErrorOtherUserInfo: isError,
+    otherUserInfo: ApplyUserDefaults(data?.metadata!),
+    isFetchingOtherUserInfo: isFetching
   };
 };
 
@@ -174,11 +207,11 @@ export const useUserInfo = () => {
  * The `useAllPostsData` function is a custom hook that fetches all posts data, sets the loading and
  * error states, and returns the fetched data along with additional information.
  * @returns The function `useAllPostsData` returns an object with the following properties:
- * - `isLoading` is a boolean that indicates whether the data is still loading.
- * - `isError` is a boolean that indicates whether there is an error.
- * - `allPost` is an array of all posts.
- * - `userInfo` is an object that contains information about the user.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * - `isLoadingAllPosts` is a boolean that indicates whether the data is still loading.
+ * - `isErrorAllPosts` is a boolean that indicates whether there is an error.
+ * - `allPosts` is an array of all posts.
+ * - `isFetchingAllPosts` is a boolean that indicates whether the query is currently fetching.
+ * - `refetchAllPosts` is a function that refetches the posts data.
  */
 export const useAllPostsData = () => {
   const dispatch = useAppDispatch();
@@ -200,29 +233,67 @@ export const useAllPostsData = () => {
   });
 
   return {
-    isLoading,
-    isError,
-    allPost: data?.metadata,
-    isFetching,
-    refetchPosts: refetch
+    isLoadingAllPosts: isLoading,
+    isErrorAllPosts: isError,
+    allPosts: data?.metadata,
+    isFetchingAllPosts: isFetching,
+    refetchAllPosts: refetch
   };
 };
 
 /**
- * The `usePostsData` function is a custom hook that fetches and returns data related to posts, user
- * information, and owner information based on a given userID.
+ * The function `useAllPostsNewsfeedData` is a custom hook that fetches all posts for a newsfeed and
+ * provides loading, error, data, and refetching functionality.
+ * @returns The function `useAllPostsNewsfeedData` returns an object with the following properties:
+ * - `isLoadingAllPostsNewsfeed` is a boolean that indicates whether the data is still loading.
+ * - `isErrorAllPostsNewsfeed` is a boolean that indicates whether there is an error.
+ * - `allPostsNewsfeed` is an array of all posts for a newsfeed.
+ * - `isFetchingAllPostsNewsfeed` is a boolean that indicates whether the query is currently fetching.
+ * - `refetchAllPostsNewsfeed` is a function that refetches the posts data.
+ */
+export const useAllPostsNewsfeedData = () => {
+  const dispatch = useAppDispatch();
+
+  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+    queryKey: ['allPostsNewsfeed'],
+    queryFn: async () => {
+      dispatch(setIsInProfile(false));
+      const { data } = await postService.GetAllPostNewsFeed();
+      return data;
+    },
+    staleTime: Infinity,
+    onSuccess(data) {
+      dispatch(setAllPostNewsfeed(data.metadata));
+    },
+    onError(err) {
+      console.log(err);
+    }
+  });
+
+  return {
+    isLoadingAllPostsNewsfeed: isLoading,
+    isErrorAllPostsNewsfeed: isError,
+    allPostsNewsfeed: ApplyPostsDefaults(data?.metadata!),
+    isFetchingAllPostsNewsfeed: isFetching,
+    refetchAllPostsNewsfeed: refetch
+  };
+};
+
+/**
+ * The `useUserPostsData` function is a custom hook that fetches and returns data related to posts, user
+ * information, and ownerInfo information based on a given userID.
  * @param {string} userID - The userID parameter is a string that represents the user ID for which the
  * posts data is being fetched.
- * @returns The function `usePostsData` returns an object with the following properties:
- * - `isLoading` is a boolean that indicates whether the data is still loading.
- * - `isError` is a boolean that indicates whether there is an error.
- * - `postArray` is an array of posts.
- * - `userInfo` is an object that contains information about the user.
- * - `ownerInfo` is an object that contains information about the owner.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * @returns The function `useUserPostsData` returns an object with the following properties:
+ * - `isLoadingUserPosts` is a boolean that indicates whether the data is still loading.
+ * - `isErrorUserPosts` is a boolean that indicates whether there is an error.
+ * - `userPosts` is an array of posts.
+ * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
-export const usePostsData = (userID: string) => {
+export const useUserPostsData = (userID: string) => {
   const dispatch = useAppDispatch();
+
+  const client_id = useAppSelector((state) => state.authReducer.userID);
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
@@ -232,7 +303,9 @@ export const usePostsData = (userID: string) => {
       } else {
         dispatch(setIsInProfile(false));
       }
-      const { data } = await postService.getAllPostByUserID(userID);
+      const { data } = await postService.getAllPostByUserID(
+        userID === 'me' ? client_id! : userID
+      );
       return data;
     },
     enabled: !!userID,
@@ -246,10 +319,29 @@ export const usePostsData = (userID: string) => {
   });
 
   return {
-    isLoading,
-    isError,
-    postArray: data?.metadata,
-    isFetching
+    isLoadingUserPosts: isLoading,
+    isErrorUserPosts: isError,
+    userPosts: ApplyPostsDefaults(data?.metadata!),
+    isFetchingUserPosts: isFetching
+  };
+};
+
+export const useCommentsData = (postID: string) => {
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['comments', postID],
+    queryFn: async () => {
+      const { data } = await postService.getParentComments(postID);
+      return data;
+    },
+    enabled: !!postID,
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingComments: isLoading,
+    isErrorComments: isError,
+    comments: data?.metadata,
+    isFetchingComments: isFetching
   };
 };
 
@@ -259,9 +351,9 @@ export const usePostsData = (userID: string) => {
  * @returns The function `useConversationsData` returns an object with the following properties:
  * - `isLoadingConversations` is a boolean that indicates whether the conversations data is still
  * loading.
- * - `isError` is a boolean that indicates whether there is an error.
+ * - `isErrorConversations` is a boolean that indicates whether there is an error.
  * - `conversations` is an array of conversations.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * - `isFetchingConversations` is a boolean that indicates whether the query is currently fetching.
  */
 export const useConversationsData = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
@@ -274,9 +366,9 @@ export const useConversationsData = () => {
 
   return {
     isLoadingConversations: isLoading,
-    isError,
+    isErrorConversations: isError,
     conversations: data?.content?.conversations,
-    isFetching
+    isFetchingConversations: isFetching
   };
 };
 
@@ -286,11 +378,11 @@ export const useConversationsData = () => {
  * @param {string | undefined} conversationID - The conversationID parameter is a string that
  * represents the ID of the conversation for which we want to fetch data.
  * @returns The function `useCurrentConversationData` returns an object with the following properties:
- * - `isLoadingConversation` is a boolean that indicates whether the conversation data is still
+ * - `isLoadingCurrentConversation` is a boolean that indicates whether the conversation data is still
  * loading.
- * - `isError` is a boolean that indicates whether there is an error.
+ * - `isErrorCurrentConversation` is a boolean that indicates whether there is an error.
  * - `currentConversation` is an object that contains information about the current conversation.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * - `isFetchingCurrentConversation` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCurrentConversationData = (
   conversationID: string | undefined
@@ -305,10 +397,10 @@ export const useCurrentConversationData = (
   });
 
   return {
-    isLoadingConversation: isLoading,
-    isError,
+    isLoadingCurrentConversation: isLoading,
+    isErrorCurrentConversation: isError,
     currentConversation: data?.content?.conversation,
-    isFetching
+    isFetchingCurrentConversation: isFetching
   };
 };
 
@@ -319,18 +411,15 @@ export const useCurrentConversationData = (
  * whom we want to fetch the followers data.
  * @returns The function `useFollowersData` returns an object with the following properties:
  * - `isLoadingFollowers` is a boolean that indicates whether the followers data is still loading.
- * - `isError` is a boolean that indicates whether there is an error.
+ * - `isErrorFollowers` is a boolean that indicates whether there is an error.
  * - `followers` is an array of followers.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * - `isFetchingFollowers` is a boolean that indicates whether the query is currently fetching.
  */
 export const useFollowersData = (userID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['followers', userID],
     queryFn: async () => {
       const { data } = await userService.getFollowers(userID);
-      data.metadata.followers.forEach((follower) => {
-        follower.username = follower.lastname + ' ' + follower.firstname;
-      });
       return data;
     },
     enabled: !!userID
@@ -338,9 +427,9 @@ export const useFollowersData = (userID: string) => {
 
   return {
     isLoadingFollowers: isLoading,
-    isError,
+    isErrorFollowers: isError,
     followers: data?.metadata.followers,
-    isFetching
+    isFetchingFollowers: isFetching
   };
 };
 
@@ -351,9 +440,9 @@ export const useFollowersData = (userID: string) => {
  * conversation. It is used to fetch the messages associated with that conversation.
  * @returns The function `useMessagesData` returns an object with the following properties:
  * - `isLoadingMessages` is a boolean that indicates whether the messages data is still loading.
- * - `isError` is a boolean that indicates whether there is an error.
+ * - `isErrorMessages` is a boolean that indicates whether there is an error.
  * - `messages` is an array of messages.
- * - `isFetching` is a boolean that indicates whether the query is currently fetching.
+ * - `isFetchingMessages` is a boolean that indicates whether the query is currently fetching.
  * - `refetchMessages` is a function that refetches the messages data.
  */
 export const useMessagesData = (conversationID: any) => {
@@ -368,9 +457,9 @@ export const useMessagesData = (conversationID: any) => {
 
   return {
     isLoadingMessages: isLoading,
-    isError,
+    isErrorMessages: isError,
     messages: data?.content?.messages,
-    isFetching,
+    isFetchingMessages: isFetching,
     refetchMessages: refetch
   };
 };

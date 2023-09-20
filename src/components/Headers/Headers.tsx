@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -29,7 +29,7 @@ import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useConversationsData } from '@/hooks';
+import { useAllPostsNewsfeedData, useConversationsData } from '@/hooks';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssHeaders';
 
@@ -55,6 +55,15 @@ const Headers = () => {
     }
   };
 
+  const { refetchAllPostsNewsfeed } = useAllPostsNewsfeedData();
+
+  const handleClick = useCallback(() => {
+    const { pathname } = window.location;
+    if (pathname === '/') {
+      refetchAllPostsNewsfeed();
+    }
+  }, [refetchAllPostsNewsfeed, window.location.pathname]);
+
   const handleLogout = () => {
     dispatch(LOGOUT_SAGA());
   };
@@ -63,14 +72,14 @@ const Headers = () => {
     {
       key: '1',
       label: (
-        <NavLink to={`/user/${userInfo?.id}`}>
+        <NavLink to={`/user/${userInfo._id}`}>
           <div
             className="myInfo flex items-center py-1 px-1"
             style={{
               height: '12%'
             }}>
             <div className="avatar relative">
-              <Avatar key={userInfo.id} src={userInfo.user_image} />
+              <Avatar key={userInfo._id} src={userInfo.user_image} />
             </div>
             <div className="name_career">
               <div
@@ -79,7 +88,7 @@ const Headers = () => {
                   color: themeColorSet.colorText1,
                   fontWeight: 600
                 }}>
-                {userInfo.lastname}
+                {userInfo.name}
               </div>
             </div>
           </div>
@@ -114,111 +123,109 @@ const Headers = () => {
   const [countUnseen, setCountUnseen] = useState(0);
   const [countNoti, setCountNoti] = useState(0);
 
-  const { conversations, isLoadingConversations } = useConversationsData();
+  // const { conversations, isLoadingConversations } = useConversationsData();
 
-  const [messages, setMessages] = useState<any[]>([]);
+  // const [messages, setMessages] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (isLoadingConversations) return;
+  // useEffect(() => {
+  //   if (isLoadingConversations) return;
 
-    setMessages(conversations);
-  }, [conversations, isLoadingConversations]);
+  //   setMessages(conversations);
+  // }, [conversations, isLoadingConversations]);
 
-  useEffect(() => {
-    if (isLoadingConversations) return;
+  // useEffect(() => {
+  //   if (isLoadingConversations) return;
 
-    const unseenConversations = messages.filter((conversation: any) => {
-      if (conversation.messages?.length === 0) return false;
-      const seenList =
-        conversation.messages[conversation.messages.length - 1].seen || [];
-      return !seenList.some((user: any) => user._id === userInfo.id);
-    });
+  //   const unseenConversations = messages.filter((conversation: any) => {
+  //     if (conversation.messages?.length === 0) return false;
+  //     const seenList =
+  //       conversation.messages[conversation.messages.length - 1].seen || [];
+  //     return !seenList.some((user: any) => user._id === userInfo.id);
+  //   });
 
-    if (unseenConversations.length > 0) {
-      document.title = `(${unseenConversations.length}) DevHub`;
-      setCountUnseen(unseenConversations.length);
-    } else {
-      document.title = `DevHub`;
-      setCountUnseen(0);
-    }
-  }, [messages, isLoadingConversations]);
+  //   if (unseenConversations.length > 0) {
+  //     document.title = `(${unseenConversations.length}) DevHub`;
+  //     setCountUnseen(unseenConversations.length);
+  //   } else {
+  //     document.title = `DevHub`;
+  //     setCountUnseen(0);
+  //   }
+  // }, [messages, isLoadingConversations]);
 
-  const pusherKey = useMemo(() => {
-    return userInfo?.id;
-  }, [userInfo]);
+  // const pusherKey = useMemo(() => {
+  //   return userInfo._id;
+  // }, [userInfo]);
 
-  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
+  // const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
 
-  const popupNotification = (message: any, conversation: any) => {
-    api.open({
-      message:
-        message.sender.username +
-        ' ' +
-        format(new Date(message.createdAt), 'p'),
-      description: message.body ? message.body : 'Sent an image',
-      duration: 5,
-      icon: conversation.isGroup ? (
-        <AvatarGroup key={conversation._id} users={conversation.users} />
-      ) : (
-        <AvatarMessage key={conversation._id} user={message.sender} />
-      ),
-      placement: 'bottomRight',
-      btn: (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => {
-            navigate(`/message/${conversation._id}`);
-          }}>
-          Go to message
-        </Button>
-      )
-    });
-  };
+  // const popupNotification = (message: any, conversation: any) => {
+  //   api.open({
+  //     message:
+  //       message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
+  //     description: message.body ? message.body : 'Sent an image',
+  //     duration: 5,
+  //     icon: conversation.isGroup ? (
+  //       <AvatarGroup key={conversation._id} users={conversation.users} />
+  //     ) : (
+  //       <AvatarMessage key={conversation._id} user={message.sender} />
+  //     ),
+  //     placement: 'bottomRight',
+  //     btn: (
+  //       <Button
+  //         type="primary"
+  //         size="small"
+  //         onClick={() => {
+  //           navigate(`/message/${conversation._id}`);
+  //         }}>
+  //         Go to message
+  //       </Button>
+  //     )
+  //   });
+  // };
 
-  useEffect(() => {
-    if (!pusherKey) return;
+  // useEffect(() => {
+  //   if (!pusherKey) return;
 
-    pusherClient.subscribe(pusherKey);
+  //   pusherClient.subscribe(pusherKey);
 
-    const updateHandler = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
-            playNotiMessage.play();
-            popupNotification(
-              conversation.messages[conversation.messages.length - 1],
-              currentConversation
-            );
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
+  //   const updateHandler = (conversation: any) => {
+  //     setMessages((current: any) =>
+  //       current.map((currentConversation: any) => {
+  //         if (currentConversation._id === conversation.id) {
+  //           playNotiMessage.play();
+  //           popupNotification(
+  //             conversation.messages[conversation.messages.length - 1],
+  //             currentConversation
+  //           );
+  //           return {
+  //             ...currentConversation,
+  //             messages: conversation.messages
+  //           };
+  //         }
 
-          return currentConversation;
-        })
-      );
-    };
+  //         return currentConversation;
+  //       })
+  //     );
+  //   };
 
-    const updateHandlerSeen = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
+  //   const updateHandlerSeen = (conversation: any) => {
+  //     setMessages((current: any) =>
+  //       current.map((currentConversation: any) => {
+  //         if (currentConversation._id === conversation.id) {
+  //           return {
+  //             ...currentConversation,
+  //             messages: conversation.messages
+  //           };
+  //         }
 
-          return currentConversation;
-        })
-      );
-    };
+  //         return currentConversation;
+  //       })
+  //     );
+  //   };
 
-    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
-    pusherClient.bind('conversation-update-noti', updateHandler);
-  }, [pusherKey]);
+  //   pusherClient.bind('conversation-update-seen', updateHandlerSeen);
+  //   pusherClient.bind('conversation-update-noti', updateHandler);
+  // }, [pusherKey]);
 
   return (
     <ConfigProvider
@@ -246,13 +253,14 @@ const Headers = () => {
             <Col span={16} offset={4}>
               <Row align="middle">
                 <Col span={4}>
-                  <NavLink to="/">
+                  <NavLink to="/" onClick={handleClick}>
                     <FontAwesomeIcon
                       className="iconLogo text-3xl"
                       icon={faSnowflake}
                       style={{ color: themeColorSet.colorText1 }}
                     />
                     <Title
+                      onClick={handleClick}
                       level={2}
                       className="title inline-block ml-2"
                       style={{ color: themeColorSet.colorText1 }}>

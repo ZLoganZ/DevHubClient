@@ -4,26 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import {
-  SAVE_COMMENT_POSTSHARE_SAGA,
-  SAVE_COMMENT_SAGA,
-  SAVE_REPLY_SAGA,
-  SAVE_REPLY_POSTSHARE_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
+import { SAVE_COMMENT_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import { PostType, UserInfoType } from '@/types';
+import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssOpenPostDetail';
 
 interface Props {
   post: PostType;
   userInfo: UserInfoType;
-}
-
-interface Data {
-  isReply: boolean;
-  idComment: number | null;
 }
 
 const OpenMyPostShareDetail = (Props: Props) => {
@@ -37,7 +27,10 @@ const OpenMyPostShareDetail = (Props: Props) => {
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
 
-  const [data, setData] = useState<Data>({ isReply: false, idComment: null });
+  const [data, setData] = useState<SelectedCommentValues>({
+    isReply: false,
+    idComment: null
+  });
 
   const inputRef = useRef<any>();
 
@@ -45,56 +38,19 @@ const OpenMyPostShareDetail = (Props: Props) => {
     if (data.isReply) inputRef.current.focus();
   }, [data]);
 
-  const handleData = (data: Data) => {
+  const handleData = (data: SelectedCommentValues) => {
     setData(data);
   };
 
   const handleSubmitComment = () => {
-    if (Props.post.type === 'Share') {
-      if (data.isReply) {
-        dispatch(
-          SAVE_REPLY_POSTSHARE_SAGA({
-            id: Props.post.id,
-            reply: {
-              contentComment: commentContent,
-              idComment: data.idComment
-            }
-          })
-        );
-        setData({ isReply: false, idComment: null });
-      } else {
-        dispatch(
-          SAVE_COMMENT_POSTSHARE_SAGA({
-            comment: {
-              contentComment: commentContent
-            },
-            id: Props.post.id
-          })
-        );
-      }
-    } else {
-      if (data.isReply) {
-        dispatch(
-          SAVE_REPLY_SAGA({
-            id: Props.post.id,
-            reply: {
-              contentComment: commentContent,
-              idComment: data.idComment
-            }
-          })
-        );
-        setData({ isReply: false, idComment: null });
-      } else {
-        dispatch(
-          SAVE_COMMENT_SAGA({
-            comment: {
-              contentComment: commentContent
-            },
-            id: Props.post.id
-          })
-        );
-      }
-    }
+    dispatch(
+      SAVE_COMMENT_SAGA({
+        content: commentContent,
+        post: Props.post._id,
+        type: data.isReply ? 'child' : 'parent',
+        parent: data.isReply ? data.idComment! : undefined
+      })
+    );
     setTimeout(() => {
       setCommentContent('');
     }, 1000);
@@ -111,12 +67,12 @@ const OpenMyPostShareDetail = (Props: Props) => {
   const memoizedComponent = useMemo(
     () => (
       <MyPostDetail
-        onData={handleData}
+        handleData={handleData}
         post={Props.post}
         userInfo={Props.post.post_attributes.user}
         data={data}
-        postShare={Props.post?.type === 'Share'}
-        owner={Props.post?.post_attributes.owner_post}
+        isShared={Props.post?.type === 'Share'}
+        ownerInfo={Props.post?.post_attributes.owner_post}
       />
     ),
     [Props.post, data]

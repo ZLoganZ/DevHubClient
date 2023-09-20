@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { Button } from 'antd';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import StyleTotal from './cssMiniComponent';
 import { useAppSelector } from '@/hooks';
+import StyleTotal from './cssMiniComponent';
 
 // ===========================================
 
@@ -67,7 +67,6 @@ export const ButtonCancelHover = ({
   disabled
 }: ButtonCancelHoverProps) => {
   const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (
     <StyleTotal theme={themeColorSet}>

@@ -1,25 +1,20 @@
 import { Image } from 'antd';
-import { useSelector } from 'react-redux';
 
-import { RootState } from '@/redux/configStore';
 import { UserInfoType } from '@/types';
+import { useAppSelector } from '@/hooks';
 
 interface AvatarProps {
   users: UserInfoType[];
 }
 
 const AvatarGroup = (Props: AvatarProps) => {
-  const { members } = useSelector(
-    (state: RootState) => state.activeListReducer
-  );
-  const userInfo = useSelector(
-    (state: RootState) => state.userReducer.userInfo
-  );
+  const { members } = useAppSelector((state) => state.activeListReducer);
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const slicedUsers = Props.users.slice(0, 3);
-  const isActive = Props.users?.map((user) => {
-    if (user.id === userInfo.id) return;
-    return members.indexOf(user.id) !== -1;
+  const isActive = Props.users.map((user) => {
+    if (user._id === userInfo._id) return;
+    return members.indexOf(user._id) !== -1;
   });
 
   const positionMap = {
@@ -32,7 +27,7 @@ const AvatarGroup = (Props: AvatarProps) => {
     <div className="relative h-11 w-11">
       {slicedUsers.map((user, index) => (
         <div
-          key={user.id}
+          key={user._id}
           className={`absolute inline-block rounded-full overflow-hidden h-[21px] w-[21px] ${
             positionMap[index as keyof typeof positionMap]
           }`}>

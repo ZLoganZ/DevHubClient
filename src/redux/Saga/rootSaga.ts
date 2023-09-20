@@ -11,15 +11,14 @@ export function* rootSaga() {
     // authSaga
     authSaga.theoDoiLoginSaga(),
     authSaga.theoDoiLogoutSaga(),
-    authSaga.theoDoiGetUserIDSaga(),
     authSaga.theoDoiLoginWithGoogleSaga(),
-    authSaga.theoDoiCheckLoginSaga(),
     authSaga.theoDoiForgotPasswordSaga(),
     authSaga.theoDoiVerifyCodeSaga(),
     authSaga.theoDoiResetPasswordSaga(),
     authSaga.theoDoiCheckVerifyCodeSaga(),
     authSaga.theoDoiCheckResetPasswordSaga(),
     authSaga.theoDoiRegisterSaga(),
+    authSaga.theoDoiGetUserIDSaga(),
 
     // userSaga
     userSaga.theoDoiUpdateUserSaga(),
@@ -30,7 +29,6 @@ export function* rootSaga() {
 
     // postSaga
     postSaga.theoDoiCreatePostSaga(),
-    postSaga.theoDoiGetPostShareByIdSaga(),
     postSaga.theoDoiGetAllPostByUserIDSaga(),
     postSaga.theoDoiGetAllPostSaga(),
     postSaga.theoDoiDeletePostSaga(),
@@ -39,13 +37,8 @@ export function* rootSaga() {
     postSaga.theoDoiSharePostSaga(),
     postSaga.theoDoiSavePostSaga(),
     postSaga.theoDoiSaveCommentSaga(),
-    postSaga.theoDoiSaveReplySaga(),
-    postSaga.theoDoiSaveCommentPostShareSaga(),
-    postSaga.theoDoiLikePostShareSaga(),
-    postSaga.theoDoiSaveReplyPostShareSaga(),
     postSaga.theoDoiGetPostByIdSaga(),
     postSaga.theoDoiIncreaseViewPostSaga(),
-    postSaga.theoDoiIncreaseViewPostShareSaga(),
     postSaga.theoDoiLikeCommentPostSaga(),
     postSaga.theoDoiDislikeCommentPostSaga(),
 
@@ -64,6 +57,6 @@ export function* rootSaga() {
     getStartedSaga.theoDoichooseShouldFollowerSaga(),
 
     // communitySaga
-    communitySaga.theoDoiGetCommunityByIDSaga(),
+    communitySaga.theoDoiGetCommunityByIDSaga()
   ]);
 }

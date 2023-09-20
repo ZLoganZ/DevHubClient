@@ -7,12 +7,13 @@ import StyleTotal from './cssAddExperienceForm';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { ExperienceType } from '@/types';
 
 interface EditProps {
-  experiences: any;
-  setExperiences: any;
-  itemCurrent: any;
-  indexCurrent: any;
+  experiences: ExperienceType[];
+  setExperiences: (experiences: ExperienceType[]) => void;
+  itemCurrent: ExperienceType;
+  indexCurrent: number;
 }
 
 const { RangePicker } = DatePicker;
@@ -28,22 +29,23 @@ const EditExperienceForm = (Props: EditProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [positionName, setPositionName] = useState(
-    Props.itemCurrent.positionName
+  const [position_name, setPositionName] = useState(
+    Props.itemCurrent.position_name
   );
-  const [companyName, setCompanyName] = useState(Props.itemCurrent.companyName);
-  const [startDate, setStartDate] = useState(Props.itemCurrent.startDate);
-  const [endDate, setEndDate] = useState(Props.itemCurrent.endDate);
+  const [company_name, setCompanyName] = useState(
+    Props.itemCurrent.company_name
+  );
+  const [start_date, setStartDate] = useState(Props.itemCurrent.start_date);
+  const [end_date, setEndDate] = useState(Props.itemCurrent.end_date);
   const [pastDate, setPastDate] = useState('');
 
-  const checkUntilNow = Props.itemCurrent.endDate === 'Now';
+  const checkUntilNow = Props.itemCurrent.end_date === 'Now';
   const [untilNow, setUntilNow] = useState(checkUntilNow);
 
   const checkDisablePicker: [boolean, boolean] = checkUntilNow
     ? [false, true]
     : [false, false];
-  const [disablePicker, setDisablePicker] =
-    useState<[boolean, boolean]>(checkDisablePicker);
+  const [disablePicker, setDisablePicker] = useState(checkDisablePicker);
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -54,19 +56,19 @@ const EditExperienceForm = (Props: EditProps) => {
   };
 
   const experience = {
-    positionName: '',
-    companyName: '',
-    startDate: '',
-    endDate: ''
+    position_name: '',
+    company_name: '',
+    start_date: '',
+    end_date: ''
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
     if (
-      positionName === '' ||
-      companyName === '' ||
-      startDate === '' ||
-      endDate === ''
+      position_name === '' ||
+      company_name === '' ||
+      start_date === '' ||
+      end_date === ''
     ) {
       error();
       return;
@@ -79,13 +81,13 @@ const EditExperienceForm = (Props: EditProps) => {
   };
 
   useEffect(() => {
-    experience.positionName = positionName;
-    experience.companyName = companyName;
-    experience.startDate = startDate;
-    experience.endDate = endDate;
+    experience.position_name = position_name;
+    experience.company_name = company_name;
+    experience.start_date = start_date;
+    experience.end_date = end_date;
 
     dispatch(setHandleSubmit(handleSetExperience));
-  }, [positionName, companyName, startDate, endDate]);
+  }, [position_name, company_name, start_date, end_date]);
 
   return (
     <ConfigProvider
@@ -100,13 +102,13 @@ const EditExperienceForm = (Props: EditProps) => {
               className="PositionName form__group field"
               style={{ width: '48%' }}>
               <input
-                defaultValue={positionName}
+                defaultValue={position_name}
                 pattern="[A-Za-z ]*"
                 type="input"
                 className="form__field"
                 placeholder="Position Name"
-                name="positionName"
-                id="positionName"
+                name="position_name"
+                id="position_name"
                 required
                 onChange={(e) => {
                   if (searchRef.current) {
@@ -118,7 +120,7 @@ const EditExperienceForm = (Props: EditProps) => {
                 }}
                 autoComplete="off"
               />
-              <label htmlFor="positionName" className="form__label">
+              <label htmlFor="position_name" className="form__label">
                 Position Name
               </label>
             </div>
@@ -126,13 +128,13 @@ const EditExperienceForm = (Props: EditProps) => {
               className="CompanyName form__group field"
               style={{ width: '48%' }}>
               <input
-                defaultValue={companyName}
+                defaultValue={company_name}
                 pattern="[A-Za-z ]*"
                 type="input"
                 className="form__field"
                 placeholder="Company Name"
-                name="companyName"
-                id="companyName"
+                name="company_name"
+                id="company_name"
                 required
                 onChange={(e) => {
                   if (searchRef.current) {
@@ -144,7 +146,7 @@ const EditExperienceForm = (Props: EditProps) => {
                 }}
                 autoComplete="off"
               />
-              <label htmlFor="companyName" className="form__label">
+              <label htmlFor="company_name" className="form__label">
                 Company Name
               </label>
             </div>
@@ -161,8 +163,8 @@ const EditExperienceForm = (Props: EditProps) => {
                 setPastDate(dateString[1]);
               }}
               defaultValue={[
-                dayjs(startDate, dateFormat),
-                endDate === 'Now' ? dayjs() : dayjs(endDate, dateFormat)
+                dayjs(start_date, dateFormat),
+                end_date === 'Now' ? dayjs() : dayjs(end_date, dateFormat)
               ]}
             />
             <button

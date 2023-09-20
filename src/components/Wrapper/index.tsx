@@ -4,10 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
-import {
-  GET_POSTSHARE_BY_ID_SAGA,
-  GET_POST_BY_ID_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
+import { GET_POST_BY_ID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
 import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
@@ -102,8 +99,8 @@ export const PostShareWrapper = () => {
 
   useEffect(() => {
     dispatch(
-      GET_POSTSHARE_BY_ID_SAGA({
-        id: postID
+      GET_POST_BY_ID_SAGA({
+        id: postID!
       })
     );
   }, []);
@@ -165,7 +162,11 @@ export const PostShareWrapper = () => {
     );
   } else {
     return (
-      <OpenOtherPostShareDetail key={post.id} post={post} userInfo={userInfo} />
+      <OpenOtherPostShareDetail
+        key={post._id}
+        post={post}
+        userInfo={userInfo}
+      />
     );
   }
 };
@@ -192,7 +193,7 @@ export const PostWrapper = () => {
   useEffect(() => {
     dispatch(
       GET_POST_BY_ID_SAGA({
-        id: postID
+        id: postID!
       })
     );
   }, []);
@@ -254,7 +255,7 @@ export const PostWrapper = () => {
     );
   } else {
     return (
-      <OpenOtherPostDetail key={post.id} post={post} userInfo={userInfo} />
+      <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />
     );
   }
 };
@@ -280,7 +281,8 @@ export const ProfileWrapper = () => {
 
   const path = location.pathname;
 
-  if (path === '/me') navigate(`/user/${userIDFromStore}`);
+  if (path === '/me' || path === '/user/me')
+    navigate(`/user/${userIDFromStore}`);
 
   return (
     <ConfigProvider

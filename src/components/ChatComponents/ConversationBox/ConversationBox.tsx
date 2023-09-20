@@ -25,10 +25,10 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     return messages[messages.length - 1];
   }, [Props.data.messages]);
 
-  const isOwn = userInfo.id === lastMessage?.sender._id;
+  const isOwn = userInfo._id === lastMessage?.sender._id;
 
   const userID = useMemo(() => {
-    return userInfo.id;
+    return userInfo._id;
   }, [userInfo]);
 
   const hasSeen = useMemo(() => {
@@ -49,7 +49,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     return 'Start a conversation';
   }, [lastMessage, userID]);
 
-  const formatDateTime = (date: any) => {
+  const formatDateTime = (date: Date) => {
     if (isToday(date)) {
       return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {
@@ -85,7 +85,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
                 color: themeColorSet.colorText1
               }}>
               <span style={{ color: themeColorSet.colorText1 }}>
-                {Props.data.name || otherUser.username}
+                {Props.data.name || otherUser.name}
               </span>
             </p>
             {lastMessage?.createdAt && (

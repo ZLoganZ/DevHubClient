@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ export const ForgotPassword = () => {
 
   const [email, setEmail] = useState('');
 
-  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
@@ -76,7 +76,7 @@ export const ResetPassword = () => {
 
   const [password, setPassword] = useState('');
 
-  const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
@@ -162,7 +162,7 @@ export const VerifyCode = () => {
 
   const [code, setCode] = useState('');
 
-  const handleChangeCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeCode = (e: ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
   };
 

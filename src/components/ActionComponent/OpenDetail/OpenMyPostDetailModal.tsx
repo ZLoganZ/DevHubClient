@@ -5,31 +5,22 @@ import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
 import {
-  SAVE_COMMENT_POSTSHARE_SAGA,
   SAVE_COMMENT_SAGA,
-  SAVE_REPLY_SAGA,
-  SAVE_REPLY_POSTSHARE_SAGA,
-  GET_POSTSHARE_BY_ID_SAGA,
   GET_POST_BY_ID_SAGA
 } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import { PostType, UserInfoType } from '@/types';
+import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
 interface PostProps {
   post: PostType;
   userInfo: UserInfoType;
-  postShare?: boolean;
-  owner?: UserInfoType;
+  isShared?: boolean;
+  ownerInfo?: UserInfoType;
   visible?: boolean;
   setVisible?: any;
-}
-
-interface Data {
-  isReply: boolean;
-  idComment: number | null;
 }
 
 const OpenMyPostDetailModal = (PostProps: PostProps) => {
@@ -47,18 +38,17 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   const inputRef = useRef<any>();
 
   useEffect(() => {
-    if (PostProps.postShare) {
-      dispatch(GET_POSTSHARE_BY_ID_SAGA({ id: PostProps.post.id }));
-    } else {
-      dispatch(GET_POST_BY_ID_SAGA({ id: PostProps.post.id }));
-    }
+    dispatch(GET_POST_BY_ID_SAGA({ id: PostProps.post._id }));
   }, []);
 
-  const [data, setData] = useState<Data>({ isReply: false, idComment: null });
+  const [data, setData] = useState<SelectedCommentValues>({
+    isReply: false,
+    idComment: null
+  });
 
   const [visible, setVisible] = useState(PostProps.visible);
 
-  const handleData = (data: Data) => {
+  const handleData = (data: SelectedCommentValues) => {
     setData(data);
   };
 
@@ -71,38 +61,19 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   }, [PostProps.visible]);
 
   const handleSubmitComment = () => {
-    const { postShare, post } = PostProps;
+    const { post } = PostProps;
     const { isReply, idComment } = data;
-    const comment = {
-      contentComment: commentContent
-    };
 
-    const saveCommentAction = postShare
-      ? SAVE_COMMENT_POSTSHARE_SAGA
-      : SAVE_COMMENT_SAGA;
-    const saveReplyAction = postShare
-      ? SAVE_REPLY_POSTSHARE_SAGA
-      : SAVE_REPLY_SAGA;
+    const saveCommentAction = SAVE_COMMENT_SAGA;
 
-    if (isReply) {
-      dispatch(
-        saveReplyAction({
-          id: post.id,
-          reply: {
-            contentComment: commentContent,
-            idComment
-          }
-        })
-      );
-      setData({ isReply: false, idComment: null });
-    } else {
-      dispatch(
-        saveCommentAction({
-          comment,
-          id: post.id
-        })
-      );
-    }
+    dispatch(
+      saveCommentAction({
+        content: commentContent,
+        post: post._id,
+        type: isReply ? 'child' : 'parent',
+        parent: isReply ? idComment! : undefined
+      })
+    );
 
     setCommentContent('');
   };
@@ -118,12 +89,12 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   const memoizedComponent = useMemo(
     () => (
       <MyPostDetail
-        onData={handleData}
+        handleData={handleData}
         post={PostProps.post}
         userInfo={PostProps.userInfo}
         data={data}
-        postShare={PostProps.postShare}
-        owner={PostProps.owner}
+        isShared={PostProps.isShared}
+        ownerInfo={PostProps.ownerInfo}
       />
     ),
     [PostProps.post, PostProps.userInfo, data]
@@ -221,7 +192,7 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
       <StyleTotal theme={themeColorSet}>
         <Modal
           centered
-          title={'The post of ' + PostProps.userInfo?.username}
+          title={'The post of ' + PostProps.userInfo?.name}
           width={720}
           footer={
             <ConfigProvider>

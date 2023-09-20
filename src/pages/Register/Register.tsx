@@ -7,7 +7,7 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
-import { UserRegisterType } from '@/types';
+import { UserRegisterDataType } from '@/types';
 import { useAppDispatch } from '@/hooks';
 
 import StyleTotal from './cssRegister';
@@ -25,7 +25,7 @@ const Register = () => {
     }
   });
 
-  const onSubmit = (values: UserRegisterType) => {
+  const onSubmit = (values: UserRegisterDataType) => {
     dispatch(REGISTER_SAGA(values));
   };
 

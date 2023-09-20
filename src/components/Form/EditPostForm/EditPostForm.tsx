@@ -35,10 +35,10 @@ const toolbarOptions = [
 ];
 
 interface PostProps {
-  id: any;
-  title: any;
-  content: any;
-  img?: any;
+  id: string;
+  title: string;
+  content: string;
+  img?: string;
 }
 
 const EditPostForm = (PostProps: PostProps) => {
@@ -50,7 +50,7 @@ const EditPostForm = (PostProps: PostProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const handleUploadImage = async (file: RcFile) => {
+  const handleUploadImage = async (file: RcFile | string) => {
     if (!file)
       return {
         url: null,
@@ -107,7 +107,7 @@ const EditPostForm = (PostProps: PostProps) => {
     defaultValues: {
       title: PostProps.title,
       content: PostProps.content,
-      linkImage: PostProps.img
+      img: PostProps.img
     }
   });
 
@@ -116,14 +116,14 @@ const EditPostForm = (PostProps: PostProps) => {
       error();
     } else {
       dispatch(setLoading(true));
-      if (form.getValues('linkImage') !== PostProps.img) {
-        if (form.getValues('linkImage')) {
-          const result = await handleUploadImage(form.getValues('linkImage'));
-          form.setValue('linkImage', result.url);
+      if (form.getValues('img') !== PostProps.img) {
+        if (form.getValues('img')) {
+          const result = await handleUploadImage(form.getValues('img')!);
+          form.setValue('img', result.url);
         }
         if (PostProps.img) await handleRemoveImage(PostProps.img);
       }
-      values.linkImage = form.getValues('linkImage');
+      values.img = form.getValues('img');
       dispatch(
         UPDATE_POST_SAGA({
           id: PostProps.id,
@@ -204,20 +204,20 @@ const EditPostForm = (PostProps: PostProps) => {
     if (PostProps.img) {
       const nameSplit = PostProps.img.split('/');
       const duplicateName = nameSplit.pop();
-      const name = duplicateName.replace(/_[^_]*\./, '.');
+      const name = duplicateName?.replace(/_[^_]*\./, '.');
       return name;
     }
     return undefined;
   }, [PostProps.img]);
 
   const handleUpload = (info: any) => {
-    form.setValue('linkImage', info?.fileList[0]?.originFileObj);
+    form.setValue('img', info?.fileList[0]?.originFileObj);
   };
 
   const fileList: UploadFile[] = [
     {
       uid: '-1',
-      name: nameImage,
+      name: nameImage!,
       status: 'done',
       url: PostProps.img
     }
@@ -288,7 +288,7 @@ const EditPostForm = (PostProps: PostProps) => {
               </Popover>
               <span>
                 <Upload
-                  name="linkImage"
+                  name="img"
                   listType="picture"
                   onChange={handleUpload}
                   accept="image/png, image/jpeg, image/jpg"

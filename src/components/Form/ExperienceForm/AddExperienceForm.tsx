@@ -6,11 +6,12 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { ExperienceType } from '@/types';
 import StyleTotal from './cssAddExperienceForm';
 
 interface EditProps {
-  experiences: any;
-  setExperiences: any;
+  experiences: ExperienceType[];
+  setExperiences: (experiences: ExperienceType[]) => void;
 }
 
 const { RangePicker } = DatePicker;
@@ -26,10 +27,10 @@ const AddExperienceForm = (Props: EditProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [positionName, setPositionName] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [position_name, setPositionName] = useState('');
+  const [company_name, setCompanyName] = useState('');
+  const [start_date, setStartDate] = useState('');
+  const [end_date, setEndDate] = useState('');
   const [pastDate, setPastDate] = useState('');
 
   const [untilNow, setUntilNow] = useState(false);
@@ -47,24 +48,24 @@ const AddExperienceForm = (Props: EditProps) => {
   };
 
   const experience = {
-    positionName: '',
-    companyName: '',
-    startDate: '',
-    endDate: ''
+    position_name: '',
+    company_name: '',
+    start_date: '',
+    end_date: ''
   };
 
   const handleSetExperience = (e: any) => {
     e.preventDefault();
     if (
-      positionName === '' ||
-      companyName === '' ||
-      startDate === '' ||
-      endDate === ''
+      position_name === '' ||
+      company_name === '' ||
+      start_date === '' ||
+      end_date === ''
     ) {
-      // console.log('positionName', positionName);
-      // console.log('companyName', companyName);
-      // console.log('startDate', startDate);
-      // console.log('endDate', endDate);
+      // console.log('position_name', position_name);
+      // console.log('company_name', company_name);
+      // console.log('start_date', start_date);
+      // console.log('end_date', end_date);
       error();
       return;
     } else {
@@ -74,13 +75,13 @@ const AddExperienceForm = (Props: EditProps) => {
   };
 
   useEffect(() => {
-    experience.positionName = positionName;
-    experience.companyName = companyName;
-    experience.startDate = startDate;
-    experience.endDate = endDate;
+    experience.position_name = position_name;
+    experience.company_name = company_name;
+    experience.start_date = start_date;
+    experience.end_date = end_date;
 
     dispatch(setHandleSubmit(handleSetExperience));
-  }, [positionName, companyName, startDate, endDate]);
+  }, [position_name, company_name, start_date, end_date]);
 
   return (
     <ConfigProvider
@@ -100,8 +101,8 @@ const AddExperienceForm = (Props: EditProps) => {
                 type="input"
                 className="form__field"
                 placeholder="Position Name"
-                name="positionName"
-                id="positionName"
+                name="position_name"
+                id="position_name"
                 required
                 onChange={(e) => {
                   if (searchRef.current) {
@@ -113,7 +114,7 @@ const AddExperienceForm = (Props: EditProps) => {
                 }}
                 autoComplete="off"
               />
-              <label htmlFor="positionName" className="form__label">
+              <label htmlFor="position_name" className="form__label">
                 Position Name
               </label>
             </div>
@@ -126,8 +127,8 @@ const AddExperienceForm = (Props: EditProps) => {
                 type="input"
                 className="form__field"
                 placeholder="Company Name"
-                name="companyName"
-                id="companyName"
+                name="company_name"
+                id="company_name"
                 required
                 onChange={(e) => {
                   if (searchRef.current) {
@@ -139,7 +140,7 @@ const AddExperienceForm = (Props: EditProps) => {
                 }}
                 autoComplete="off"
               />
-              <label htmlFor="companyName" className="form__label">
+              <label htmlFor="company_name" className="form__label">
                 Company Name
               </label>
             </div>

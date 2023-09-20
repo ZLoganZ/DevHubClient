@@ -17,8 +17,8 @@ import { useAppSelector } from '@/hooks';
 import StyleTotal from './cssMessageChat';
 
 interface IParams {
-  conversationId: string;
-  setIsDisplayShare: any;
+  conversationID: string;
+  setIsDisplayShare: (isDisplayShare: boolean) => void;
   isDisplayShare: boolean;
 }
 
@@ -29,10 +29,10 @@ const MessageChat = (Props: IParams) => {
 
   const { members } = useAppSelector((state) => state.activeListReducer);
 
-  const { currentConversation, isLoadingConversation } =
-    useCurrentConversationData(Props.conversationId);
+  const { currentConversation, isLoadingCurrentConversation } =
+    useCurrentConversationData(Props.conversationID);
 
-  const { messages, isLoadingMessages } = useMessagesData(Props.conversationId);
+  const { messages, isLoadingMessages } = useMessagesData(Props.conversationID);
 
   const otherUser = useOtherUser(currentConversation);
 
@@ -52,7 +52,7 @@ const MessageChat = (Props: IParams) => {
   const [messagesState, setMessagesState] = useState([]);
 
   const seenMessage = async () => {
-    await messageService.seenMessage(Props.conversationId);
+    await messageService.seenMessage(Props.conversationID);
   };
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const MessageChat = (Props: IParams) => {
   }, [isLoadingMessages, messages]);
 
   useEffect(() => {
-    pusherClient.subscribe(Props.conversationId);
+    pusherClient.subscribe(Props.conversationID);
 
     const messageHandler = async (message: any) => {
       seenMessage();
@@ -91,11 +91,11 @@ const MessageChat = (Props: IParams) => {
     pusherClient.bind('message-update', updateMessageHandler);
 
     return () => {
-      pusherClient.unsubscribe(Props.conversationId);
+      pusherClient.unsubscribe(Props.conversationID);
       pusherClient.unbind('new-message', messageHandler);
       pusherClient.unbind('message-update', updateMessageHandler);
     };
-  }, [Props.conversationId]);
+  }, [Props.conversationID]);
 
   useIntersectionObserverNow(bottomRef, seenMessage);
 
@@ -125,7 +125,7 @@ const MessageChat = (Props: IParams) => {
 
   return (
     <StyleTotal className="h-full" theme={themeColorSet}>
-      {isLoadingConversation ? (
+      {isLoadingCurrentConversation ? (
         <></>
       ) : (
         <>
@@ -151,7 +151,7 @@ const MessageChat = (Props: IParams) => {
                 <div style={{ color: themeColorSet.colorText1 }}>
                   {currentConversation.name || (
                     <NavLink to={`/user/${otherUser._id}`}>
-                      {otherUser.username}
+                      {otherUser.name}
                     </NavLink>
                   )}
                 </div>

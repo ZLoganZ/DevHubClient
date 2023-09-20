@@ -45,7 +45,7 @@ import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { usePostsData } from '@/hooks';
+import { useUserPostsData, useUserInfo } from '@/hooks';
 import { RepositoryType } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 
@@ -64,7 +64,7 @@ const MyProfile = () => {
   useEffect(() => {
     dispatch(
       GET_ALL_POST_BY_USERID_SAGA({
-        userId: userID
+        userID: userID!
       })
     );
     dispatch(setIsInProfile(true));
@@ -74,19 +74,25 @@ const MyProfile = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, []);
-
-  const { isLoading, postArray, userInfo, ownerInfo, isFetching } =
-    usePostsData('me');
+  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } =
+    useUserPostsData('me');
 
   useEffect(() => {
-    document.title = isLoading ? 'DevHub' : `${userInfo?.lastname} | DevHub`;
-  }, [isLoading]);
+    if (isLoadingUserPosts === true) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [isLoadingUserPosts]);
+
+  const { userInfo } = useUserInfo();
+
+  useEffect(() => {
+    document.title = isLoadingUserPosts
+      ? 'DevHub'
+      : `${userInfo?.name} | DevHub`;
+  }, [isLoadingUserPosts]);
 
   const renderRepositoryIem = (item: RepositoryType) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
@@ -159,7 +165,10 @@ const MyProfile = () => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {!postArray || !userInfo || !ownerInfo || isLoading || isFetching ? (
+        {!userPosts ||
+        !userInfo ||
+        isLoadingUserPosts ||
+        isFetchingUserPosts ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -169,7 +178,7 @@ const MyProfile = () => {
                   className="cover w-full h-80 rounded-br-lg rounded-bl-lg"
                   style={{
                     backgroundImage: `url("${
-                      ownerInfo.cover_image || `/images/ProfilePage/cover.jpg`
+                      userInfo.cover_image || `/images/ProfilePage/cover.jpg`
                     }")`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
@@ -178,7 +187,7 @@ const MyProfile = () => {
                 <div className="avatar rounded-full overflow-hidden object-cover flex">
                   <Image
                     src={
-                      ownerInfo.user_image ||
+                      userInfo.user_image ||
                       './images/DefaultAvatar/default_avatar.png'
                     }
                     alt="avt"
@@ -196,20 +205,19 @@ const MyProfile = () => {
                     <div
                       className="text-2xl font-bold"
                       style={{ color: themeColorSet.colorText1 }}>
-                      {ownerInfo.lastname}
+                      {userInfo.name}
                     </div>
                     <div className="position mt-2">
                       <FontAwesomeIcon className="icon" icon={faSnowflake} />
                       <span
                         style={{ color: themeColorSet.colorText3 }}
                         className="ml-2">
-                        {ownerInfo.experiences &&
-                        ownerInfo.experiences.length > 0
-                          ? ownerInfo.experiences.length > 1
-                            ? ownerInfo.experiences[0].position_name +
+                        {userInfo.experiences && userInfo.experiences.length > 0
+                          ? userInfo.experiences.length > 1
+                            ? userInfo.experiences[0].position_name +
                               ' & ' +
-                              ownerInfo.experiences[1].position_name
-                            : ownerInfo.experiences[0].position_name
+                              userInfo.experiences[1].position_name
+                            : userInfo.experiences[0].position_name
                           : 'No job position'}
                       </span>
                     </div>
@@ -243,24 +251,24 @@ const MyProfile = () => {
                 </Row>
                 <div className="id_address_join">
                   <span className="id item mr-2">
-                    @{ownerInfo.alias || 'user'}
+                    @{userInfo.alias || 'user'}
                   </span>
                   <span className="address item mr-2">
                     <FontAwesomeIcon
                       className="icon mr-2"
                       icon={faLocationDot}
                     />
-                    {ownerInfo.location || 'Global'}
+                    {userInfo.location || 'Global'}
                   </span>
                   <span className="join">
                     <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
-                    Joined {ownerInfo.created_at}
+                    Joined {userInfo.createdAt}
                   </span>
                 </div>
                 <Col span={18} className="mt-5">
                   <div className="tags flex flex-wrap">
                     {descArray.map((item, index) => {
-                      if (ownerInfo.tags.indexOf(item.title) !== -1) {
+                      if (userInfo.tags?.indexOf(item.title) !== -1) {
                         return (
                           <Tag
                             className="item mx-2 my-2 px-4 py-1"
@@ -282,22 +290,20 @@ const MyProfile = () => {
                 </Col>
                 <div className="follow mt-5">
                   <span className="follower item mr-2">
-                    <span className="mr-1">{ownerInfo.followers.length}</span>{' '}
-                    {ownerInfo.followers.length > 1 ? 'Followers' : 'Follower'}
+                    <span className="mr-1">{userInfo.followers.length}</span>{' '}
+                    {userInfo.followers.length > 1 ? 'Followers' : 'Follower'}
                   </span>
                   <span className="following item mr-2">
-                    <span className="mr-1">{ownerInfo.following.length}</span>{' '}
-                    {ownerInfo.following.length > 1
-                      ? 'Followings'
-                      : 'Following'}
+                    <span className="mr-1">{userInfo.following.length}</span>{' '}
+                    {userInfo.following.length > 1 ? 'Followings' : 'Following'}
                   </span>
                   <span className="post mr-2">
-                    <span className="mr-1">{ownerInfo.posts.length}</span>{' '}
-                    {ownerInfo.posts.length > 1 ? 'Posts' : 'Post'}
+                    <span className="mr-1">{userInfo.posts.length}</span>{' '}
+                    {userInfo.posts.length > 1 ? 'Posts' : 'Post'}
                   </span>
                 </div>
                 <div className="experience mt-5">
-                  {ownerInfo.experiences.map((item) => (
+                  {userInfo.experiences.map((item) => (
                     <div className="item mt-2">
                       <FontAwesomeIcon
                         className="icon mr-2"
@@ -316,7 +322,7 @@ const MyProfile = () => {
                 </div>
                 <div className="contact mt-5">
                   <Space>
-                    {ownerInfo.contacts.map((item) => {
+                    {userInfo.contacts.map((item) => {
                       switch (item.key) {
                         case '0':
                           return (
@@ -392,8 +398,8 @@ const MyProfile = () => {
                         label: 'Introduction',
                         children: (
                           <div className="mt-10 mb-20">
-                            {!ownerInfo.about &&
-                              ownerInfo.repositories.length === 0 && (
+                            {!userInfo.about &&
+                              userInfo.repositories.length === 0 && (
                                 <div className="w-8/12 mb-10">
                                   <Empty
                                     image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -401,7 +407,7 @@ const MyProfile = () => {
                                   />
                                 </div>
                               )}
-                            {ownerInfo.about && (
+                            {userInfo.about && (
                               <div className="w-8/12">
                                 <div
                                   style={{
@@ -412,14 +418,14 @@ const MyProfile = () => {
                                   About
                                 </div>
                                 <ReactQuill
-                                  value={ownerInfo.about}
+                                  value={userInfo.about}
                                   readOnly={true}
                                   theme="bubble"
                                   modules={{}}
                                 />
                               </div>
                             )}
-                            {ownerInfo.repositories.length !== 0 && (
+                            {userInfo.repositories.length !== 0 && (
                               <div className="w-8/12 mt-5">
                                 <div
                                   style={{
@@ -430,7 +436,7 @@ const MyProfile = () => {
                                   Repositories
                                 </div>
                                 <div className="flex flex-wrap justify-between mt-5">
-                                  {ownerInfo.repositories.map((item) => {
+                                  {userInfo.repositories.map((item) => {
                                     return renderRepositoryIem(item);
                                   })}
                                 </div>
@@ -447,7 +453,7 @@ const MyProfile = () => {
                             <div className="w-8/12">
                               <NewPost userInfo={userInfo} />
                             </div>
-                            {postArray.length === 0 && (
+                            {userPosts.length === 0 && (
                               <div className="w-8/12">
                                 <Empty
                                   className="mt-10 mb-20"
@@ -456,22 +462,24 @@ const MyProfile = () => {
                                 />
                               </div>
                             )}
-                            {postArray.map((item) => {
+                            {userPosts.map((item) => {
                               return (
                                 <div className="w-8/12">
                                   {item.type === 'Share' && (
                                     <MyPostShare
-                                      key={item.id}
-                                      post={item}
-                                      userInfo={ownerInfo}
-                                      owner={item.post_attributes.owner_post}
+                                      key={item._id}
+                                      postShared={item}
+                                      userInfo={userInfo}
+                                      ownerInfo={
+                                        item.post_attributes.owner_post!
+                                      }
                                     />
                                   )}
                                   {item.type === 'Post' && (
                                     <MyPost
-                                      key={item.id}
+                                      key={item._id}
                                       post={item}
-                                      userInfo={ownerInfo}
+                                      userInfo={userInfo}
                                     />
                                   )}
                                 </div>

@@ -24,10 +24,10 @@ export function* getConversationsSaga() {
   try {
     const { data, status } = yield call(messageService.getConversations);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(SetConversations(data.content));
+      yield put(SetConversations(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -43,11 +43,11 @@ export function* createConversationSaga({ payload }: any) {
       payload
     );
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(AddConversations(data.content));
-      yield put(SetCurrentConversation(data.content));
+      yield put(AddConversations(data.metadata));
+      yield put(SetCurrentConversation(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -63,10 +63,10 @@ export function* getConversationSaga({ payload }: any) {
       payload
     );
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(SetCurrentConversation(data.content));
+      yield put(SetCurrentConversation(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -79,10 +79,10 @@ export function* getMessagesSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.getMessages, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(SetMessages(data.content));
+      yield put(SetMessages(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -95,7 +95,7 @@ export function* seenMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.seenMessage, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(SetCurrentConversation(data.content));
+      yield put(SetCurrentConversation(data.metadata));
     }
   } catch (err: any) {
     console.log(err);
@@ -111,7 +111,7 @@ export function* sendMessageSaga({ payload }: any) {
   try {
     const { data, status } = yield call(messageService.sendMessage, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(SetMessage(data.content));
+      yield put(SetMessage(data.metadata));
     }
   } catch (err: any) {
     console.log(err);

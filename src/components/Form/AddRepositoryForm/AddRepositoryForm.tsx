@@ -11,10 +11,11 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { GET_REPOSITORY_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { RepositoryType } from '@/types';
 
 interface ReposProps {
-  repositories: any;
-  setRepositories: any;
+  repositories: RepositoryType[];
+  setRepositories: (repos: RepositoryType[]) => void;
 }
 
 const AddRepositoryForm = (Props: ReposProps) => {
@@ -84,7 +85,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
 
   const { repos } = useAppSelector((state) => state.userReducer);
 
-  const renderItemRepos = (item: any, index: number) => {
+  const renderItemRepos = (item: RepositoryType, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <div
@@ -144,8 +145,8 @@ const AddRepositoryForm = (Props: ReposProps) => {
               }
             }}>
             <Checkbox
-              defaultChecked={newRepositories.some((repo: any) => {
-                return repo?.id == item?.id;
+              defaultChecked={newRepositories.some((repo) => {
+                return repo.id == item.id;
               })}
               onChange={(e) => {
                 if (e.target.checked) {
@@ -153,7 +154,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
                 } else {
                   newRepositories.splice(
                     newRepositories.findIndex(
-                      (repo: any) => repo?.id == item.id
+                      (repo) => repo.id == item.id
                     ),
                     1
                   );

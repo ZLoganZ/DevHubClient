@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
 
-import StyleTotal from './cssAddTagComponent';
+import StyleTotal from './cssAddTags';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
@@ -12,7 +12,7 @@ interface Props {
   callback: (tags: string[]) => void;
 }
 
-const AddTagComponent = (Props: Props) => {
+const AddTags = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -51,7 +51,7 @@ const AddTagComponent = (Props: Props) => {
                   : 'itemAddTag mx-2 my-2 px-4 py-2'
               }
               onClick={() => {
-                if (addTagArr?.includes(item.title)) {
+                if (addTagArr.includes(item.title)) {
                   //   addTagArr.splice(addTagArr.indexOf(item.title), 1);
                   setAddTagArr(addTagArrTemp.filter((i) => i !== item.title));
                   return;
@@ -72,4 +72,4 @@ const AddTagComponent = (Props: Props) => {
   );
 };
 
-export default AddTagComponent;
+export default AddTags;

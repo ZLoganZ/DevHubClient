@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { UserLoginType } from '@/types';
+import { UserLoginDataType } from '@/types';
 
 interface State {
   members: string[];
-  followers: UserLoginType[];
+  followers: UserLoginDataType[];
 }
 
 const initialState: State = {

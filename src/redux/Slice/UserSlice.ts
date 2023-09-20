@@ -3,20 +3,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RepositoryType, UserInfoType } from '@/types';
 
 interface UserInfoState {
-  username: string;
+  name: string;
   password: string;
   userInfo: UserInfoType;
   repos: RepositoryType[];
 }
 
 const initialState: UserInfoState = {
-  username: '',
+  name: '',
   password: '',
   userInfo: {
-    id: '',
+    _id: '',
     email: '',
-    firstname: '',
-    lastname: '',
     phone_number: '',
     user_image: '',
     cover_image: '',
@@ -28,14 +26,15 @@ const initialState: UserInfoState = {
     repositories: [],
     contacts: [],
     location: '',
-    created_at: '',
+    createdAt: '',
     favorites: [],
     communities: [],
     notifications: [],
     followers: [],
     following: [],
     is_following: false,
-    role: []
+    role: [],
+    name: ''
   },
   repos: []
 };
@@ -44,27 +43,20 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    loginUser: (state, action) => {
-      return {
-        ...state,
-        username: action.payload.username,
-        password: action.payload.password
-      };
-    },
     setUser: (state, action) => {
       return {
         ...state,
-        userInfo: action.payload.userInfo
+        userInfo: { ...state.userInfo, ...action.payload }
       };
     },
     setRepos: (state, action) => {
       return {
         ...state,
-        repos: action.payload.repository
+        repos: action.payload
       };
     }
   }
 });
 
-export const { loginUser, setUser, setRepos } = userSlice.actions;
+export const { setUser, setRepos } = userSlice.actions;
 export default userSlice.reducer;

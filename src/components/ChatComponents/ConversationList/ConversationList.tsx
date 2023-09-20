@@ -14,10 +14,11 @@ import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupMod
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
 import { useAppSelector } from '@/hooks';
+import { UserInfoType } from '@/types';
 
 interface ConversationListProps {
   initialItems: any;
-  users: [];
+  followers: UserInfoType[];
   title?: string;
   selected?: string;
 }
@@ -37,7 +38,7 @@ const ConversationList = (Props: ConversationListProps) => {
   const [items, setItems] = useState(Props.initialItems);
 
   const pusherKey = useMemo(() => {
-    return userInfo?.id;
+    return userInfo._id;
   }, [userInfo]);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const ConversationList = (Props: ConversationListProps) => {
     const updateHandler = (conversation: any) => {
       setItems((current: any) =>
         current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
+          if (currentConversation._id === conversation._id) {
             return {
               ...currentConversation,
               messages: conversation.messages
@@ -120,7 +121,7 @@ const ConversationList = (Props: ConversationListProps) => {
       if (conversation.messages?.length === 0) return false;
       const seenList =
         conversation.messages[conversation.messages.length - 1].seen || [];
-      return !seenList.some((user: any) => user._id === userInfo.id);
+      return !seenList.some((user: any) => user._id === userInfo._id);
     });
 
     if (unseenConversations.length > 0) {
@@ -140,7 +141,7 @@ const ConversationList = (Props: ConversationListProps) => {
     const updateHandler = (conversation: any) => {
       setMessages((current: any) =>
         current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
+          if (currentConversation._id === conversation._id) {
             playNotiMessage.play();
             return {
               ...currentConversation,
@@ -156,7 +157,7 @@ const ConversationList = (Props: ConversationListProps) => {
     const updateHandlerSeen = (conversation: any) => {
       setMessages((current: any) =>
         current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
+          if (currentConversation._id === conversation._id) {
             return {
               ...currentConversation,
               messages: conversation.messages
@@ -174,9 +175,9 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const HandleOnClick = async (item: any) => {
     const { data } = await messageService.createConversation({
-      users: [item, userInfo.id]
+      followers: [item, userInfo._id]
     });
-    navigate(`/message/${data.content.conversation._id}`);
+    navigate(`/message/${data.metadata.conversation._id}`);
   };
 
   // Open OtherPostDetailModal
@@ -190,9 +191,9 @@ const ConversationList = (Props: ConversationListProps) => {
     }
   }, [visible, isOpenPostDetail]);
 
-  const formatUsername = (username: any) => {
-    const MAX_LENGTH = 14; // maximum length of username on one line
-    const words = username.split(' ');
+  const formatUsername = (name: any) => {
+    const MAX_LENGTH = 14; // maximum length of name on one line
+    const words = name.split(' ');
     const lines = [];
     let currentLine = '';
 
@@ -212,7 +213,7 @@ const ConversationList = (Props: ConversationListProps) => {
       lines.push(currentLine.trim());
     }
 
-    // return the formatted username
+    // return the formatted name
     return lines.join('\n');
   };
 
@@ -222,7 +223,7 @@ const ConversationList = (Props: ConversationListProps) => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {isOpenPostDetail && <OpenGroupModal users={Props.users} />}
+        {isOpenPostDetail && <OpenGroupModal users={Props.followers} />}
         <div className="searchChat h-screen">
           <Space
             className="myInfo flex justify-between items-center py-4 px-3"
@@ -232,20 +233,20 @@ const ConversationList = (Props: ConversationListProps) => {
               height: '12%'
             }}>
             <div className="flex">
-              <NavLink to={`/user/${userInfo.id}`}>
+              <NavLink to={`/user/${userInfo._id}`}>
                 <div className="avatar mr-3">
-                  <Avatar key={userInfo.id} user={userInfo} />
+                  <Avatar key={userInfo._id} user={userInfo} />
                 </div>
               </NavLink>
               <div className="name_career">
-                <NavLink to={`/user/${userInfo.id}`}>
+                <NavLink to={`/user/${userInfo._id}`}>
                   <div
                     className="name mb-1"
                     style={{
                       color: themeColorSet.colorText1,
                       fontWeight: 600
                     }}>
-                    {userInfo.lastname}
+                    {userInfo.name}
                   </div>
                 </NavLink>
                 <div
@@ -320,7 +321,7 @@ const ConversationList = (Props: ConversationListProps) => {
               style={{
                 overflow: 'auto'
               }}>
-              {Props.users.map((item: any) => {
+              {Props.followers.map((item: any) => {
                 return (
                   <div
                     className="user flex flex-col items-center cursor-pointer w-1/2 mt-5"
@@ -335,7 +336,7 @@ const ConversationList = (Props: ConversationListProps) => {
                         fontSize: '0.9rem',
                         color: themeColorSet.colorText1
                       }}>
-                      {formatUsername(item.username)}
+                      {formatUsername(item.name)}
                     </div>
                   </div>
                 );

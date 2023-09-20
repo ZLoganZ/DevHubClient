@@ -4,7 +4,7 @@ import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
 
-import StyleTotal from './cssAddLinkComponent';
+import StyleTotal from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
@@ -14,11 +14,11 @@ import { useAppDispatch, useAppSelector } from '@/hooks';
 import { ContactType } from '@/types';
 
 interface Props {
-  links: ContactType[];
-  callback: (links: ContactType[]) => void;
+  contacts: ContactType[];
+  callback: (contacts: ContactType[]) => void;
 }
 
-const AddLinkComponent = (Props: Props) => {
+const AddContacts = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -28,13 +28,13 @@ const AddLinkComponent = (Props: Props) => {
 
   const contactArray = [...contactArrays];
 
-  //add links
-  const [addLinkArr, setAddLinkArr] = useState([...Props.links]);
+  //add contacts
+  const [addLinkArr, setAddLinkArr] = useState([...Props.contacts]);
 
   let addLinkArrTemp = addLinkArr.map((obj) => ({ ...obj }));
 
   //add tooltips
-  const [addTooltips, setAddTooltips] = useState([...Props.links]);
+  const [addTooltips, setAddTooltips] = useState([...Props.contacts]);
 
   let addTooltipsTemp = addTooltips.map((obj) => ({ ...obj }));
 
@@ -289,4 +289,4 @@ const AddLinkComponent = (Props: Props) => {
   );
 };
 
-export default AddLinkComponent;
+export default AddContacts;

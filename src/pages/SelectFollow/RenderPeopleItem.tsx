@@ -54,7 +54,7 @@ const RenderPeopleItem = ({ item }: any) => {
                   fontSize: '1.1rem',
                   fontWeight: '600'
                 }}>
-                {item.username}
+                {item.name}
               </span>
               <span
                 className="icon"
@@ -88,10 +88,10 @@ const RenderPeopleItem = ({ item }: any) => {
               }}>
               {item?.experiences.length > 0
                 ? item?.experiences.length > 1
-                  ? item?.experiences[0].positionName +
+                  ? item?.experiences[0].position_name +
                     ' & ' +
-                    item?.experiences[1].positionName
-                  : item?.experiences[0].positionName
+                    item?.experiences[1].position_name
+                  : item?.experiences[0].position_name
                 : ''}
             </div>
           </div>

@@ -4,7 +4,8 @@ import { PostType, UserInfoType } from '@/types';
 
 interface State {
   postArr: PostType[];
-  allPost: PostType[];
+  allPosts: PostType[];
+  allPostsNewsfeed: PostType[];
   post: PostType;
   ownerInfo: UserInfoType;
   isOpenPostDetail: boolean;
@@ -13,16 +14,15 @@ interface State {
 
 const initialState: State = {
   postArr: [],
-  allPost: [],
+  allPosts: [],
   post: {
+    _id: '',
     type: 'Post',
-    id: '',
     post_attributes: {
       user: {
-        id: '',
+        _id: '',
         email: '',
-        firstname: '',
-        lastname: '',
+        role: [],
         phone_number: '',
         user_image: '',
         cover_image: '',
@@ -34,14 +34,14 @@ const initialState: State = {
         repositories: [],
         contacts: [],
         location: '',
-        created_at: '',
+        createdAt: '',
         favorites: [],
         communities: [],
         notifications: [],
         followers: [],
         following: [],
         is_following: false,
-        role: []
+        name: ''
       },
       title: undefined,
       content: undefined,
@@ -53,13 +53,17 @@ const initialState: State = {
       like_number: 0,
       comment_number: 0,
       share_number: 0
-    }
+    },
+    createdAt: '',
+    is_liked: false,
+    is_shared: false,
+    is_saved: false
   },
   ownerInfo: {
-    id: '',
+    name: '',
+    _id: '',
     email: '',
-    firstname: '',
-    lastname: '',
+    role: [],
     phone_number: '',
     user_image: '',
     cover_image: '',
@@ -71,18 +75,17 @@ const initialState: State = {
     repositories: [],
     contacts: [],
     location: '',
-    created_at: '',
+    createdAt: '',
     favorites: [],
     communities: [],
     notifications: [],
     followers: [],
     following: [],
-    is_following: false,
-    role: []
+    is_following: false
   },
-
   isOpenPostDetail: false,
-  isInProfile: false
+  isInProfile: false,
+  allPostsNewsfeed: []
 };
 
 const postSlice = createSlice({
@@ -92,13 +95,19 @@ const postSlice = createSlice({
     setAllPost: (state, action) => {
       return {
         ...state,
-        allPost: action.payload.allPostArr
+        allPosts: action.payload
+      };
+    },
+    setAllPostNewsfeed: (state, action) => {
+      return {
+        ...state,
+        allPostsNewsfeed: action.payload
       };
     },
     setPostArr: (state, action) => {
       return {
         ...state,
-        postArr: action.payload.postArr
+        postArr: action.payload
       };
     },
     openPostDetail: (state) => {
@@ -110,13 +119,13 @@ const postSlice = createSlice({
     setPost: (state, action) => {
       return {
         ...state,
-        post: action.payload.post
+        post: action.payload
       };
     },
     setOwnerInfo: (state, action) => {
       return {
         ...state,
-        ownerInfo: action.payload.ownerInfo
+        ownerInfo: action.payload
       };
     },
     setIsInProfile: (state, action) => {
@@ -126,9 +135,9 @@ const postSlice = createSlice({
       };
     },
     updatePosts: (state, action) => {
-      const updatedPosts = state.postArr.map((post: any) => {
-        if (post._id === action.payload.post._id) {
-          return action.payload.post;
+      const updatedPosts = state.postArr.map((post) => {
+        if (post._id === action.payload._id) {
+          return action.payload;
         }
         return post;
       });
@@ -147,6 +156,7 @@ export const {
   setOwnerInfo,
   setIsInProfile,
   updatePosts,
-  setPostArr
+  setPostArr,
+  setAllPostNewsfeed
 } = postSlice.actions;
 export default postSlice.reducer;

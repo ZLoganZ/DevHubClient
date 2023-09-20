@@ -1,13 +1,13 @@
-export type UserLoginType = {
+export type UserLoginDataType = {
   email: string;
   password: string;
 };
 
-export type GoogleLoginType = {
+export type GoogleLoginDataType = {
   token: string;
 };
 
-export type UserRegisterType = {
+export type UserRegisterDataType = {
   email: string;
   password: string;
   firstname: string;
@@ -19,34 +19,38 @@ export type UserATokenType = {
   accessToken: string;
 };
 
-export type ForgotPasswordType = {
+export type ForgotPasswordDataType = {
   email: string;
 };
 
-export type VerifyCodeType = {
+export type VerifyCodeDataType = {
   email: string;
   code: string;
 };
 
-export type ResetPasswordType = {
+export type ResetPasswordDataType = {
   email: string;
   password: string;
   confirm?: string;
 };
 
-export type UpdateUserType = {
-  firstname?: string;
-  lastname?: string;
+export type UserUpdateDataType = {
+  name?: string;
   phone_number?: string;
   user_image?: string;
   cover_image?: string;
   tags?: string[];
   alias?: string;
   about?: string;
-  experiences?: string[];
-  repositories?: string[];
-  contacts?: string[];
+  experiences?: ExperienceType[];
+  repositories?: RepositoryType[];
+  contacts?: ContactType[];
   location?: string;
+};
+
+export type UpdateUserType = {
+  id: string;
+  userUpdate: UserUpdateDataType;
 };
 
 export type RepositoryType = {
@@ -61,11 +65,10 @@ export type RepositoryType = {
 };
 
 export type ExperienceType = {
-  id?: string;
-  position_name?: string;
-  company_name?: string;
-  start_date?: string;
-  end_date?: string;
+  position_name: string;
+  company_name: string;
+  start_date: string;
+  end_date: string;
 };
 
 export type ContactType = {
@@ -76,12 +79,10 @@ export type ContactType = {
 };
 
 export type UserInfoType = {
-  username?: string;
-  id: string;
+  _id: string;
+  name: string;
   email: string;
   role: string[];
-  firstname: string;
-  lastname: string;
   phone_number: string;
   user_image: string;
   cover_image: string;
@@ -93,7 +94,7 @@ export type UserInfoType = {
   repositories: RepositoryType[];
   contacts: ContactType[];
   location: string;
-  created_at: string;
+  createdAt: string;
   favorites: string[];
   communities: string[];
   notifications: string[];
@@ -110,16 +111,42 @@ export type FollowType = {
 
 type TypeofPost = 'Post' | 'Share';
 
-export type PostType = {
+type TypeOfLink = {
+  address: string;
+  title: string;
+  description: string;
+  image: string;
+};
+
+export type CreatePostDataType = {
+  title: string;
+  content: string;
+  img?: string;
+};
+
+export type UpdatePostDataType = {
   id: string;
+  postUpdate: CreatePostDataType;
+};
+
+export type SharePostDataType = {
+  post: string;
+  owner_post: string;
+};
+
+export type PostType = {
+  _id: string;
   type: TypeofPost;
   post_attributes: {
     user: UserInfoType;
+
+    //if type is post
     title?: string;
     content?: string;
     img?: string;
-    url?: string;
+    url?: TypeOfLink;
 
+    //if type is share
     post?: PostType;
     owner_post?: UserInfoType;
 
@@ -128,10 +155,14 @@ export type PostType = {
     comment_number: number;
     share_number: number;
   };
+  is_liked: boolean;
+  is_shared: boolean;
+  is_saved: boolean;
+  createdAt: string;
 };
 
 export type LikeType = {
-  id: string;
+  _id: string;
   user: UserInfoType;
   post: PostType;
   owner_post: UserInfoType;
@@ -139,8 +170,30 @@ export type LikeType = {
 
 type TypeofComment = 'parent' | 'child';
 
-export type CommentType = {
+export type CreateCommentDataType = {
+  content: string;
+  type: TypeofComment;
+  post: string;
+  parent?: string;
+};
+
+export type CreateLikeCommentType = {
   id: string;
+  comment: LikeCommentType;
+};
+
+export type GetChildCommentsType = {
+  post: string;
+  parent: string;
+};
+
+export type LikeCommentType = {
+  type: TypeofComment;
+  post: string;
+};
+
+export type CommentType = {
+  _id: string;
   post: PostType;
   user: UserInfoType;
   content: string;
@@ -149,36 +202,20 @@ export type CommentType = {
   //if type is child
   parent?: CommentType;
 
+  is_liked: boolean;
+  is_disliked: boolean;
   likes: LikeType[];
-  numlike: number;
+  like_number: number;
+  dislike_number: number;
 };
 
-export type UserInfoResponseType = {
-  message: string;
-  status: number;
-  metadata: UserInfoType;
+export type SelectedCommentValues = {
+  isReply: boolean;
+  idComment: string | null;
 };
 
-export type UpdateUserResponseType = {
+export type ResponseType<T> = {
   message: string;
   status: number;
-  metadata: UserInfoType;
-};
-
-export type FollowResponseType = {
-  message: string;
-  status: number;
-  metadata: FollowType;
-};
-
-export type PostsResponseType = {
-  message: string;
-  status: number;
-  metadata: PostType[];
-};
-
-export type PostResponseType = {
-  message: string;
-  status: number;
-  metadata: PostType;
+  metadata: T;
 };

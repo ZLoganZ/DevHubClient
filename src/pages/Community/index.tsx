@@ -139,7 +139,7 @@ export const CommunityAdmin = () => {
                                   key={item._id}
                                   post={item}
                                   userInfo={userInfo}
-                                  owner={item.user}
+                                  ownerInfo={item.user}
                                 />
                               )}
                               {!item.PostShared && (
@@ -258,7 +258,7 @@ export const CommunityAdmin = () => {
                                     fontWeight: 600,
                                     color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -296,7 +296,7 @@ export const CommunityAdmin = () => {
                                     color: themeColorSet.colorText1
                                   }}>
                                   {' '}
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -355,7 +355,7 @@ export const CommunityAdmin = () => {
                                       color: themeColorSet.colorText1
                                     }}>
                                     {' '}
-                                    {item.lastname + ' ' + item.firstname}
+                                    {item.name}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>
@@ -497,7 +497,7 @@ export const CommunityMember = () => {
                                   key={item._id}
                                   post={item}
                                   userInfo={userInfo}
-                                  owner={item.user}
+                                  ownerInfo={item.user}
                                 />
                               )}
                               {!item.PostShared && (
@@ -616,7 +616,7 @@ export const CommunityMember = () => {
                                     fontWeight: 600,
                                     color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -654,7 +654,7 @@ export const CommunityMember = () => {
                                     color: themeColorSet.colorText1
                                   }}>
                                   {' '}
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -713,7 +713,7 @@ export const CommunityMember = () => {
                                       color: themeColorSet.colorText1
                                     }}>
                                     {' '}
-                                    {item.lastname + ' ' + item.firstname}
+                                    {item.name}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>
@@ -855,7 +855,7 @@ export const CommunityNoMember = () => {
                                   key={item._id}
                                   post={item}
                                   userInfo={userInfo}
-                                  owner={item.user}
+                                  ownerInfo={item.user}
                                 />
                               )}
                               {!item.PostShared && (
@@ -974,7 +974,7 @@ export const CommunityNoMember = () => {
                                     fontWeight: 600,
                                     color: themeColorSet.colorText1
                                   }}>
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -1012,7 +1012,7 @@ export const CommunityNoMember = () => {
                                     color: themeColorSet.colorText1
                                   }}>
                                   {' '}
-                                  {item.lastname + ' ' + item.firstname}
+                                  {item.name}
                                 </span>
                                 <span
                                   style={{ color: themeColorSet.colorText3 }}>
@@ -1071,7 +1071,7 @@ export const CommunityNoMember = () => {
                                       color: themeColorSet.colorText1
                                     }}>
                                     {' '}
-                                    {item.lastname + ' ' + item.firstname}
+                                    {item.name}
                                   </span>
                                   <span
                                     style={{ color: themeColorSet.colorText3 }}>

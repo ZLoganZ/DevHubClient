@@ -14,8 +14,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import StyleTotal from './cssMenu';
 import { useAppSelector } from '@/hooks';
+import StyleTotal from './cssMenu';
 
 const MenuMain = () => {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const MenuMain = () => {
     const path = location.pathname;
     if (path === '/') {
       setKey('1');
-    } else if (path === '/me' || path === `/user/${userInfo?.id}`) {
+    } else if (path === '/me' || path === `/user/${userInfo._id}`) {
       setKey('2');
     } else if (path === '/explore') {
       setKey('3');
@@ -110,10 +110,10 @@ const MenuMain = () => {
                 ) : (
                   <FontAwesomeIcon className="icon" icon={faUser} />
                 ),
-                label: userInfo.user_image,
+                label: userInfo.name,
                 title: '',
                 onClick: () => {
-                  navigate(`/user/${userInfo?.id}`);
+                  navigate(`/user/${userInfo._id}`);
                 }
               },
               {

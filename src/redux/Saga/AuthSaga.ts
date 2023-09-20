@@ -1,7 +1,6 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
-  CHECK_LOGIN_SAGA,
   CHECK_RESET_PASSWORD_SAGA,
   CHECK_VERIFY_CODE_SAGA,
   FORGOT_PASSWORD_SAGA,
@@ -13,11 +12,12 @@ import {
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
-import { setLogin, setUserID } from '@/redux/Slice/AuthSlice';
+import { setUserID } from '@/redux/Slice/AuthSlice';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { authService } from '@/services/AuthService';
 import {
+  CLIENT_ID,
   DARK_THEME,
   STATUS_CODE,
   TOKEN,
@@ -30,10 +30,15 @@ function* LoginSaga({ payload }: any) {
     const { data, status } = yield call(authService.login, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+      localStorage.setItem(
+        TOKEN,
+        JSON.stringify(data.metadata.tokens.accessToken)
+      );
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
+
+      yield put(setUserID({ userID: data.metadata.user._id }));
 
       const { location } = yield select((state) => state.functionReducer);
 
@@ -56,16 +61,20 @@ function* RegisterSaga({ payload }: any) {
   try {
     const { data, status } = yield call(authService.register, payload);
     if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
-
+      localStorage.setItem(
+        TOKEN,
+        JSON.stringify(data.metadata.tokens.accessToken)
+      );
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
+
+      yield put(setUserID({ userID: data.metadata.user._id }));
 
       window.location.replace('/');
     }
   } catch (err: any) {
     localStorage.removeItem(TOKEN);
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -76,12 +85,7 @@ export function* theoDoiRegisterSaga() {
 // Logout
 function* LogoutSaga() {
   try {
-    const token = localStorage.getItem(TOKEN);
-
-    const userAuth = {
-      accessToken: token!
-    };
-    const { status } = yield call(authService.logout, userAuth);
+    const { status } = yield call(authService.logout);
     if (status === STATUS_CODE.SUCCESS) {
       localStorage.removeItem(TOKEN);
       localStorage.removeItem(TOKEN_GITHUB);
@@ -97,29 +101,13 @@ export function* theoDoiLogoutSaga() {
   yield takeLatest(LOGOUT_SAGA, LogoutSaga);
 }
 
-// Get User ID
-function* getUserIDSaga() {
-  try {
-    const { data, status } = yield call(authService.getUserID);
-    if (status === STATUS_CODE.SUCCESS) {
-      yield put(setUserID({ userID: data.content }));
-    }
-  } catch (err: any) {
-    console.log(err);
-  }
-}
-
-export function* theoDoiGetUserIDSaga() {
-  yield takeLatest(GET_USER_ID, getUserIDSaga);
-}
-
 // Login with Google
 function* LoginWithGoogleSaga({ payload }: any) {
   try {
     const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(TOKEN, JSON.stringify(data.content?.accessToken));
+      localStorage.setItem(TOKEN, JSON.stringify(data.metadata?.accessToken));
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
@@ -138,29 +126,6 @@ function* LoginWithGoogleSaga({ payload }: any) {
 
 export function* theoDoiLoginWithGoogleSaga() {
   yield takeLatest(LOGIN_WITH_GOOGLE_SAGA, LoginWithGoogleSaga);
-}
-
-// Check Login Saga
-function* CheckLoginSaga() {
-  try {
-    const token = localStorage.getItem(TOKEN);
-    const userAuth = {
-      accessToken: token!
-    };
-    const { status } = yield call(authService.checkLogin, userAuth);
-    if (status === STATUS_CODE.SUCCESS) {
-      yield put(setLogin({ login: true }));
-    } else {
-      yield put(setLogin({ login: false }));
-    }
-  } catch (err: any) {
-    yield put(setLogin({ login: false }));
-    console.log(err);
-  }
-}
-
-export function* theoDoiCheckLoginSaga() {
-  yield takeLatest(CHECK_LOGIN_SAGA, CheckLoginSaga);
 }
 
 // Forgot Password Saga
@@ -271,4 +236,17 @@ function* CheckResetPasswordSaga({ payload }: any) {
 
 export function* theoDoiCheckResetPasswordSaga() {
   yield takeLatest(CHECK_RESET_PASSWORD_SAGA, CheckResetPasswordSaga);
+}
+
+function* GetUserIDSaga() {
+  try {
+    const userID = localStorage.getItem(CLIENT_ID);
+    yield put(setUserID(userID));
+  } catch (err: any) {
+    console.log(err);
+  }
+}
+
+export function* theoDoiGetUserIDSaga() {
+  yield takeLatest(GET_USER_ID, GetUserIDSaga);
 }

@@ -48,7 +48,7 @@ const Chat = () => {
 
   const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
-  const { isLoadingConversation } = useCurrentConversationData(
+  const { isLoadingCurrentConversation } = useCurrentConversationData(
     conversationID ? conversationID : undefined
   );
 
@@ -107,7 +107,7 @@ const Chat = () => {
               }}>
               <ConversationList
                 key={conversations[0]?.lastMessageAt}
-                users={followers}
+                followers={followers!}
                 initialItems={conversations}
                 selected={conversationID}
               />
@@ -125,7 +125,7 @@ const Chat = () => {
               }}>
               {!conversationID ? (
                 <EmptyChat key={Math.random()} />
-              ) : isLoadingConversation ? (
+              ) : isLoadingCurrentConversation ? (
                 <LoadingConversation />
               ) : (
                 <>
@@ -133,7 +133,7 @@ const Chat = () => {
                     <MessageChat
                       // key={conversations[0]?.lastMessageAt}
                       key={conversationID}
-                      conversationId={conversationID}
+                      conversationID={conversationID}
                       setIsDisplayShare={setIsDisplayShare}
                       isDisplayShare={isDisplayShare}
                     />
@@ -145,7 +145,7 @@ const Chat = () => {
             {isDisplayShare ? (
               <SharedMedia
                 key={conversationID}
-                conversationId={conversationID}
+                conversationID={conversationID!}
               />
             ) : (
               <></>

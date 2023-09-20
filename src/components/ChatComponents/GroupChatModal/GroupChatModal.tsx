@@ -2,12 +2,13 @@ import { ConfigProvider, Input, Select } from 'antd';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppSelector } from '@/hooks';
+import { UserInfoType } from '@/types';
 import StyleTotal from './cssGroupChatModal';
 
 interface GroupChatModalProps {
-  users: any;
-  setValue: (value: any) => void;
-  setName: (name: any) => void;
+  users: UserInfoType[];
+  setValue: (value: []) => void;
+  setName: (name: string) => void;
 }
 
 const GroupChatModal = (Props: GroupChatModalProps) => {
@@ -42,15 +43,12 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
               <Select
                 mode="multiple"
                 placeholder="Select members"
-                options={Props.users.map((user: any) => ({
-                  label: user.username,
-                  value: user.username,
+                options={Props.users.map((user) => ({
+                  label: user.name,
+                  value: user.name,
                   id: user._id
                 }))}
-                onChange={(value, options) => {
-                  options.forEach((option: any, index: any) => {
-                    value[index] = option.id;
-                  });
+                onChange={(value) => {
                   Props.setValue(value);
                 }}
               />

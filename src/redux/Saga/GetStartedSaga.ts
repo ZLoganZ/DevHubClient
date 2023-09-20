@@ -16,7 +16,7 @@ export function* chooseGetStartedSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseGetStarted, payload);
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -29,7 +29,7 @@ export function* chooseGetInterestSaga({ payload }: any) {
   try {
     yield call(getStartedService.chooseInterest, payload);
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -44,7 +44,7 @@ function* chooseShouldFollowerSaga({ payload }: any) {
       payload
     );
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -57,10 +57,10 @@ function* getShouldFollowSaga() {
   try {
     const { data, status } = yield getStartedService.getShouldFollower();
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(setShouldFollowers(data.content));
+      yield put(setShouldFollowers(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 

@@ -4,16 +4,17 @@ import CommentDetail from '@/components/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useCommentsData } from '@/hooks';
+import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
 import StyleTotal from './cssPostDetail';
 
 interface PostProps {
-  post: any;
-  userInfo: any;
-  data: any;
-  onData: (data: any) => void;
-  postShare?: any;
-  owner?: any;
+  post: PostType;
+  userInfo: UserInfoType;
+  data: SelectedCommentValues;
+  handleData: (data: SelectedCommentValues) => void;
+  isShared?: boolean;
+  ownerInfo?: UserInfoType;
 }
 
 const OtherPostDetail = (Props: PostProps) => {
@@ -21,35 +22,35 @@ const OtherPostDetail = (Props: PostProps) => {
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
+  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
     Props.data.idComment
   );
+
+  const { comments } = useCommentsData(Props.post._id);
 
   useEffect(() => {
     setSelectedCommentId(Props.data.idComment);
   }, [Props.data]);
 
-  const handleSelectComment = (commentId: string | null) => {
-    setSelectedCommentId(commentId);
+  const handleSelectComment = (commentID: string | null) => {
+    setSelectedCommentId(commentID);
   };
 
   return (
     <StyleTotal theme={themeColorSet}>
       <div className="postDetail">
-        {Props.postShare ? (
+        {Props.isShared ? (
           <OtherPostShare
-            key={Props.post?._id}
-            post={Props.post}
+            key={Props.post._id}
+            postShared={Props.post}
             userInfo={Props.userInfo}
-            owner={Props.owner}
-            detail={true}
+            ownerInfo={Props.ownerInfo!}
           />
         ) : (
           <OtherPost
-            key={Props.post?._id}
+            key={Props.post._id}
             post={Props.post}
             userInfo={Props.userInfo}
-            detail={true}
           />
         )}
         <div
@@ -58,32 +59,32 @@ const OtherPostDetail = (Props: PostProps) => {
             maxHeight: '30rem',
             overflow: 'auto'
           }}>
-          {Props.post?.comments?.map((item: any) => {
+          {comments?.map((item) => {
             return (
-              <div key={item?._id}>
+              <div key={item._id}>
                 {item ? (
                   <CommentDetail
-                    key={item?._id}
-                    onData={Props.onData}
+                    key={item._id}
+                    handleData={Props.handleData}
                     comment={item}
                     userInfo={Props.userInfo}
-                    selectedCommentId={selectedCommentId}
+                    selectedCommentID={selectedCommentID}
                     onSelectComment={handleSelectComment}
                     postID={Props.post._id}>
-                    {item.listReply?.map((item: any) => {
+                    {/* {item.listReply?.map((item: any) => {
                       return (
                         <CommentDetail
                           key={item?._id}
-                          onData={Props.onData}
+                          handleData={Props.handleData}
                           comment={item}
                           userInfo={Props.userInfo}
-                          selectedCommentId={selectedCommentId}
+                          selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
                           isReply={true}
                           postID={Props.post._id}
                         />
                       );
-                    })}
+                    })} */}
                   </CommentDetail>
                 ) : null}
               </div>

@@ -9,7 +9,6 @@ import {
 } from '@/redux/ActionSaga/UserActionSaga';
 import { setRepos, setUser } from '@/redux/Slice/UserSlice';
 import { setFollowers } from '@/redux/Slice/ActiveListSlice';
-import { setOwnerInfo } from '@/redux/Slice/PostSlice';
 import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 
 import { userService } from '@/services/UserService';
@@ -20,13 +19,12 @@ function* updateUserSaga({ payload }: any) {
   try {
     const { data, status } = yield call(userService.updateUser, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(setOwnerInfo(data.content));
-      yield put(setUser(data.content));
+      yield put(setUser(data.metadata));
       yield put(setLoading(false));
       yield put(closeDrawer({}));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -39,14 +37,10 @@ function* getFollowersSaga() {
   try {
     const { data, status } = yield call(userService.getFollowers, '');
     if (status === STATUS_CODE.SUCCESS) {
-      data.content.followers.forEach((follower: any) => {
-        follower.username = follower.lastname + ' ' + follower.firstname;
-      });
-      yield put(setUser(data.content));
-      yield put(setFollowers(data.content));
+      yield put(setFollowers(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -59,10 +53,10 @@ function* getUserInfoSaga() {
   try {
     const { data, status } = yield call(userService.getUserInfo);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(setUser(data.content));
+      yield put(setUser(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -78,7 +72,7 @@ function* followUserSaga({ payload }: any) {
       // Do nothing
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 
@@ -91,10 +85,10 @@ function* getRepositoryGithubSaga() {
   try {
     const { data, status } = yield call(userService.getRepositoryGithub);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(setRepos(data.content));
+      yield put(setRepos(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 

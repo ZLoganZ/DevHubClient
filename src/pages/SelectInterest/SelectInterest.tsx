@@ -19,7 +19,7 @@ const SelectInterest = () => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const addArray: any = [];
+  const addArray: string[] = [];
 
   // Hàm hiển thị mesage
   const error = () => {

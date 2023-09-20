@@ -17,32 +17,32 @@ import { pusherClient } from '@/util/functions/Pusher';
 import { useAppSelector } from '@/hooks';
 
 interface SharedMediaProps {
-  conversationId: any;
+  conversationID: string;
 }
 
 const SharedMedia = (Props: SharedMediaProps) => {
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const { isLoadingConversation, currentConversation } =
-    useCurrentConversationData(Props.conversationId);
+  const { isLoadingCurrentConversation, currentConversation } =
+    useCurrentConversationData(Props.conversationID);
 
   const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const pusherKey = useMemo(() => {
-    return userInfo?.id;
+    return userInfo._id;
   }, [userInfo]);
 
   const [items, setItems] = useState<any>([]);
 
   useEffect(() => {
-    if (isLoadingConversation) return;
+    if (isLoadingCurrentConversation) return;
 
     setItems(currentConversation.image);
-  }, [isLoadingConversation, currentConversation]);
+  }, [isLoadingCurrentConversation, currentConversation]);
 
   useEffect(() => {
-    if (isLoadingConversation) return;
+    if (isLoadingCurrentConversation) return;
 
     pusherClient.subscribe(pusherKey);
 
@@ -53,7 +53,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
     };
 
     pusherClient.bind('conversation-update-media', updateHandler);
-  }, [Props.conversationId, isLoadingConversation]);
+  }, [Props.conversationID, isLoadingCurrentConversation]);
 
   const formatDateTime = (date: any) => {
     if (isToday(date)) {
@@ -88,7 +88,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
 
   return (
     <StyleTotal>
-      {isLoadingConversation ? (
+      {isLoadingCurrentConversation ? (
         <>
           <div
             className="shared"
@@ -303,7 +303,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
                                     color: themeColorSet.colorText1,
                                     fontWeight: '600'
                                   }}>
-                                  {item.sender.username}
+                                  {item.sender.name}
                                 </div>
                                 <Space
                                   style={{

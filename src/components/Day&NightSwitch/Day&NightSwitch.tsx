@@ -1,15 +1,12 @@
 import { ConfigProvider } from 'antd';
-import React from 'react';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppSelector } from '@/hooks';
 import './Day&NightSwitch.css';
 
 interface Props {
-  checkedChildren?: React.ReactNode;
-  unCheckedChildren?: React.ReactNode;
-  checked?: boolean;
-  onChange?: (checked: boolean) => void;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 }
 
 const DayNightSwitch = (Props: Props) => {
@@ -29,7 +26,7 @@ const DayNightSwitch = (Props: Props) => {
               id="toggle"
               className="toggle-switch"
               type="checkbox"
-              defaultChecked={!Props?.checked}
+              defaultChecked={!Props.checked}
               onClick={() => {
                 if (Props && Props.onChange) {
                   Props.onChange(!Props.checked);

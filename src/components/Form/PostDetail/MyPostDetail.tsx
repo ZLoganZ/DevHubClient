@@ -4,16 +4,17 @@ import MyPostShare from '@/components/Post/MyPostShare';
 import CommentDetail from '@/components/CommentDetail';
 import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useCommentsData } from '@/hooks';
+import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssPostDetail';
 
 interface PostProps {
-  post: any;
-  userInfo: any;
-  data: any;
-  onData: (data: any) => void;
-  postShare?: any;
-  owner?: any;
+  post: PostType;
+  userInfo: UserInfoType;
+  data: SelectedCommentValues;
+  handleData: (data: SelectedCommentValues) => void;
+  isShared?: boolean;
+  ownerInfo?: UserInfoType;
 }
 
 const MyPostDetail = (Props: PostProps) => {
@@ -21,31 +22,32 @@ const MyPostDetail = (Props: PostProps) => {
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
+  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
     Props.data.idComment
   );
+
+  const { comments } = useCommentsData(Props.post._id);
 
   useEffect(() => {
     setSelectedCommentId(Props.data.idComment);
   }, [Props.data]);
 
-  const handleSelectComment = (commentId: string | null) => {
-    setSelectedCommentId(commentId);
+  const handleSelectComment = (commentID: string | null) => {
+    setSelectedCommentId(commentID);
   };
 
   return (
     <StyleTotal theme={themeColorSet}>
       <div className="postDetail">
-        {Props.postShare ? (
+        {Props.isShared ? (
           <MyPostShare
-            key={Props.post?._id}
-            post={Props.post}
+            key={Props.post._id}
+            postShared={Props.post}
             userInfo={Props.userInfo}
-            owner={Props.owner}
-            detail={true}
+            ownerInfo={Props.ownerInfo!}
           />
         ) : (
-          <MyPost post={Props.post} userInfo={Props.userInfo} detail={true} />
+          <MyPost post={Props.post} userInfo={Props.userInfo} />
         )}
         <div
           className="commentTotal px-3 ml-4"
@@ -53,32 +55,32 @@ const MyPostDetail = (Props: PostProps) => {
             maxHeight: '30rem',
             overflow: 'auto'
           }}>
-          {Props.post?.comments?.map((item: any) => {
+          {comments?.map((item) => {
             return (
-              <div className="px-4" key={item?._id}>
+              <div className="px-4" key={item._id}>
                 {item ? (
                   <CommentDetail
-                    onData={Props.onData}
-                    key={item?._id}
+                    handleData={Props.handleData}
+                    key={item._id}
                     comment={item}
                     userInfo={Props.userInfo}
-                    selectedCommentId={selectedCommentId}
+                    selectedCommentID={selectedCommentID}
                     onSelectComment={handleSelectComment}
                     postID={Props.post._id}>
-                    {item.listReply?.map((item: any, index: number) => {
+                    {/* {item.listReply?.map((item: any) => {
                       return (
                         <CommentDetail
-                          onData={Props.onData}
+                          handleData={Props.handleData}
                           key={item?._id}
                           comment={item}
                           userInfo={Props.userInfo}
-                          selectedCommentId={selectedCommentId}
+                          selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
                           isReply={true}
-                          postID={Props.post._id}
+                          postID={Props.post.id}
                         />
                       );
-                    })}
+                    })} */}
                   </CommentDetail>
                 ) : null}
               </div>

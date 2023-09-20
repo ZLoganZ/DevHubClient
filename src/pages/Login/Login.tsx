@@ -14,7 +14,7 @@ import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
 import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
 import { useAppDispatch } from '@/hooks';
-import { UserLoginType } from '@/types';
+import { UserLoginDataType } from '@/types';
 
 import StyleTotal from './cssLogin';
 
@@ -80,7 +80,7 @@ const Login = () => {
     }
   });
 
-  const onSubmit = async (values: UserLoginType) => {
+  const onSubmit = async (values: UserLoginDataType) => {
     dispatch(LOGIN_SAGA(values));
   };
 

@@ -25,6 +25,7 @@ import { CREATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { UserInfoType } from '@/types';
 import StyleTotal from './cssNewPost';
 
 Quill.register('modules/imageCompress', ImageCompress);
@@ -37,7 +38,7 @@ const toolbarOptions = [
 ];
 
 interface Props {
-  userInfo: any;
+  userInfo: UserInfoType;
 }
 
 //===================================================
@@ -108,8 +109,9 @@ const NewPost = (Props: Props) => {
       if (result.status === 'done') {
         dispatch(
           CREATE_POST_SAGA({
-            postCreate: values,
-            linkImage: result.url
+            title: values.title,
+            content: values.content,
+            img: result.url
           })
         );
         setLoading(false);
@@ -204,14 +206,13 @@ const NewPost = (Props: Props) => {
               <Avatar
                 size={50}
                 src={
-                  Props.userInfo?.userImage
-                    ? Props.userInfo?.userImage
-                    : './images/DefaultAvatar/default_avatar.png'
+                  Props.userInfo.user_image ||
+                  './images/DefaultAvatar/default_avatar.png'
                 }
               />
               <div className="name font-bold ml-2">
-                <NavLink to={`/user/${Props.userInfo?.id}`}>
-                  {Props.userInfo?.username}
+                <NavLink to={`/user/${Props.userInfo._id}`}>
+                  {Props.userInfo.name}
                 </NavLink>
               </div>
             </div>

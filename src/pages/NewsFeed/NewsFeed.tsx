@@ -12,7 +12,7 @@ import LoadingNewFeed from '@/components/GlobalSetting/LoadingNewFeed';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
-import { useAllPostsData } from '@/hooks';
+import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import StyleTotal from './cssNewsFeed';
@@ -94,16 +94,33 @@ const NewFeed = () => {
     dispatch(setIsInProfile(false));
   }, []);
 
+  const {
+    isLoadingAllPostsNewsfeed,
+    isFetchingAllPostsNewsfeed,
+    allPostsNewsfeed
+  } = useAllPostsNewsfeedData();
+
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, []);
+    if (isLoadingAllPostsNewsfeed === true) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    if (
+      isLoadingAllPostsNewsfeed === false &&
+      isFetchingAllPostsNewsfeed === true
+    ) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed]);
 
-  const { isLoading, isFetching, allPost, userInfo } = useAllPostsData();
+  const { userInfo } = useUserInfo();
 
-  const popular = [...allPost!]
+  const popular = [...(allPostsNewsfeed! || [])]
     .filter((item) => item.type !== 'Share')
     .sort(
       (a, b) => b.post_attributes.view_number - a.post_attributes.view_number
@@ -129,12 +146,12 @@ const NewFeed = () => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {!allPost ||
+        {!allPostsNewsfeed ||
         !userInfo ||
         !popular ||
         !community ||
-        isLoading ||
-        isFetching ? (
+        isLoadingAllPostsNewsfeed ||
+        isFetchingAllPostsNewsfeed ? (
           <LoadingNewFeed />
         ) : (
           <Row>
@@ -146,22 +163,22 @@ const NewFeed = () => {
                   </div>
 
                   <div className="show">
-                    {allPost.map((item, index) => {
+                    {allPostsNewsfeed.map((item, index) => {
                       return (
                         <div key={index}>
-                          {!item.hasOwnProperty('PostShared') && (
+                          {item.type === 'Post' && (
                             <OtherPost
-                              key={item.id}
+                              key={item._id}
                               post={item}
                               userInfo={item.post_attributes.user}
                             />
                           )}
-                          {item.hasOwnProperty('PostShared') && (
+                          {item.type === 'Share' && (
                             <OtherPostShare
-                              key={item.id}
-                              post={item}
+                              key={item._id}
+                              postShared={item}
                               userInfo={item.post_attributes.user}
-                              owner={item.post_attributes.owner_post}
+                              ownerInfo={item.post_attributes.owner_post!}
                             />
                           )}
                         </div>
@@ -227,7 +244,7 @@ const NewFeed = () => {
                     {popular.map((item, index) => {
                       return (
                         <div key={index}>
-                          <NavLink to={`/post/${item.id}`}>
+                          <NavLink to={`/post/${item._id}`}>
                             <div
                               className="popular-post-item flex items-center pt-3 pb-3"
                               style={{
@@ -253,9 +270,7 @@ const NewFeed = () => {
                                     color: themeColorSet.colorText1,
                                     fontWeight: 600
                                   }}>
-                                  <span>
-                                    {item.post_attributes.user.lastname}
-                                  </span>
+                                  <span>{item.post_attributes.user.name}</span>
                                 </div>
                                 <div
                                   className="popular-post-item-desc mt-1"
@@ -320,61 +335,60 @@ const NewFeed = () => {
                           return;
                         } else {
                           return (
-                            <>
-                              <div
-                                className="top-community-item flex pt-3 pb-3"
+                            <div
+                              key={index}
+                              className="top-community-item flex pt-3 pb-3"
+                              style={{
+                                borderBottom: '1px solid',
+                                borderColor: themeColorSet.colorBg4
+                              }}>
+                              <img
                                 style={{
-                                  borderBottom: '1px solid',
-                                  borderColor: themeColorSet.colorBg4
-                                }}>
-                                <img
+                                  width: 50,
+                                  height: 50,
+                                  borderRadius: 50
+                                }}
+                                className="top-community-item-image"
+                                src={`${item.image}`}
+                                alt=""
+                              />
+                              <div className="content ml-3  ">
+                                <div
+                                  className="name"
                                   style={{
-                                    width: 50,
-                                    height: 50,
-                                    borderRadius: 50
-                                  }}
-                                  className="top-community-item-image"
-                                  src={`${item.image}`}
-                                  alt=""
-                                />
-                                <div className="content ml-3  ">
-                                  <div
-                                    className="name"
+                                    color: themeColorSet.colorText1,
+                                    fontWeight: 600
+                                  }}>
+                                  <span>{item.name}</span>
+                                </div>
+                                <div
+                                  className="popular-post-item-desc mt-1"
+                                  style={{
+                                    color: themeColorSet.colorText2,
+                                    fontSize: '0.9rem'
+                                  }}>
+                                  {item.description.length > 28
+                                    ? item.description.slice(0, 28) + '...'
+                                    : item.description}
+                                </div>
+                                <div className="top-community-item-member mt-1">
+                                  <FontAwesomeIcon
+                                    icon={faUserFriends}
                                     style={{
-                                      color: themeColorSet.colorText1,
-                                      fontWeight: 600
-                                    }}>
-                                    <span>{item.name}</span>
-                                  </div>
-                                  <div
-                                    className="popular-post-item-desc mt-1"
+                                      color: themeColorSet.colorText3,
+                                      fontSize: '0.7rem'
+                                    }}
+                                  />
+                                  <span
                                     style={{
-                                      color: themeColorSet.colorText2,
-                                      fontSize: '0.9rem'
+                                      marginLeft: 5,
+                                      color: themeColorSet.colorText3
                                     }}>
-                                    {item.description.length > 28
-                                      ? item.description.slice(0, 28) + '...'
-                                      : item.description}
-                                  </div>
-                                  <div className="top-community-item-member mt-1">
-                                    <FontAwesomeIcon
-                                      icon={faUserFriends}
-                                      style={{
-                                        color: themeColorSet.colorText3,
-                                        fontSize: '0.7rem'
-                                      }}
-                                    />
-                                    <span
-                                      style={{
-                                        marginLeft: 5,
-                                        color: themeColorSet.colorText3
-                                      }}>
-                                      {item.member} Members
-                                    </span>
-                                  </div>
+                                    {item.member} Members
+                                  </span>
                                 </div>
                               </div>
-                            </>
+                            </div>
                           );
                         }
                       })}

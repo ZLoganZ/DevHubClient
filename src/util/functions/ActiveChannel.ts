@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { Channel, Members } from 'pusher-js';
 
@@ -8,13 +7,11 @@ import {
   addMember,
   removeMember
 } from '@/redux/Slice/ActiveListSlice';
-import { AppDispatch, RootState } from '@/redux/configStore';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 const ActiveChannel = () => {
   const dispatch = useAppDispatch();
-  const { members } = useSelector(
-    (state: RootState) => state.activeListReducer
-  );
+  const { members } = useAppSelector((state) => state.activeListReducer);
 
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 

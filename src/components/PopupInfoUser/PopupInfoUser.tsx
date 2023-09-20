@@ -12,16 +12,22 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { UserInfoType } from '@/types';
 import StyleTotal from './cssPopupInfoUser';
 
-const PopupInfoUser = ({ userInfo, isMe }: any) => {
+interface Props {
+  userInfo: UserInfoType;
+  userID: string;
+}
+
+const PopupInfoUser = ({ userInfo, userID }: Props) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [isFollowing, setIsFollowing] = useState(userInfo.isFollowing);
+  const [isFollowing, setIsFollowing] = useState(userInfo.is_following);
 
   return (
     <ConfigProvider
@@ -30,13 +36,13 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
       }}>
       <StyleTotal theme={themeColorSet} className="flex justify-center">
         <div className="popupInfoUser flex" style={{ width: '95%' }}>
-          <NavLink to={`/user/${userInfo?.id}`}>
+          <NavLink to={`/user/${userInfo._id}`}>
             <div className="popupInfoUser__avatar mr-5 mt-3">
-              <Avatar size={70} src={userInfo?.userImage} />
+              <Avatar size={70} src={userInfo.user_image} />
             </div>
           </NavLink>
           <div className="popupInfoUser__content">
-            <NavLink to={`/user/${userInfo?.id}`}>
+            <NavLink to={`/user/${userInfo._id}`}>
               <div
                 className="name"
                 style={{
@@ -44,7 +50,7 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
                   fontWeight: 600,
                   fontSize: '1.3rem'
                 }}>
-                {userInfo.username}
+                {userInfo.name}
               </div>
             </NavLink>
             <div className="position mt-2">
@@ -58,15 +64,15 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
             <div className="follow mt-5">
               <span className="follower item mr-2">
                 <span className="mr-1">{userInfo.followers?.length}</span>{' '}
-                {userInfo.followers?.length > 1 ? 'Followers' : 'Follower'}
+                {userInfo.followers.length > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className="following item mr-2">
                 <span className="mr-1">{userInfo.following?.length}</span>{' '}
-                {userInfo.following?.length > 1 ? 'Followings' : 'Following'}
+                {userInfo.following.length > 1 ? 'Followings' : 'Following'}
               </span>
               <span className="post mr-2">
                 <span className="mr-1">{userInfo.posts?.length}</span>{' '}
-                {userInfo.posts?.length > 1 ? 'Posts' : 'Post'}
+                {userInfo.posts.length > 1 ? 'Posts' : 'Post'}
               </span>
             </div>
             <div className="experience mt-5 mb-5">
@@ -89,13 +95,13 @@ const PopupInfoUser = ({ userInfo, isMe }: any) => {
                 <span className="position mr-2">Software Engineer</span>
               </div>
             </div>
-            {isMe !== userInfo.id ? (
+            {userID !== userInfo._id ? (
               <div className="button_Total flex mb-5">
                 <div className="followButton mr-4">
                   <button
                     className="btnFollow btn-primary px-6 py-1.5 rounded-3xl"
                     onClick={() => {
-                      dispatch(FOLLOW_USER_SAGA(userInfo.id));
+                      dispatch(FOLLOW_USER_SAGA(userInfo._id));
                       setIsFollowing(!isFollowing);
                     }}>
                     <span style={{ color: commonColor.colorWhile1 }}>

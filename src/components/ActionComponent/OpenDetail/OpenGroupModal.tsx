@@ -26,8 +26,8 @@ const OpenGroupModal = (Props: Props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  let [membersGroup, SetMembersGroup] = useState<UserInfoType[]>();
-  let [name, setGroupName] = useState<string>();
+  const [membersGroup, SetMembersGroup] = useState<UserInfoType[]>();
+  const [name, setGroupName] = useState<string>();
 
   const handleSetName = (newName: string) => {
     setGroupName(newName);

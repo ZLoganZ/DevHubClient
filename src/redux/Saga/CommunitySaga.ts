@@ -13,11 +13,11 @@ function* getCommunityByIDSaga({ payload }: any) {
   try {
     const { data, status } = yield communityService.getCommunityByID(payload);
     if (status === STATUS_CODE.SUCCESS) {
-      yield put(setCommunity(data.content));
-      yield put(setUser(data.content));
+      yield put(setCommunity(data.metadata));
+      yield put(setUser(data.metadata));
     }
   } catch (err: any) {
-    console.log(err.response.data);
+    console.log(err);
   }
 }
 

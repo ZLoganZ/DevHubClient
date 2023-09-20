@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ForwardRefExoticComponent, ReactNode, useState } from 'react';
 import { Comment } from '@ant-design/compatible';
 import { Avatar, ConfigProvider, Skeleton, Tooltip } from 'antd';
 import Icon, {
@@ -15,14 +15,15 @@ import {
   LIKE_COMMENT_POST_SAGA
 } from '@/redux/ActionSaga/PostActionSaga';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
 
 interface CommentProps {
-  comment: any;
-  userInfo: any;
-  children?: any;
-  onData: (data: any) => void;
-  selectedCommentId?: string | null;
-  onSelectComment: (commentId: string | null) => void;
+  comment: CommentType;
+  userInfo: UserInfoType;
+  children?: ReactNode;
+  handleData: (data: SelectedCommentValues) => void;
+  selectedCommentID?: string | null;
+  onSelectComment: (commentID: string | null) => void;
   isReply?: boolean;
   postID?: string;
 }
@@ -35,13 +36,11 @@ const CommentDetail = (Props: CommentProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [likes, setLike] = useState<number>(Props.comment?.likes?.length || 0);
-  const [dislikes, setDislike] = useState<number>(
-    Props.comment?.dislikes?.length || 0
-  );
+  const [likes, setLike] = useState(Props.comment.like_number || 0);
+  const [dislikes, setDislike] = useState(Props.comment.like_number || 0);
   const [action, setAction] = useState(
-    Props.comment?.isLiked || Props.comment?.isDisliked
-      ? Props.comment?.isLiked
+    Props.comment.is_liked || Props.comment.is_disliked
+      ? Props.comment.is_liked
         ? 'liked'
         : 'disliked'
       : ''
@@ -49,46 +48,52 @@ const CommentDetail = (Props: CommentProps) => {
 
   const like = () => {
     if (action === 'liked') {
-      setLike((prev: number) => prev - 1);
+      setLike((prev) => prev - 1);
       setAction('');
     } else {
-      setLike((prev: number) => prev + 1);
-      if (action === 'disliked') setDislike((prev: any) => prev - 1);
+      setLike((prev) => prev + 1);
+      if (action === 'disliked') setDislike((prev) => prev - 1);
       setAction('liked');
     }
     dispatch(
       LIKE_COMMENT_POST_SAGA({
-        idComment: Props.comment._id,
-        postID: Props.postID
+        id: Props.comment._id,
+        comment: {
+          type: Props.isReply ? 'child' : 'parent',
+          post: Props.postID!
+        }
       })
     );
   };
 
   const dislike = () => {
     if (action === 'disliked') {
-      setDislike((prev: number) => prev - 1);
+      setDislike((prev) => prev - 1);
       setAction('');
     } else {
-      setDislike((prev: number) => prev + 1);
-      if (action === 'liked') setLike((prev: any) => prev - 1);
+      setDislike((prev) => prev + 1);
+      if (action === 'liked') setLike((prev) => prev - 1);
       setAction('disliked');
     }
     dispatch(
       DISLIKE_COMMENT_POST_SAGA({
-        idComment: Props.comment._id,
-        postID: Props.postID
+        id: Props.comment._id,
+        comment: {
+          type: Props.isReply ? 'child' : 'parent',
+          post: Props.postID!
+        }
       })
     );
   };
 
   const setReply = () => {
-    const selectedCommentId =
-      Props.selectedCommentId === Props.comment._id ? null : Props.comment._id;
-    Props.onData({
-      isReply: selectedCommentId ? true : false,
-      idComment: selectedCommentId
+    const selectedCommentID =
+      Props.selectedCommentID === Props.comment._id ? null : Props.comment._id;
+    Props.handleData({
+      isReply: selectedCommentID ? true : false,
+      idComment: selectedCommentID
     });
-    Props.onSelectComment(selectedCommentId);
+    Props.onSelectComment(selectedCommentID);
   };
 
   const actions = [
@@ -98,8 +103,8 @@ const CommentDetail = (Props: CommentProps) => {
           type="like"
           component={
             action === 'liked'
-              ? (LikeFilled as React.ForwardRefExoticComponent<any>)
-              : (LikeOutlined as React.ForwardRefExoticComponent<any>)
+              ? (LikeFilled as ForwardRefExoticComponent<any>)
+              : (LikeOutlined as ForwardRefExoticComponent<any>)
           }
           onClick={like}
           style={{
@@ -115,8 +120,8 @@ const CommentDetail = (Props: CommentProps) => {
           type="dislike"
           component={
             action === 'disliked'
-              ? (DislikeFilled as React.ForwardRefExoticComponent<any>)
-              : (DislikeOutlined as React.ForwardRefExoticComponent<any>)
+              ? (DislikeFilled as ForwardRefExoticComponent<any>)
+              : (DislikeOutlined as ForwardRefExoticComponent<any>)
           }
           onClick={dislike}
           style={{
@@ -134,7 +139,7 @@ const CommentDetail = (Props: CommentProps) => {
           id="reply"
           key="comment-basic-reply-to"
           onClick={setReply}
-          {...(Props.selectedCommentId === Props.comment._id
+          {...(Props.selectedCommentID === Props.comment._id
             ? {
                 style: {
                   color: '#1890ff',
@@ -150,7 +155,7 @@ const CommentDetail = (Props: CommentProps) => {
                 }
               })}>
           <span style={{ color: themeColorSet.colorText3 }}>
-            {Props.selectedCommentId === Props.comment._id ? 'Cancel' : 'Reply'}
+            {Props.selectedCommentID === Props.comment._id ? 'Cancel' : 'Reply'}
           </span>
         </span>
       ))
@@ -163,7 +168,7 @@ const CommentDetail = (Props: CommentProps) => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {!Props.comment?.user?.username ? (
+        {!Props.comment?.user?.name ? (
           <Skeleton avatar paragraph={{ rows: 2 }} active />
         ) : (
           <div className="commentDetail">
@@ -175,25 +180,25 @@ const CommentDetail = (Props: CommentProps) => {
                     color: themeColorSet.colorText1,
                     fontSize: '0.85rem'
                   }}>
-                  {Props.comment?.user?.username}
+                  {Props.comment?.user?.name}
                 </div>
               }
               actions={actions}
               avatar={
-                Props.comment?.user?.userImage ? (
+                Props.comment.user.user_image ? (
                   <Avatar
-                    src={Props.comment?.user?.userImage}
-                    alt={Props.comment?.user?.username}
+                    src={Props.comment.user.user_image}
+                    alt={Props.comment.user.name}
                   />
                 ) : (
                   <Avatar
                     style={{ backgroundColor: '#87d068' }}
                     icon="user"
-                    alt={Props.comment?.user?.username}
+                    alt={Props.comment.user.name}
                   />
                 )
               }
-              content={<div className="">{Props.comment?.content}</div>}>
+              content={<div className="">{Props.comment.content}</div>}>
               {Props.children}
             </Comment>
           </div>

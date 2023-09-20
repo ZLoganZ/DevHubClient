@@ -1,19 +1,15 @@
 import { Image } from 'antd';
-import { useSelector } from 'react-redux';
 
-import { RootState } from '@/redux/configStore';
+import { useAppSelector } from '@/hooks';
+import { UserInfoType } from '@/types';
 
 interface AvatarProps {
-  user?: any;
+  user: UserInfoType;
 }
 
 const AvatarMessage = (Props: AvatarProps) => {
-  const { members } = useSelector(
-    (state: RootState) => state.activeListReducer
-  );
-  const isActive =
-    members?.indexOf(Props.user?.id ? Props.user?.id : Props.user._id) !== -1 ||
-    false;
+  const { members } = useAppSelector((state) => state.activeListReducer);
+  const isActive = members.indexOf(Props.user._id!) !== -1 || false;
 
   return (
     <div className="relative">
@@ -21,7 +17,7 @@ const AvatarMessage = (Props: AvatarProps) => {
         <Image
           preview={false}
           src={
-            Props.user?.userImage || './images/DefaultAvatar/default_avatar.png'
+            Props.user.user_image || './images/DefaultAvatar/default_avatar.png'
           }
           alt="Avatar"
           style={{
