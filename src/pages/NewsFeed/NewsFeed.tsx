@@ -100,25 +100,22 @@ const NewFeed = () => {
     allPostsNewsfeed
   } = useAllPostsNewsfeedData();
 
+  const { userInfo } = useUserInfo();
+
   useEffect(() => {
-    if (isLoadingAllPostsNewsfeed === true) {
+    if (isLoadingAllPostsNewsfeed) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-    if (
-      isLoadingAllPostsNewsfeed === false &&
-      isFetchingAllPostsNewsfeed === true
-    ) {
+    if (isLoadingAllPostsNewsfeed === false && isFetchingAllPostsNewsfeed) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
   }, [isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed]);
-
-  const { userInfo } = useUserInfo();
 
   const popular = [...(allPostsNewsfeed! || [])]
     .filter((item) => item.type !== 'Share')

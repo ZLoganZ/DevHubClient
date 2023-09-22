@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
 
 import {
-  FollowType,
   RepositoryType,
   ResponseType,
   UserUpdateDataType,
@@ -21,12 +20,12 @@ export class UserService extends BaseService {
   };
   getFollowers = (
     userID: string
-  ): Promise<AxiosResponse<ResponseType<FollowType>>> => {
+  ): Promise<AxiosResponse<ResponseType<UserInfoType[]>>> => {
     return this.get(`/users/followers/${userID}`);
   };
   getFollowing = (
     userID: string
-  ): Promise<AxiosResponse<ResponseType<FollowType>>> => {
+  ): Promise<AxiosResponse<ResponseType<UserInfoType[]>>> => {
     return this.get(`/users/following/${userID}`);
   };
   getShouldFollow = (): Promise<

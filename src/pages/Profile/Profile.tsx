@@ -38,7 +38,6 @@ import descArray from '@/components/GlobalSetting/ItemComponent/Description';
 
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
-import { GET_ALL_POST_BY_USERID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import { useOtherUserInfo, useUserPostsData } from '@/hooks';
@@ -62,19 +61,14 @@ const Profile = (Props: Props) => {
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
-    dispatch(
-      GET_ALL_POST_BY_USERID_SAGA({
-        userID: userID
-      })
-    );
     dispatch(setIsInProfile(false));
-  }, [dispatch, userID]);
+  }, []);
 
   const { isLoadingUserPosts, userPosts, isFetchingUserPosts } =
     useUserPostsData(userID);
 
   useEffect(() => {
-    if (isLoadingUserPosts === true) {
+    if (isLoadingUserPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -82,7 +76,7 @@ const Profile = (Props: Props) => {
     }
   }, [isLoadingUserPosts]);
 
-  const { otherUserInfo } = useOtherUserInfo(userID);
+  const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
   // isShared
   const [isFollowing, setIsFollowing] = useState(true);
@@ -174,7 +168,8 @@ const Profile = (Props: Props) => {
         {!userPosts ||
         !otherUserInfo ||
         isLoadingUserPosts ||
-        isFetchingUserPosts ? (
+        isFetchingUserPosts ||
+        isLoadingOtherUserInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -268,7 +263,7 @@ const Profile = (Props: Props) => {
                 <Col span={18} className="mt-5">
                   <div className="tags flex flex-wrap">
                     {descArray.map((item, index) => {
-                      if (otherUserInfo.tags.indexOf(item.title) !== -1) {
+                      if (otherUserInfo.tags?.indexOf(item.title) !== -1) {
                         return (
                           <Tag
                             className="item mx-2 my-2 px-4 py-1"

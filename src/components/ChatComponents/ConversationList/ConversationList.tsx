@@ -13,7 +13,7 @@ import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useUserInfo } from '@/hooks';
 import { UserInfoType } from '@/types';
 
 interface ConversationListProps {
@@ -31,9 +31,8 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const navigate = useNavigate();
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
-
   const { members } = useAppSelector((state) => state.activeListReducer);
+  const { userInfo } = useUserInfo();
 
   const [items, setItems] = useState(Props.initialItems);
 

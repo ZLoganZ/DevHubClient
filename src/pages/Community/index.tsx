@@ -20,7 +20,7 @@ import MyPost from '@/components/Post/MyPost';
 import NewPost from '@/components/NewPost';
 import MyPostShare from '@/components/Post/MyPostShare';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useUserInfo } from '@/hooks';
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
@@ -40,7 +40,7 @@ export const CommunityAdmin = () => {
 
   const community = useAppSelector((state) => state.communityReducer.community);
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   return (
     <ConfigProvider

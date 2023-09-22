@@ -14,7 +14,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useUserInfo } from '@/hooks';
 import StyleTotal from './cssMenu';
 
 const MenuMain = () => {
@@ -26,7 +26,7 @@ const MenuMain = () => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
   const [key, setKey] = useState('');
 
   // Hover menu
@@ -70,7 +70,6 @@ const MenuMain = () => {
           collapsible
           collapsed={collapsed}
           width={240}
-          // collapsedWidth={80}
           className="sider"
           style={{
             overflow: 'auto',

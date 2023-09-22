@@ -11,7 +11,7 @@ import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleTotal from './cssSharedMedia';
-import { useCurrentConversationData } from '@/hooks';
+import { useCurrentConversationData, useUserInfo } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { pusherClient } from '@/util/functions/Pusher';
 import { useAppSelector } from '@/hooks';
@@ -27,7 +27,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
   const { isLoadingCurrentConversation, currentConversation } =
     useCurrentConversationData(Props.conversationID);
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   const pusherKey = useMemo(() => {
     return userInfo._id;

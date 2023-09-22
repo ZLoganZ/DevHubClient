@@ -8,7 +8,7 @@ import { GET_POST_BY_ID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
 import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
 
 const CommunityAdmin = lazy(() =>
@@ -46,7 +46,7 @@ export const CommunityWrapper = () => {
     dispatch(GET_COMMUNITY_BY_ID_SAGA(communityID));
   }, []);
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
   const role = useMemo(() => {
     if (userInfo.role) {
       if (userInfo.role.includes('0101')) return 'ADMIN';
