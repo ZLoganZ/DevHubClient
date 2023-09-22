@@ -30,6 +30,7 @@ import {
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
 import { NavLink } from 'react-router-dom';
+import { format } from 'date-fns';
 
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
@@ -40,7 +41,7 @@ import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useOtherUserInfo, useUserPostsData } from '@/hooks';
+import { useOtherUserInfo, usePopupInfoData, useUserPostsData } from '@/hooks';
 import { RepositoryType } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 
@@ -60,6 +61,8 @@ const Profile = (Props: Props) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
+  const uid = useAppSelector((state) => state.authReducer.userID);
+
   useEffect(() => {
     dispatch(setIsInProfile(false));
   }, []);
@@ -78,10 +81,12 @@ const Profile = (Props: Props) => {
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
+  const { isLoadingPopupInfo } = usePopupInfoData(userID, uid!);
+
   // isShared
   const [isFollowing, setIsFollowing] = useState(true);
   useEffect(() => {
-    setIsFollowing(otherUserInfo?.is_following!);
+    setIsFollowing(otherUserInfo?.is_following);
   }, [otherUserInfo]);
 
   const openInNewTab = (url: string) => {
@@ -169,7 +174,8 @@ const Profile = (Props: Props) => {
         !otherUserInfo ||
         isLoadingUserPosts ||
         isFetchingUserPosts ||
-        isLoadingOtherUserInfo ? (
+        isLoadingOtherUserInfo ||
+        isLoadingPopupInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -257,7 +263,8 @@ const Profile = (Props: Props) => {
                   </span>
                   <span className="join">
                     <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
-                    Joined {otherUserInfo.createdAt}
+                    Joined{' '}
+                    {format(new Date(otherUserInfo.createdAt), 'MMM yyyy')}
                   </span>
                 </div>
                 <Col span={18} className="mt-5">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Avatar, ConfigProvider } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,7 +32,10 @@ const PopupInfoUser = ({ userInfo, userID }: Props) => {
     userID
   );
 
-  const [isFollowing, setIsFollowing] = useState(userInfo.is_following);
+  const [isFollowing, setIsFollowing] = useState(userInfo?.is_following);
+  useEffect(() => {
+    setIsFollowing(userInfo?.is_following);
+  }, [userInfo]);
 
   return (
     <ConfigProvider

@@ -329,7 +329,7 @@ export const CommunityAdmin = () => {
                       </Collapse>
                     </div>
                     <div
-                      className="recentlyJoined px-3 py-4 mb-3 rounded-md"
+                      className="recentlyJoin px-3 py-4 mb-3 rounded-md"
                       style={{ backgroundColor: themeColorSet.colorBg2 }}>
                       <div
                         className="title mb-2 text-lg"
@@ -337,7 +337,7 @@ export const CommunityAdmin = () => {
                         Recently Joined
                       </div>
                       <div className="content">
-                        {community.recentlyJoined.map(
+                        {community.recentlyJoin.map(
                           (item: any, index: number) => {
                             return (
                               <div
@@ -687,7 +687,7 @@ export const CommunityMember = () => {
                       </Collapse>
                     </div>
                     <div
-                      className="recentlyJoined px-3 py-4 mb-3 rounded-md"
+                      className="recentlyJoin px-3 py-4 mb-3 rounded-md"
                       style={{ backgroundColor: themeColorSet.colorBg2 }}>
                       <div
                         className="title mb-2 text-lg"
@@ -695,7 +695,7 @@ export const CommunityMember = () => {
                         Recently Joined
                       </div>
                       <div className="content">
-                        {community.recentlyJoined.map(
+                        {community.recentlyJoin.map(
                           (item: any, index: number) => {
                             return (
                               <div
@@ -1045,7 +1045,7 @@ export const CommunityNoMember = () => {
                       </Collapse>
                     </div>
                     <div
-                      className="recentlyJoined px-3 py-4 mb-3 rounded-md"
+                      className="recentlyJoin px-3 py-4 mb-3 rounded-md"
                       style={{ backgroundColor: themeColorSet.colorBg2 }}>
                       <div
                         className="title mb-2 text-lg"
@@ -1053,7 +1053,7 @@ export const CommunityNoMember = () => {
                         Recently Joined
                       </div>
                       <div className="content">
-                        {community.recentlyJoined.map(
+                        {community.recentlyJoin.map(
                           (item: any, index: number) => {
                             return (
                               <div

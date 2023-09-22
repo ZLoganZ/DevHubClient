@@ -22,7 +22,7 @@ const StyleTotal = styled.div`
     .infoCommunity {
       .admin,
       .member,
-      .recentlyJoined {
+      .recentlyJoin {
         .content {
           .item {
             :hover {
