@@ -1,15 +1,23 @@
-import ReactDOM from "react-dom/client";
-import App from "@/App.tsx";
-import { Provider } from "react-redux";
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
 
-import store from "@/redux/configStore";
-import "./index.css";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { store } from '@/redux/configStore';
+import App from '@/App.tsx';
+import './index.css';
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </GoogleOAuthProvider>
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <Provider store={store}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
+  </Provider>
 );
