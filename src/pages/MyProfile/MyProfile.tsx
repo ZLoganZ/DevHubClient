@@ -32,6 +32,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { NavLink } from 'react-router-dom';
 import 'react-quill/dist/quill.bubble.css';
+import { format } from 'date-fns';
 
 import descArray from '@/components/GlobalSetting/ItemComponent/Description';
 import NewPost from '@/components/NewPost';
@@ -44,7 +45,7 @@ import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useUserPostsData, useUserInfo } from '@/hooks';
+import { useUserPostsData, useUserInfo, usePopupInfoData } from '@/hooks';
 import { RepositoryType } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 
@@ -81,6 +82,8 @@ const MyProfile = () => {
   }, [isLoadingUserPosts]);
 
   const { userInfo, isLoadingUserInfo } = useUserInfo();
+
+  const { isLoadingPopupInfo } = usePopupInfoData(userID!, userID!);
 
   useEffect(() => {
     document.title = isLoadingUserPosts
@@ -163,7 +166,8 @@ const MyProfile = () => {
         !userInfo ||
         isLoadingUserPosts ||
         isFetchingUserPosts ||
-        isLoadingUserInfo ? (
+        isLoadingUserInfo ||
+        isLoadingPopupInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -257,7 +261,7 @@ const MyProfile = () => {
                   </span>
                   <span className="join">
                     <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
-                    Joined {userInfo.createdAt}
+                    Joined {format(new Date(userInfo.createdAt), 'MMM yyyy')}
                   </span>
                 </div>
                 <Col span={18} className="mt-5">

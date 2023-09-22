@@ -278,7 +278,7 @@ const SelectCommunity = () => {
                                 width: '10%'
                               }}>
                               <ButtonActiveHover rounded>
-                                Join
+                                Joined
                               </ButtonActiveHover>
                             </div>
                           </div>
