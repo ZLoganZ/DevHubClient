@@ -3,7 +3,7 @@ import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { useOtherUser } from '@/hooks';
+import { useOtherUser, useUserInfo } from '@/hooks';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppSelector } from '@/hooks';
 
@@ -14,8 +14,8 @@ interface ConversationBoxProps {
 
 const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
-  // Lấy theme từ LocalStorage chuyển qua css
+  const { userInfo } = useUserInfo();
+
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 

@@ -1,6 +1,6 @@
 import { PostType, UserInfoType } from '@/types';
 
-export const ApplyUserDefaults = (obj: UserInfoType) => {
+export const ApplyUserDefaults = (obj: UserInfoType | Object) => {
   if (!obj) return;
   const defaultValues: UserInfoType = {
     _id: '',

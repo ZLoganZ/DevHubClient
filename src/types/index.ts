@@ -103,12 +103,6 @@ export type UserInfoType = {
   is_following: boolean;
 };
 
-export type FollowType = {
-  user: UserInfoType;
-  followers: UserInfoType[];
-  followings: UserInfoType[];
-};
-
 type TypeofPost = 'Post' | 'Share';
 
 type TypeOfLink = {

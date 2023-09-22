@@ -40,7 +40,6 @@ import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
 import MyPostShare from '@/components/Post/MyPostShare';
 import MyPost from '@/components/Post/MyPost';
 
-import { GET_ALL_POST_BY_USERID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
@@ -62,11 +61,6 @@ const MyProfile = () => {
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
-    dispatch(
-      GET_ALL_POST_BY_USERID_SAGA({
-        userID: userID!
-      })
-    );
     dispatch(setIsInProfile(true));
   }, []);
 
@@ -78,7 +72,7 @@ const MyProfile = () => {
     useUserPostsData('me');
 
   useEffect(() => {
-    if (isLoadingUserPosts === true) {
+    if (isLoadingUserPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -86,7 +80,7 @@ const MyProfile = () => {
     }
   }, [isLoadingUserPosts]);
 
-  const { userInfo } = useUserInfo();
+  const { userInfo, isLoadingUserInfo } = useUserInfo();
 
   useEffect(() => {
     document.title = isLoadingUserPosts
@@ -168,7 +162,8 @@ const MyProfile = () => {
         {!userPosts ||
         !userInfo ||
         isLoadingUserPosts ||
-        isFetchingUserPosts ? (
+        isFetchingUserPosts ||
+        isLoadingUserInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>

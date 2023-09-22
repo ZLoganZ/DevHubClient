@@ -5,10 +5,10 @@ import { ConfigProvider, FloatButton, Layout } from 'antd';
 import Headers from '@/components/Headers';
 import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
 import Menu from '@/components/Menu';
-import { GET_USER_INFO_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
 import StyleTotal from './cssMainLayout';
+import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;
@@ -16,20 +16,18 @@ interface PropsMainTemplate {
 
 const MainLayout = (props: PropsMainTemplate) => {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
-
   // Lấy theme từ LocalStorage chuyển qua css
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   useLayoutEffect(() => {
-    dispatch(GET_USER_INFO_SAGA());
+    dispatch(GET_USER_ID());
   }, []);
 
-  if (!userInfo.name) {
-    return <LoadingLogo />;
-  }
+  const { isLoadingUserInfo } = useUserInfo();
+
+  if (isLoadingUserInfo) return <LoadingLogo />;
 
   document.title = 'DevHub';
 
@@ -44,21 +42,19 @@ const MainLayout = (props: PropsMainTemplate) => {
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
           <FloatButton.BackTop />
           <Headers />
-          <Layout hasSider style={{ backgroundColor: themeColorSet.colorBg1 }}>
-            <Menu />
-            <Content style={{ marginLeft: '5rem', marginTop: '5rem' }}>
-              <div
-                style={{
-                  backgroundImage: 'url(/images/ProfilePage/cover.jpg)',
-                  backgroundAttachment: 'fixed',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}>
-                <Component />
-              </div>
-            </Content>
-          </Layout>
+          <Menu />
+          <Content
+            style={{
+              marginLeft: '5rem',
+              marginTop: '5rem',
+              backgroundImage: 'url(/images/ProfilePage/cover.jpg)',
+              backgroundAttachment: 'fixed',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}>
+            <Component />
+          </Content>
         </Layout>
       </StyleTotal>
     </ConfigProvider>

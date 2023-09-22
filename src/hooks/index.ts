@@ -13,7 +13,6 @@ import { messageService } from '@/services/MessageService';
 import { userService } from '@/services/UserService';
 import { AppDispatch, RootState } from '@/redux/configStore';
 import {
-  ApplyPostDefaults,
   ApplyPostsDefaults,
   ApplyUserDefaults
 } from '@/util/functions/ApplyDefaults';
@@ -132,7 +131,7 @@ export const useIntersectionObserverNow = (
  * @returns The function `useOtherUser` returns the information of the other user in a conversation.
  */
 export const useOtherUser = (conversation: any) => {
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   const otherUser = useMemo(() => {
     const currentUser = userInfo._id;
@@ -157,11 +156,15 @@ export const useOtherUser = (conversation: any) => {
  * - `isFetchingUserInfo` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserInfo = () => {
+  const userID =
+    useAppSelector((state) => state.authReducer.userID) ||
+    localStorage.getItem('x-client-id');
+
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      const { data } = await userService.getUserInfo();
-      return data;
+      const { data } = await userService.getUserInfoByID(userID!);
+      return ApplyUserDefaults(data.metadata);
     },
     staleTime: Infinity
   });
@@ -169,7 +172,7 @@ export const useUserInfo = () => {
   return {
     isLoadingUserInfo: isLoading,
     isErrorUserInfo: isError,
-    userInfo: ApplyUserDefaults(data?.metadata!),
+    userInfo: data!,
     isFetchingUserInfo: isFetching
   };
 };
@@ -190,7 +193,7 @@ export const useOtherUserInfo = (userID: string) => {
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
       const { data } = await userService.getUserInfoByID(userID);
-      return data;
+      return ApplyUserDefaults(data.metadata);
     },
     staleTime: Infinity
   });
@@ -198,7 +201,7 @@ export const useOtherUserInfo = (userID: string) => {
   return {
     isLoadingOtherUserInfo: isLoading,
     isErrorOtherUserInfo: isError,
-    otherUserInfo: ApplyUserDefaults(data?.metadata!),
+    otherUserInfo: data!,
     isFetchingOtherUserInfo: isFetching
   };
 };
@@ -259,11 +262,11 @@ export const useAllPostsNewsfeedData = () => {
     queryFn: async () => {
       dispatch(setIsInProfile(false));
       const { data } = await postService.GetAllPostNewsFeed();
-      return data;
+      return ApplyPostsDefaults(data.metadata);
     },
     staleTime: Infinity,
     onSuccess(data) {
-      dispatch(setAllPostNewsfeed(data.metadata));
+      dispatch(setAllPostNewsfeed(data));
     },
     onError(err) {
       console.log(err);
@@ -273,7 +276,7 @@ export const useAllPostsNewsfeedData = () => {
   return {
     isLoadingAllPostsNewsfeed: isLoading,
     isErrorAllPostsNewsfeed: isError,
-    allPostsNewsfeed: ApplyPostsDefaults(data?.metadata!),
+    allPostsNewsfeed: data!,
     isFetchingAllPostsNewsfeed: isFetching,
     refetchAllPostsNewsfeed: refetch
   };
@@ -306,12 +309,12 @@ export const useUserPostsData = (userID: string) => {
       const { data } = await postService.getAllPostByUserID(
         userID === 'me' ? client_id! : userID
       );
-      return data;
+      return ApplyPostsDefaults(data.metadata);
     },
     enabled: !!userID,
     staleTime: Infinity,
     onSuccess(data) {
-      dispatch(setPostArr(data.metadata));
+      dispatch(setPostArr(data));
     },
     onError(err) {
       console.log(err);
@@ -321,7 +324,7 @@ export const useUserPostsData = (userID: string) => {
   return {
     isLoadingUserPosts: isLoading,
     isErrorUserPosts: isError,
-    userPosts: ApplyPostsDefaults(data?.metadata!),
+    userPosts: data!,
     isFetchingUserPosts: isFetching
   };
 };
@@ -428,8 +431,77 @@ export const useFollowersData = (userID: string) => {
   return {
     isLoadingFollowers: isLoading,
     isErrorFollowers: isError,
-    followers: data?.metadata.followers,
+    followers: data?.metadata,
     isFetchingFollowers: isFetching
+  };
+};
+
+/**
+ * The `usePopupInfoData` function is a custom hook in TypeScript that fetches and updates popup
+ * information for a user, including their followers and following, and updates the query data
+ * accordingly.
+ * @param {string} userID - The `userID` parameter is the ID of the user for whom we want to fetch the
+ * popup info. This ID is used to make API requests to get the followers and following data for that
+ * user.
+ * @param {string} myID - The `myID` parameter is the ID of the user who is currently logged in or
+ * viewing the popup info.
+ * @returns The function `usePopupInfoData` returns an object with the following properties:
+ * - `isLoadingPopupInfo` is a boolean that indicates whether the popup info data is still loading.
+ * - `isErrorPopupInfo` is a boolean that indicates whether there is an error.
+ * - `popupInfo` is an object that contains information about the popup info.
+ * - `isFetchingPopupInfo` is a boolean that indicates whether the query is currently fetching.
+ */
+export const usePopupInfoData = (userID: string, myID: string) => {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['popupInfo', userID],
+    queryFn: async () => {
+      const [{ data: Followers }, { data: Following }] = await Promise.all([
+        userService.getFollowers(userID),
+        userService.getFollowing(userID)
+      ]);
+
+      if (myID === userID)
+        queryClient.setQueryData(['userInfo'], (oldData: any) => {
+          return {
+            ...oldData,
+            followers: Followers.metadata,
+            following: Following.metadata
+          };
+        });
+      else {
+        queryClient.invalidateQueries(['otherUserInfo', userID]).then(() => {
+          queryClient.setQueryData(
+            ['otherUserInfo', userID],
+            (oldData: any) => {
+              return {
+                ...oldData,
+                followers: Followers.metadata,
+                following: Following.metadata,
+                is_following: Followers.metadata.some(
+                  (user) => user._id === myID
+                )
+              };
+            }
+          );
+        });
+      }
+
+      return {
+        followers: Followers.metadata,
+        following: Following.metadata
+      };
+    },
+    enabled: !!userID,
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingPopupInfo: isLoading,
+    isErrorPopupInfo: isError,
+    popupInfo: data,
+    isFetchingPopupInfo: isFetching
   };
 };
 

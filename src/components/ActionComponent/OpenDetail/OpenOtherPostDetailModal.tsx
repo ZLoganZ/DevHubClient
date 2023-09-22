@@ -10,7 +10,7 @@ import {
 } from '@/redux/ActionSaga/PostActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import OtherPostDetailModal from '@/components/Form/PostDetail/OtherPostDetail';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
@@ -31,7 +31,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);

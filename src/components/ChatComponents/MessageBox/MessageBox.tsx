@@ -5,7 +5,7 @@ import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 import StyleTotal from './cssMessageBox';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useUserInfo } from '@/hooks';
 
 interface MessageBoxProps {
   data: any;
@@ -17,7 +17,7 @@ const MessageBox = (Props: MessageBoxProps) => {
   const { change } = useAppSelector((state) => state.themeReducer);
   const { themeColorSet } = getTheme();
 
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   const isOwn = userInfo._id === Props.data.sender._id;
   const seenList = (Props.data.seen || [])

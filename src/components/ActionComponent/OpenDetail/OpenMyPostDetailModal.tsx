@@ -10,7 +10,7 @@ import {
 } from '@/redux/ActionSaga/PostActionSaga';
 import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
 import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
@@ -32,8 +32,6 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
-
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
 
   const inputRef = useRef<any>();
 
@@ -59,6 +57,8 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   useEffect(() => {
     if (!PostProps.visible) setCommentContent('');
   }, [PostProps.visible]);
+
+  const { userInfo } = useUserInfo();
 
   const handleSubmitComment = () => {
     const { post } = PostProps;

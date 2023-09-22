@@ -29,7 +29,7 @@ import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAllPostsNewsfeedData, useConversationsData } from '@/hooks';
+import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import StyleTotal from './cssHeaders';
 
@@ -43,7 +43,7 @@ const Headers = () => {
   const switchTheme = localStorage.getItem('theme')
     ? localStorage.getItem('theme') === 'dark'
     : true;
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   // Switch theme
   const dispatch = useAppDispatch();

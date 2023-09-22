@@ -38,7 +38,7 @@ function* LoginSaga({ payload }: any) {
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
-      yield put(setUserID({ userID: data.metadata.user._id }));
+      yield put(setUserID(data.metadata.user._id));
 
       const { location } = yield select((state) => state.functionReducer);
 
@@ -68,7 +68,7 @@ function* RegisterSaga({ payload }: any) {
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
-      yield put(setUserID({ userID: data.metadata.user._id }));
+      yield put(setUserID(data.metadata.user._id));
 
       window.location.replace('/');
     }

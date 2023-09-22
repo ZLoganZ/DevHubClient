@@ -1,7 +1,7 @@
 import { Image } from 'antd';
 
 import { UserInfoType } from '@/types';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useUserInfo } from '@/hooks';
 
 interface AvatarProps {
   users: UserInfoType[];
@@ -9,7 +9,7 @@ interface AvatarProps {
 
 const AvatarGroup = (Props: AvatarProps) => {
   const { members } = useAppSelector((state) => state.activeListReducer);
-  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo } = useUserInfo();
 
   const slicedUsers = Props.users.slice(0, 3);
   const isActive = Props.users.map((user) => {
