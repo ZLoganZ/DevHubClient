@@ -1,150 +1,16 @@
-import { useEffect, useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 
-import {
-  setAllPost,
-  setAllPostNewsfeed,
-  setIsInProfile,
-  setPostArr
-} from '@/redux/Slice/PostSlice';
-import { postService } from '@/services/PostService';
-import { messageService } from '@/services/MessageService';
 import { userService } from '@/services/UserService';
-import { AppDispatch, RootState } from '@/redux/configStore';
 import {
   ApplyPostsDefaults,
   ApplyUserDefaults
 } from '@/util/functions/ApplyDefaults';
+import { postService } from '@/services/PostService';
+import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import { messageService } from '@/services/MessageService';
+import { useAppSelector } from './special';
 
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
-/**
- * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
- * API to detect when a target element intersects with the viewport and triggers a callback function
- * after a specified time (default is 5000 milliseconds).
- * @param targetRef - A mutable ref object that represents the target element to observe for
- * intersection.
- * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It can be used to perform some action or trigger some
- * behavior when the intersection occurs.
- * @param {number} [time=5000] - The `time` parameter is an optional parameter that specifies the
- * duration (in milliseconds) for which the target element needs to be continuously intersecting with
- * the viewport before triggering the `onIntersect` callback function. If the target element is
- * continuously intersecting with the viewport for the specified duration, the  `onIntersect` callback
- * function will be called. If the target element is no longer intersecting with the viewport before
- * the specified duration, the `onIntersect` callback function will not be called.
- */
-export const useIntersectionObserver = (
-  targetRef: React.MutableRefObject<null>,
-  onIntersect: () => void,
-  time: number = 5000
-) => {
-  useEffect(() => {
-    let intersectTimeoutID: any;
-    let intersectTime: any;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            intersectTime = intersectTime || Date.now();
-            intersectTimeoutID = setInterval(() => {
-              if (Date.now() - intersectTime >= time) {
-                clearInterval(intersectTimeoutID);
-                onIntersect();
-              }
-            }, 100);
-          } else {
-            clearInterval(intersectTimeoutID);
-            intersectTime = null;
-          }
-        });
-      },
-      {
-        rootMargin: '0px',
-        threshold: 1.0
-      }
-    );
-
-    if (targetRef.current) {
-      observer.observe(targetRef.current);
-    }
-
-    return () => {
-      clearInterval(intersectTimeoutID);
-      if (targetRef.current) {
-        observer.unobserve(targetRef.current);
-      }
-    };
-  }, [targetRef, onIntersect]);
-};
-
-/**
- * The `useIntersectionObserverNow` function is a custom React hook that uses the Intersection Observer
- * API to detect when a target element intersects with the viewport and calls a callback function when
- * it does.
- * @param targetRef - The targetRef is a React mutable ref object that refers to the element that you
- * want to observe for intersection. It is typically created using the useRef() hook and passed as a
- * parameter to the useIntersectionObserverNow hook.
- * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It is typically used to trigger some action or update
- * the UI when the element becomes visible to the user.
- */
-export const useIntersectionObserverNow = (
-  targetRef: React.RefObject<HTMLDivElement>,
-  onIntersect: () => void
-) => {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            onIntersect();
-          }
-        });
-      },
-      {
-        rootMargin: '0px',
-        threshold: 1.0
-      }
-    );
-
-    if (targetRef.current) {
-      observer.observe(targetRef.current);
-    }
-
-    return () => {
-      if (targetRef.current) {
-        observer.unobserve(targetRef.current);
-      }
-    };
-  }, [targetRef, onIntersect]);
-};
-
-/**
- * The `useOtherUser` function returns the information of the other user in a conversation, including
- * their name.
- * @param {any} conversation - The `conversation` parameter is an object that represents a
- * conversation. It likely contains information about the users involved in the conversation, such as
- * their IDs and usernames.
- * @returns The function `useOtherUser` returns the information of the other user in a conversation.
- */
-export const useOtherUser = (conversation: any) => {
-  const { userInfo } = useUserInfo();
-
-  const otherUser = useMemo(() => {
-    const currentUser = userInfo._id;
-
-    const otherUser = conversation?.users?.filter(
-      (user: any) => user._id !== currentUser
-    );
-
-    return otherUser[0];
-  }, [userInfo, conversation.users]);
-
-  return otherUser;
-};
+// ---------------------------FETCH HOOKS---------------------------
 
 /**
  * The `useUserInfo` function is a custom hook that fetches user information and returns the loading
@@ -163,8 +29,16 @@ export const useUserInfo = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      const { data } = await userService.getUserInfoByID(userID!);
-      return ApplyUserDefaults(data.metadata);
+      let [{ data: Followers }, { data: Following }, { data: userInfo }] =
+        await Promise.all([
+          userService.getFollowers(userID!),
+          userService.getFollowing(userID!),
+          userService.getUserInfoByID(userID!)
+        ]);
+
+      userInfo.metadata.followers = Followers.metadata;
+      userInfo.metadata.following = Following.metadata;
+      return ApplyUserDefaults(userInfo.metadata);
     },
     staleTime: Infinity
   });
@@ -192,8 +66,16 @@ export const useOtherUserInfo = (userID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
-      const { data } = await userService.getUserInfoByID(userID);
-      return ApplyUserDefaults(data.metadata);
+      let [{ data: Followers }, { data: Following }, { data: userInfo }] =
+        await Promise.all([
+          userService.getFollowers(userID),
+          userService.getFollowing(userID),
+          userService.getUserInfoByID(userID)
+        ]);
+
+      userInfo.metadata.followers = Followers.metadata;
+      userInfo.metadata.following = Following.metadata;
+      return ApplyUserDefaults(userInfo.metadata);
     },
     staleTime: Infinity
   });
@@ -217,19 +99,13 @@ export const useOtherUserInfo = (userID: string) => {
  * - `refetchAllPosts` is a function that refetches the posts data.
  */
 export const useAllPostsData = () => {
-  const dispatch = useAppDispatch();
-
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPosts'],
     queryFn: async () => {
-      dispatch(setIsInProfile(false));
       const { data } = await postService.getAllPost();
       return data;
     },
     staleTime: Infinity,
-    onSuccess(data) {
-      dispatch(setAllPost(data.metadata));
-    },
     onError(err) {
       console.log(err);
     }
@@ -255,19 +131,13 @@ export const useAllPostsData = () => {
  * - `refetchAllPostsNewsfeed` is a function that refetches the posts data.
  */
 export const useAllPostsNewsfeedData = () => {
-  const dispatch = useAppDispatch();
-
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPostsNewsfeed'],
     queryFn: async () => {
-      dispatch(setIsInProfile(false));
       const { data } = await postService.GetAllPostNewsFeed();
       return ApplyPostsDefaults(data.metadata);
     },
     staleTime: Infinity,
-    onSuccess(data) {
-      dispatch(setAllPostNewsfeed(data));
-    },
     onError(err) {
       console.log(err);
     }
@@ -294,18 +164,11 @@ export const useAllPostsNewsfeedData = () => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const dispatch = useAppDispatch();
-
   const client_id = useAppSelector((state) => state.authReducer.userID);
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
     queryFn: async () => {
-      if (userID === 'me') {
-        dispatch(setIsInProfile(true));
-      } else {
-        dispatch(setIsInProfile(false));
-      }
       const { data } = await postService.getAllPostByUserID(
         userID === 'me' ? client_id! : userID
       );
@@ -313,9 +176,6 @@ export const useUserPostsData = (userID: string) => {
     },
     enabled: !!userID,
     staleTime: Infinity,
-    onSuccess(data) {
-      dispatch(setPostArr(data));
-    },
     onError(err) {
       console.log(err);
     }
@@ -329,6 +189,46 @@ export const useUserPostsData = (userID: string) => {
   };
 };
 
+/**
+ * The `usePostData` function is a custom hook that fetches a post by its ID and returns the post data,
+ * loading state, error state, and fetching state.
+ * @param {string} postID - The postID parameter is a string that represents the ID of the post you
+ * want to fetch.
+ * @returns The function `usePostData` returns an object with the following properties:
+ * - `isLoadingPost` is a boolean that indicates whether the post data is still loading.
+ * - `isErrorPost` is a boolean that indicates whether there is an error.
+ * - `post` is an object that contains information about the post.
+ * - `isFetchingPost` is a boolean that indicates whether the query is currently fetching.
+ */
+export const usePostData = (postID: string) => {
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['post', postID],
+    queryFn: async () => {
+      const { data } = await postService.getPostByID(postID);
+      return data;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingPost: isLoading,
+    isErrorPost: isError,
+    post: data?.metadata,
+    isFetchingPost: isFetching
+  };
+};
+
+/**
+ * The `useCommentsData` function is a custom hook that fetches and returns comments data for a
+ * specific post ID.
+ * @param {string} postID - The postID parameter is a string that represents the ID of a post. It is
+ * used to fetch the comments associated with that post.
+ * @returns The function `useCommentsData` returns an object with the following properties:
+ * - `isLoadingComments` is a boolean that indicates whether the comments data is still loading.
+ * - `isErrorComments` is a boolean that indicates whether there is an error.
+ * - `comments` is an array of comments.
+ * - `isFetchingComments` is a boolean that indicates whether the query is currently fetching.
+ */
 export const useCommentsData = (postID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['comments', postID],
@@ -345,6 +245,36 @@ export const useCommentsData = (postID: string) => {
     isErrorComments: isError,
     comments: data?.metadata,
     isFetchingComments: isFetching
+  };
+};
+
+/**
+ * The `useGetRepository` function is a custom hook that retrieves repository data from GitHub API and
+ * provides loading, error, and fetching status.
+ * @returns The function `useGetRepository` returns an object with the following properties:
+ * - `isLoadingRepository` is a boolean that indicates whether the repository data is still loading.
+ * - `isErrorRepository` is a boolean that indicates whether there is an error.
+ * - `repository` is an object that contains information about the repository.
+ * - `isFetchingRepository` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useGetRepository = () => {
+  const aGToken = localStorage.getItem(TOKEN_GITHUB);
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ['repository'],
+    queryFn: async () => {
+      const { data } = await userService.getRepositoryGithub();
+      return data;
+    },
+    staleTime: Infinity,
+    enabled: !!aGToken
+  });
+
+  return {
+    isLoadingRepository: isLoading,
+    isErrorRepository: isError,
+    repository: data?.metadata,
+    isFetchingRepository: isFetching
   };
 };
 
@@ -437,75 +367,6 @@ export const useFollowersData = (userID: string) => {
 };
 
 /**
- * The `usePopupInfoData` function is a custom hook in TypeScript that fetches and updates popup
- * information for a user, including their followers and following, and updates the query data
- * accordingly.
- * @param {string} userID - The `userID` parameter is the ID of the user for whom we want to fetch the
- * popup info. This ID is used to make API requests to get the followers and following data for that
- * user.
- * @param {string} myID - The `myID` parameter is the ID of the user who is currently logged in or
- * viewing the popup info.
- * @returns The function `usePopupInfoData` returns an object with the following properties:
- * - `isLoadingPopupInfo` is a boolean that indicates whether the popup info data is still loading.
- * - `isErrorPopupInfo` is a boolean that indicates whether there is an error.
- * - `popupInfo` is an object that contains information about the popup info.
- * - `isFetchingPopupInfo` is a boolean that indicates whether the query is currently fetching.
- */
-export const usePopupInfoData = (userID: string, myID: string) => {
-  const queryClient = useQueryClient();
-
-  const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['popupInfo', userID],
-    queryFn: async () => {
-      const [{ data: Followers }, { data: Following }] = await Promise.all([
-        userService.getFollowers(userID),
-        userService.getFollowing(userID)
-      ]);
-
-      if (myID === userID)
-        queryClient.setQueryData(['userInfo'], (oldData: any) => {
-          return {
-            ...oldData,
-            followers: Followers.metadata,
-            following: Following.metadata
-          };
-        });
-      else {
-        queryClient.invalidateQueries(['otherUserInfo', userID]).then(() => {
-          queryClient.setQueryData(
-            ['otherUserInfo', userID],
-            (oldData: any) => {
-              return {
-                ...oldData,
-                followers: Followers.metadata,
-                following: Following.metadata,
-                is_following: Followers.metadata.some(
-                  (user) => user._id === myID
-                )
-              };
-            }
-          );
-        });
-      }
-
-      return {
-        followers: Followers.metadata,
-        following: Following.metadata
-      };
-    },
-    enabled: !!userID,
-    staleTime: Infinity
-  });
-
-  return {
-    isLoadingPopupInfo: isLoading,
-    isErrorPopupInfo: isError,
-    popupInfo: data,
-    isFetchingPopupInfo: isFetching
-  };
-};
-
-/**
  * The `useMessagesData` function is a custom hook that fetches messages data for a given conversation
  * ID and provides loading, error, data, and refetching functionality.
  * @param {any} conversationID - The conversationID parameter is the unique identifier for a
@@ -534,41 +395,4 @@ export const useMessagesData = (conversationID: any) => {
     isFetchingMessages: isFetching,
     refetchMessages: refetch
   };
-};
-
-export const useUpdateAllPosts = () => {
-  const queryClient = useQueryClient();
-
-  return queryClient.invalidateQueries(['allPosts']);
-};
-
-export const useCreatePost = () => {
-  const queryClient = useQueryClient();
-
-  const { isInProfile } = useAppSelector((state) => state.postReducer);
-
-  const { mutate, isLoading, isError, isSuccess } = useMutation(
-    async (newPost: any) => {
-      const { data } = await postService.createPost(newPost);
-      return data;
-    },
-    {
-      onSuccess(data) {
-        if (isInProfile) {
-          queryClient.setQueryData(['allPosts'], (oldData: any) => {
-            return {
-              ...oldData,
-              content: {
-                ...oldData.content,
-                allPostArr: [...oldData.content.allPostArr, data]
-              }
-            };
-          });
-        } else {
-          queryClient.invalidateQueries(['posts']);
-        }
-      }
-    }
-  );
-  return { mutate, isLoading, isError, isSuccess };
 };

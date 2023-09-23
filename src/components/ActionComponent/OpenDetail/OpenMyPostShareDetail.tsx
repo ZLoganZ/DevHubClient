@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import { SAVE_COMMENT_SAGA } from '@/redux/ActionSaga/PostActionSaga';
-import MyPostDetail from '@/components/Form/PostDetail/MyPostDetail';
+import MyPostDetail from '@/components/PostDetail/MyPostDetail';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useCommentPost } from '@/hooks/mutation';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssOpenPostDetail';
 
@@ -17,10 +17,8 @@ interface Props {
 }
 
 const OpenMyPostShareDetail = (Props: Props) => {
-  const dispatch = useAppDispatch();
-
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -31,6 +29,8 @@ const OpenMyPostShareDetail = (Props: Props) => {
     isReply: false,
     idComment: null
   });
+
+  const { mutateCommentPost } = useCommentPost();
 
   const inputRef = useRef<any>();
 
@@ -43,14 +43,13 @@ const OpenMyPostShareDetail = (Props: Props) => {
   };
 
   const handleSubmitComment = () => {
-    dispatch(
-      SAVE_COMMENT_SAGA({
-        content: commentContent,
-        post: Props.post._id,
-        type: data.isReply ? 'child' : 'parent',
-        parent: data.isReply ? data.idComment! : undefined
-      })
-    );
+    mutateCommentPost({
+      content: commentContent,
+      post: Props.post._id,
+      type: data.isReply ? 'child' : 'parent',
+      parent: data.isReply ? data.idComment! : undefined
+    });
+
     setTimeout(() => {
       setCommentContent('');
     }, 1000);

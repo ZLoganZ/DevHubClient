@@ -10,7 +10,7 @@ import {
   ButtonCancelHover
 } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 const OpenGroupModal = (Props: Props) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

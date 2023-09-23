@@ -12,7 +12,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
-import { sha1 } from 'crypto-hash';
+// import { sha1 } from 'crypto-hash';
 import ImageCompress from 'quill-image-compress';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,10 +21,10 @@ import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
-import { CREATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useCreatePost } from '@/hooks/mutation';
+import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleTotal from './cssNewPost';
 
@@ -44,15 +44,23 @@ interface Props {
 //===================================================
 
 const NewPost = (Props: Props) => {
-  const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
+  const {
+    mutateCreatePost,
+    isLoadingCreatePost,
+    isSuccessCreatePost,
+    isErrorCreatePost
+  } = useCreatePost();
+
   const [random, setRandom] = useState(0);
+
+  const [file, setFile]: any = useState(null);
 
   // Quill Editor
   let [quill, setQuill]: any = useState(null);
@@ -73,7 +81,13 @@ const NewPost = (Props: Props) => {
     quill.root.addEventListener('paste', (event: any) => {
       event.preventDefault();
       const text = event.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, text);
+
+      const textToHTMLWithTabAndSpace = text
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        .replace(/ /g, '&nbsp;');
+
+      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
     });
 
     setQuill(quill);
@@ -104,31 +118,32 @@ const NewPost = (Props: Props) => {
     if (quill.root.innerHTML === '<p><br></p>') {
       error();
     } else {
-      setLoading(true);
       const result = await handleUploadImage(file);
       if (result.status === 'done') {
-        dispatch(
-          CREATE_POST_SAGA({
-            title: values.title,
-            content: values.content,
-            img: result.url
-          })
-        );
-        setLoading(false);
-        quill.root.innerHTML = '<p><br></p>';
-        setRandom(Math.random());
-        setFile(null);
-        form.setValue('title', '');
-        form.setValue('content', '');
-        form.setValue('linkImage', null);
-        messageApi.success('Create post successfully');
+        mutateCreatePost({
+          title: values.title,
+          content: values.content,
+          img: result.url
+        });
       }
     }
   };
 
-  const [file, setFile]: any = useState(null);
+  useEffect(() => {
+    if (isSuccessCreatePost) {
+      quill.root.innerHTML = '<p><br></p>';
+      setRandom(Math.random());
+      setFile(null);
+      form.setValue('title', '');
+      form.setValue('content', '');
+      form.setValue('linkImage', null);
+      messageApi.success('Create post successfully');
+    }
 
-  const [loading, setLoading] = useState(false);
+    if (isErrorCreatePost) {
+      messageApi.error('Create post failed');
+    }
+  }, [isSuccessCreatePost, isErrorCreatePost]);
 
   const handleUpload = (info: any) => {
     if (info.fileList.length === 0) return;
@@ -160,28 +175,28 @@ const NewPost = (Props: Props) => {
     };
   };
 
-  const handleRemoveImage = async () => {
-    form.setValue('linkImage', null);
-    const formData = new FormData();
-    const public_id = file.public_id;
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id);
-    const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(
-      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
-    );
-    formData.append('signature', signature);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
-    const data = await res.json();
-    setFile(data);
-  };
+  // const handleRemoveImage = async () => {
+  //   form.setValue('linkImage', null);
+  //   const formData = new FormData();
+  //   const public_id = file.public_id;
+  //   formData.append('api_key', '235531261932754');
+  //   formData.append('public_id', public_id);
+  //   const timestamp = String(Date.now());
+  //   formData.append('timestamp', timestamp);
+  //   const signature = await sha1(
+  //     `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
+  //   );
+  //   formData.append('signature', signature);
+  //   const res = await fetch(
+  //     'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
+  //     {
+  //       method: 'POST',
+  //       body: formData
+  //     }
+  //   );
+  //   const data = await res.json();
+  //   setFile(data);
+  // };
 
   return (
     <ConfigProvider
@@ -221,6 +236,7 @@ const NewPost = (Props: Props) => {
                 key={random}
                 name="title"
                 placeholder="Add a Title"
+                autoComplete="off"
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
@@ -270,15 +286,10 @@ const NewPost = (Props: Props) => {
                   accept="image/*"
                   key={random}
                   maxCount={1}
-                  customRequest={async ({
-                    file,
-                    onSuccess,
-                    onError,
-                    onProgress
-                  }: any) => {
+                  customRequest={async ({ onSuccess }: any) => {
                     onSuccess('ok');
                   }}
-                  data={(file) => {
+                  data={(_) => {
                     return {};
                   }}
                   listType="picture"
@@ -294,9 +305,9 @@ const NewPost = (Props: Props) => {
               <ButtonActiveHover
                 rounded
                 onClick={form.handleSubmit(onSubmit)}
-                loading={loading}>
+                loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhile1 }}>
-                  {loading ? 'Creating..' : 'Create'}
+                  {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>
               </ButtonActiveHover>
             </div>

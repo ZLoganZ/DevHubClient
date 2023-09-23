@@ -11,17 +11,17 @@ import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleTotal from './cssSharedMedia';
-import { useCurrentConversationData, useUserInfo } from '@/hooks';
+import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { pusherClient } from '@/util/functions/Pusher';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 
 interface SharedMediaProps {
   conversationID: string;
 }
 
 const SharedMedia = (Props: SharedMediaProps) => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const { isLoadingCurrentConversation, currentConversation } =

@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import { SAVE_COMMENT_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import OtherPostDetail from '@/components/Form/PostDetail/OtherPostDetail';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
+import { useAppSelector } from '@/hooks/special';
+import { useCommentPost } from '@/hooks/mutation';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssOpenPostDetail';
 
@@ -17,10 +17,8 @@ interface Props {
 }
 
 const OpenOtherPostShareDetail = (Props: Props) => {
-  const dispatch = useAppDispatch();
-
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -31,6 +29,8 @@ const OpenOtherPostShareDetail = (Props: Props) => {
     isReply: false,
     idComment: null
   });
+
+  const { mutateCommentPost } = useCommentPost();
 
   const inputRef = React.useRef<any>();
 
@@ -46,16 +46,13 @@ const OpenOtherPostShareDetail = (Props: Props) => {
     const { post } = Props;
     const { isReply, idComment } = data;
 
-    const saveCommentAction = SAVE_COMMENT_SAGA;
+    mutateCommentPost({
+      content: commentContent,
+      post: post._id,
+      type: isReply ? 'child' : 'parent',
+      parent: isReply ? idComment! : undefined
+    });
 
-    dispatch(
-      saveCommentAction({
-        content: commentContent,
-        post: post._id,
-        type: isReply ? 'child' : 'parent',
-        parent: isReply ? idComment! : undefined
-      })
-    );
     setTimeout(() => {
       setCommentContent('');
     }, 1000);

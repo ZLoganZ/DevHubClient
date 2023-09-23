@@ -2,12 +2,12 @@ import { ConfigProvider } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssNotFound404';
 
 const NotFound404 = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -6,14 +6,14 @@ import { NavLink } from 'react-router-dom';
 
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useIntersectionObserverNow } from '@/hooks';
-import { useOtherUser } from '@/hooks';
-import { useCurrentConversationData, useMessagesData } from '@/hooks';
+import { useIntersectionObserverNow } from '@/hooks/special';
+import { useOtherUser } from '@/hooks/special';
+import { useCurrentConversationData, useMessagesData } from '@/hooks/fetch';
 import { messageService } from '@/services/MessageService';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssMessageChat';
 
 interface IParams {
@@ -24,7 +24,7 @@ interface IParams {
 
 const MessageChat = (Props: IParams) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const { members } = useAppSelector((state) => state.activeListReducer);

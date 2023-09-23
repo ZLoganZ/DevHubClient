@@ -25,18 +25,17 @@ import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
-import {
-  DELETE_POST_SAGA,
-  INCREASE_VIEW_SAGA,
-  LIKE_POST_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useIntersectionObserver } from '@/hooks';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useIntersectionObserver
+} from '@/hooks/special';
+import { useDeletePost, useLikePost, useViewPost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
 
@@ -53,9 +52,13 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  const change = useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
+
+  const { mutateLikePost } = useLikePost();
+  const { mutateDeletePost } = useDeletePost();
+  const { mutateViewPost } = useViewPost();
 
   // ------------------------ Like ------------------------
 
@@ -111,11 +114,8 @@ const MyPostShare = (PostProps: PostShareProps) => {
   };
 
   const handleOk = () => {
-    dispatch(
-      DELETE_POST_SAGA({
-        id: PostProps.postShared._id
-      })
-    );
+    mutateDeletePost(PostProps.postShared._id);
+
     setIsModalOpen(false);
     openNotificationWithIcon('success');
   };
@@ -135,9 +135,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
         </div>
       ),
       onClick: () => {
-        window
-          .open(`/postshare/${PostProps.postShared._id}`, '_blank')
-          ?.focus();
+        window.open(`/post/${PostProps.postShared._id}`, '_blank')?.focus();
       }
     },
     {
@@ -170,9 +168,14 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const displayContent =
-    expanded || PostProps.postShared.post_attributes.post?.post_attributes.content?.length! <= 250
+    expanded ||
+    PostProps.postShared.post_attributes.post?.post_attributes.content
+      ?.length! <= 250
       ? PostProps.postShared.post_attributes.post?.post_attributes.content
-      : PostProps.postShared.post_attributes.post?.post_attributes.content?.slice(0, 200) + '...';
+      : PostProps.postShared.post_attributes.post?.post_attributes.content?.slice(
+          0,
+          200
+        ) + '...';
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
@@ -182,11 +185,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const postShareRef = React.useRef(null);
 
   const onIntersect = () => {
-    dispatch(
-      INCREASE_VIEW_SAGA({
-        id: PostProps.postShared._id
-      })
-    );
+    mutateViewPost(PostProps.postShared._id);
   };
 
   useIntersectionObserver(postShareRef, onIntersect);
@@ -253,7 +252,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
                     overlayInnerStyle={{
                       border: `1px solid ${themeColorSet.colorBg3}`
                     }}
-                    mouseEnterDelay={0.7}
+                    mouseEnterDelay={0.4}
                     content={
                       <PopupInfoUser
                         userInfo={PostProps.userInfo}
@@ -272,7 +271,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
                     className="time"
                     style={{ color: themeColorSet.colorText3 }}>
                     <NavLink
-                      to={`/postshare/${PostProps.postShared._id}`}
+                      to={`/post/${PostProps.postShared._id}`}
                       style={{ color: themeColorSet.colorText3 }}>
                       {/* <span>{'Data Analyst'} • </span> */}
                       <span>{date}</span>
@@ -302,7 +301,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
                       overlayInnerStyle={{
                         border: `1px solid ${themeColorSet.colorBg3}`
                       }}
-                      mouseEnterDelay={0.7}
+                      mouseEnterDelay={0.4}
                       content={
                         <PopupInfoUser
                           userInfo={PostProps.ownerInfo}
@@ -333,7 +332,10 @@ const MyPostShare = (PostProps: PostShareProps) => {
             </div>
             <div className="postBody mt-5">
               <div className="title font-bold">
-                {PostProps.postShared.post_attributes.post?.post_attributes.title}
+                {
+                  PostProps.postShared.post_attributes.post?.post_attributes
+                    .title
+                }
               </div>
               <div className="content mt-3">
                 <div className="content__text">
@@ -342,17 +344,21 @@ const MyPostShare = (PostProps: PostShareProps) => {
                     readOnly={true}
                     theme={'bubble'}
                   />
-                  {PostProps.postShared.post_attributes.post?.post_attributes.content?.length! >
-                    250 && (
+                  {PostProps.postShared.post_attributes.post?.post_attributes
+                    .content?.length! > 250 && (
                     <a onClick={toggleExpanded}>
                       {expanded ? 'Read less' : 'Read more'}
                     </a>
                   )}
                 </div>
-                {PostProps.postShared.post_attributes.post?.post_attributes.img ? (
+                {PostProps.postShared.post_attributes.post?.post_attributes
+                  .img ? (
                   <div className="contentImage mt-3">
                     <Image
-                      src={PostProps.postShared.post_attributes.post.post_attributes.img}
+                      src={
+                        PostProps.postShared.post_attributes.post
+                          .post_attributes.img
+                      }
                       alt=""
                       style={{ width: '100%' }}
                     />
@@ -421,13 +427,12 @@ const MyPostShare = (PostProps: PostShareProps) => {
                       setLikeColor('red');
                       setIsLiked(true);
                     }
-                    dispatch(
-                      LIKE_POST_SAGA({
-                        post: PostProps.postShared._id,
-                        owner_post:
-                          PostProps.postShared.post_attributes.owner_post?._id!
-                      })
-                    );
+
+                    mutateLikePost({
+                      post: PostProps.postShared._id,
+                      owner_post:
+                        PostProps.postShared.post_attributes.owner_post?._id!
+                    });
                   }}
                 />
               </Space>

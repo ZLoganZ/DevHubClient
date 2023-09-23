@@ -5,7 +5,7 @@ import StyleTotal from './cssAddTags';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 interface Props {
   tags: string[];
@@ -16,7 +16,7 @@ const AddTags = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

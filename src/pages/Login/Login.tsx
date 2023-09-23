@@ -13,7 +13,7 @@ import {
 import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
 import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch } from '@/hooks/special';
 import { UserLoginDataType } from '@/types';
 
 import StyleTotal from './cssLogin';

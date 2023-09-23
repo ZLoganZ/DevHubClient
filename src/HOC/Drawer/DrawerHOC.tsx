@@ -6,13 +6,13 @@ import {
   ButtonActiveHover,
   ButtonCancelHover
 } from '@/components/MiniComponent';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssDrawerHOC';
 
 const DrawerHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

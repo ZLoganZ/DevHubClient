@@ -5,10 +5,10 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import StyleTotal from './cssLoadingLogo';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 
 const LoadingLogo = () => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

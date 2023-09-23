@@ -37,13 +37,13 @@ import OtherPostShare from '@/components/Post/OtherPostShare';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
 import descArray from '@/components/GlobalSetting/ItemComponent/Description';
 
-import { setIsInProfile } from '@/redux/Slice/PostSlice';
-import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useOtherUserInfo, usePopupInfoData, useUserPostsData } from '@/hooks';
+
 import { RepositoryType } from '@/types';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useOtherUserInfo, useUserPostsData } from '@/hooks/fetch';
+import { useAppSelector } from '@/hooks/special';
+import { useFollowUser } from '@/hooks/mutation';
 
 import StyleTotal from './cssProfile';
 
@@ -52,20 +52,14 @@ interface Props {
 }
 
 const Profile = (Props: Props) => {
-  const dispatch = useAppDispatch();
-
   const { userID } = Props;
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const uid = useAppSelector((state) => state.authReducer.userID);
-
-  useEffect(() => {
-    dispatch(setIsInProfile(false));
-  }, []);
+  const { mutateFollowUser } = useFollowUser();
 
   const { isLoadingUserPosts, userPosts, isFetchingUserPosts } =
     useUserPostsData(userID);
@@ -81,12 +75,10 @@ const Profile = (Props: Props) => {
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
-  const { isLoadingPopupInfo } = usePopupInfoData(userID, uid!);
-
   // isShared
   const [isFollowing, setIsFollowing] = useState(true);
   useEffect(() => {
-    setIsFollowing(otherUserInfo?.is_following);
+    setIsFollowing(otherUserInfo?.is_followed);
   }, [otherUserInfo]);
 
   const openInNewTab = (url: string) => {
@@ -97,7 +89,7 @@ const Profile = (Props: Props) => {
     document.title = isLoadingUserPosts
       ? 'DevHub'
       : `${otherUserInfo?.name} | DevHub`;
-  }, [isLoadingUserPosts]);
+  }, [isLoadingUserPosts, isLoadingOtherUserInfo]);
 
   const renderRepositoryIem = (item: RepositoryType) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
@@ -174,8 +166,7 @@ const Profile = (Props: Props) => {
         !otherUserInfo ||
         isLoadingUserPosts ||
         isFetchingUserPosts ||
-        isLoadingOtherUserInfo ||
-        isLoadingPopupInfo ? (
+        isLoadingOtherUserInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -243,7 +234,7 @@ const Profile = (Props: Props) => {
                         className="follow px-4 py-2 rounded-full"
                         onClick={() => {
                           setIsFollowing(!isFollowing);
-                          dispatch(FOLLOW_USER_SAGA(otherUserInfo._id));
+                          mutateFollowUser(userID);
                         }}>
                         <span>{isFollowing ? 'Following' : 'Follow'}</span>
                       </div>
@@ -293,23 +284,25 @@ const Profile = (Props: Props) => {
                 <div className="follow mt-5">
                   <span className="follower item mr-2">
                     <span className="mr-1">
-                      {otherUserInfo.followers.length}
+                      {otherUserInfo?.follower_number || 0}
                     </span>{' '}
-                    {otherUserInfo.followers.length > 1
+                    {otherUserInfo?.follower_number > 1
                       ? 'Followers'
                       : 'Follower'}
                   </span>
                   <span className="following item mr-2">
                     <span className="mr-1">
-                      {otherUserInfo.following.length}
+                      {otherUserInfo?.following_number || 0}
                     </span>{' '}
-                    {otherUserInfo.following.length > 1
+                    {otherUserInfo?.following_number > 1
                       ? 'Followings'
                       : 'Following'}
                   </span>
                   <span className="post mr-2">
-                    <span className="mr-1">{otherUserInfo.posts.length}</span>{' '}
-                    {otherUserInfo.posts.length > 1 ? 'Posts' : 'Post'}
+                    <span className="mr-1">
+                      {otherUserInfo?.post_number || 0}
+                    </span>{' '}
+                    {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
                   </span>
                 </div>
                 <div className="experience mt-5">
@@ -471,7 +464,7 @@ const Profile = (Props: Props) => {
                             )}
                             {userPosts.map((item) => {
                               return (
-                                <div className="w-8/12">
+                                <div key={item._id} className="w-8/12">
                                   {item.type === 'Share' && (
                                     <OtherPostShare
                                       key={item._id}

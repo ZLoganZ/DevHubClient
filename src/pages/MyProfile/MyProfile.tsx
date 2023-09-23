@@ -12,7 +12,6 @@ import {
 } from 'antd';
 import ReactQuill from 'react-quill';
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSnowflake,
@@ -42,28 +41,21 @@ import MyPostShare from '@/components/Post/MyPostShare';
 import MyPost from '@/components/Post/MyPost';
 
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
-import { setIsInProfile } from '@/redux/Slice/PostSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useUserPostsData, useUserInfo, usePopupInfoData } from '@/hooks';
 import { RepositoryType } from '@/types';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useUserInfo, useUserPostsData } from '@/hooks/fetch';
 
 import StyleTotal from './cssMyProfile';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
 
-  const { userID } = useParams<{ userID: string }>();
-
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
-
-  useEffect(() => {
-    dispatch(setIsInProfile(true));
-  }, []);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -83,13 +75,11 @@ const MyProfile = () => {
 
   const { userInfo, isLoadingUserInfo } = useUserInfo();
 
-  const { isLoadingPopupInfo } = usePopupInfoData(userID!, userID!);
-
   useEffect(() => {
     document.title = isLoadingUserPosts
       ? 'DevHub'
       : `${userInfo?.name} | DevHub`;
-  }, [isLoadingUserPosts]);
+  }, [isLoadingUserPosts, isLoadingUserInfo]);
 
   const renderRepositoryIem = (item: RepositoryType) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
@@ -166,8 +156,7 @@ const MyProfile = () => {
         !userInfo ||
         isLoadingUserPosts ||
         isFetchingUserPosts ||
-        isLoadingUserInfo ||
-        isLoadingPopupInfo ? (
+        isLoadingUserInfo ? (
           <LoadingProfileComponent />
         ) : (
           <>
@@ -289,16 +278,22 @@ const MyProfile = () => {
                 </Col>
                 <div className="follow mt-5">
                   <span className="follower item mr-2">
-                    <span className="mr-1">{userInfo.followers.length}</span>{' '}
-                    {userInfo.followers.length > 1 ? 'Followers' : 'Follower'}
+                    <span className="mr-1">
+                      {userInfo?.follower_number || 0}
+                    </span>{' '}
+                    {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
                   </span>
                   <span className="following item mr-2">
-                    <span className="mr-1">{userInfo.following.length}</span>{' '}
-                    {userInfo.following.length > 1 ? 'Followings' : 'Following'}
+                    <span className="mr-1">
+                      {userInfo?.following_number || 0}
+                    </span>{' '}
+                    {userInfo?.following_number > 1
+                      ? 'Followings'
+                      : 'Following'}
                   </span>
                   <span className="post mr-2">
-                    <span className="mr-1">{userInfo.posts.length}</span>{' '}
-                    {userInfo.posts.length > 1 ? 'Posts' : 'Post'}
+                    <span className="mr-1">{userInfo?.post_number || 0}</span>{' '}
+                    {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
                   </span>
                 </div>
                 <div className="experience mt-5">
@@ -463,7 +458,7 @@ const MyProfile = () => {
                             )}
                             {userPosts.map((item) => {
                               return (
-                                <div className="w-8/12">
+                                <div key={item._id} className="w-8/12">
                                   {item.type === 'Share' && (
                                     <MyPostShare
                                       key={item._id}

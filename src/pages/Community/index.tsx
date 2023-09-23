@@ -20,14 +20,15 @@ import MyPost from '@/components/Post/MyPost';
 import NewPost from '@/components/NewPost';
 import MyPostShare from '@/components/Post/MyPostShare';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -381,7 +382,7 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -739,7 +740,7 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

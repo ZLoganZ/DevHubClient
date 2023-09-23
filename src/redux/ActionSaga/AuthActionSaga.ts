@@ -34,8 +34,6 @@ export const LOGOUT_SAGA = createAction('LOGOUT_SAGA');
 
 export const GET_USER_ID = createAction('GET_USER_ID');
 
-export const CHECK_LOGIN_SAGA = createAction('CHECK_LOGIN_SAGA');
-
 export const FORGOT_PASSWORD_SAGA = createAction(
   'FORGOT_PASSWORD_SAGA',
   (data: ForgotPasswordDataType) => ({

@@ -5,7 +5,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
 import StyleTotal from './cssAddExperienceForm';
 
@@ -23,7 +23,7 @@ const AddExperienceForm = (Props: EditProps) => {
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -154,7 +154,7 @@ const AddExperienceForm = (Props: EditProps) => {
                 return current && current > dayjs().endOf('day');
               }}
               size="large"
-              onChange={(value, dateString) => {
+              onChange={(_, dateString) => {
                 setStartDate(dateString[0]);
                 untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
                 setPastDate(dateString[1]);

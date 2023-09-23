@@ -41,8 +41,10 @@ export class UserService extends BaseService {
   ): Promise<AxiosResponse<ResponseType<UserInfoType>>> => {
     return this.get(`/users/find/${userID}`);
   };
-  followUser = (userID: string) => {
-    return this.post(`/users/follow/${userID}`, '');
+  followUser = (
+    userID: string
+  ): Promise<AxiosResponse<ResponseType<boolean>>> => {
+    return this.put(`/users/follow/${userID}`, '');
   };
   getRepositoryGithub = (): Promise<
     AxiosResponse<ResponseType<RepositoryType[]>>

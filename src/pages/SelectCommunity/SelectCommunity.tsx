@@ -7,7 +7,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssSelectCommunity';
 
 const SelectCommunity = () => {
@@ -130,7 +130,7 @@ const SelectCommunity = () => {
   ];
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

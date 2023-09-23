@@ -14,16 +14,13 @@ import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
-import {
-  INCREASE_VIEW_SAGA,
-  LIKE_POST_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
-import { useIntersectionObserver } from '@/hooks';
+import { useIntersectionObserver } from '@/hooks/special';
+import { useLikePost, useViewPost } from '@/hooks/mutation';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
 
@@ -38,9 +35,12 @@ const PostShare = (PostProps: PostShareProps) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  const change = useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
+
+  const { mutateLikePost } = useLikePost();
+  const { mutateViewPost } = useViewPost();
 
   // ------------------------ Like ------------------------
 
@@ -95,13 +95,11 @@ const PostShare = (PostProps: PostShareProps) => {
       label: (
         <div className="item flex items-center px-4 py-2">
           <FontAwesomeIcon className="icon" icon={faUpRightFromSquare} />
-          <span className="ml-2">Open postShared in new tab</span>
+          <span className="ml-2">Open post in new tab</span>
         </div>
       ),
       onClick: () => {
-        window
-          .open(`/postshare/${PostProps.postShared._id}`, '_blank')
-          ?.focus();
+        window.open(`/post/${PostProps.postShared._id}`, '_blank')?.focus();
       }
     }
   ];
@@ -129,11 +127,7 @@ const PostShare = (PostProps: PostShareProps) => {
   const postShareRef = React.useRef(null);
 
   const onIntersect = () => {
-    dispatch(
-      INCREASE_VIEW_SAGA({
-        id: PostProps.postShared._id
-      })
-    );
+    mutateViewPost(PostProps.postShared._id);
   };
 
   useIntersectionObserver(postShareRef, onIntersect);
@@ -172,7 +166,7 @@ const PostShare = (PostProps: PostShareProps) => {
                     overlayInnerStyle={{
                       border: `1px solid ${themeColorSet.colorBg3}`
                     }}
-                    mouseEnterDelay={0.7}
+                    mouseEnterDelay={0.4}
                     content={
                       <PopupInfoUser
                         userInfo={PostProps.userInfo}
@@ -191,7 +185,7 @@ const PostShare = (PostProps: PostShareProps) => {
                     className="time"
                     style={{ color: themeColorSet.colorText3 }}>
                     <NavLink
-                      to={`/postshare/${PostProps.postShared._id}`}
+                      to={`/post/${PostProps.postShared._id}`}
                       style={{ color: themeColorSet.colorText3 }}>
                       {/* <span>{'Data Analyst'} • </span> */}
                       <span>{date}</span>
@@ -221,7 +215,7 @@ const PostShare = (PostProps: PostShareProps) => {
                       overlayInnerStyle={{
                         border: `1px solid ${themeColorSet.colorBg3}`
                       }}
-                      mouseEnterDelay={0.7}
+                      mouseEnterDelay={0.4}
                       content={
                         <PopupInfoUser
                           userInfo={PostProps.ownerInfo}
@@ -347,13 +341,12 @@ const PostShare = (PostProps: PostShareProps) => {
                       setLikeColor('red');
                       setIsLiked(true);
                     }
-                    dispatch(
-                      LIKE_POST_SAGA({
-                        owner_post:
-                          PostProps.postShared.post_attributes.owner_post?._id!,
-                        post: PostProps.postShared.post_attributes.post?._id!
-                      })
-                    );
+
+                    mutateLikePost({
+                      owner_post:
+                        PostProps.postShared.post_attributes.owner_post?._id!,
+                      post: PostProps.postShared.post_attributes.post?._id!
+                    });
                   }}
                 />
               </Space>

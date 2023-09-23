@@ -10,7 +10,7 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
 import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
 import { ButtonActiveHover } from '@/components/MiniComponent';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ContactType } from '@/types';
 
 interface Props {
@@ -22,7 +22,7 @@ const AddContacts = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

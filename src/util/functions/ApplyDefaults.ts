@@ -22,7 +22,7 @@ export const ApplyUserDefaults = (obj: UserInfoType | Object) => {
     notifications: [],
     followers: [],
     following: [],
-    is_following: false,
+    is_followed: false,
     role: [],
     name: ''
   };
@@ -57,7 +57,7 @@ export const ApplyPostDefaults = (obj: PostType) => {
         notifications: [],
         followers: [],
         following: [],
-        is_following: false,
+        is_followed: false,
         name: ''
       },
       title: undefined,
@@ -108,7 +108,7 @@ export const ApplyPostsDefaults = (obj: PostType[]) => {
           notifications: [],
           followers: [],
           following: [],
-          is_following: false,
+          is_followed: false,
           name: ''
         },
         title: undefined,

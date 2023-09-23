@@ -29,13 +29,14 @@ import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/functions/Pusher';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+
+import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   const { algorithm } = getTheme();

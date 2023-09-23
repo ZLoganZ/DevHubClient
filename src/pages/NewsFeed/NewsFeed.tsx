@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Col, ConfigProvider, Dropdown, MenuProps, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileLines, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileLines /* faUserFriends */
+} from '@fortawesome/free-solid-svg-icons';
 import { DownOutlined } from '@ant-design/icons';
 
 import OtherPostShare from '@/components/Post/OtherPostShare';
@@ -11,9 +13,8 @@ import OtherPost from '@/components/Post/OtherPost';
 import LoadingNewFeed from '@/components/GlobalSetting/LoadingNewFeed';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { setIsInProfile } from '@/redux/Slice/PostSlice';
-import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
+import { useAppSelector } from '@/hooks/special';
 
 import StyleTotal from './cssNewsFeed';
 
@@ -83,16 +84,10 @@ const community = [
 ];
 
 const NewFeed = () => {
-  const dispatch = useAppDispatch();
-
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
-
-  useEffect(() => {
-    dispatch(setIsInProfile(false));
-  }, []);
 
   const {
     isLoadingAllPostsNewsfeed,
@@ -310,7 +305,7 @@ const NewFeed = () => {
                       );
                     })}
                   </div>
-                  <div
+                  {/* <div
                     className="top-community mt-3"
                     style={{
                       backgroundColor: themeColorSet.colorBg2,
@@ -390,7 +385,7 @@ const NewFeed = () => {
                         }
                       })}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </Col>

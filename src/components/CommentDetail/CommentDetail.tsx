@@ -1,6 +1,6 @@
 import { ForwardRefExoticComponent, ReactNode, useState } from 'react';
 import { Comment } from '@ant-design/compatible';
-import { Avatar, ConfigProvider, Skeleton, Tooltip } from 'antd';
+import { Avatar, ConfigProvider, Tooltip } from 'antd';
 import Icon, {
   DislikeFilled,
   DislikeOutlined,
@@ -10,11 +10,8 @@ import Icon, {
 
 import { getTheme } from '@/util/functions/ThemeFunction';
 import StyleTotal from '@/components/Post/cssPost';
-import {
-  DISLIKE_COMMENT_POST_SAGA,
-  LIKE_COMMENT_POST_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useLikeComment } from '@/hooks/mutation';
 import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
 
 interface CommentProps {
@@ -30,8 +27,9 @@ interface CommentProps {
 
 const CommentDetail = (Props: CommentProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const dispatch = useAppDispatch();
+  useAppSelector((state) => state.themeReducer.change);
+
+  const { mutateLikeComment } = useLikeComment();
 
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
@@ -55,15 +53,14 @@ const CommentDetail = (Props: CommentProps) => {
       if (action === 'disliked') setDislike((prev) => prev - 1);
       setAction('liked');
     }
-    dispatch(
-      LIKE_COMMENT_POST_SAGA({
-        id: Props.comment._id,
-        comment: {
-          type: Props.isReply ? 'child' : 'parent',
-          post: Props.postID!
-        }
-      })
-    );
+
+    mutateLikeComment({
+      id: Props.comment._id,
+      comment: {
+        type: Props.isReply ? 'child' : 'parent',
+        post: Props.postID!
+      }
+    });
   };
 
   const dislike = () => {
@@ -75,15 +72,14 @@ const CommentDetail = (Props: CommentProps) => {
       if (action === 'liked') setLike((prev) => prev - 1);
       setAction('disliked');
     }
-    dispatch(
-      DISLIKE_COMMENT_POST_SAGA({
-        id: Props.comment._id,
-        comment: {
-          type: Props.isReply ? 'child' : 'parent',
-          post: Props.postID!
-        }
-      })
-    );
+
+    mutateLikeComment({
+      id: Props.comment._id,
+      comment: {
+        type: Props.isReply ? 'child' : 'parent',
+        post: Props.postID!
+      }
+    });
   };
 
   const setReply = () => {
@@ -168,41 +164,37 @@ const CommentDetail = (Props: CommentProps) => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        {!Props.comment?.user?.name ? (
-          <Skeleton avatar paragraph={{ rows: 2 }} active />
-        ) : (
-          <div className="commentDetail">
-            <Comment
-              author={
-                <div
-                  style={{
-                    fontWeight: 600,
-                    color: themeColorSet.colorText1,
-                    fontSize: '0.85rem'
-                  }}>
-                  {Props.comment?.user?.name}
-                </div>
-              }
-              actions={actions}
-              avatar={
-                Props.comment.user.user_image ? (
-                  <Avatar
-                    src={Props.comment.user.user_image}
-                    alt={Props.comment.user.name}
-                  />
-                ) : (
-                  <Avatar
-                    style={{ backgroundColor: '#87d068' }}
-                    icon="user"
-                    alt={Props.comment.user.name}
-                  />
-                )
-              }
-              content={<div className="">{Props.comment.content}</div>}>
-              {Props.children}
-            </Comment>
-          </div>
-        )}
+        <div className="commentDetail">
+          <Comment
+            author={
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: themeColorSet.colorText1,
+                  fontSize: '0.85rem'
+                }}>
+                {Props.comment?.user?.name}
+              </div>
+            }
+            actions={actions}
+            avatar={
+              Props.comment.user.user_image ? (
+                <Avatar
+                  src={Props.comment.user.user_image}
+                  alt={Props.comment.user.name}
+                />
+              ) : (
+                <Avatar
+                  style={{ backgroundColor: '#87d068' }}
+                  icon="user"
+                  alt={Props.comment.user.name}
+                />
+              )
+            }
+            content={<div className="">{Props.comment.content}</div>}>
+            {Props.children}
+          </Comment>
+        </div>
       </StyleTotal>
     </ConfigProvider>
   );

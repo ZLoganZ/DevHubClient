@@ -14,7 +14,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 import StyleTotal from './cssMenu';
 
 const MenuMain = () => {
@@ -22,7 +23,7 @@ const MenuMain = () => {
   const location = useLocation();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

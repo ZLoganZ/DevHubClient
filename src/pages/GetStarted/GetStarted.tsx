@@ -9,7 +9,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { CHOOSE_GET_STARTED_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssGetStarted';
 
 const GetStarted = () => {
@@ -17,7 +17,7 @@ const GetStarted = () => {
   const [messageApi, contextHolder] = message.useMessage();
   let navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

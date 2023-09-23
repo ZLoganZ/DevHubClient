@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { CHECK_LOGIN_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 export const AlreadyAuth = () => {
   const dispatch = useAppDispatch();
@@ -11,12 +10,6 @@ export const AlreadyAuth = () => {
   const location = useLocation();
 
   const login = useAppSelector((state) => state.authReducer.login);
-
-  useEffect(() => {
-    if (login !== null) return;
-
-    dispatch(CHECK_LOGIN_SAGA());
-  }, []);
 
   if (login === null) {
     return <LoadingLogo />;
@@ -35,12 +28,6 @@ export const Auth = () => {
   const location = useLocation();
 
   const login = useAppSelector((state) => state.authReducer.login);
-
-  useEffect(() => {
-    if (login !== null) return;
-
-    dispatch(CHECK_LOGIN_SAGA());
-  }, []);
 
   if (login === null) {
     return <LoadingLogo />;

@@ -28,7 +28,9 @@ export class PostService extends BaseService {
   GetAllPostNewsFeed = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
     return this.get(`/posts/newsfeed`);
   };
-  createPost = (post: CreatePostDataType) => {
+  createPost = (
+    post: CreatePostDataType
+  ): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.post(`/posts`, post);
   };
   updatePost = (
@@ -59,18 +61,18 @@ export class PostService extends BaseService {
   ): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
     return this.get(`/comments/children`, comment);
   };
-  saveComment = (comment: CreateCommentDataType) => {
+  createComment = (comment: CreateCommentDataType) => {
     return this.post(`/comments/create`, comment);
   };
-  getPostById = (
+  getPostByID = (
     id: string
   ): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.get(`/posts/find/${id}`);
   };
-  increaseViewPost = (id: string) => {
+  viewPost = (id: string) => {
     return this.put(`/posts/view/${id}`, null);
   };
-  likeCommentPost = (id: string, payload: LikeCommentType) => {
+  likeComment = (id: string, payload: LikeCommentType) => {
     return this.post(`/comments/like/${id}`, payload);
   };
   dislikeCommentPost = (id: string, payload: LikeCommentType) => {

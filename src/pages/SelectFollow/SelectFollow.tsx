@@ -1,6 +1,6 @@
 import { ConfigProvider } from 'antd';
 import { useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 
@@ -8,15 +8,14 @@ import RenderPeopleItem from './RenderPeopleItem';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { GET_SHOULD_FOLLOWERS_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssSelectFollow';
 
 const SelectFollow = () => {
   const dispatch = useAppDispatch();
-  let navigate = useNavigate();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

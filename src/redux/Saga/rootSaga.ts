@@ -1,7 +1,5 @@
 import { all } from 'redux-saga/effects';
-import * as userSaga from './UserSaga';
 import * as authSaga from './AuthSaga';
-import * as postSaga from './PostSaga';
 import * as messageSaga from './MessageSaga';
 import * as getStartedSaga from './GetStartedSaga';
 import * as communitySaga from './CommunitySaga';
@@ -20,27 +18,27 @@ export function* rootSaga() {
     authSaga.theoDoiRegisterSaga(),
     authSaga.theoDoiGetUserIDSaga(),
 
-    // userSaga
-    userSaga.theoDoiUpdateUserSaga(),
-    userSaga.theoDoiGetFollowersSaga(),
-    userSaga.theoDoiGetUserInfoSaga(),
-    userSaga.theoDoiFollowUserSaga(),
-    userSaga.theoDoiGetRepositoryGithubSaga(),
+    // // userSaga
+    // userSaga.theoDoiUpdateUserSaga(),
+    // userSaga.theoDoiGetFollowersSaga(),
+    // userSaga.theoDoiGetUserInfoSaga(),
+    // userSaga.theoDoiFollowUserSaga(),
+    // userSaga.theoDoiGetRepositoryGithubSaga(),
 
-    // postSaga
-    postSaga.theoDoiCreatePostSaga(),
-    postSaga.theoDoiGetAllPostByUserIDSaga(),
-    postSaga.theoDoiGetAllPostSaga(),
-    postSaga.theoDoiDeletePostSaga(),
-    postSaga.theoDoiLikePostSaga(),
-    postSaga.theoDoiUpdatePostSaga(),
-    postSaga.theoDoiSharePostSaga(),
-    postSaga.theoDoiSavePostSaga(),
-    postSaga.theoDoiSaveCommentSaga(),
-    postSaga.theoDoiGetPostByIdSaga(),
-    postSaga.theoDoiIncreaseViewPostSaga(),
-    postSaga.theoDoiLikeCommentPostSaga(),
-    postSaga.theoDoiDislikeCommentPostSaga(),
+    // // postSaga
+    // postSaga.theoDoiCreatePostSaga(),
+    // postSaga.theoDoiGetAllPostByUserIDSaga(),
+    // postSaga.theoDoiGetAllPostSaga(),
+    // postSaga.theoDoiDeletePostSaga(),
+    // postSaga.theoDoiLikePostSaga(),
+    // postSaga.theoDoiUpdatePostSaga(),
+    // postSaga.theoDoiSharePostSaga(),
+    // postSaga.theoDoiSavePostSaga(),
+    // postSaga.theoDoiSaveCommentSaga(),
+    // postSaga.theoDoiGetPostByIdSaga(),
+    // postSaga.theoDoiIncreaseViewPostSaga(),
+    // postSaga.theoDoiLikeCommentPostSaga(),
+    // postSaga.theoDoiDislikeCommentPostSaga(),
 
     // messageSaga
     messageSaga.theoDoiGetConversationsSaga(),

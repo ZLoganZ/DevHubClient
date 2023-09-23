@@ -8,7 +8,7 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { UserRegisterDataType } from '@/types';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch } from '@/hooks/special';
 
 import StyleTotal from './cssRegister';
 

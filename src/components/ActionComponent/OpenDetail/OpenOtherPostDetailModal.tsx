@@ -4,13 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import {
-  SAVE_COMMENT_SAGA,
-  GET_POST_BY_ID_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import OtherPostDetailModal from '@/components/Form/PostDetail/OtherPostDetail';
-import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
+import OtherPostDetailModal from '@/components/PostDetail/OtherPostDetail';
+import { useAppSelector } from '@/hooks/special';
+import { useCommentPost } from '@/hooks/mutation';
+import { useUserInfo } from '@/hooks/fetch';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssOpenPostDetailModal';
 
@@ -24,10 +22,8 @@ interface PostProps {
 }
 
 const OpenOtherPostDetailModal = (PostProps: PostProps) => {
-  const dispatch = useAppDispatch();
-
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -38,14 +34,12 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
 
   const [visible, setVisible] = useState(PostProps.visible);
 
-  useEffect(() => {
-    dispatch(GET_POST_BY_ID_SAGA({ id: PostProps.post._id }));
-  }, [PostProps.post._id, PostProps.isShared]);
-
   const [data, setData] = useState<SelectedCommentValues>({
     isReply: false,
     idComment: null
   });
+
+  const { mutateCommentPost } = useCommentPost();
 
   const inputRef = useRef<any>();
 
@@ -65,16 +59,12 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
     const { post } = PostProps;
     const { isReply, idComment } = data;
 
-    const saveCommentAction = SAVE_COMMENT_SAGA;
-
-    dispatch(
-      saveCommentAction({
-        content: commentContent,
-        post: post._id,
-        type: isReply ? 'child' : 'parent',
-        parent: isReply ? idComment! : undefined
-      })
-    );
+    mutateCommentPost({
+      content: commentContent,
+      post: post._id,
+      type: isReply ? 'child' : 'parent',
+      parent: isReply ? idComment! : undefined
+    });
 
     setCommentContent('');
   };

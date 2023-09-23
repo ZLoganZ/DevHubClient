@@ -30,13 +30,6 @@ import ReactQuill from 'react-quill';
 import { NavLink } from 'react-router-dom';
 import 'react-quill/dist/quill.bubble.css';
 
-import {
-  DELETE_POST_SAGA,
-  LIKE_POST_SAGA,
-  SHARE_POST_SAGA,
-  SAVE_POST_SAGA,
-  INCREASE_VIEW_SAGA
-} from '@/redux/ActionSaga/PostActionSaga';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import EditPostForm from '@/components/Form/EditPostForm';
@@ -44,8 +37,18 @@ import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenM
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useIntersectionObserver } from '@/hooks';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useIntersectionObserver
+} from '@/hooks/special';
+import {
+  useDeletePost,
+  useLikePost,
+  useSavePost,
+  useSharePost,
+  useViewPost
+} from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
 
@@ -63,9 +66,15 @@ const MyPost = (PostProps: PostProps) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  const change = useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
+
+  const { mutateLikePost } = useLikePost();
+  const { mutateDeletePost } = useDeletePost();
+  const { mutateSharePost } = useSharePost();
+  const { mutateSavePost } = useSavePost();
+  const { mutateViewPost } = useViewPost();
 
   // ------------------------ Like ------------------------
 
@@ -189,11 +198,9 @@ const MyPost = (PostProps: PostProps) => {
   const handleOk = async () => {
     if (PostProps.post.post_attributes.img)
       await handleRemoveImage(PostProps.post.post_attributes.img);
-    dispatch(
-      DELETE_POST_SAGA({
-        id: PostProps.post._id
-      })
-    );
+
+    mutateDeletePost(PostProps.post._id);
+
     setIsModalOpen(false);
     openNotificationWithIcon('success');
   };
@@ -290,11 +297,7 @@ const MyPost = (PostProps: PostProps) => {
   const postRef = React.useRef(null);
 
   const onIntersect = () => {
-    dispatch(
-      INCREASE_VIEW_SAGA({
-        id: PostProps.post._id
-      })
-    );
+    mutateViewPost(PostProps.post._id);
   };
 
   useIntersectionObserver(postRef, onIntersect);
@@ -359,7 +362,7 @@ const MyPost = (PostProps: PostProps) => {
                     overlayInnerStyle={{
                       border: `1px solid ${themeColorSet.colorBg3}`
                     }}
-                    mouseEnterDelay={0.7}
+                    mouseEnterDelay={0.4}
                     content={
                       <PopupInfoUser
                         userInfo={PostProps.userInfo}
@@ -370,7 +373,7 @@ const MyPost = (PostProps: PostProps) => {
                       <NavLink
                         to={`/user/${PostProps.userInfo._id}`}
                         style={{ color: themeColorSet.colorText1 }}>
-                        {PostProps.userInfo?.name}
+                        {PostProps.userInfo.name}
                       </NavLink>
                     </div>
                   </Popover>
@@ -480,12 +483,11 @@ const MyPost = (PostProps: PostProps) => {
                       setLikeColor('red');
                       setIsLiked(true);
                     }
-                    dispatch(
-                      LIKE_POST_SAGA({
-                        post: PostProps.post._id,
-                        owner_post: PostProps.post.post_attributes.user._id
-                      })
-                    );
+
+                    mutateLikePost({
+                      post: PostProps.post._id,
+                      owner_post: PostProps.post.post_attributes.user._id
+                    });
                   }}
                 />
               </Space>
@@ -508,12 +510,11 @@ const MyPost = (PostProps: PostProps) => {
                       setShareColor('blue');
                       setIsShared(true);
                     }
-                    dispatch(
-                      SHARE_POST_SAGA({
-                        post: PostProps.post._id,
-                        owner_post: PostProps.post.post_attributes.user._id
-                      })
-                    );
+
+                    mutateSharePost({
+                      post: PostProps.post._id,
+                      owner_post: PostProps.post.post_attributes.user._id
+                    });
                   }}
                 />
               </Space>
@@ -560,11 +561,8 @@ const MyPost = (PostProps: PostProps) => {
                         setIsSaved(true);
                         setSaveColor('yellow');
                       }
-                      dispatch(
-                        SAVE_POST_SAGA({
-                          id: PostProps.post._id
-                        })
-                      );
+
+                      mutateSavePost(PostProps.post._id);
                     }}
                   />
                   <Avatar

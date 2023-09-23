@@ -1,11 +1,11 @@
 import { Skeleton, Space } from 'antd';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 
 const LoadingConversation = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   return (

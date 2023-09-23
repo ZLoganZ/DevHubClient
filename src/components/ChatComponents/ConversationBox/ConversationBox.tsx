@@ -3,9 +3,10 @@ import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { useOtherUser, useUserInfo } from '@/hooks';
+import { useOtherUser } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 
 interface ConversationBoxProps {
   data: any;
@@ -16,7 +17,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
   const { userInfo } = useUserInfo();
 
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const lastMessage = useMemo(() => {

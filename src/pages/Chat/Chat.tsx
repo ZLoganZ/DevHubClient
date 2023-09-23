@@ -22,15 +22,15 @@ import {
   useConversationsData,
   useCurrentConversationData,
   useFollowersData
-} from '@/hooks';
+} from '@/hooks/fetch';
 import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

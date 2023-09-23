@@ -4,20 +4,20 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 
-import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useFollowUser } from '@/hooks/mutation';
 
 const RenderPeopleItem = ({ item }: any) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const [follow, setFollow] = useState(false);
+  const { mutateFollowUser } = useFollowUser();
 
-  const dispatch = useAppDispatch();
+  const [follow, setFollow] = useState(false);
 
   return (
     <ConfigProvider
@@ -104,7 +104,7 @@ const RenderPeopleItem = ({ item }: any) => {
               rounded
               onClick={() => {
                 setFollow(!follow);
-                dispatch(FOLLOW_USER_SAGA(item._id));
+                mutateFollowUser(item._id);
               }}>
               {' '}
               {!follow ? 'Follow' : 'Following'}

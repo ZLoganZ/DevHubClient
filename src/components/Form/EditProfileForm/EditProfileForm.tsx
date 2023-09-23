@@ -40,11 +40,12 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import AddTags from '@/components/AddTags';
 import AddContacts from '@/components/AddContacts';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
-import { UPDATE_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { commonColor } from '@/util/cssVariable';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useUpdateUser } from '@/hooks/mutation';
+import { useUserInfo } from '@/hooks/fetch';
 import { ContactType, ExperienceType, RepositoryType } from '@/types';
 import StyleTotal from './cssEditProfileForm';
 
@@ -52,13 +53,15 @@ const EditProfileForm = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
+  const { mutateUpdateUser } = useUpdateUser();
+
   const [messageApi, contextHolder] = message.useMessage();
 
-  const userInfo = useAppSelector((state) => state.postReducer.ownerInfo);
+  const { userInfo } = useUserInfo();
 
   const [tags, setTags] = useState(userInfo?.tags);
 
@@ -66,7 +69,7 @@ const EditProfileForm = () => {
 
   // const [firstname, setFirstName] = useState(userInfo.firstname);
 
-  const [name, setLastName] = useState(userInfo.name);
+  const [name, setName] = useState(userInfo.name);
 
   const [alias, setAlias] = useState(userInfo.alias || '');
 
@@ -170,7 +173,7 @@ const EditProfileForm = () => {
   // };
 
   const handleChangeLastName = (e: ChangeEvent<HTMLInputElement>) => {
-    setLastName(e.target.value);
+    setName(e.target.value);
   };
 
   const handleChangeTags = (tags: string[]) => {
@@ -206,27 +209,23 @@ const EditProfileForm = () => {
       formData.append('coverImage', res.url);
       if (initialCover) await handleRemoveImage(initialCover);
     }
-    dispatch(
-      UPDATE_USER_SAGA({
-        id: userInfo._id,
-        userUpdate: {
-          name: name /* + ' ' + firstname */,
-          alias,
-          location,
-          user_image: fileAvatar
-            ? formData.get('userImage')?.toString()!
-            : undefined,
-          cover_image: fileCover
-            ? formData.get('coverImage')?.toString()!
-            : undefined,
-          tags,
-          contacts: contacts,
-          about,
-          experiences,
-          repositories
-        }
-      })
-    );
+
+    mutateUpdateUser({
+      name: name /* + ' ' + firstname */,
+      alias,
+      location,
+      user_image: fileAvatar
+        ? formData.get('userImage')?.toString()!
+        : undefined,
+      cover_image: fileCover
+        ? formData.get('coverImage')?.toString()!
+        : undefined,
+      tags,
+      contacts: contacts,
+      about,
+      experiences,
+      repositories
+    });
   };
 
   useEffect(() => {
@@ -329,7 +328,7 @@ const EditProfileForm = () => {
           <span
             onClick={() => {
               setExperiences(
-                experiences.filter((item, indexFilter) => indexFilter !== index)
+                experiences.filter((_, indexFilter) => indexFilter !== index)
               );
             }}>
             <FontAwesomeIcon
@@ -620,7 +619,7 @@ const EditProfileForm = () => {
                   autoComplete="off"
                 />
                 <label htmlFor="name" className="form__label">
-                  Last Name
+                  Username
                 </label>
               </div>
               {/* <div

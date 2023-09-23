@@ -8,9 +8,9 @@ import StyleTotal from './cssAddRepositoryForm';
 import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
 import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { GET_REPOSITORY_SAGA } from '@/redux/ActionSaga/UserActionSaga';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useGetRepository } from '@/hooks/fetch';
 import { RepositoryType } from '@/types';
 
 interface ReposProps {
@@ -21,13 +21,15 @@ interface ReposProps {
 const AddRepositoryForm = (Props: ReposProps) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [access_token_github, setAccess_token_github] = useState(
     localStorage.getItem(TOKEN_GITHUB)
   );
+
+  const { repository, isLoadingRepository } = useGetRepository();
 
   const openPopup = () => {
     const width = 500; // Width of the pop-up window
@@ -41,9 +43,9 @@ const AddRepositoryForm = (Props: ReposProps) => {
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    let userData: any = undefined;
+    let userData: any;
 
-    const handleMessage = (event: any) => {
+    const handleMessage = (event: MessageEvent) => {
       if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
         userData = event.data;
         if (userData) {
@@ -77,13 +79,15 @@ const AddRepositoryForm = (Props: ReposProps) => {
 
   useEffect(() => {
     if (access_token_github) {
-      dispatch(GET_REPOSITORY_SAGA());
+      if (!isLoadingRepository && repository) {
+        setRepos(repository);
+      }
     } else {
       openPopup();
     }
   }, [access_token_github]);
 
-  const { repos } = useAppSelector((state) => state.userReducer);
+  const [repos, setRepos] = useState<RepositoryType[]>([]);
 
   const renderItemRepos = (item: RepositoryType, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
@@ -153,9 +157,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
                   newRepositories.push(item);
                 } else {
                   newRepositories.splice(
-                    newRepositories.findIndex(
-                      (repo) => repo.id == item.id
-                    ),
+                    newRepositories.findIndex((repo) => repo.id == item.id),
                     1
                   );
                 }

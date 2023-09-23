@@ -7,7 +7,7 @@ import {
   setUseSelector
 } from '@/redux/Slice/FunctionSlice';
 
-import { useAppDispatch, useAppSelector } from './hooks';
+import { useAppDispatch, useAppSelector } from './hooks/special';
 
 import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
@@ -15,7 +15,6 @@ import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 import ActiveStatus from '@/components/ActionComponent/ActiveStatus';
 import {
   CommunityWrapper,
-  PostShareWrapper,
   PostWrapper,
   ProfileWrapper
 } from '@/components/Wrapper';
@@ -51,20 +50,103 @@ const App = () => {
 
   dispatch(setUseSelector(useAppSelector));
 
+  const routes = [
+    {
+      path: '/login',
+      mainLayout: false,
+      component: <Login />
+    },
+    {
+      path: '/register',
+      mainLayout: false,
+      component: <Register />
+    },
+    {
+      path: '/forgot',
+      mainLayout: false,
+      component: <ForgotPassword />
+    },
+    {
+      path: '/verify',
+      mainLayout: false,
+      component: <VerifyCode />
+    },
+    {
+      path: '/reset',
+      mainLayout: false,
+      component: <ResetPassword />
+    },
+    {
+      path: '/',
+      mainLayout: true,
+      component: <NewsFeed />
+    },
+    {
+      path: '/message/:conversationID?',
+      mainLayout: false,
+      component: <Chat />
+    },
+    {
+      path: '/select-interest',
+      mainLayout: false,
+      component: <SelectInterest />
+    },
+    {
+      path: '/select-follow',
+      mainLayout: false,
+      component: <SelectFollow />
+    },
+    {
+      path: '/select-community',
+      mainLayout: false,
+      component: <SelectCommunity />
+    },
+    {
+      path: '/get-started',
+      mainLayout: false,
+      component: <GetStarted />
+    },
+    {
+      path: '/user/:userID',
+      mainLayout: true,
+      component: <ProfileWrapper />
+    },
+    {
+      path: '/me',
+      mainLayout: true,
+      component: <ProfileWrapper />
+    },
+    {
+      path: '/post/:postID',
+      mainLayout: true,
+      component: <PostWrapper />
+    },
+    {
+      path: '/community/:communityID',
+      mainLayout: true,
+      component: <CommunityWrapper />
+    },
+    {
+      path: '*',
+      mainLayout: false,
+      component: <NotFound404 />
+    }
+  ];
+
   return (
     <>
       <ModalHOC />
       <DrawerHOC />
       <ActiveStatus />
       <Routes>
-        {/* <Route element={<AlreadyAuth />}> */}
+        {/* <Route element={<AlreadyAuth />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/verify" element={<VerifyCode />} />
         <Route path="/reset" element={<ResetPassword />} />
-        {/* </Route> */}
-        {/* <Route element={<Auth />}> */}
+        </Route>
+        <Route element={<Auth />}>
         <Route index element={<MainLayout Component={NewsFeed} />} />
         <Route path="/message/:conversationID?" element={<Chat />} />
         <Route path="/select-interest" element={<SelectInterest />} />
@@ -81,15 +163,26 @@ const App = () => {
           element={<MainLayout Component={PostWrapper} />}
         />
         <Route
-          path="/postshare/:postID"
-          element={<MainLayout Component={PostShareWrapper} />}
-        />
-        <Route
           path="/community/:communityID"
           element={<MainLayout Component={CommunityWrapper} />}
         />
         <Route path="*" element={<NotFound404 />} />
-        {/* </Route> */}
+        </Route> */}
+        {routes.map((route, index) => {
+          return (
+            <Route
+              key={index}
+              path={route.path}
+              element={
+                route.mainLayout ? (
+                  <MainLayout Component={route.component} />
+                ) : (
+                  route.component
+                )
+              }
+            />
+          );
+        })}
       </Routes>
     </>
   );

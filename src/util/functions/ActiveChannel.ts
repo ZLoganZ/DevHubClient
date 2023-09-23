@@ -7,7 +7,7 @@ import {
   addMember,
   removeMember
 } from '@/redux/Slice/ActiveListSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 const ActiveChannel = () => {
   const dispatch = useAppDispatch();

@@ -19,10 +19,10 @@ import { UploadOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
-import { UPDATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
-import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
+import { callBackSubmitDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useUpdatePost } from '@/hooks/mutation';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssEditPostForm';
 
 Quill.register('modules/imageCompress', ImageCompress);
@@ -46,9 +46,11 @@ const EditPostForm = (PostProps: PostProps) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
+
+  const { mutateUpdatePost } = useUpdatePost();
 
   const handleUploadImage = async (file: RcFile | string) => {
     if (!file)
@@ -115,7 +117,6 @@ const EditPostForm = (PostProps: PostProps) => {
     if (quill.root.innerHTML === '<p><br></p>') {
       error();
     } else {
-      dispatch(setLoading(true));
       if (form.getValues('img') !== PostProps.img) {
         if (form.getValues('img')) {
           const result = await handleUploadImage(form.getValues('img')!);
@@ -124,16 +125,15 @@ const EditPostForm = (PostProps: PostProps) => {
         if (PostProps.img) await handleRemoveImage(PostProps.img);
       }
       values.img = form.getValues('img');
-      dispatch(
-        UPDATE_POST_SAGA({
-          id: PostProps.id,
-          postUpdate: values
-        })
-      );
+
+      mutateUpdatePost({
+        id: PostProps.id,
+        postUpdate: values
+      });
     }
   };
 
-  const beforeUpload = (file: any) => {
+  const beforeUpload = (file: RcFile) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
       messageApi.error('Image must smaller than 3MB!');
@@ -294,13 +294,10 @@ const EditPostForm = (PostProps: PostProps) => {
                   accept="image/png, image/jpeg, image/jpg"
                   defaultFileList={PostProps.img ? [...fileList] : []}
                   maxCount={1}
-                  customRequest={async ({
-                    file,
-                    onSuccess,
-                    onError,
-                    onProgress
-                  }: any) => {
-                    onSuccess('ok');
+                  customRequest={async ({ onSuccess }) => {
+                    if (onSuccess) {
+                      onSuccess('ok');
+                    }
                   }}
                   beforeUpload={beforeUpload}>
                   <Button icon={<UploadOutlined />}>Upload</Button>

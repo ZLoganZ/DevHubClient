@@ -6,7 +6,7 @@ import { ConfigProvider, DatePicker, message } from 'antd';
 import StyleTotal from './cssAddExperienceForm';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
 
 interface EditProps {
@@ -25,7 +25,7 @@ const EditExperienceForm = (Props: EditProps) => {
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -157,7 +157,7 @@ const EditExperienceForm = (Props: EditProps) => {
               format={dateFormat}
               disabled={disablePicker}
               size="large"
-              onChange={(value, dateString) => {
+              onChange={(_, dateString) => {
                 setStartDate(dateString[0]);
                 untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
                 setPastDate(dateString[1]);

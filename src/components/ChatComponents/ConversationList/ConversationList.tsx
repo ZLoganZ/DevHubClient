@@ -13,7 +13,8 @@ import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 import { UserInfoType } from '@/types';
 
 interface ConversationListProps {
@@ -25,13 +26,13 @@ interface ConversationListProps {
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  const { members } = useAppSelector((state) => state.activeListReducer);
+  useAppSelector((state) => state.activeListReducer.members);
   const { userInfo } = useUserInfo();
 
   const [items, setItems] = useState(Props.initialItems);

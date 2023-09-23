@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 
+import MyPostShare from '@/components/Post/MyPostShare';
 import CommentDetail from '@/components/CommentDetail';
-import OtherPost from '@/components/Post/OtherPost';
-import OtherPostShare from '@/components/Post/OtherPostShare';
+import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector, useCommentsData } from '@/hooks';
-import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
+import { useAppSelector } from '@/hooks/special';
+import { useCommentsData } from '@/hooks/fetch';
+import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
 import StyleTotal from './cssPostDetail';
+import { Skeleton } from 'antd';
 
 interface PostProps {
   post: PostType;
@@ -17,16 +19,16 @@ interface PostProps {
   ownerInfo?: UserInfoType;
 }
 
-const OtherPostDetail = (Props: PostProps) => {
+const MyPostDetail = (Props: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
     Props.data.idComment
   );
 
-  const { comments } = useCommentsData(Props.post._id);
+  const { comments, isLoadingComments } = useCommentsData(Props.post._id);
 
   useEffect(() => {
     setSelectedCommentId(Props.data.idComment);
@@ -40,18 +42,14 @@ const OtherPostDetail = (Props: PostProps) => {
     <StyleTotal theme={themeColorSet}>
       <div className="postDetail">
         {Props.isShared ? (
-          <OtherPostShare
+          <MyPostShare
             key={Props.post._id}
             postShared={Props.post}
             userInfo={Props.userInfo}
             ownerInfo={Props.ownerInfo!}
           />
         ) : (
-          <OtherPost
-            key={Props.post._id}
-            post={Props.post}
-            userInfo={Props.userInfo}
-          />
+          <MyPost post={Props.post} userInfo={Props.userInfo} />
         )}
         <div
           className="commentTotal px-3 ml-4"
@@ -59,41 +57,45 @@ const OtherPostDetail = (Props: PostProps) => {
             maxHeight: '30rem',
             overflow: 'auto'
           }}>
-          {comments?.map((item) => {
-            return (
-              <div key={item._id}>
-                {item ? (
-                  <CommentDetail
-                    key={item._id}
-                    handleData={Props.handleData}
-                    comment={item}
-                    userInfo={Props.userInfo}
-                    selectedCommentID={selectedCommentID}
-                    onSelectComment={handleSelectComment}
-                    postID={Props.post._id}>
-                    {/* {item.listReply?.map((item: any) => {
+          {isLoadingComments ? (
+            <Skeleton avatar paragraph={{ rows: 2 }} active />
+          ) : (
+            comments?.map((item) => {
+              return (
+                <div className="px-4" key={item._id}>
+                  {item ? (
+                    <CommentDetail
+                      handleData={Props.handleData}
+                      key={item._id}
+                      comment={item}
+                      userInfo={Props.userInfo}
+                      selectedCommentID={selectedCommentID}
+                      onSelectComment={handleSelectComment}
+                      postID={Props.post._id}>
+                      {/* {item.listReply?.map((item: any) => {
                       return (
                         <CommentDetail
-                          key={item?._id}
                           handleData={Props.handleData}
+                          key={item?._id}
                           comment={item}
                           userInfo={Props.userInfo}
                           selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
                           isReply={true}
-                          postID={Props.post._id}
+                          postID={Props.post.id}
                         />
                       );
                     })} */}
-                  </CommentDetail>
-                ) : null}
-              </div>
-            );
-          })}
+                    </CommentDetail>
+                  ) : null}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </StyleTotal>
   );
 };
 
-export default OtherPostDetail;
+export default MyPostDetail;

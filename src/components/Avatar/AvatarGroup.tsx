@@ -1,7 +1,8 @@
 import { Image } from 'antd';
 
 import { UserInfoType } from '@/types';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 
 interface AvatarProps {
   users: UserInfoType[];

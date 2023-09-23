@@ -5,7 +5,8 @@ import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 import StyleTotal from './cssMessageBox';
 import { getTheme } from '@/util/functions/ThemeFunction';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 
 interface MessageBoxProps {
   data: any;
@@ -14,7 +15,7 @@ interface MessageBoxProps {
 
 const MessageBox = (Props: MessageBoxProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const { userInfo } = useUserInfo();

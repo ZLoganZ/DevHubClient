@@ -1,7 +1,7 @@
 import { ConfigProvider, Input, Select } from 'antd';
 
 import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleTotal from './cssGroupChatModal';
 
@@ -13,7 +13,7 @@ interface GroupChatModalProps {
 
 const GroupChatModal = (Props: GroupChatModalProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

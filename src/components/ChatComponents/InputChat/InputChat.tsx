@@ -11,7 +11,7 @@ import {
 import { getTheme } from '@/util/functions/ThemeFunction';
 import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
-import { useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
 
 interface Props {
   conversationID: string;
@@ -19,7 +19,7 @@ interface Props {
 
 const InputChat = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.themeReducer.change);
   const { themeColorSet } = getTheme();
 
   const [message, setMessage] = useState('');
