@@ -1,14 +1,14 @@
-import { Content } from 'antd/es/layout/layout';
-import { useLayoutEffect } from 'react';
-import { ConfigProvider, FloatButton, Layout } from 'antd';
+import { Content } from "antd/es/layout/layout";
+import { useLayoutEffect } from "react";
+import { ConfigProvider, FloatButton, Layout } from "antd";
 
-import Headers from '@/components/Headers';
-import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
-import Menu from '@/components/Menu';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
-import StyleTotal from './cssMainLayout';
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
+import Headers from "@/components/Headers";
+import LoadingLogo from "@/components/GlobalSetting/LoadingLogo";
+import Menu from "@/components/Menu";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { useAppDispatch, useAppSelector, useUserInfo } from "@/hooks";
+import StyleTotal from "./cssMainLayout";
+import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;
@@ -29,14 +29,14 @@ const MainLayout = (props: PropsMainTemplate) => {
 
   if (isLoadingUserInfo) return <LoadingLogo />;
 
-  document.title = 'DevHub';
+  document.title = "DevHub";
 
   const { Component } = props;
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor
+        token: themeColor,
       }}>
       <StyleTotal className="abcdef" theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
@@ -44,14 +44,14 @@ const MainLayout = (props: PropsMainTemplate) => {
           <Headers />
           <Menu />
           <Content
+            className="xs:ml-0 xs:mt-20 ml-20"
             style={{
-              marginLeft: '5rem',
-              marginTop: '5rem',
-              backgroundImage: 'url(/images/ProfilePage/cover.jpg)',
-              backgroundAttachment: 'fixed',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              marginTop: "5rem",
+              backgroundImage: "url(/images/ProfilePage/cover.jpg)",
+              backgroundAttachment: "fixed",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}>
             <Component />
           </Content>

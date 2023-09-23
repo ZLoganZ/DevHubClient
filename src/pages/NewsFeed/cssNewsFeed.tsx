@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const StyleTotal = styled.div`
   background-color: ${(props) => props.theme.colorBg1};
@@ -31,6 +31,7 @@ const StyleTotal = styled.div`
       }
     }
   }
+
 `;
 
 export default StyleTotal;

@@ -68,6 +68,9 @@ const StyleTotal = styled.div`
       }
     }
   }
+
+
+
 `;
 
 export default StyleTotal;

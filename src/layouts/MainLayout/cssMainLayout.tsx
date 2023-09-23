@@ -1,5 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-const StyleTotal = styled.div``;
+const StyleTotal = styled.div`
+
+
+`;
 
 export default StyleTotal;

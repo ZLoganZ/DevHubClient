@@ -9,6 +9,7 @@ const StyleTotal = styled.div`
       /* color: red; */
     }
   }
+  
 `;
 
 export default StyleTotal;
