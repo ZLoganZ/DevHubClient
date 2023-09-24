@@ -43,7 +43,7 @@ export class PostService extends BaseService {
     return this.delete(`/posts/delete/${id}`);
   };
   likePost = (post: SharePostDataType) => {
-    return this.post(`/users/likepost`, post);
+    return this.put(`/users/likepost`, post);
   };
   sharePost = (sharepost: SharePostDataType) => {
     return this.post(`/posts/share`, sharepost);

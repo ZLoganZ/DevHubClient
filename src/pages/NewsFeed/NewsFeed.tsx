@@ -20,7 +20,7 @@ import StyleTotal from './cssNewsFeed';
 
 const popular_time = [
   {
-    label: 'To Day',
+    label: 'Today',
     key: '1'
   },
   {
@@ -112,15 +112,31 @@ const NewFeed = () => {
     }
   }, [isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed]);
 
-  const popular = [...(allPostsNewsfeed! || [])]
+  const [popularOpen, setPopularOpen] = useState(false);
+  const [popularvalue, setPopularvalue] = useState('Today');
+
+  const popular = [...(allPostsNewsfeed || [])]
     .filter((item) => item.type !== 'Share')
+    .filter((item) => {
+      const date = new Date(item.createdAt);
+      const dateNow = new Date();
+      const diffTime = Math.abs(dateNow.getTime() - date.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (popularvalue === 'Today') {
+        return diffDays <= 1;
+      }
+      if (popularvalue === 'Week') {
+        return diffDays <= 7;
+      }
+      if (popularvalue === 'Month') {
+        return diffDays <= 30;
+      }
+      return diffDays <= 1;
+    })
     .sort(
       (a, b) => b.post_attributes.view_number - a.post_attributes.view_number
     )
     .slice(0, 3);
-
-  const [popularOpen, setPopularOpen] = useState(false);
-  const [popularvalue, setPopularvalue] = useState('To Day');
 
   const handlePopularClick: MenuProps['onClick'] = (e) => {
     const a = popular_time.find((item) => item.key === e.key);

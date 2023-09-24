@@ -142,7 +142,7 @@ const MyPost = (PostProps: PostProps) => {
       : setSaveColor(themeColorSet.colorText1);
   }, [PostProps.post.is_saved, change]);
 
-  const formatDateTime = (date: any) => {
+  const formatDateTime = (date: Date) => {
     if (isToday(date)) {
       return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {

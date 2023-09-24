@@ -15,7 +15,7 @@ const StyleTotal = styled.div`
     #notfound {
       position: relative;
       height: 100vh;
-      background: ${(props: any) => props.theme.colorBg1};
+      background: ${(props) => props.theme.colorBg1};
     }
 
     #notfound .notfound {
@@ -54,7 +54,7 @@ const StyleTotal = styled.div`
       margin-top: 0px;
       margin-bottom: 0px;
       margin-left: -12px;
-      color: ${(props: any) => props.theme.colorBg1};
+      color: ${(props) => props.theme.colorBg1};
       text-transform: uppercase;
       text-shadow: -1px -1px 0px #8400ff, 1px 1px 0px #ff005a;
       letter-spacing: -20px;
@@ -68,7 +68,7 @@ const StyleTotal = styled.div`
       top: 110px;
       font-size: 42px;
       font-weight: 700;
-      color: ${(props: any) => props.theme.colorText1};
+      color: ${(props) => props.theme.colorText1};
       text-transform: uppercase;
       text-shadow: 0px 2px 0px #8400ff;
       letter-spacing: 13px;

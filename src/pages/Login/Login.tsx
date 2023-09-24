@@ -45,7 +45,7 @@ const Login = () => {
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    const handleMessage = (event: any) => {
+    const handleMessage = (event: MessageEvent) => {
       if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
         // Check the origin of the message for security
         // Handle the received data from the server

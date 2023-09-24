@@ -55,7 +55,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
     pusherClient.bind('conversation-update-media', updateHandler);
   }, [Props.conversationID, isLoadingCurrentConversation]);
 
-  const formatDateTime = (date: any) => {
+  const formatDateTime = (date: Date) => {
     if (isToday(date)) {
       return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {

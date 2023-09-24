@@ -39,7 +39,7 @@ const MessageBox = (Props: MessageBoxProps) => {
         : 'bg-gray-700 text-white mr-7'
     }`;
 
-  const formatDateTime = (date: any) => {
+  const formatDateTime = (date: Date) => {
     if (isToday(date)) {
       return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {

@@ -84,7 +84,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
     setIsLiked(PostProps.postShared.is_liked);
   }, [PostProps.postShared.is_liked]);
 
-  const formatDateTime = (date: any) => {
+  const formatDateTime = (date: Date) => {
     if (isToday(date)) {
       return format(date, 'p'); // Display only time for today
     } else if (isThisWeek(date, { weekStartsOn: 1 })) {
