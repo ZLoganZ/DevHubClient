@@ -8,7 +8,7 @@ interface AvatarProps {
 }
 
 const AvatarMessage = (Props: AvatarProps) => {
-  const { members } = useAppSelector((state) => state.activeListReducer);
+  const { members } = useAppSelector((state) => state.activeList);
   const isActive = members.indexOf(Props.user._id!) !== -1 || false;
 
   return (

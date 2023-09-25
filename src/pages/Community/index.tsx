@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import StyleTotal from './cssCommunity';
 import { format } from 'date-fns';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import {
   Avatar,
   Col,
@@ -28,7 +28,7 @@ const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -39,7 +39,7 @@ export const CommunityAdmin = () => {
     });
   }, []);
 
-  const community = useAppSelector((state) => state.communityReducer.community);
+  const community = useAppSelector((state) => state.community.community);
 
   const { userInfo } = useUserInfo();
 
@@ -382,7 +382,7 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -393,9 +393,7 @@ export const CommunityMember = () => {
     });
   }, []);
 
-  const community = useSelector(
-    (state: any) => state.communityReducer.community
-  );
+  const community = useSelector((state: any) => state.community.community);
 
   const userInfo = useSelector(
     (state: RootState) => state.userReducer.userInfo
@@ -740,7 +738,7 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -751,9 +749,7 @@ export const CommunityNoMember = () => {
     });
   }, []);
 
-  const community = useSelector(
-    (state: any) => state.communityReducer.community
-  );
+  const community = useSelector((state: any) => state.community.community);
 
   const userInfo = useSelector(
     (state: RootState) => state.userReducer.userInfo

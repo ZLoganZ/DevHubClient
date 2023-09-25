@@ -24,7 +24,10 @@ export const ApplyUserDefaults = (obj: UserInfoType | Object) => {
     following: [],
     is_followed: false,
     role: [],
-    name: ''
+    name: '',
+    follower_number: 0,
+    following_number: 0,
+    post_number: 0
   };
 
   return { ...defaultValues, ...obj };
@@ -58,7 +61,10 @@ export const ApplyPostDefaults = (obj: PostType) => {
         followers: [],
         following: [],
         is_followed: false,
-        name: ''
+        name: '',
+        follower_number: 0,
+        following_number: 0,
+        post_number: 0
       },
       title: undefined,
       content: undefined,
@@ -109,7 +115,10 @@ export const ApplyPostsDefaults = (obj: PostType[]) => {
           followers: [],
           following: [],
           is_followed: false,
-          name: ''
+          name: '',
+          follower_number: 0,
+          following_number: 0,
+          post_number: 0
         },
         title: undefined,
         content: undefined,

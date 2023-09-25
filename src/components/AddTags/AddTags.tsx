@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
 
 import StyleTotal from './cssAddTags';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -16,7 +16,7 @@ const AddTags = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

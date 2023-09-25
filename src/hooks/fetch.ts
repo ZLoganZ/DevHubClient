@@ -1,12 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { userService } from '@/services/UserService';
-import {
-  ApplyPostsDefaults,
-  ApplyUserDefaults
-} from '@/util/functions/ApplyDefaults';
+import { ApplyPostsDefaults, ApplyUserDefaults } from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
-import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
 
@@ -23,7 +20,7 @@ import { useAppSelector } from './special';
  */
 export const useUserInfo = () => {
   const userID =
-    useAppSelector((state) => state.authReducer.userID) ||
+    useAppSelector((state) => state.auth.userID) ||
     localStorage.getItem('x-client-id');
 
   const { data, isLoading, isError, isFetching } = useQuery({
@@ -140,7 +137,8 @@ export const useAllPostsNewsfeedData = () => {
     staleTime: Infinity,
     onError(err) {
       console.log(err);
-    }
+    },
+    enabled: window.location.pathname === '/'
   });
 
   return {
@@ -164,7 +162,7 @@ export const useAllPostsNewsfeedData = () => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const client_id = useAppSelector((state) => state.authReducer.userID);
+  const client_id = useAppSelector((state) => state.auth.userID);
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
@@ -258,7 +256,7 @@ export const useCommentsData = (postID: string) => {
  * - `isFetchingRepository` is a boolean that indicates whether the query is currently fetching.
  */
 export const useGetRepository = () => {
-  const aGToken = localStorage.getItem(TOKEN_GITHUB);
+  const aGToken = localStorage.getItem(GITHUB_TOKEN);
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['repository'],

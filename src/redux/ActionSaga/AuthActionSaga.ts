@@ -32,8 +32,6 @@ export const LOGIN_WITH_GOOGLE_SAGA = createAction(
 
 export const LOGOUT_SAGA = createAction('LOGOUT_SAGA');
 
-export const GET_USER_ID = createAction('GET_USER_ID');
-
 export const FORGOT_PASSWORD_SAGA = createAction(
   'FORGOT_PASSWORD_SAGA',
   (data: ForgotPasswordDataType) => ({

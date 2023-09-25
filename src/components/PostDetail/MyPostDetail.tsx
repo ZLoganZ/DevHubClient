@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import MyPostShare from '@/components/Post/MyPostShare';
 import CommentDetail from '@/components/CommentDetail';
 import MyPost from '@/components/Post/MyPost';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
@@ -21,7 +21,7 @@ interface PostProps {
 
 const MyPostDetail = (Props: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
@@ -57,16 +57,17 @@ const MyPostDetail = (Props: PostProps) => {
             maxHeight: '30rem',
             overflow: 'auto'
           }}>
-          {isLoadingComments ? (
+          {isLoadingComments &&
+          Props.post.post_attributes.comment_number > 0 ? (
             <Skeleton avatar paragraph={{ rows: 2 }} active />
           ) : (
             comments?.map((item) => {
               return (
-                <div className="px-4" key={item._id}>
+                <div key={item._id}>
                   {item ? (
                     <CommentDetail
-                      handleData={Props.handleData}
                       key={item._id}
+                      handleData={Props.handleData}
                       comment={item}
                       userInfo={Props.userInfo}
                       selectedCommentID={selectedCommentID}
@@ -75,14 +76,14 @@ const MyPostDetail = (Props: PostProps) => {
                       {/* {item.listReply?.map((item: any) => {
                       return (
                         <CommentDetail
-                          handleData={Props.handleData}
                           key={item?._id}
+                          handleData={Props.handleData}
                           comment={item}
                           userInfo={Props.userInfo}
                           selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
                           isReply={true}
-                          postID={Props.post.id}
+                          postID={Props.post._id}
                         />
                       );
                     })} */}

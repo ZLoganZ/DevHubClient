@@ -10,6 +10,12 @@ const StyleTotal = styled.div`
   }
 
   .popular-post-body {
+    .no-post {
+      color: ${(props) => props.theme.colorText1};
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
     .popular-post-item {
       border-radius: 5px;
       :hover {

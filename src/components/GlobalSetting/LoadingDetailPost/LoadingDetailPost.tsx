@@ -1,12 +1,12 @@
 import { ConfigProvider, Skeleton } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import StyleTotal from './cssLoadingDetailPost';
 import { useAppSelector } from '@/hooks/special';
 
 const LoadingDetailPost = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

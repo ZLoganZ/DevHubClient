@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
 import StyleTotal from './cssAddRepositoryForm';
-import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
-import { TOKEN_GITHUB } from '@/util/constants/SettingSystem';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { GetGitHubUrl } from '@/util/getGithubUrl';
+import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
+import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useGetRepository } from '@/hooks/fetch';
@@ -21,12 +21,12 @@ interface ReposProps {
 const AddRepositoryForm = (Props: ReposProps) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [access_token_github, setAccess_token_github] = useState(
-    localStorage.getItem(TOKEN_GITHUB)
+    localStorage.getItem(GITHUB_TOKEN)
   );
 
   const { repository, isLoadingRepository } = useGetRepository();
@@ -49,7 +49,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
       if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
         userData = event.data;
         if (userData) {
-          localStorage.setItem(TOKEN_GITHUB, userData.accessTokenGitHub);
+          localStorage.setItem(GITHUB_TOKEN, userData.accessTokenGitHub);
           setAccess_token_github(userData.accessTokenGitHub);
         }
       }
@@ -85,7 +85,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
     } else {
       openPopup();
     }
-  }, [access_token_github]);
+  }, [access_token_github, repository, isLoadingRepository]);
 
   const [repos, setRepos] = useState<RepositoryType[]>([]);
 

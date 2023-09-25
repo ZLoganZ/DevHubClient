@@ -4,7 +4,6 @@ import {
   CHECK_RESET_PASSWORD_SAGA,
   CHECK_VERIFY_CODE_SAGA,
   FORGOT_PASSWORD_SAGA,
-  GET_USER_ID,
   LOGIN_SAGA,
   LOGIN_WITH_GOOGLE_SAGA,
   LOGOUT_SAGA,
@@ -17,11 +16,10 @@ import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { authService } from '@/services/AuthService';
 import {
-  CLIENT_ID,
   DARK_THEME,
   STATUS_CODE,
-  TOKEN,
-  TOKEN_GITHUB
+  AUTHORIZATION,
+  GITHUB_TOKEN
 } from '@/util/constants/SettingSystem';
 
 // LoginSaga
@@ -30,10 +28,7 @@ function* LoginSaga({ payload }: any) {
     const { data, status } = yield call(authService.login, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(
-        TOKEN,
-        JSON.stringify(data.metadata.tokens.accessToken)
-      );
+      localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
@@ -61,10 +56,7 @@ function* RegisterSaga({ payload }: any) {
   try {
     const { data, status } = yield call(authService.register, payload);
     if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(
-        TOKEN,
-        JSON.stringify(data.metadata.tokens.accessToken)
-      );
+      localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
@@ -73,7 +65,7 @@ function* RegisterSaga({ payload }: any) {
       window.location.replace('/');
     }
   } catch (err: any) {
-    localStorage.removeItem(TOKEN);
+    localStorage.removeItem(AUTHORIZATION);
     console.log(err);
   }
 }
@@ -87,8 +79,8 @@ function* LogoutSaga() {
   try {
     const { status } = yield call(authService.logout);
     if (status === STATUS_CODE.SUCCESS) {
-      localStorage.removeItem(TOKEN);
-      localStorage.removeItem(TOKEN_GITHUB);
+      localStorage.removeItem(AUTHORIZATION);
+      localStorage.removeItem(GITHUB_TOKEN);
 
       window.location.replace('/login');
     }
@@ -107,7 +99,10 @@ function* LoginWithGoogleSaga({ payload }: any) {
     const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(TOKEN, JSON.stringify(data.metadata?.accessToken));
+      localStorage.setItem(
+        AUTHORIZATION,
+        JSON.stringify(data.metadata?.accessToken)
+      );
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
@@ -236,17 +231,4 @@ function* CheckResetPasswordSaga({ payload }: any) {
 
 export function* theoDoiCheckResetPasswordSaga() {
   yield takeLatest(CHECK_RESET_PASSWORD_SAGA, CheckResetPasswordSaga);
-}
-
-function* GetUserIDSaga() {
-  try {
-    const userID = localStorage.getItem(CLIENT_ID);
-    yield put(setUserID(userID));
-  } catch (err: any) {
-    console.log(err);
-  }
-}
-
-export function* theoDoiGetUserIDSaga() {
-  yield takeLatest(GET_USER_ID, GetUserIDSaga);
 }

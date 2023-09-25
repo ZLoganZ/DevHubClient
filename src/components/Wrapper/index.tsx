@@ -3,13 +3,12 @@ import { Col, ConfigProvider, Row, Skeleton } from 'antd';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
 import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { usePostData, useUserInfo } from '@/hooks/fetch';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 
 const CommunityAdmin = lazy(() =>
   import('@/pages/Community').then((module) => ({
@@ -36,7 +35,7 @@ export const CommunityWrapper = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -83,7 +82,7 @@ export const PostWrapper = () => {
   const { postID } = useParams();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -152,22 +151,15 @@ export const PostWrapper = () => {
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userID: userIDFromStore } = useAppSelector(
-    (state) => state.authReducer
-  );
-
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
+  const { userID: userIDFromStore } = useAppSelector((state) => state.auth);
 
   const path = location.pathname;
 

@@ -21,6 +21,12 @@ const modalHOCSlide = createSlice({
         footer: action.payload.footer
       };
     },
+    setFooter: (state, action) => {
+      return {
+        ...state,
+        footer: action.payload
+      };
+    },
     closeModal: (state) => {
       return {
         ...state,
@@ -36,5 +42,6 @@ const modalHOCSlide = createSlice({
   }
 });
 
-export const { openModal, closeModal, setHandleSubmit } = modalHOCSlide.actions;
+export const { openModal, setFooter, closeModal, setHandleSubmit } =
+  modalHOCSlide.actions;
 export default modalHOCSlide.reducer;

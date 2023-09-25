@@ -1,30 +1,23 @@
 import { Content } from 'antd/es/layout/layout';
-import { useEffect } from 'react';
 import { ConfigProvider, FloatButton, Layout } from 'antd';
 
 import Headers from '@/components/Headers';
 import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
 import Menu from '@/components/Menu';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import StyleTotal from './cssMainLayout';
 
 interface PropsMainTemplate {
-  Component: JSX.Element;
+  Component: () => JSX.Element;
 }
 
 const MainLayout = (props: PropsMainTemplate) => {
-  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
-
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
 
   const { isLoadingUserInfo } = useUserInfo();
 
@@ -54,7 +47,7 @@ const MainLayout = (props: PropsMainTemplate) => {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}>
-              {Component}
+              <Component />
             </Content>
           </Layout>
         </StyleTotal>

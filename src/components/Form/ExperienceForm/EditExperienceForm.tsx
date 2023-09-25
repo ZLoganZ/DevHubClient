@@ -4,7 +4,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ConfigProvider, DatePicker, message } from 'antd';
 
 import StyleTotal from './cssAddExperienceForm';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
@@ -25,7 +25,7 @@ const EditExperienceForm = (Props: EditProps) => {
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -62,8 +62,7 @@ const EditExperienceForm = (Props: EditProps) => {
     end_date: ''
   };
 
-  const handleSetExperience = (e: any) => {
-    e.preventDefault();
+  const handleSetExperience = () => {
     if (
       position_name === '' ||
       company_name === '' ||

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentPost } from '@/hooks/mutation';
@@ -18,7 +18,7 @@ interface Props {
 
 const OpenOtherPostShareDetail = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

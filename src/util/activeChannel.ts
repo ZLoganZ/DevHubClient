@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Channel, Members } from 'pusher-js';
 
-import { pusherClient } from './Pusher';
+import { pusherClient } from './pusher';
 import {
   setMembers,
   addMember,
@@ -11,14 +11,14 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 const ActiveChannel = () => {
   const dispatch = useAppDispatch();
-  const { members } = useAppSelector((state) => state.activeListReducer);
+  useAppSelector((state) => state.activeList.members);
 
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 
-  const login = useAppSelector((state) => state.authReducer.login);
+  const user = useAppSelector((state) => state.auth.userID);
 
   useEffect(() => {
-    if (!login) return;
+    if (!user) return;
     let channel = activeChannel;
 
     if (!channel) {
@@ -49,7 +49,7 @@ const ActiveChannel = () => {
         setActiveChannel(null);
       }
     };
-  }, [activeChannel, addMember, setMembers, removeMember, login]);
+  }, [activeChannel, addMember, setMembers, removeMember, user]);
 };
 
 export default ActiveChannel;

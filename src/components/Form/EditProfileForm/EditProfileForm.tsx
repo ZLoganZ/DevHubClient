@@ -41,7 +41,7 @@ import AddTags from '@/components/AddTags';
 import AddContacts from '@/components/AddContacts';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
@@ -53,7 +53,7 @@ const EditProfileForm = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -504,7 +504,7 @@ const EditProfileForm = () => {
               </Upload>
             </Space>
           </section>
-          <section className="addLinks mt-3">
+          <section className="links mt-3 flex items-center">
             {contacts.map((item) => {
               switch (item.key) {
                 case '0':
@@ -567,7 +567,7 @@ const EditProfileForm = () => {
               }
             })}
             <button
-              className="addLinks mt-2 px-4 py-1 cursor-pointer"
+              className="addLinks px-4 py-1 cursor-pointer"
               onClick={() => {
                 dispatch(
                   openModal({
@@ -589,7 +589,7 @@ const EditProfileForm = () => {
                 borderColor: themeColorSet.colorBg4
               }}>
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
-              Add Links
+              {contacts.length === 0 ? 'Add Contacts' : 'Edit Contacts'}
             </button>
           </section>
           <section className="inputInformation mt-5">
@@ -691,7 +691,7 @@ const EditProfileForm = () => {
               }}>
               Expertise
             </div>
-            <div className="tags flex flex-wrap">
+            <div className="tags flex flex-wrap items-center">
               {descArray.map((item, index) => {
                 if (tags.indexOf(item.title) !== -1) {
                   return (
@@ -711,7 +711,7 @@ const EditProfileForm = () => {
                 return null;
               })}
               <button
-                className="addTags mt-2 px-4 py-1 cursor-pointer"
+                className="addTags px-4 py-1 cursor-pointer"
                 style={{
                   border: '1px solid',
                   borderColor: themeColorSet.colorBg4
@@ -732,7 +732,7 @@ const EditProfileForm = () => {
                   );
                 }}>
                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                Add Tags
+                {tags.length === 0 ? 'Add Tags' : 'Edit Tags'}
               </button>
             </div>
           </section>

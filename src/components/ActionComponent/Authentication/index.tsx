@@ -1,41 +1,21 @@
-import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import LoadingLogo from '@/components/GlobalSetting/LoadingLogo';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useAppSelector } from '@/hooks/special';
 
-export const AlreadyAuth = () => {
-  const dispatch = useAppDispatch();
-
+export const NotAuth = () => {
   const location = useLocation();
 
-  const login = useAppSelector((state) => state.authReducer.login);
+  const user = useAppSelector((state) => state.auth.userID);
 
-  if (login === null) {
-    return <LoadingLogo />;
-  }
-
-  if (login === true) {
-    return <Navigate to="/" replace state={{ from: location }} />;
-  }
-
-  return <Outlet />;
+  if (user) return <Navigate to="/" replace state={{ from: location }} />;
+  else return <Outlet />;
 };
 
 export const Auth = () => {
-  const dispatch = useAppDispatch();
-
   const location = useLocation();
 
-  const login = useAppSelector((state) => state.authReducer.login);
+  const user = useAppSelector((state) => state.auth.userID);
 
-  if (login === null) {
-    return <LoadingLogo />;
-  }
-
-  if (login === false) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
-  return <Outlet />;
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
+  else return <Outlet />;
 };

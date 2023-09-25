@@ -41,7 +41,7 @@ import MyPostShare from '@/components/Post/MyPostShare';
 import MyPost from '@/components/Post/MyPost';
 
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import { RepositoryType } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -53,7 +53,7 @@ const MyProfile = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

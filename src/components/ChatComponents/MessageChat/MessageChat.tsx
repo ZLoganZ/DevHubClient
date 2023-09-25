@@ -4,8 +4,8 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { find } from 'lodash';
 import { NavLink } from 'react-router-dom';
 
-import { pusherClient } from '@/util/functions/Pusher';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { pusherClient } from '@/util/pusher';
+import { getTheme } from '@/util/theme';
 import { useIntersectionObserverNow } from '@/hooks/special';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentConversationData, useMessagesData } from '@/hooks/fetch';
@@ -24,10 +24,10 @@ interface IParams {
 
 const MessageChat = (Props: IParams) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { members } = useAppSelector((state) => state.activeListReducer);
+  const { members } = useAppSelector((state) => state.activeList);
 
   const { currentConversation, isLoadingCurrentConversation } =
     useCurrentConversationData(Props.conversationID);

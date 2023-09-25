@@ -8,7 +8,7 @@ import {
   faSnowflake
 } from '@fortawesome/free-solid-svg-icons';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
@@ -22,7 +22,7 @@ interface Props {
 
 const PopupInfoUser = ({ userInfo, userID }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

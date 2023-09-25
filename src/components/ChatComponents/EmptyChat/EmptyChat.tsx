@@ -1,8 +1,8 @@
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 
 const EmptyChat = () => {
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
     <div

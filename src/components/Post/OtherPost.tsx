@@ -24,7 +24,6 @@ import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { useIntersectionObserver } from '@/hooks/special';
@@ -34,8 +33,8 @@ import {
   useSharePost,
   useViewPost
 } from '@/hooks/mutation';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
 
@@ -48,10 +47,9 @@ interface PostProps {
 
 const OtherPost = (PostProps: PostProps) => {
   const link = PostProps.post.post_attributes.url;
-  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const change = useAppSelector((state) => state.themeReducer.change);
+  const change = useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -189,12 +187,7 @@ const OtherPost = (PostProps: PostProps) => {
 
   useIntersectionObserver(postRef, onIntersect);
 
-  // Get my userID
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
-
-  const { userID } = useAppSelector((state) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.auth);
 
   return (
     <ConfigProvider

@@ -5,7 +5,7 @@ import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
 import StyleTotal from './cssOpenPostDetail';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import MyPostDetail from '@/components/PostDetail/MyPostDetail';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentPost } from '@/hooks/mutation';
@@ -18,7 +18,7 @@ interface Props {
 
 const OpenMyPostDetail = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -107,8 +107,9 @@ const StyleTotal = styled.div`
         }
       }
     }
-    .addLinks {
+    .links {
       .addLinks {
+        border-radius: 2rem;
         :hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;
@@ -127,6 +128,11 @@ const StyleTotal = styled.div`
     .expertise {
       .addTags {
         color: ${(props) => props.theme.colorText3};
+        border-radius: 2rem;
+        :hover {
+          color: ${(props) => props.theme.colorText2};
+          transition: all 0.5s;
+        }
         :hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;

@@ -30,12 +30,11 @@ import ReactQuill from 'react-quill';
 import { NavLink } from 'react-router-dom';
 import 'react-quill/dist/quill.bubble.css';
 
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import EditPostForm from '@/components/Form/EditPostForm';
 import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import {
   useAppDispatch,
@@ -66,7 +65,7 @@ const MyPost = (PostProps: PostProps) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const change = useAppSelector((state) => state.themeReducer.change);
+  const change = useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -302,12 +301,7 @@ const MyPost = (PostProps: PostProps) => {
 
   useIntersectionObserver(postRef, onIntersect);
 
-  // Get my userID
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
-
-  const { userID } = useAppSelector((state) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.auth);
 
   return (
     <ConfigProvider

@@ -10,8 +10,8 @@ import {
   LOGIN_SAGA,
   LOGIN_WITH_GOOGLE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
-import { GetGitHubUrl } from '@/util/functions/GetGithubUrl';
-import { TOKEN, TOKEN_GITHUB } from '@/util/constants/SettingSystem';
+import { GetGitHubUrl } from '@/util/getGithubUrl';
+import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
 import { useAppDispatch } from '@/hooks/special';
 import { UserLoginDataType } from '@/types';
@@ -51,8 +51,8 @@ const Login = () => {
         // Handle the received data from the server
         const userData = event.data;
         if (userData) {
-          localStorage.setItem(TOKEN, userData.accessToken);
-          localStorage.setItem(TOKEN_GITHUB, userData.accessTokenGitHub);
+          localStorage.setItem(AUTHORIZATION, userData.accessToken);
+          localStorage.setItem(GITHUB_TOKEN, userData.accessTokenGitHub);
 
           // go to home page or redirect to previous page
           const state = location.state as { from: Location };

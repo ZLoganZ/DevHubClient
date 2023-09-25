@@ -1,5 +1,5 @@
 import { ConfigProvider, Space } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { faSun } from '@fortawesome/free-regular-svg-icons';
@@ -23,26 +23,19 @@ import {
   useCurrentConversationData,
   useFollowersData
 } from '@/hooks/fetch';
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
-  const dispatch = useAppDispatch();
-
   const { conversationID } = useParams();
 
-  const { userID } = useAppSelector((state) => state.authReducer);
-
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
+  const { userID } = useAppSelector((state) => state.auth);
 
   const { conversations, isLoadingConversations } = useConversationsData();
 

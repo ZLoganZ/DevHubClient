@@ -25,16 +25,11 @@ import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useIntersectionObserver
-} from '@/hooks/special';
+import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useDeletePost, useLikePost, useViewPost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
@@ -49,10 +44,9 @@ type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 const MyPostShare = (PostProps: PostShareProps) => {
   const link = PostProps.postShared.post_attributes.url;
-  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const change = useAppSelector((state) => state.themeReducer.change);
+  const change = useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -190,12 +184,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
 
   useIntersectionObserver(postShareRef, onIntersect);
 
-  // Get my userID
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
-
-  const { userID } = useAppSelector((state) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.auth);
 
   return (
     <ConfigProvider

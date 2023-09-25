@@ -1,8 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { userService } from '@/services/UserService';
+
+const getUserID = async () => {
+  try {
+    const { data } = await userService.getUserInfo();
+
+    return data.metadata._id;
+  } catch (error) {
+    return null;
+  }
+};
+
 const initialState = {
-  login: null,
-  userID: null
+  userID: await getUserID()
 };
 
 const authSlice = createSlice({

@@ -8,7 +8,7 @@ import Icon, {
   LikeOutlined
 } from '@ant-design/icons';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import StyleTotal from '@/components/Post/cssPost';
 import { useAppSelector } from '@/hooks/special';
 import { useLikeComment } from '@/hooks/mutation';
@@ -27,7 +27,7 @@ interface CommentProps {
 
 const CommentDetail = (Props: CommentProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
 
   const { mutateLikeComment } = useLikeComment();
 

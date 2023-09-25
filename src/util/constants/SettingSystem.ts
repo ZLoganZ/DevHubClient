@@ -1,7 +1,5 @@
 export const DOMAIN_NAME = 'http://localhost:4052/api/v1';
 
-export const TOKEN = 'authorization';
-export const TOKEN_GITHUB = 'access_token_github';
 export const USER_LOGIN = 'user_login';
 export const ID_USER = '_id';
 

@@ -37,7 +37,7 @@ import OtherPostShare from '@/components/Post/OtherPostShare';
 import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
 import descArray from '@/components/GlobalSetting/ItemComponent/Description';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 
 import { RepositoryType } from '@/types';
@@ -55,7 +55,7 @@ const Profile = (Props: Props) => {
   const { userID } = Props;
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

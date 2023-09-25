@@ -1,6 +1,6 @@
 import { ConfigProvider } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import './Day&NightSwitch.css';
 
@@ -11,7 +11,7 @@ interface Props {
 
 const DayNightSwitch = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
 
   return (

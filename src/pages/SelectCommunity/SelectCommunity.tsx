@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import { commonColor } from '@/util/cssVariable';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssSelectCommunity';
 
@@ -130,7 +130,7 @@ const SelectCommunity = () => {
   ];
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (

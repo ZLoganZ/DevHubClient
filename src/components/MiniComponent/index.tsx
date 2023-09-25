@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { MouseEventHandler, ReactNode } from 'react';
 import { Button } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssMiniComponent';
 
@@ -11,7 +11,7 @@ type ButtonNormalHoverProps = 'primary' | 'text' | 'default' | 'dashed';
 
 type ButtonActiveHoverProps = {
   children?: ReactNode;
-  onClick?: () => void;
+  onClick?: MouseEventHandler;
   loading?: boolean;
   rounded?: boolean;
   block?: boolean;
@@ -26,7 +26,7 @@ export const ButtonActiveHover = ({
   block,
   type
 }: ButtonActiveHoverProps) => {
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   return (
@@ -66,7 +66,7 @@ export const ButtonCancelHover = ({
   onClick,
   disabled
 }: ButtonCancelHoverProps) => {
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
     <StyleTotal theme={themeColorSet}>

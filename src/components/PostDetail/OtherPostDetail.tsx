@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import CommentDetail from '@/components/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
@@ -21,7 +21,7 @@ interface PostProps {
 
 const OtherPostDetail = (Props: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const [selectedCommentID, setSelectedCommentId] = useState<string | null>(

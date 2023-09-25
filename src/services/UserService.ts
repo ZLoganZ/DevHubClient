@@ -49,7 +49,7 @@ export class UserService extends BaseService {
   getRepositoryGithub = (): Promise<
     AxiosResponse<ResponseType<RepositoryType[]>>
   > => {
-    return this.getgithub(`/users/repositories`);
+    return this.getGithub(`/users/repositories`);
   };
 }
 

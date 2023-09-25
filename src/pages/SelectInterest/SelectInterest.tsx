@@ -6,7 +6,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import { CHOOSE_GET_INTEREST_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { commonColor } from '@/util/cssVariable';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssSelectInterest';
 
@@ -15,7 +15,7 @@ const SelectInterest = () => {
   let navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

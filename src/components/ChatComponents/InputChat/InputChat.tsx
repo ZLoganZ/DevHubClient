@@ -8,7 +8,7 @@ import {
   faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
@@ -19,7 +19,7 @@ interface Props {
 
 const InputChat = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const [message, setMessage] = useState('');

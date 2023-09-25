@@ -1,7 +1,6 @@
 import {
   GoogleLoginDataType,
   UserLoginDataType,
-  UserATokenType,
   UserRegisterDataType,
   VerifyCodeDataType,
   ForgotPasswordDataType,

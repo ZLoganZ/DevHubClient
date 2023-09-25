@@ -9,13 +9,13 @@ import {
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssForgotPassword';
 
 export const ForgotPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -63,7 +63,7 @@ export const ForgotPassword = () => {
 
 export const ResetPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -149,7 +149,7 @@ export const ResetPassword = () => {
 
 export const VerifyCode = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

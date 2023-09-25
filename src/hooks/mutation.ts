@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { postService } from '@/services/PostService';
 import { userService } from '@/services/UserService';
 import {
@@ -11,7 +12,7 @@ import {
   UpdatePostDataType,
   UserUpdateDataType
 } from '@/types';
-import { useAppSelector } from './special';
+import { useAppDispatch, useAppSelector } from './special';
 
 // ----------------------------- MUTATIONS -----------------------------
 
@@ -25,7 +26,7 @@ import { useAppSelector } from './special';
  * - `isSuccessCreatePost` is a boolean that indicates whether the post was successfully created.
  */
 export const useCreatePost = () => {
-  const uid = useAppSelector((state) => state.authReducer.userID);
+  const uid = useAppSelector((state) => state.auth.userID);
 
   const queryClient = useQueryClient();
 
@@ -122,7 +123,7 @@ export const useUpdatePost = () => {
         );
 
       queryClient.invalidateQueries({
-        queryKey: ['post']
+        queryKey: ['post', updatedPost.metadata._id]
       });
     }
   });
@@ -262,69 +263,6 @@ export const useSavePost = () => {
 };
 
 /**
- * The `useUpdateUser` function is a custom hook that handles updating a user's information and
- * invalidating the 'userInfo' query in the query cache upon success.
- * @returns The function `useUpdateUser` returns an object with the following properties:
- * - `mutateUpdateUser` is a function that handles the mutation of the user.
- * - `isLoadingUpdateUser` is a boolean that indicates whether the user is still loading.
- * - `isErrorUpdateUser` is a boolean that indicates whether there is an error.
- * - `isSuccessUpdateUser` is a boolean that indicates whether the user was successfully updated.
- */
-export const useUpdateUser = () => {
-  const queryClient = useQueryClient();
-
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
-    mutationFn: async (user: UserUpdateDataType) => {
-      await userService.updateUser(user);
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ['userInfo']
-      });
-    }
-  });
-  return {
-    mutateUpdateUser: mutate,
-    isLoadingUpdateUser: isLoading,
-    isErrorUpdateUser: isError,
-    isSuccessUpdateUser: isSuccess
-  };
-};
-
-/**
- * The `useFollowUser` function is a custom hook that handles following a user, including making the
- * API call, handling loading and error states, and invalidating relevant queries in the query cache.
- * @returns The `useFollowUser` function returns an object with the following properties:
- * - `mutateFollowUser` is a function that handles the mutation of the follow user.
- * - `isLoadingFollowUser` is a boolean that indicates whether the follow user is still loading.
- * - `isErrorFollowUser` is a boolean that indicates whether there is an error.
- * - `isSuccessFollowUser` is a boolean that indicates whether the follow user was successful.
- */
-export const useFollowUser = () => {
-  const queryClient = useQueryClient();
-
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
-    mutationFn: async (userID: string) => {
-      await userService.followUser(userID);
-    },
-    onSuccess(_, userID) {
-      queryClient.invalidateQueries({
-        queryKey: ['otherUserInfo', userID]
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['userInfo']
-      });
-    }
-  });
-  return {
-    mutateFollowUser: mutate,
-    isLoadingFollowUser: isLoading,
-    isErrorFollowUser: isError,
-    isSuccessFollowUser: isSuccess
-  };
-};
-
-/**
  * The `useCommentPost` function is a custom hook that handles the creation of a new comment and
  * invalidates the comments query cache upon success.
  * @returns The `useCommentPost` function returns an object with the following properties:
@@ -382,5 +320,72 @@ export const useLikeComment = () => {
     isLoadingLikeComment: isLoading,
     isErrorLikeComment: isError,
     isSuccessLikeComment: isSuccess
+  };
+};
+
+/**
+ * The `useUpdateUser` function is a custom hook that handles updating a user's information and
+ * invalidating the 'userInfo' query in the query cache upon success.
+ * @returns The function `useUpdateUser` returns an object with the following properties:
+ * - `mutateUpdateUser` is a function that handles the mutation of the user.
+ * - `isLoadingUpdateUser` is a boolean that indicates whether the user is still loading.
+ * - `isErrorUpdateUser` is a boolean that indicates whether there is an error.
+ * - `isSuccessUpdateUser` is a boolean that indicates whether the user was successfully updated.
+ */
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  const dispatch = useAppDispatch();
+
+  const { mutate, isLoading, isError, isSuccess } = useMutation({
+    mutationFn: async (user: UserUpdateDataType) => {
+      await userService.updateUser(user);
+    },
+    onSuccess() {
+      dispatch(setLoading(false));
+      dispatch(closeDrawer());
+      queryClient.invalidateQueries({
+        queryKey: ['userInfo']
+      });
+    }
+  });
+  return {
+    mutateUpdateUser: mutate,
+    isLoadingUpdateUser: isLoading,
+    isErrorUpdateUser: isError,
+    isSuccessUpdateUser: isSuccess
+  };
+};
+
+/**
+ * The `useFollowUser` function is a custom hook that handles following a user, including making the
+ * API call, handling loading and error states, and invalidating relevant queries in the query cache.
+ * @returns The `useFollowUser` function returns an object with the following properties:
+ * - `mutateFollowUser` is a function that handles the mutation of the follow user.
+ * - `isLoadingFollowUser` is a boolean that indicates whether the follow user is still loading.
+ * - `isErrorFollowUser` is a boolean that indicates whether there is an error.
+ * - `isSuccessFollowUser` is a boolean that indicates whether the follow user was successful.
+ */
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.followUser(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({
+        queryKey: ['otherUserInfo', userID]
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['userInfo']
+      });
+    }
+  });
+  return {
+    mutateFollowUser: mutate,
+    isLoadingFollowUser: isLoading,
+    isErrorFollowUser: isError,
+    isSuccessFollowUser: isSuccess
   };
 };

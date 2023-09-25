@@ -12,8 +12,8 @@ import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleTotal from './cssSharedMedia';
 import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { pusherClient } from '@/util/functions/Pusher';
+import { getTheme } from '@/util/theme';
+import { pusherClient } from '@/util/pusher';
 import { useAppSelector } from '@/hooks/special';
 
 interface SharedMediaProps {
@@ -21,7 +21,7 @@ interface SharedMediaProps {
 }
 
 const SharedMedia = (Props: SharedMediaProps) => {
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { isLoadingCurrentConversation, currentConversation } =

@@ -6,7 +6,7 @@ import { DownOutlined } from '@ant-design/icons';
 
 import StyleTotal from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
 import { ButtonActiveHover } from '@/components/MiniComponent';
@@ -22,7 +22,7 @@ const AddContacts = (Props: Props) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

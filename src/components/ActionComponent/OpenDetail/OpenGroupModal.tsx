@@ -3,7 +3,7 @@ import { useState, useLayoutEffect } from 'react';
 
 import StyleTotal from './cssOpenPostDetailModal';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import {
   ButtonActiveHover,
@@ -20,7 +20,7 @@ interface Props {
 const OpenGroupModal = (Props: Props) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

@@ -20,7 +20,7 @@ const drawerHOCSlide = createSlice({
         ComponentContentDrawer: action.payload.component
       };
     },
-    closeDrawer: (state, action) => {
+    closeDrawer: (state) => {
       return {
         ...state,
         visible: false
@@ -32,18 +32,12 @@ const drawerHOCSlide = createSlice({
         callBackSubmit: action.payload
       };
     },
-    submitDrawer: (state, action) => {},
     setLoading: (state, action) => {
       return { ...state, loading: action.payload };
     }
   }
 });
 
-export const {
-  openDrawer,
-  submitDrawer,
-  callBackSubmitDrawer,
-  closeDrawer,
-  setLoading
-} = drawerHOCSlide.actions;
+export const { openDrawer, callBackSubmitDrawer, closeDrawer, setLoading } =
+  drawerHOCSlide.actions;
 export default drawerHOCSlide.reducer;

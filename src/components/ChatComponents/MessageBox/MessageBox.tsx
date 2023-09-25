@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 
 import StyleTotal from './cssMessageBox';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
@@ -15,7 +15,7 @@ interface MessageBoxProps {
 
 const MessageBox = (Props: MessageBoxProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { userInfo } = useUserInfo();

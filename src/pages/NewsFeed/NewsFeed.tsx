@@ -12,7 +12,7 @@ import NewPost from '@/components/NewPost';
 import OtherPost from '@/components/Post/OtherPost';
 import LoadingNewFeed from '@/components/GlobalSetting/LoadingNewFeed';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
@@ -24,12 +24,20 @@ const popular_time = [
     key: '1'
   },
   {
-    label: 'Week',
+    label: 'This week',
     key: '2'
   },
   {
-    label: 'Month',
+    label: 'This month',
     key: '3'
+  },
+  {
+    label: 'This year',
+    key: '4'
+  },
+  {
+    label: 'All time',
+    key: '5'
   }
 ];
 
@@ -85,7 +93,7 @@ const community = [
 
 const NewFeed = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -104,7 +112,7 @@ const NewFeed = () => {
         behavior: 'smooth'
       });
     }
-    if (isLoadingAllPostsNewsfeed === false && isFetchingAllPostsNewsfeed) {
+    if (!isLoadingAllPostsNewsfeed && isFetchingAllPostsNewsfeed) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -113,7 +121,7 @@ const NewFeed = () => {
   }, [isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed]);
 
   const [popularOpen, setPopularOpen] = useState(false);
-  const [popularvalue, setPopularvalue] = useState('Today');
+  const [popularvalue, setPopularvalue] = useState('All time');
 
   const popular = [...(allPostsNewsfeed || [])]
     .filter((item) => item.type !== 'Share')
@@ -125,13 +133,19 @@ const NewFeed = () => {
       if (popularvalue === 'Today') {
         return diffDays <= 1;
       }
-      if (popularvalue === 'Week') {
+      if (popularvalue === 'This week') {
         return diffDays <= 7;
       }
-      if (popularvalue === 'Month') {
+      if (popularvalue === 'This month') {
         return diffDays <= 30;
       }
-      return diffDays <= 1;
+      if (popularvalue === 'This year') {
+        return diffDays <= 365;
+      }
+      if (popularvalue === 'All time') {
+        return true;
+      }
+      return true;
     })
     .sort(
       (a, b) => b.post_attributes.view_number - a.post_attributes.view_number
@@ -247,8 +261,22 @@ const NewFeed = () => {
                     style={{
                       backgroundColor: themeColorSet.colorBg2,
                       borderEndEndRadius: 10,
+                      borderEndStartRadius: 10,
                       padding: 10
                     }}>
+                    {popular.length === 0 && (
+                      <div className="flex justify-center items-center no-post">
+                        <span
+                          style={{
+                            fontSize: '1.2rem',
+                            fontWeight: 600,
+                            color: themeColorSet.colorText1
+                          }}>
+                          No popular post {popularvalue === 'All time' && 'for'}{' '}
+                          {popularvalue.toLowerCase()}
+                        </span>
+                      </div>
+                    )}
                     {popular.map((item, index) => {
                       return (
                         <div key={index}>

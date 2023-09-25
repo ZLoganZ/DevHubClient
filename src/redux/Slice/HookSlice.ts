@@ -4,7 +4,7 @@ const initialState = {
   navigate: () => {},
   dispatch: () => {},
   useSelector: () => {},
-  location: () => {},
+  location: () => {}
 };
 
 const functionSlice = createSlice({
@@ -22,9 +22,10 @@ const functionSlice = createSlice({
     },
     setLocation: (state, action) => {
       return { ...state, location: action.payload };
-    },
-  },
+    }
+  }
 });
 
-export const { setNavigate, setDispatch, setUseSelector, setLocation } = functionSlice.actions;
+export const { setNavigate, setDispatch, setUseSelector, setLocation } =
+  functionSlice.actions;
 export default functionSlice.reducer;

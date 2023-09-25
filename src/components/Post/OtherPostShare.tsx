@@ -14,13 +14,12 @@ import { NavLink } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.bubble.css';
 
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
 import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { useIntersectionObserver } from '@/hooks/special';
 import { useLikePost, useViewPost } from '@/hooks/mutation';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleTotal from './cssPost';
 
@@ -32,10 +31,9 @@ interface PostShareProps {
 
 const PostShare = (PostProps: PostShareProps) => {
   const link = PostProps.postShared.post_attributes.post?.post_attributes.url;
-  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const change = useAppSelector((state) => state.themeReducer.change);
+  const change = useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -83,7 +81,7 @@ const PostShare = (PostProps: PostShareProps) => {
   const date = formatDateTime(shareAt);
 
   const postCreatedAt = new Date(
-    PostProps.postShared.post_attributes.post?.createdAt!
+    PostProps.postShared.post_attributes.post!.createdAt
   );
   //format date to get full date
   const postDate = formatDateTime(postCreatedAt);
@@ -132,12 +130,7 @@ const PostShare = (PostProps: PostShareProps) => {
 
   useIntersectionObserver(postShareRef, onIntersect);
 
-  // Get my userID
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
-
-  const { userID } = useAppSelector((state) => state.authReducer);
+  const { userID } = useAppSelector((state) => state.auth);
 
   return (
     <ConfigProvider

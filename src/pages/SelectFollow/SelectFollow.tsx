@@ -6,7 +6,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import RenderPeopleItem from './RenderPeopleItem';
 import { commonColor } from '@/util/cssVariable';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { GET_SHOULD_FOLLOWERS_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssSelectFollow';
@@ -15,7 +15,7 @@ const SelectFollow = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -25,7 +25,7 @@ const SelectFollow = () => {
   }, []);
 
   const peopleArray = useAppSelector(
-    (state) => state.getStartedReducer.arrayShouldFollowers
+    (state) => state.getStarted.arrayShouldFollowers
   );
 
   return (

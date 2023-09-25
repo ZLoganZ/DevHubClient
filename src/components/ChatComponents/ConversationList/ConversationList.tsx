@@ -7,8 +7,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
 import StyleTotal from './cssConversationList';
-import { pusherClient } from '@/util/functions/Pusher';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { pusherClient } from '@/util/pusher';
+import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -26,13 +26,13 @@ interface ConversationListProps {
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  useAppSelector((state) => state.activeListReducer.members);
+  useAppSelector((state) => state.activeList.members);
   const { userInfo } = useUserInfo();
 
   const [items, setItems] = useState(Props.initialItems);
@@ -183,7 +183,7 @@ const ConversationList = (Props: ConversationListProps) => {
   // Open OtherPostDetailModal
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
 
-  const { visible } = useAppSelector((state) => state.modalHOCReducer);
+  const { visible } = useAppSelector((state) => state.modalHOC);
 
   useEffect(() => {
     if (!visible && isOpenPostDetail) {

@@ -27,8 +27,8 @@ import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import DayNightSwitch from '@/components/Day&NightSwitch';
 import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
-import { pusherClient } from '@/util/functions/Pusher';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { pusherClient } from '@/util/pusher';
+import { getTheme } from '@/util/theme';
 
 import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -36,7 +36,7 @@ import StyleTotal from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   const { algorithm } = getTheme();

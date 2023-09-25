@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import {
   flex_center_column,
   darkThemeSet,
-  commonColor,
-} from "@/util/cssVariable";
+  commonColor
+} from '@/util/cssVariable';
 
 const StyleTotal = styled.div`
   background-color: ${darkThemeSet.colorBg1};
@@ -22,7 +22,7 @@ const StyleTotal = styled.div`
     height: 85%;
     border-radius: 15px;
     overflow: hidden;
-    background-image: url("./images/registerPage/background.jpg");
+    background-image: url('./images/registerPage/background.jpg');
     background-size: cover;
     .cover {
       width: 100%;

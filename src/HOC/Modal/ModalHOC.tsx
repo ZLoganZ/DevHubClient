@@ -1,6 +1,6 @@
 import { ConfigProvider, Modal } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import {
   ButtonActiveHover,
@@ -12,13 +12,13 @@ import StyleTotal from './cssModalHOC';
 const ModalHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Modal
   const { visible, ComponentContentModal, footer, title, handleSubmit } =
-    useAppSelector((state) => state.modalHOCReducer);
+    useAppSelector((state) => state.modalHOC);
 
   const onClose = () => {
     dispatch(closeModal());
@@ -61,9 +61,7 @@ const ModalHOC = () => {
               ) : (
                 footer
               )
-            }
-            // onOk={handleSubmit}
-          >
+            }>
             {ComponentContentModal}
           </Modal>
         </div>

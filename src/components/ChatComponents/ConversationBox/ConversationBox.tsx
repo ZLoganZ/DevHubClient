@@ -5,7 +5,7 @@ import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 
 interface ConversationBoxProps {
@@ -17,7 +17,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
   const { userInfo } = useUserInfo();
 
-  useAppSelector((state) => state.themeReducer.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const lastMessage = useMemo(() => {
