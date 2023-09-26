@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ConfigProvider, Dropdown, Button, Input, Avatar } from 'antd';
+import { Dropdown, Button, Input, Avatar, ConfigProvider } from 'antd';
 import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import StyleTotal from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
-import contactArrays from '@/components/GlobalSetting/ItemComponent/Contact';
+import contactArrays from '@/util/Descriptions/Contacts';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ContactType } from '@/types';
@@ -23,7 +23,6 @@ const AddContacts = (Props: Props) => {
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const contactArray = [...contactArrays];
@@ -143,7 +142,6 @@ const AddContacts = (Props: Props) => {
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           colorBorder: themeColorSet.colorBg4,
           controlHeight: 40
         }
@@ -151,7 +149,7 @@ const AddContacts = (Props: Props) => {
       <StyleTotal theme={themeColorSet}>
         <div className="flex flex-col mt-7">
           {addLinkArrTemp.map((item, index) => (
-            <div className="flex flex-row items-center mb-4">
+            <div key={index} className="flex flex-row items-center mb-4">
               <Dropdown
                 menu={{
                   items: contactArray,
@@ -177,7 +175,7 @@ const AddContacts = (Props: Props) => {
                 </a>
               </Dropdown>
               <Input
-                key={index}
+                key={index + '1'}
                 className="w-full ml-2 pl-2 inputlink"
                 placeholder={contactArray[parseInt(item.key)].linkDefault}
                 defaultValue={addLinkArr[index]?.link}
@@ -195,7 +193,7 @@ const AddContacts = (Props: Props) => {
                 }}
               />
               <Input
-                key={index}
+                key={index + '2'}
                 className={
                   addTooltips[index].state
                     ? 'w-full ml-2 pl-2 inputlink'

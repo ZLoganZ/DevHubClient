@@ -1,9 +1,6 @@
-import { ConfigProvider } from 'antd';
 import { useState, useLayoutEffect } from 'react';
 
-import StyleTotal from './cssOpenPostDetailModal';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
-import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import {
   ButtonActiveHover,
@@ -21,8 +18,6 @@ const OpenGroupModal = (Props: Props) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
-  const { themeColorSet } = getTheme();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,16 +80,7 @@ const OpenGroupModal = (Props: Props) => {
     );
   }, [isLoading, name, membersGroup]);
 
-  return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div></div>
-      </StyleTotal>
-    </ConfigProvider>
-  );
+  return <></>;
 };
 
 export default OpenGroupModal;

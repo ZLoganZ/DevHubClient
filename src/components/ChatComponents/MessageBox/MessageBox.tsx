@@ -1,9 +1,9 @@
 import { Image } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 
 import StyleTotal from './cssMessageBox';
 import { getTheme } from '@/util/theme';
+import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
@@ -38,18 +38,6 @@ const MessageBox = (Props: MessageBoxProps) => {
         ? ''
         : 'bg-gray-700 text-white mr-7'
     }`;
-
-  const formatDateTime = (date: Date) => {
-    if (isToday(date)) {
-      return format(date, 'p'); // Display only time for today
-    } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, 'iiii, p'); // Display full day of the week and time for this week
-    } else if (isThisYear(date)) {
-      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
-    } else {
-      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
-    }
-  };
 
   return (
     <StyleTotal theme={themeColorSet}>
@@ -91,7 +79,7 @@ const MessageBox = (Props: MessageBoxProps) => {
               style={{
                 color: themeColorSet.colorText2
               }}>
-              {formatDateTime(new Date(Props?.data?.createdAt))}
+              {formatDateTime(Props.data.createdAt)}
             </div>
           </div>
           {Props.isLast && isOwn && seenList.length > 0 && (

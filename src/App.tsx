@@ -7,7 +7,7 @@ import {
   setUseSelector
 } from '@/redux/Slice/HookSlice';
 
-import { useAppDispatch, useAppSelector } from './hooks/special';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
@@ -38,17 +38,14 @@ import NotFound404 from '@/pages/NotFound404';
 import MainLayout from '@/layouts/MainLayout';
 
 const App = () => {
-  //Set một số tham số cần thiết trên toàn cục
   const dispatch = useAppDispatch();
   dispatch(setDispatch(dispatch));
 
-  const navigate = useNavigate();
-  dispatch(setNavigate(navigate));
-
-  const location = useLocation();
-  dispatch(setLocation(location));
-
   dispatch(setUseSelector(useAppSelector));
+
+  dispatch(setNavigate(useNavigate()));
+
+  dispatch(setLocation(useLocation()));
 
   return (
     <>

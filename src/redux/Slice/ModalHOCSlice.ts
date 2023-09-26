@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   title: '',
+  type: '',
   visible: false,
   ComponentContentModal: null,
   footer: null,
@@ -16,6 +17,7 @@ const modalHOCSlide = createSlice({
       return {
         ...state,
         title: action.payload.title,
+        type: action.payload.type,
         visible: true,
         ComponentContentModal: action.payload.component,
         footer: action.payload.footer

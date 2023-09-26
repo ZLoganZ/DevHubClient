@@ -1,4 +1,3 @@
-import { MouseEventHandler, ReactNode } from 'react';
 import { Button } from 'antd';
 
 import { getTheme } from '@/util/theme';
@@ -10,8 +9,8 @@ import StyleTotal from './cssMiniComponent';
 type ButtonNormalHoverProps = 'primary' | 'text' | 'default' | 'dashed';
 
 type ButtonActiveHoverProps = {
-  children?: ReactNode;
-  onClick?: MouseEventHandler;
+  children?: React.ReactNode;
+  onClick?: React.MouseEventHandler;
   loading?: boolean;
   rounded?: boolean;
   block?: boolean;
@@ -56,12 +55,14 @@ export const ButtonActiveNonHover = () => {
 // ===========================================
 
 type ButtonCancelHoverProps = {
-  children?: ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
+  className?: string;
 };
 
 export const ButtonCancelHover = ({
+  className,
   children,
   onClick,
   disabled
@@ -71,7 +72,7 @@ export const ButtonCancelHover = ({
   return (
     <StyleTotal theme={themeColorSet}>
       <Button
-        className="ButtonCancelHover font-bold px-6 py-2 rounded-3xl"
+        className={`ButtonCancelHover font-bold px-6 py-2 rounded-3xl ${className}`}
         onClick={onClick}
         style={{ height: '100%' }}
         disabled={disabled}>

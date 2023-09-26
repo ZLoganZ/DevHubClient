@@ -1,7 +1,7 @@
 import { ConfigProvider, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import descArray from '@/components/GlobalSetting/ItemComponent/Description';
+import descArray from '@/util/Descriptions/Tags';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 
 import { CHOOSE_GET_INTEREST_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';

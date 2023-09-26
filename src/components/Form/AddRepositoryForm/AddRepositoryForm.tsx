@@ -22,7 +22,6 @@ const AddRepositoryForm = (Props: ReposProps) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [access_token_github, setAccess_token_github] = useState(
@@ -123,8 +122,8 @@ const AddRepositoryForm = (Props: ReposProps) => {
               {item.private ? 'Private' : 'Public'}
             </span>
           </div>
-          <div className="bottom items-center">
-            <span className="mr-3">
+          <div className="bottom flex items-center">
+            <span className="mr-3 flex items-center">
               <span className="mr-2 text-2xl" style={{ color: colorLanguage }}>
                 •
               </span>
@@ -150,18 +149,19 @@ const AddRepositoryForm = (Props: ReposProps) => {
             }}>
             <Checkbox
               defaultChecked={newRepositories.some((repo) => {
-                return repo.id == item.id;
+                return repo.id === item.id;
               })}
               onChange={(e) => {
                 if (e.target.checked) {
                   newRepositories.push(item);
                 } else {
                   newRepositories.splice(
-                    newRepositories.findIndex((repo) => repo.id == item.id),
+                    newRepositories.findIndex((repo) => repo.id === item.id),
                     1
                   );
                 }
-              }}></Checkbox>
+              }}
+            />
           </ConfigProvider>
         </div>
       </div>
@@ -169,41 +169,36 @@ const AddRepositoryForm = (Props: ReposProps) => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div className="addRepositories">
-          {!access_token_github || repos.length === 0 ? (
-            <div className="py-20">
-              <Spin tip="Loading" size="large">
-                <div className="content" />
-              </Spin>
+    <StyleTotal theme={themeColorSet}>
+      <div className="addRepositories">
+        {!access_token_github || repos.length === 0 ? (
+          <div className="py-20">
+            <Spin tip="Loading" size="large">
+              <div className="content" />
+            </Spin>
+          </div>
+        ) : (
+          // Nếu có access_token_github
+          <div>
+            <div
+              className="title mt-5"
+              style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
+              Select the repositories you want to feature
             </div>
-          ) : (
-            // Nếu có access_token_github
-            <div>
-              <div
-                className="title mt-5"
-                style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
-                Select the repositories you want to feature
-              </div>
-              <div
-                className="repositories mt-5 mb-6 px-2"
-                style={{
-                  maxHeight: '402px',
-                  overflow: 'auto'
-                }}>
-                {repos.map((item, index) => {
-                  return renderItemRepos(item, index);
-                })}
-              </div>
+            <div
+              className="repositories mt-5 mb-6 px-2"
+              style={{
+                maxHeight: '402px',
+                overflow: 'auto'
+              }}>
+              {repos.map((item, index) => {
+                return renderItemRepos(item, index);
+              })}
             </div>
-          )}
-        </div>
-      </StyleTotal>
-    </ConfigProvider>
+          </div>
+        )}
+      </div>
+    </StyleTotal>
   );
 };
 

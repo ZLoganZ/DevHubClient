@@ -199,6 +199,7 @@ export type CommentType = {
   likes: LikeType[];
   like_number: number;
   dislike_number: number;
+  createdAt: string;
 };
 
 export type SelectedCommentValues = {

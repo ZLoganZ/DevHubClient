@@ -11,12 +11,12 @@ import {
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
-import LoadingConversation from '@/components/GlobalSetting/LoadingConversation';
+import LoadingConversation from '@/components/Loading/LoadingConversation';
+import LoadingChat from '@/components/Loading/LoadingChat';
 import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import InputChat from '@/components/ChatComponents/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
-import LoadingChat from '@/components/GlobalSetting/LoadingChat';
 
 import {
   useConversationsData,

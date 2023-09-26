@@ -30,32 +30,30 @@ const DrawerHOC = () => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        <div>
-          <Drawer
-            title={title}
-            width={720}
-            onClose={onClose}
-            open={visible}
-            footer={
-              <div style={{ textAlign: 'right' }}>
-                <Space>
-                  <ButtonCancelHover onClick={onClose} disabled={loading}>
-                    Cancel
-                  </ButtonCancelHover>
-                  <ButtonActiveHover
-                    onClick={() => {
-                      callBackSubmit();
-                    }}
-                    loading={loading}
-                    rounded>
-                    Submit
-                  </ButtonActiveHover>
-                </Space>
-              </div>
-            }>
-            {ComponentContentDrawer}
-          </Drawer>
-        </div>
+        <Drawer
+          title={title}
+          width={720}
+          onClose={onClose}
+          open={visible}
+          footer={
+            <div style={{ textAlign: 'right' }}>
+              <Space>
+                <ButtonCancelHover onClick={onClose} disabled={loading}>
+                  Cancel
+                </ButtonCancelHover>
+                <ButtonActiveHover
+                  onClick={() => {
+                    callBackSubmit();
+                  }}
+                  loading={loading}
+                  rounded>
+                  Submit
+                </ButtonActiveHover>
+              </Space>
+            </div>
+          }>
+          {ComponentContentDrawer}
+        </Drawer>
       </StyleTotal>
     </ConfigProvider>
   );

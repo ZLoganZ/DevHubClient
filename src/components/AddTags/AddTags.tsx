@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ConfigProvider } from 'antd';
 
 import StyleTotal from './cssAddTags';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import descArrays from '@/components/GlobalSetting/ItemComponent/Description';
+import descArrays from '@/util/Descriptions/Tags';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 interface Props {
@@ -17,7 +16,6 @@ const AddTags = (Props: Props) => {
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const descArray = [...descArrays];
@@ -36,39 +34,34 @@ const AddTags = (Props: Props) => {
   }, [addTagArr]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div className="flex flex-wrap">
-          {descArray.map((item, index) => (
-            <span
-              key={index}
-              className={
-                addTagArr.indexOf(item.title) !== -1
-                  ? 'itemAddTag mx-2 my-2 px-4 py-2 active'
-                  : 'itemAddTag mx-2 my-2 px-4 py-2'
+    <StyleTotal theme={themeColorSet}>
+      <div className="flex flex-wrap">
+        {descArray.map((item, index) => (
+          <span
+            key={index}
+            className={
+              addTagArr.indexOf(item.title) !== -1
+                ? 'itemAddTag mx-2 my-2 px-4 py-2 active'
+                : 'itemAddTag mx-2 my-2 px-4 py-2'
+            }
+            onClick={() => {
+              if (addTagArr.includes(item.title)) {
+                //   addTagArr.splice(addTagArr.indexOf(item.title), 1);
+                setAddTagArr(addTagArrTemp.filter((i) => i !== item.title));
+                return;
+              } else {
+                //   addTagArr.push(item.title);
+                setAddTagArr([...addTagArr, item.title]);
+                addTagArrTemp = [...addTagArr, item.title];
+                return;
               }
-              onClick={() => {
-                if (addTagArr.includes(item.title)) {
-                  //   addTagArr.splice(addTagArr.indexOf(item.title), 1);
-                  setAddTagArr(addTagArrTemp.filter((i) => i !== item.title));
-                  return;
-                } else {
-                  //   addTagArr.push(item.title);
-                  setAddTagArr([...addTagArr, item.title]);
-                  addTagArrTemp = [...addTagArr, item.title];
-                  return;
-                }
-              }}>
-              <span className="mr-2">{item.svg}</span>
-              <span>{item.title}</span>
-            </span>
-          ))}
-        </div>
-      </StyleTotal>
-    </ConfigProvider>
+            }}>
+            <span className="mr-2">{item.svg}</span>
+            <span>{item.title}</span>
+          </span>
+        ))}
+      </div>
+    </StyleTotal>
   );
 };
 

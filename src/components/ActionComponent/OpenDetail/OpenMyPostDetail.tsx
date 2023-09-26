@@ -1,4 +1,4 @@
-import { Avatar, ConfigProvider, Input, Popover, Row, Col } from 'antd';
+import { Avatar, Input, Popover, Row, Col } from 'antd';
 import { useMemo, useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,6 @@ interface Props {
 const OpenMyPostDetail = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [commentContent, setCommentContent] = useState('');
@@ -43,6 +42,8 @@ const OpenMyPostDetail = (Props: Props) => {
   };
 
   const handleSubmitComment = () => {
+    if (checkEmpty()) return;
+
     mutateCommentPost({
       content: commentContent,
       post: Props.post._id,
@@ -68,10 +69,10 @@ const OpenMyPostDetail = (Props: Props) => {
       <MyPostDetail
         handleData={handleData}
         post={Props.post}
-        userInfo={Props.post?.post_attributes.user}
+        userInfo={Props.post.post_attributes.user}
         data={data}
-        isShared={Props.post?.type === 'Share'}
-        ownerInfo={Props.post?.post_attributes.owner_post}
+        isShared={Props.post.type === 'Share'}
+        ownerInfo={Props.post.post_attributes.owner_post}
       />
     ),
     [Props.post, data]
@@ -141,20 +142,23 @@ const OpenMyPostDetail = (Props: Props) => {
                   />
                 </span>
               </Popover>
-            }></Input>
-          <span
-            className="sendComment cursor-pointer hover:text-blue-700"
-            {...(checkEmpty()
-              ? {
-                  style: {
-                    color: 'gray',
-                    cursor: 'not-allowed'
-                  }
-                }
-              : { transition: 'all 0.3s' })}
-            onClick={handleSubmitComment}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </span>
+            }
+            suffix={
+              <span
+                className="cursor-pointer hover:text-blue-700"
+                {...(checkEmpty()
+                  ? {
+                      style: {
+                        color: 'gray',
+                        cursor: 'not-allowed'
+                      }
+                    }
+                  : { transition: 'all 0.3s' })}
+                onClick={handleSubmitComment}>
+                <FontAwesomeIcon icon={faPaperPlane} />
+              </span>
+            }
+          />
         </div>
       </div>
     ),
@@ -162,25 +166,20 @@ const OpenMyPostDetail = (Props: Props) => {
   );
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <Row className="py-4">
-          <Col offset={3} span={18}>
-            <div
-              style={{
-                backgroundColor: themeColorSet.colorBg2
-              }}
-              className="rounded-lg">
-              {memoizedComponent}
-              {memoizedInputComment}
-            </div>
-          </Col>
-        </Row>
-      </StyleTotal>
-    </ConfigProvider>
+    <StyleTotal theme={themeColorSet}>
+      <Row className="py-4">
+        <Col offset={3} span={18}>
+          <div
+            style={{
+              backgroundColor: themeColorSet.colorBg2
+            }}
+            className="rounded-lg">
+            {memoizedComponent}
+            {memoizedInputComment}
+          </div>
+        </Col>
+      </Row>
+    </StyleTotal>
   );
 };
 

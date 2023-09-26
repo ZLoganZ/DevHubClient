@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import Quill from 'quill';
-import { ConfigProvider } from 'antd';
 import ImageCompress from 'quill-image-compress';
 import 'react-quill/dist/quill.snow.css';
 
@@ -29,7 +28,6 @@ const QuillEdit = (Props: QuillEditProps) => {
   const searchRef = useRef<any>(null);
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [value, setValue] = useState<any>(Props.content);
@@ -99,14 +97,9 @@ const QuillEdit = (Props: QuillEditProps) => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div id="editorDrawer" />
-      </StyleTotal>
-    </ConfigProvider>
+    <StyleTotal theme={themeColorSet}>
+      <div id="editorDrawer" />
+    </StyleTotal>
   );
 };
 

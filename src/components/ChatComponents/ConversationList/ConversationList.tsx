@@ -27,7 +27,6 @@ interface ConversationListProps {
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
@@ -218,154 +217,143 @@ const ConversationList = (Props: ConversationListProps) => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        {isOpenPostDetail && <OpenGroupModal users={Props.followers} />}
-        <div className="searchChat h-screen">
-          <Space
-            className="myInfo flex justify-between items-center py-4 px-3"
-            style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '12%'
-            }}>
-            <div className="flex">
+    <StyleTotal theme={themeColorSet}>
+      {isOpenPostDetail && <OpenGroupModal users={Props.followers} />}
+      <div className="searchChat h-screen">
+        <Space
+          className="myInfo flex justify-between items-center py-4 px-3"
+          style={{
+            borderBottom: '1px solid',
+            borderColor: themeColorSet.colorBg4,
+            height: '12%'
+          }}>
+          <div className="flex">
+            <NavLink to={`/user/${userInfo._id}`}>
+              <div className="avatar mr-3">
+                <Avatar key={userInfo._id} user={userInfo} />
+              </div>
+            </NavLink>
+            <div className="name_career">
               <NavLink to={`/user/${userInfo._id}`}>
-                <div className="avatar mr-3">
-                  <Avatar key={userInfo._id} user={userInfo} />
+                <div
+                  className="name mb-1"
+                  style={{
+                    color: themeColorSet.colorText1,
+                    fontWeight: 600
+                  }}>
+                  {userInfo.name}
                 </div>
               </NavLink>
-              <div className="name_career">
-                <NavLink to={`/user/${userInfo._id}`}>
-                  <div
-                    className="name mb-1"
-                    style={{
-                      color: themeColorSet.colorText1,
-                      fontWeight: 600
-                    }}>
-                    {userInfo.name}
-                  </div>
-                </NavLink>
-                <div
-                  className="career"
-                  style={{
-                    color: themeColorSet.colorText3
-                  }}>
-                  UX/UI Designer
-                </div>
-              </div>
-            </div>
-            <div
-              className="iconPlus cursor-pointer"
-              onClick={() => setIsOpenPostDetail(!isOpenPostDetail)}>
-              <FontAwesomeIcon
-                className="text-xl"
-                icon={faUsersLine}
-                color={themeColorSet.colorText1}
-              />
-            </div>
-          </Space>
-          <div
-            className="searchInput px-3 py-4 w-full flex justify-between items-center"
-            style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '11%'
-            }}>
-            <div className="input flex items-center w-full">
               <div
-                className="iconSearch mr-2"
+                className="career"
                 style={{
                   color: themeColorSet.colorText3
                 }}>
-                <SearchOutlined className="text-2xl" />
+                UX/UI Designer
               </div>
-              <ConfigProvider
-                theme={{
-                  token: {
-                    lineWidth: 0,
-                    controlHeight: 40,
-                    borderRadius: 0
-                  }
-                }}>
-                <Input
-                  placeholder="Search"
-                  className="mr-4"
-                  style={{
-                    width: '90%'
-                  }}
-                />
-              </ConfigProvider>
             </div>
           </div>
           <div
-            className="userActive px-3 py-4 w-full"
+            className="iconPlus cursor-pointer"
+            onClick={() => setIsOpenPostDetail(!isOpenPostDetail)}>
+            <FontAwesomeIcon
+              className="text-xl"
+              icon={faUsersLine}
+              color={themeColorSet.colorText1}
+            />
+          </div>
+        </Space>
+        <div
+          className="searchInput px-3 py-4 w-full flex justify-between items-center"
+          style={{
+            borderBottom: '1px solid',
+            borderColor: themeColorSet.colorBg4,
+            height: '11%'
+          }}>
+          <div className="input flex items-center w-full">
+            <div
+              className="iconSearch mr-2"
+              style={{
+                color: themeColorSet.colorText3
+              }}>
+              <SearchOutlined className="text-2xl" />
+            </div>
+            <ConfigProvider
+              theme={{
+                token: {
+                  lineWidth: 0,
+                  controlHeight: 40,
+                  borderRadius: 0
+                }
+              }}>
+              <Input placeholder="Search" className="mr-4" />
+            </ConfigProvider>
+          </div>
+        </div>
+        <div
+          className="userActive px-3 py-4 w-full"
+          style={{
+            borderBottom: '1px solid',
+            borderColor: themeColorSet.colorBg4,
+            height: '27%'
+          }}>
+          <div
+            className="title"
             style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '27%'
+              fontWeight: 600,
+              color: themeColorSet.colorText1
             }}>
-            <div
-              className="title"
-              style={{
-                fontWeight: 600,
-                color: themeColorSet.colorText1
-              }}>
-              People
-            </div>
-            <div
-              className="listUser flex mt-5"
-              style={{
-                overflow: 'auto'
-              }}>
-              {Props.followers.map((item: any) => {
-                return (
-                  <div
-                    className="user flex flex-col items-center cursor-pointer w-1/2 mt-5"
-                    key={item._id}
-                    onClick={() => HandleOnClick(item._id)}>
-                    <div className="avatar relative">
-                      <Avatar key={item._id} user={item} />
-                    </div>
-                    <div
-                      className="name text-center mt-2"
-                      style={{
-                        fontSize: '0.9rem',
-                        color: themeColorSet.colorText1
-                      }}>
-                      {formatUsername(item.name)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            People
           </div>
           <div
-            className="userChat"
+            className="listUser flex mt-5"
             style={{
-              height: '57%',
               overflow: 'auto'
             }}>
-            {items.map(
-              (item: any) =>
-                (item.messages.length > 0 || item.isGroup) && (
-                  <NavLink to={`/message/${item._id}`}>
-                    <ConversationBox
-                      key={item._id}
-                      data={item}
-                      selected={item._id === Props.selected}
-                    />
-                  </NavLink>
-                )
-            )}
+            {Props.followers.map((item: any) => {
+              return (
+                <div
+                  className="user flex flex-col items-center cursor-pointer w-1/2 mt-5"
+                  key={item._id}
+                  onClick={() => HandleOnClick(item._id)}>
+                  <div className="avatar relative">
+                    <Avatar key={item._id} user={item} />
+                  </div>
+                  <div
+                    className="name text-center mt-2"
+                    style={{
+                      fontSize: '0.9rem',
+                      color: themeColorSet.colorText1
+                    }}>
+                    {formatUsername(item.name)}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div className="listUser"></div>
         </div>
-      </StyleTotal>
-    </ConfigProvider>
+        <div
+          className="userChat"
+          style={{
+            height: '57%',
+            overflow: 'auto'
+          }}>
+          {items.map(
+            (item: any) =>
+              (item.messages.length > 0 || item.isGroup) && (
+                <NavLink to={`/message/${item._id}`}>
+                  <ConversationBox
+                    key={item._id}
+                    data={item}
+                    selected={item._id === Props.selected}
+                  />
+                </NavLink>
+              )
+          )}
+        </div>
+        <div className="listUser"></div>
+      </div>
+    </StyleTotal>
   );
 };
 

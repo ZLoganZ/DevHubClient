@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Col, ConfigProvider, Dropdown, MenuProps, Row, Space } from 'antd';
+import { Col, Dropdown, MenuProps, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFileLines /* faUserFriends */
@@ -10,7 +10,7 @@ import { DownOutlined } from '@ant-design/icons';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import NewPost from '@/components/NewPost';
 import OtherPost from '@/components/Post/OtherPost';
-import LoadingNewFeed from '@/components/GlobalSetting/LoadingNewFeed';
+import LoadingNewFeed from '@/components/Loading/LoadingNewFeed';
 
 import { getTheme } from '@/util/theme';
 import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
@@ -94,7 +94,6 @@ const community = [
 const NewFeed = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const {
@@ -163,193 +162,187 @@ const NewFeed = () => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        {!allPostsNewsfeed ||
-        !userInfo ||
-        !popular ||
-        !community ||
-        isLoadingAllPostsNewsfeed ||
-        isFetchingAllPostsNewsfeed ? (
-          <LoadingNewFeed />
-        ) : (
-          <Row>
-            <Col offset={3} span={18}>
-              <div className="new-feed flex justify-between mt-10">
-                <div className="new-feed-left w-8/12">
-                  <div className="">
-                    <NewPost userInfo={userInfo} />
-                  </div>
-
-                  <div className="show">
-                    {allPostsNewsfeed.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          {item.type === 'Post' && (
-                            <OtherPost
-                              key={item._id}
-                              post={item}
-                              userInfo={item.post_attributes.user}
-                            />
-                          )}
-                          {item.type === 'Share' && (
-                            <OtherPostShare
-                              key={item._id}
-                              postShared={item}
-                              userInfo={item.post_attributes.user}
-                              ownerInfo={item.post_attributes.owner_post!}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+    <StyleTotal theme={themeColorSet}>
+      {!allPostsNewsfeed ||
+      !userInfo ||
+      !popular ||
+      !community ||
+      isLoadingAllPostsNewsfeed ||
+      isFetchingAllPostsNewsfeed ? (
+        <LoadingNewFeed />
+      ) : (
+        <Row>
+          <Col offset={3} span={18}>
+            <div className="new-feed flex justify-between mt-10">
+              <div className="new-feed-left w-8/12">
+                <div className="">
+                  <NewPost userInfo={userInfo} />
                 </div>
-                <div className="new-feed-right w-4/12 pl-3">
-                  <div
-                    className="popular-post flex justify-between items-center"
-                    style={{
-                      backgroundColor: themeColorSet.colorBg2,
-                      borderStartStartRadius: 10,
-                      borderStartEndRadius: 10,
-                      padding: 10
-                    }}>
-                    <span
-                      style={{
-                        fontSize: '1.2rem',
-                        fontWeight: 600,
-                        color: themeColorSet.colorText1
-                      }}>
-                      Popular Post
-                    </span>
 
-                    <Dropdown
-                      menu={{
-                        items: popular_time,
-                        onClick: handlePopularClick
-                      }}
-                      trigger={['click']}
-                      onOpenChange={handleOpenPopularChange}
-                      open={popularOpen}>
-                      <div onClick={(e) => e.preventDefault()}>
-                        <Space
-                          style={{
-                            maxWidth: 100,
-                            width: 100,
-                            fontWeight: 600,
-                            fontSize: 16,
-                            color: themeColorSet.colorText1,
-                            cursor: 'pointer'
-                          }}>
-                          <span
-                            style={{
-                              fontSize: '0.9rem',
-                              color: themeColorSet.colorText2
-                            }}>
-                            {popularvalue}
-                          </span>
-                          <DownOutlined style={{ fontSize: '0.7rem' }} />
-                        </Space>
+                <div className="show">
+                  {allPostsNewsfeed.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        {item.type === 'Post' && (
+                          <OtherPost
+                            key={item._id}
+                            post={item}
+                            userInfo={item.post_attributes.user}
+                          />
+                        )}
+                        {item.type === 'Share' && (
+                          <OtherPostShare
+                            key={item._id}
+                            postShared={item}
+                            userInfo={item.post_attributes.user}
+                            ownerInfo={item.post_attributes.owner_post!}
+                          />
+                        )}
                       </div>
-                    </Dropdown>
-                  </div>
-                  <div
-                    className="popular-post-body"
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="new-feed-right w-4/12 pl-3">
+                <div
+                  className="popular-post flex justify-between items-center"
+                  style={{
+                    backgroundColor: themeColorSet.colorBg2,
+                    borderStartStartRadius: 10,
+                    borderStartEndRadius: 10,
+                    padding: 10
+                  }}>
+                  <span
                     style={{
-                      backgroundColor: themeColorSet.colorBg2,
-                      borderEndEndRadius: 10,
-                      borderEndStartRadius: 10,
-                      padding: 10
+                      fontSize: '1.2rem',
+                      fontWeight: 600,
+                      color: themeColorSet.colorText1
                     }}>
-                    {popular.length === 0 && (
-                      <div className="flex justify-center items-center no-post">
+                    Popular Post
+                  </span>
+
+                  <Dropdown
+                    menu={{
+                      items: popular_time,
+                      onClick: handlePopularClick
+                    }}
+                    trigger={['click']}
+                    onOpenChange={handleOpenPopularChange}
+                    open={popularOpen}>
+                    <div onClick={(e) => e.preventDefault()}>
+                      <Space
+                        style={{
+                          maxWidth: 100,
+                          width: 100,
+                          fontWeight: 600,
+                          fontSize: 16,
+                          color: themeColorSet.colorText1,
+                          cursor: 'pointer'
+                        }}>
                         <span
                           style={{
-                            fontSize: '1.2rem',
-                            fontWeight: 600,
-                            color: themeColorSet.colorText1
+                            fontSize: '0.9rem',
+                            color: themeColorSet.colorText2
                           }}>
-                          No popular post {popularvalue === 'All time' && 'for'}{' '}
-                          {popularvalue.toLowerCase()}
+                          {popularvalue}
                         </span>
-                      </div>
-                    )}
-                    {popular.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          <NavLink to={`/post/${item._id}`}>
-                            <div
-                              className="popular-post-item flex items-center pt-3 pb-3"
+                        <DownOutlined style={{ fontSize: '0.7rem' }} />
+                      </Space>
+                    </div>
+                  </Dropdown>
+                </div>
+                <div
+                  className="popular-post-body"
+                  style={{
+                    backgroundColor: themeColorSet.colorBg2,
+                    borderEndEndRadius: 10,
+                    borderEndStartRadius: 10,
+                    padding: 10
+                  }}>
+                  {popular.length === 0 && (
+                    <div className="flex justify-center items-center no-post">
+                      <span
+                        style={{
+                          fontSize: '1.2rem',
+                          fontWeight: 600,
+                          color: themeColorSet.colorText1
+                        }}>
+                        No popular post {popularvalue === 'All time' && 'for'}{' '}
+                        {popularvalue.toLowerCase()}
+                      </span>
+                    </div>
+                  )}
+                  {popular.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <NavLink to={`/post/${item._id}`}>
+                          <div
+                            className="popular-post-item flex items-center pt-3 pb-3"
+                            style={{
+                              borderBottom: '1px solid',
+                              borderColor: themeColorSet.colorBg4
+                            }}>
+                            <img
                               style={{
-                                borderBottom: '1px solid',
-                                borderColor: themeColorSet.colorBg4
-                              }}>
-                              <img
+                                width: 50,
+                                height: 50,
+                                borderRadius: 50,
+                                marginLeft: 10,
+                                objectFit: 'cover'
+                              }}
+                              className="popular-post-item-image"
+                              src={`${item.post_attributes.user.user_image}`}
+                              alt=""
+                            />
+                            <div className="content ml-4  ">
+                              <div
+                                className="name"
                                 style={{
-                                  width: 50,
-                                  height: 50,
-                                  borderRadius: 50,
-                                  marginLeft: 10,
-                                  objectFit: 'cover'
-                                }}
-                                className="popular-post-item-image"
-                                src={`${item.post_attributes.user.user_image}`}
-                                alt=""
-                              />
-                              <div className="content ml-4  ">
-                                <div
-                                  className="name"
+                                  color: themeColorSet.colorText1,
+                                  fontWeight: 600
+                                }}>
+                                <span>{item.post_attributes.user.name}</span>
+                              </div>
+                              <div
+                                className="popular-post-item-desc mt-1"
+                                style={{
+                                  color: themeColorSet.colorText2,
+                                  fontSize: '0.9rem'
+                                }}>
+                                <span>
+                                  {item.post_attributes.title!.length > 28
+                                    ? item.post_attributes.title?.slice(0, 28) +
+                                      '...'
+                                    : item.post_attributes.title}
+                                </span>
+                              </div>
+                              <div className="popular-post-item-view mt-1">
+                                <FontAwesomeIcon
+                                  icon={faFileLines}
                                   style={{
-                                    color: themeColorSet.colorText1,
-                                    fontWeight: 600
-                                  }}>
-                                  <span>{item.post_attributes.user.name}</span>
-                                </div>
-                                <div
-                                  className="popular-post-item-desc mt-1"
-                                  style={{
-                                    color: themeColorSet.colorText2,
+                                    color: themeColorSet.colorText3,
                                     fontSize: '0.9rem'
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    marginLeft: 5,
+                                    color: themeColorSet.colorText3
                                   }}>
-                                  <span>
-                                    {item.post_attributes.title?.length! > 28
-                                      ? item.post_attributes.title?.slice(
-                                          0,
-                                          28
-                                        ) + '...'
-                                      : item.post_attributes.title}
-                                  </span>
-                                </div>
-                                <div className="popular-post-item-view mt-1">
-                                  <FontAwesomeIcon
-                                    icon={faFileLines}
-                                    style={{
-                                      color: themeColorSet.colorText3,
-                                      fontSize: '0.9rem'
-                                    }}
-                                  />
-                                  <span
-                                    style={{
-                                      marginLeft: 5,
-                                      color: themeColorSet.colorText3
-                                    }}>
-                                    {item.post_attributes.view_number}{' '}
-                                    {item.post_attributes.view_number! > 0
-                                      ? 'Views'
-                                      : 'View'}
-                                  </span>
-                                </div>
+                                  {item.post_attributes.view_number}{' '}
+                                  {item.post_attributes.view_number! > 0
+                                    ? 'Views'
+                                    : 'View'}
+                                </span>
                               </div>
                             </div>
-                          </NavLink>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {/* <div
+                          </div>
+                        </NavLink>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* <div
                     className="top-community mt-3"
                     style={{
                       backgroundColor: themeColorSet.colorBg2,
@@ -430,13 +423,12 @@ const NewFeed = () => {
                       })}
                     </div>
                   </div> */}
-                </div>
               </div>
-            </Col>
-          </Row>
-        )}
-      </StyleTotal>
-    </ConfigProvider>
+            </div>
+          </Col>
+        </Row>
+      )}
+    </StyleTotal>
   );
 };
 

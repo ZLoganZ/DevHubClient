@@ -1,4 +1,4 @@
-import { Avatar, ConfigProvider, Input, Popover } from 'antd';
+import { Avatar, Input, Popover } from 'antd';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -25,7 +25,6 @@ interface PostProps {
 const OpenOtherPostDetailModal = (PostProps: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();
@@ -66,6 +65,8 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
     const { post } = PostProps;
     const { isReply, idComment } = data;
 
+    if (checkEmpty()) return;
+
     mutateCommentPost({
       content: commentContent,
       post: post._id,
@@ -100,92 +101,90 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
 
   const memoizedInputComment = useMemo(
     () => (
-      <ConfigProvider
-        theme={{
-          token: themeColor
-        }}>
-        <StyleTotal theme={themeColorSet}>
-          <div className="commentInput text-right flex items-center">
-            <Avatar className="mr-2" size={40} src={userInfo.user_image} />
-            <div className="input w-full">
-              <Input
-                ref={inputRef}
-                value={commentContent}
-                placeholder="Add a Comment"
-                // allowClear
-                onKeyUp={(e) => {
-                  // get cursor position
-                  const cursorPosition = e.currentTarget.selectionStart;
-                  setCursor(cursorPosition || 0);
-                }}
-                onClick={(e) => {
-                  const cursor = e.currentTarget.selectionStart;
-                  setCursor(cursor || 0);
-                }}
-                onChange={(e) => {
-                  setCommentContent(e.currentTarget.value);
-                  const cursor = e.currentTarget.selectionStart;
-                  setCursor(cursor || 0);
-                }}
-                style={{
-                  borderColor: themeColorSet.colorText3
-                }}
-                maxLength={150}
-                onPressEnter={handleSubmitComment}
-                addonAfter={
-                  <Popover
-                    placement="right"
-                    trigger="click"
-                    title={'Emoji'}
-                    content={
-                      <Picker
-                        data={async () => {
-                          const response = await fetch(
-                            'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                          );
+      <StyleTotal theme={themeColorSet}>
+        <div className="commentInput text-right flex items-center">
+          <Avatar className="mr-2" size={40} src={userInfo.user_image} />
+          <div className="input w-full">
+            <Input
+              ref={inputRef}
+              value={commentContent}
+              placeholder="Add a Comment"
+              // allowClear
+              onKeyUp={(e) => {
+                // get cursor position
+                const cursorPosition = e.currentTarget.selectionStart;
+                setCursor(cursorPosition || 0);
+              }}
+              onClick={(e) => {
+                const cursor = e.currentTarget.selectionStart;
+                setCursor(cursor || 0);
+              }}
+              onChange={(e) => {
+                setCommentContent(e.currentTarget.value);
+                const cursor = e.currentTarget.selectionStart;
+                setCursor(cursor || 0);
+              }}
+              style={{
+                borderColor: themeColorSet.colorText3
+              }}
+              maxLength={150}
+              onPressEnter={handleSubmitComment}
+              addonAfter={
+                <Popover
+                  placement="right"
+                  trigger="click"
+                  title={'Emoji'}
+                  content={
+                    <Picker
+                      data={async () => {
+                        const response = await fetch(
+                          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
+                        );
 
-                          return response.json();
-                        }}
-                        onEmojiSelect={(emoji: any) => {
-                          setCursor(cursor + emoji.native.length);
-                          setCommentContent(
-                            commentContent.slice(0, cursor) +
-                              emoji.native +
-                              commentContent.slice(cursor)
-                          );
-                        }}
-                      />
-                    }>
-                    <span
-                      className="emoji cursor-pointer hover:text-blue-700"
-                      style={{
-                        transition: 'all 0.3s'
-                      }}>
-                      <FontAwesomeIcon
-                        className="item mr-3 ml-3"
-                        size="lg"
-                        icon={faFaceSmile}
-                      />
-                    </span>
-                  </Popover>
-                }></Input>
-              <span
-                className="sendComment cursor-pointer hover:text-blue-700"
-                {...(checkEmpty()
-                  ? {
-                      style: {
-                        color: 'gray',
-                        cursor: 'not-allowed'
+                        return response.json();
+                      }}
+                      onEmojiSelect={(emoji: any) => {
+                        setCursor(cursor + emoji.native.length);
+                        setCommentContent(
+                          commentContent.slice(0, cursor) +
+                            emoji.native +
+                            commentContent.slice(cursor)
+                        );
+                      }}
+                    />
+                  }>
+                  <span
+                    className="emoji cursor-pointer hover:text-blue-700"
+                    style={{
+                      transition: 'all 0.3s'
+                    }}>
+                    <FontAwesomeIcon
+                      className="item mr-3 ml-3"
+                      size="lg"
+                      icon={faFaceSmile}
+                    />
+                  </span>
+                </Popover>
+              }
+              suffix={
+                <span
+                  className="cursor-pointer hover:text-blue-700"
+                  {...(checkEmpty()
+                    ? {
+                        style: {
+                          color: 'gray',
+                          cursor: 'not-allowed'
+                        }
                       }
-                    }
-                  : { transition: 'all 0.3s' })}
-                onClick={handleSubmitComment}>
-                <FontAwesomeIcon icon={faPaperPlane} />
-              </span>
-            </div>
+                    : { transition: 'all 0.3s' })}
+                  onClick={handleSubmitComment}>
+                  <FontAwesomeIcon icon={faPaperPlane} />
+                </span>
+              }
+            />
           </div>
-        </StyleTotal>
-      </ConfigProvider>
+        </div>
+      </StyleTotal>
     ),
     [commentContent, cursor]
   );
@@ -195,7 +194,8 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
       openModal({
         title: 'The post of ' + PostProps.userInfo?.name,
         component: memoizedComponent,
-        footer: memoizedInputComment
+        footer: memoizedInputComment,
+        type: 'post'
       })
     );
   }, [PostProps.post, PostProps.userInfo, data]);

@@ -48,7 +48,6 @@ const NewPost = (Props: Props) => {
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const {
@@ -202,7 +201,6 @@ const NewPost = (Props: Props) => {
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           borderRadius: 0,
           lineWidth: 0
@@ -289,7 +287,7 @@ const NewPost = (Props: Props) => {
                   customRequest={async ({ onSuccess }: any) => {
                     onSuccess('ok');
                   }}
-                  data={(_) => {
+                  data={() => {
                     return {};
                   }}
                   listType="picture"

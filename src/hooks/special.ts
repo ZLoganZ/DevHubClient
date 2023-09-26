@@ -17,18 +17,18 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 /**
  * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
  * API to detect when a target element intersects with the viewport and triggers a callback function
- * after a specified time (default is 5000 milliseconds).
- * @param targetRef - A mutable ref object that represents the target element to observe for
- * intersection.
+ * after a specified time.
+ * @param targetRef - The targetRef is a mutable ref object that represents the element that you want
+ * to observe for intersection. It is typically created using the useRef() hook and passed as a
+ * parameter to the useIntersectionObserver hook.
  * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It can be used to perform some action or trigger some
- * behavior when the intersection occurs.
+ * target element intersects with the viewport. It is a function that you can define and provide to the
+ * `useIntersectionObserver` hook.
  * @param {number} [time=5000] - The `time` parameter is an optional parameter that specifies the
- * duration (in milliseconds) for which the target element needs to be continuously intersecting with
- * the viewport before triggering the `onIntersect` callback function. If the target element is
- * continuously intersecting with the viewport for the specified duration, the  `onIntersect` callback
- * function will be called. If the target element is no longer intersecting with the viewport before
- * the specified duration, the `onIntersect` callback function will not be called.
+ * duration in milliseconds for which the target element needs to be continuously intersecting with the
+ * viewport before triggering the `onIntersect` callback. If the target element is continuously
+ * intersecting for the specified duration, the `onIntersect` callback will
+ * be triggered. Otherwise, the `onIntersect` callback will not be triggered.
  */
 export const useIntersectionObserver = (
   targetRef: React.MutableRefObject<null>,
@@ -36,24 +36,23 @@ export const useIntersectionObserver = (
   time: number = 5000
 ) => {
   useEffect(() => {
-    let intersectTimeoutID: any;
-    let intersectTime: any;
+    let intersectTimeoutID: NodeJS.Timeout;
+    let intersectTime: number = 0;
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            intersectTime = intersectTime || Date.now();
-            intersectTimeoutID = setInterval(() => {
-              if (Date.now() - intersectTime >= time) {
-                clearInterval(intersectTimeoutID);
-                onIntersect();
-              }
-            }, 100);
-          } else {
-            clearInterval(intersectTimeoutID);
-            intersectTime = null;
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          intersectTime = intersectTime || Date.now();
+          intersectTimeoutID = setInterval(() => {
+            if (Date.now() - intersectTime >= time) {
+              clearInterval(intersectTimeoutID);
+              onIntersect();
+            }
+          }, 100);
+        } else {
+          clearInterval(intersectTimeoutID);
+          intersectTime = 0;
+        }
       },
       {
         rootMargin: '0px',
@@ -71,19 +70,19 @@ export const useIntersectionObserver = (
         observer.unobserve(targetRef.current);
       }
     };
-  }, [targetRef, onIntersect]);
+  }, [targetRef, onIntersect, time]);
 };
 
 /**
  * The `useIntersectionObserverNow` function is a custom React hook that uses the Intersection Observer
  * API to detect when a target element intersects with the viewport and calls a callback function when
  * it does.
- * @param targetRef - The targetRef is a React mutable ref object that refers to the element that you
- * want to observe for intersection. It is typically created using the useRef() hook and passed as a
- * parameter to the useIntersectionObserverNow hook.
+ * @param targetRef - The targetRef is a React ref object that references the HTMLDivElement that you
+ * want to observe for intersection. It allows you to access and manipulate the DOM element in your
+ * component.
  * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It is typically used to trigger some action or update
- * the UI when the element becomes visible to the user.
+ * target element intersects with the viewport. It can be used to perform some action or trigger some
+ * behavior when the intersection occurs.
  */
 export const useIntersectionObserverNow = (
   targetRef: React.RefObject<HTMLDivElement>,
@@ -91,12 +90,10 @@ export const useIntersectionObserverNow = (
 ) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            onIntersect();
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          onIntersect();
+        }
       },
       {
         rootMargin: '0px',

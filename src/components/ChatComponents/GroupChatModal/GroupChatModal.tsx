@@ -14,13 +14,11 @@ interface GroupChatModalProps {
 const GroupChatModal = (Props: GroupChatModalProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           colorBorder: themeColorSet.colorBg4
         }

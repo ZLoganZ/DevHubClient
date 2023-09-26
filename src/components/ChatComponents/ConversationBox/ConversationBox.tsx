@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
+import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 
 interface ConversationBoxProps {
@@ -50,18 +50,6 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     return 'Start a conversation';
   }, [lastMessage, userID]);
 
-  const formatDateTime = (date: Date) => {
-    if (isToday(date)) {
-      return format(date, 'p'); // Display only time for today
-    } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, 'iiii, p'); // Display full day of the week and time for this week
-    } else if (isThisYear(date)) {
-      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
-    } else {
-      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
-    }
-  };
-
   return (
     <div
       className={`w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer`}
@@ -97,7 +85,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
                   font-light
                 "
                 style={{ color: themeColorSet.colorText3 }}>
-                {formatDateTime(new Date(lastMessage.createdAt))}
+                {formatDateTime(lastMessage.createdAt)}
               </p>
             )}
           </div>

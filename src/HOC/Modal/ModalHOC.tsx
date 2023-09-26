@@ -17,7 +17,7 @@ const ModalHOC = () => {
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Modal
-  const { visible, ComponentContentModal, footer, title, handleSubmit } =
+  const { visible, ComponentContentModal, footer, title, handleSubmit, type } =
     useAppSelector((state) => state.modalHOC);
 
   const onClose = () => {
@@ -30,41 +30,38 @@ const ModalHOC = () => {
         token: themeColor
       }}>
       <StyleTotal theme={themeColorSet}>
-        <div>
-          <Modal
-            centered
-            title={title}
-            width={720}
-            onCancel={onClose}
-            open={visible}
-            footer={
-              footer === true ? (
-                <div className="flex justify-end">
-                  <span className="mr-4">
-                    {' '}
-                    <ButtonCancelHover
-                      onClick={() => {
-                        onClose();
-                      }}>
-                      Cancel
-                    </ButtonCancelHover>
-                  </span>
+        <Modal
+          key={title}
+          centered
+          title={title}
+          width={type === 'post' ? 1080 : 720}
+          onCancel={onClose}
+          open={visible}
+          footer={
+            footer === true ? (
+              <div className="flex justify-end">
+                <ButtonCancelHover
+                  className="mr-4"
+                  onClick={() => {
+                    onClose();
+                  }}>
+                  Cancel
+                </ButtonCancelHover>
 
-                  <ButtonActiveHover
-                    onClick={() => {
-                      handleSubmit();
-                    }}
-                    rounded>
-                    Save
-                  </ButtonActiveHover>
-                </div>
-              ) : (
-                footer
-              )
-            }>
-            {ComponentContentModal}
-          </Modal>
-        </div>
+                <ButtonActiveHover
+                  onClick={() => {
+                    handleSubmit();
+                  }}
+                  rounded>
+                  Save
+                </ButtonActiveHover>
+              </div>
+            ) : (
+              footer
+            )
+          }>
+          {ComponentContentModal}
+        </Modal>
       </StyleTotal>
     </ConfigProvider>
   );

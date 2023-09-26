@@ -98,33 +98,27 @@ export const useUpdatePost = () => {
       return data;
     },
     onSuccess(updatedPost) {
+      const updatePostData = (oldData: PostType[] | undefined) => {
+        return oldData?.map((post) => {
+          if (post._id === updatedPost.metadata._id) {
+            return updatedPost.metadata;
+          }
+          return post;
+        });
+      };
+
       queryClient.setQueriesData<PostType[]>(
-        ['posts', updatedPost.metadata.post_attributes.owner_post?._id!],
-        (oldData) => {
-          return oldData?.map((post) => {
-            if (post._id === updatedPost.metadata._id) {
-              return updatedPost.metadata;
-            }
-            return post;
-          });
-        }
+        ['posts', updatedPost.metadata.post_attributes.owner_post!._id],
+        updatePostData
       );
+
       if (queryClient.getQueryData(['allPostsNewsfeed']))
         queryClient.setQueriesData<PostType[]>(
           ['allPostsNewsfeed'],
-          (oldData) => {
-            return oldData?.map((post) => {
-              if (post._id === updatedPost.metadata._id) {
-                return updatedPost.metadata;
-              }
-              return post;
-            });
-          }
+          updatePostData
         );
 
-      queryClient.invalidateQueries({
-        queryKey: ['post', updatedPost.metadata._id]
-      });
+      queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
     }
   });
   return {
@@ -147,20 +141,23 @@ export const useUpdatePost = () => {
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
 
+  const uid = useAppSelector((state) => state.auth.userID);
+
   const { mutate, isLoading, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.deletePost(postID);
     },
     onSuccess(_, postID) {
-      queryClient.setQueriesData<PostType[]>(['posts', postID], (oldData) => {
+      const updatePostData = (oldData: PostType[] | undefined) => {
         return oldData?.filter((post) => post._id !== postID);
-      });
+      };
+
+      queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
+
       if (queryClient.getQueryData(['allPostsNewsfeed']))
         queryClient.setQueriesData<PostType[]>(
           ['allPostsNewsfeed'],
-          (oldData) => {
-            return oldData?.filter((post) => post._id !== postID);
-          }
+          updatePostData
         );
     }
   });

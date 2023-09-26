@@ -50,111 +50,109 @@ const InputChat = (Props: Props) => {
   };
 
   return (
-    <ConfigProvider>
+    <div
+      className="footer flex justify-between items-center"
+      style={{
+        height: '8%'
+      }}>
       <div
-        className="footer flex justify-between items-center"
+        className="iconEmoji text-center"
         style={{
-          height: '8%'
+          width: '5%'
         }}>
-        <div
-          className="iconEmoji text-center"
-          style={{
-            width: '5%'
-          }}>
-          <Popover
-            placement="top"
-            trigger="click"
-            title={'Emoji'}
-            content={
-              <Picker
-                data={async () => {
-                  const response = await fetch(
-                    'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                  );
+        <Popover
+          placement="top"
+          trigger="click"
+          title={'Emoji'}
+          content={
+            <Picker
+              data={async () => {
+                const response = await fetch(
+                  'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
+                );
 
-                  return response.json();
-                }}
-                onEmojiSelect={(emoji: any) => {
-                  setMessage(
-                    message.slice(0, cursor) +
-                      emoji.native +
-                      message.slice(cursor)
-                  );
-                }}
-                theme={themeColorSet.colorPicker}
-              />
-            }>
-            <span className="emoji">
-              <FontAwesomeIcon
-                className="item mr-3 ml-3"
-                size="lg"
-                icon={faFaceSmile}
-              />
-            </span>
-          </Popover>
-        </div>
-        <div
-          className="input"
-          style={{
-            width: '100%'
-          }}>
-          <ConfigProvider
-            theme={{
-              token: {
-                controlHeight: 32,
-                lineWidth: 0
-              }
-            }}>
-            <Input
-              allowClear
-              placeholder="Write a message"
-              value={message}
-              onKeyUp={(e) => {
-                // get cursor position
-                const cursorPosition = e.currentTarget.selectionStart;
-                setCursor(cursorPosition || 0);
+                return response.json();
               }}
-              onClick={(e) => {
-                // get cursor position
-                const cursorPosition = e.currentTarget.selectionStart;
-                setCursor(cursorPosition || 0);
+              onEmojiSelect={(emoji: any) => {
+                setMessage(
+                  message.slice(0, cursor) +
+                    emoji.native +
+                    message.slice(cursor)
+                );
               }}
-              onChange={(e) => {
-                setMessage(e.currentTarget.value);
-                // get cursor position
-                const cursorPosition = e.currentTarget.selectionStart;
-                setCursor(cursorPosition || 0);
-              }}
-              onPressEnter={(e) => {
-                handleSubmit(e.currentTarget.value);
-              }}
+              theme={themeColorSet.colorPicker}
             />
-          </ConfigProvider>
-        </div>
-        <Space
-          className="extension flex justify-center items-center"
-          style={{
-            width: '12%'
-          }}>
-          <UploadComponent onUpload={handleUpload}>
-            <div className="upload">
-              <FontAwesomeIcon
-                className="item mr-3"
-                size="lg"
-                icon={faPaperclip}
-              />
-            </div>
-          </UploadComponent>
-          <div className="micro">
+          }>
+          <span className="emoji">
             <FontAwesomeIcon
-              className="item ml-3"
+              className="item mr-3 ml-3"
               size="lg"
-              icon={faMicrophone}
+              icon={faFaceSmile}
+            />
+          </span>
+        </Popover>
+      </div>
+      <div
+        className="input"
+        style={{
+          width: '100%'
+        }}>
+        <ConfigProvider
+          theme={{
+            token: {
+              controlHeight: 32,
+              lineWidth: 0
+            }
+          }}>
+          <Input
+            allowClear
+            placeholder="Write a message"
+            value={message}
+            onKeyUp={(e) => {
+              // get cursor position
+              const cursorPosition = e.currentTarget.selectionStart;
+              setCursor(cursorPosition || 0);
+            }}
+            onClick={(e) => {
+              // get cursor position
+              const cursorPosition = e.currentTarget.selectionStart;
+              setCursor(cursorPosition || 0);
+            }}
+            onChange={(e) => {
+              setMessage(e.currentTarget.value);
+              // get cursor position
+              const cursorPosition = e.currentTarget.selectionStart;
+              setCursor(cursorPosition || 0);
+            }}
+            onPressEnter={(e) => {
+              handleSubmit(e.currentTarget.value);
+            }}
+          />
+        </ConfigProvider>
+      </div>
+      <Space
+        className="extension flex justify-center items-center"
+        style={{
+          width: '12%'
+        }}>
+        <UploadComponent onUpload={handleUpload}>
+          <div className="upload">
+            <FontAwesomeIcon
+              className="item mr-3"
+              size="lg"
+              icon={faPaperclip}
             />
           </div>
-        </Space>
-      </div>
-    </ConfigProvider>
+        </UploadComponent>
+        <div className="micro">
+          <FontAwesomeIcon
+            className="item ml-3"
+            size="lg"
+            icon={faMicrophone}
+          />
+        </div>
+      </Space>
+    </div>
   );
 };
 

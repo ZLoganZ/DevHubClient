@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { userService } from '@/services/UserService';
-import { ApplyPostsDefaults, ApplyUserDefaults } from '@/util/applyDefaults';
+import ApplyDefaults from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
 import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
@@ -26,7 +26,7 @@ export const useUserInfo = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      let [{ data: Followers }, { data: Following }, { data: userInfo }] =
+      const [{ data: Followers }, { data: Following }, { data: userInfo }] =
         await Promise.all([
           userService.getFollowers(userID!),
           userService.getFollowing(userID!),
@@ -35,7 +35,7 @@ export const useUserInfo = () => {
 
       userInfo.metadata.followers = Followers.metadata;
       userInfo.metadata.following = Following.metadata;
-      return ApplyUserDefaults(userInfo.metadata);
+      return ApplyDefaults(userInfo.metadata);
     },
     staleTime: Infinity
   });
@@ -63,7 +63,7 @@ export const useOtherUserInfo = (userID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
-      let [{ data: Followers }, { data: Following }, { data: userInfo }] =
+      const [{ data: Followers }, { data: Following }, { data: userInfo }] =
         await Promise.all([
           userService.getFollowers(userID),
           userService.getFollowing(userID),
@@ -72,7 +72,7 @@ export const useOtherUserInfo = (userID: string) => {
 
       userInfo.metadata.followers = Followers.metadata;
       userInfo.metadata.following = Following.metadata;
-      return ApplyUserDefaults(userInfo.metadata);
+      return ApplyDefaults(userInfo.metadata);
     },
     staleTime: Infinity
   });
@@ -132,7 +132,7 @@ export const useAllPostsNewsfeedData = () => {
     queryKey: ['allPostsNewsfeed'],
     queryFn: async () => {
       const { data } = await postService.GetAllPostNewsFeed();
-      return ApplyPostsDefaults(data.metadata);
+      return ApplyDefaults(data.metadata);
     },
     staleTime: Infinity,
     onError(err) {
@@ -170,7 +170,7 @@ export const useUserPostsData = (userID: string) => {
       const { data } = await postService.getAllPostByUserID(
         userID === 'me' ? client_id! : userID
       );
-      return ApplyPostsDefaults(data.metadata);
+      return ApplyDefaults(data.metadata);
     },
     enabled: !!userID,
     staleTime: Infinity,

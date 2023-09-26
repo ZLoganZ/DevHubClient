@@ -47,7 +47,6 @@ const EditPostForm = (PostProps: PostProps) => {
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const { mutateUpdatePost } = useUpdatePost();
@@ -227,7 +226,6 @@ const EditPostForm = (PostProps: PostProps) => {
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           borderRadius: 0,
           lineWidth: 0

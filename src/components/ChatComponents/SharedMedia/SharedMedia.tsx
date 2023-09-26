@@ -7,13 +7,13 @@ import {
 } from '@ant-design/icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleTotal from './cssSharedMedia';
 import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { pusherClient } from '@/util/pusher';
+import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 
 interface SharedMediaProps {
@@ -54,18 +54,6 @@ const SharedMedia = (Props: SharedMediaProps) => {
 
     pusherClient.bind('conversation-update-media', updateHandler);
   }, [Props.conversationID, isLoadingCurrentConversation]);
-
-  const formatDateTime = (date: Date) => {
-    if (isToday(date)) {
-      return format(date, 'p'); // Display only time for today
-    } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, 'iiii, p'); // Display full day of the week and time for this week
-    } else if (isThisYear(date)) {
-      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
-    } else {
-      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
-    }
-  };
 
   const downloadImage = async (url: any) => {
     const originalImage = url;
@@ -310,7 +298,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
                                     color: themeColorSet.colorText3
                                   }}>
                                   <div className="date">
-                                    {formatDateTime(new Date(item.createdAt))}
+                                    {formatDateTime(item.createdAt)}
                                   </div>
                                 </Space>
                               </Space>

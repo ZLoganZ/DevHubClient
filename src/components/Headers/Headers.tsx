@@ -30,14 +30,17 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 
-import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
+import {
+  useAllPostsNewsfeedData,
+  useConversationsData,
+  useUserInfo
+} from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleTotal from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   const { algorithm } = getTheme();
 
@@ -124,15 +127,15 @@ const Headers = () => {
   const [countUnseen, setCountUnseen] = useState(0);
   const [countNoti, setCountNoti] = useState(0);
 
-  // const { conversations, isLoadingConversations } = useConversationsData();
+  const { conversations, isLoadingConversations } = useConversationsData();
 
-  // const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
 
-  // useEffect(() => {
-  //   if (isLoadingConversations) return;
+  useEffect(() => {
+    if (isLoadingConversations) return;
 
-  //   setMessages(conversations);
-  // }, [conversations, isLoadingConversations]);
+    setMessages(conversations);
+  }, [conversations, isLoadingConversations]);
 
   // useEffect(() => {
   //   if (isLoadingConversations) return;
@@ -141,7 +144,7 @@ const Headers = () => {
   //     if (conversation.messages?.length === 0) return false;
   //     const seenList =
   //       conversation.messages[conversation.messages.length - 1].seen || [];
-  //     return !seenList.some((user: any) => user._id === userInfo.id);
+  //     return !seenList.some((user: any) => user._id === userInfo._id);
   //   });
 
   //   if (unseenConversations.length > 0) {
@@ -153,87 +156,86 @@ const Headers = () => {
   //   }
   // }, [messages, isLoadingConversations]);
 
-  // const pusherKey = useMemo(() => {
-  //   return userInfo._id;
-  // }, [userInfo]);
+  const pusherKey = useMemo(() => {
+    return userInfo._id;
+  }, [userInfo]);
 
-  // const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
+  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
 
-  // const popupNotification = (message: any, conversation: any) => {
-  //   api.open({
-  //     message:
-  //       message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
-  //     description: message.body ? message.body : 'Sent an image',
-  //     duration: 5,
-  //     icon: conversation.isGroup ? (
-  //       <AvatarGroup key={conversation._id} users={conversation.users} />
-  //     ) : (
-  //       <AvatarMessage key={conversation._id} user={message.sender} />
-  //     ),
-  //     placement: 'bottomRight',
-  //     btn: (
-  //       <Button
-  //         type="primary"
-  //         size="small"
-  //         onClick={() => {
-  //           navigate(`/message/${conversation._id}`);
-  //         }}>
-  //         Go to message
-  //       </Button>
-  //     )
-  //   });
-  // };
+  const popupNotification = (message: any, conversation: any) => {
+    api.open({
+      message:
+        message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
+      description: message.body ? message.body : 'Sent an image',
+      duration: 5,
+      icon: conversation.isGroup ? (
+        <AvatarGroup key={conversation._id} users={conversation.users} />
+      ) : (
+        <AvatarMessage key={conversation._id} user={message.sender} />
+      ),
+      placement: 'bottomRight',
+      btn: (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => {
+            navigate(`/message/${conversation._id}`);
+          }}>
+          Go to message
+        </Button>
+      )
+    });
+  };
 
-  // useEffect(() => {
-  //   if (!pusherKey) return;
+  useEffect(() => {
+    if (!pusherKey) return;
 
-  //   pusherClient.subscribe(pusherKey);
+    pusherClient.subscribe(pusherKey);
 
-  //   const updateHandler = (conversation: any) => {
-  //     setMessages((current: any) =>
-  //       current.map((currentConversation: any) => {
-  //         if (currentConversation._id === conversation.id) {
-  //           playNotiMessage.play();
-  //           popupNotification(
-  //             conversation.messages[conversation.messages.length - 1],
-  //             currentConversation
-  //           );
-  //           return {
-  //             ...currentConversation,
-  //             messages: conversation.messages
-  //           };
-  //         }
+    const updateHandler = (conversation: any) => {
+      setMessages((current: any) =>
+        current.map((currentConversation: any) => {
+          if (currentConversation._id === conversation.id) {
+            playNotiMessage.play();
+            popupNotification(
+              conversation.messages[conversation.messages.length - 1],
+              currentConversation
+            );
+            return {
+              ...currentConversation,
+              messages: conversation.messages
+            };
+          }
 
-  //         return currentConversation;
-  //       })
-  //     );
-  //   };
+          return currentConversation;
+        })
+      );
+    };
 
-  //   const updateHandlerSeen = (conversation: any) => {
-  //     setMessages((current: any) =>
-  //       current.map((currentConversation: any) => {
-  //         if (currentConversation._id === conversation.id) {
-  //           return {
-  //             ...currentConversation,
-  //             messages: conversation.messages
-  //           };
-  //         }
+    const updateHandlerSeen = (conversation: any) => {
+      setMessages((current: any) =>
+        current.map((currentConversation: any) => {
+          if (currentConversation._id === conversation.id) {
+            return {
+              ...currentConversation,
+              messages: conversation.messages
+            };
+          }
 
-  //         return currentConversation;
-  //       })
-  //     );
-  //   };
+          return currentConversation;
+        })
+      );
+    };
 
-  //   pusherClient.bind('conversation-update-seen', updateHandlerSeen);
-  //   pusherClient.bind('conversation-update-noti', updateHandler);
-  // }, [pusherKey]);
+    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
+    pusherClient.bind('conversation-update-noti', updateHandler);
+  }, [pusherKey]);
 
   return (
     <ConfigProvider
       theme={{
         algorithm: algorithm,
         token: {
-          ...themeColor,
           controlHeight: 38
         }
       }}>
@@ -314,12 +316,6 @@ const Headers = () => {
                         size="default"
                       />
                     </Dropdown>
-                    {/* <Switch
-                      checkedChildren="dark"
-                      unCheckedChildren="light"
-                      checked={switchTheme}
-                      onChange={onChange}
-                    /> */}
                     <DayNightSwitch checked={switchTheme} onChange={onChange} />
                   </Space>
                 </Col>

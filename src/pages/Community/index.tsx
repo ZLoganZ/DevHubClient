@@ -19,7 +19,7 @@ import { commonColor } from '@/util/cssVariable';
 import MyPost from '@/components/Post/MyPost';
 import NewPost from '@/components/NewPost';
 import MyPostShare from '@/components/Post/MyPostShare';
-import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
+import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
 

@@ -1,6 +1,6 @@
-import { ForwardRefExoticComponent, ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Comment } from '@ant-design/compatible';
-import { Avatar, ConfigProvider, Tooltip } from 'antd';
+import { Avatar, Tooltip } from 'antd';
 import Icon, {
   DislikeFilled,
   DislikeOutlined,
@@ -9,6 +9,7 @@ import Icon, {
 } from '@ant-design/icons';
 
 import { getTheme } from '@/util/theme';
+import formatDateTime from '@/util/formatDateTime';
 import StyleTotal from '@/components/Post/cssPost';
 import { useAppSelector } from '@/hooks/special';
 import { useLikeComment } from '@/hooks/mutation';
@@ -17,7 +18,7 @@ import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
 interface CommentProps {
   comment: CommentType;
   userInfo: UserInfoType;
-  children?: ReactNode;
+  children?: React.ReactNode;
   handleData: (data: SelectedCommentValues) => void;
   selectedCommentID?: string | null;
   onSelectComment: (commentID: string | null) => void;
@@ -31,7 +32,6 @@ const CommentDetail = (Props: CommentProps) => {
 
   const { mutateLikeComment } = useLikeComment();
 
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [likes, setLike] = useState(Props.comment.like_number || 0);
@@ -99,8 +99,8 @@ const CommentDetail = (Props: CommentProps) => {
           type="like"
           component={
             action === 'liked'
-              ? (LikeFilled as ForwardRefExoticComponent<any>)
-              : (LikeOutlined as ForwardRefExoticComponent<any>)
+              ? (LikeFilled as React.ForwardRefExoticComponent<any>)
+              : (LikeOutlined as React.ForwardRefExoticComponent<any>)
           }
           onClick={like}
           style={{
@@ -116,8 +116,8 @@ const CommentDetail = (Props: CommentProps) => {
           type="dislike"
           component={
             action === 'disliked'
-              ? (DislikeFilled as ForwardRefExoticComponent<any>)
-              : (DislikeOutlined as ForwardRefExoticComponent<any>)
+              ? (DislikeFilled as React.ForwardRefExoticComponent<any>)
+              : (DislikeOutlined as React.ForwardRefExoticComponent<any>)
           }
           onClick={dislike}
           style={{
@@ -159,44 +159,47 @@ const CommentDetail = (Props: CommentProps) => {
   ];
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div className="commentDetail">
-          <Comment
-            author={
-              <div
-                style={{
-                  fontWeight: 600,
-                  color: themeColorSet.colorText1,
-                  fontSize: '0.85rem'
-                }}>
-                {Props.comment?.user?.name}
-              </div>
-            }
-            actions={actions}
-            avatar={
-              Props.comment.user.user_image ? (
-                <Avatar
-                  src={Props.comment.user.user_image}
-                  alt={Props.comment.user.name}
-                />
-              ) : (
-                <Avatar
-                  style={{ backgroundColor: '#87d068' }}
-                  icon="user"
-                  alt={Props.comment.user.name}
-                />
-              )
-            }
-            content={<div className="">{Props.comment.content}</div>}>
-            {Props.children}
-          </Comment>
-        </div>
-      </StyleTotal>
-    </ConfigProvider>
+    <StyleTotal theme={themeColorSet}>
+      <div className="commentDetail">
+        <Comment
+          actions={actions}
+          author={
+            <div
+              style={{
+                fontWeight: 600,
+                color: themeColorSet.colorText1,
+                fontSize: '0.8rem'
+              }}>
+              {Props.comment.user.name}
+            </div>
+          }
+          datetime={
+            <div
+              style={{
+                color: themeColorSet.colorText3
+              }}>
+              {formatDateTime(Props.comment.createdAt)}
+            </div>
+          }
+          avatar={
+            Props.comment.user.user_image ? (
+              <Avatar
+                src={Props.comment.user.user_image}
+                alt={Props.comment.user.name}
+              />
+            ) : (
+              <Avatar
+                style={{ backgroundColor: '#87d068' }}
+                icon="user"
+                alt={Props.comment.user.name}
+              />
+            )
+          }
+          content={Props.comment.content}>
+          {Props.children}
+        </Comment>
+      </div>
+    </StyleTotal>
   );
 };
 

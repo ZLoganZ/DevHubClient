@@ -1,5 +1,5 @@
-import { Avatar, ConfigProvider, Input, Popover, Row, Col } from 'antd';
-import React, { useMemo, useEffect, useState } from 'react';
+import { Avatar, Input, Popover, Row, Col } from 'antd';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
@@ -19,7 +19,6 @@ interface Props {
 const OpenOtherPostShareDetail = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   const [commentContent, setCommentContent] = useState('');
@@ -32,7 +31,7 @@ const OpenOtherPostShareDetail = (Props: Props) => {
 
   const { mutateCommentPost } = useCommentPost();
 
-  const inputRef = React.useRef<any>();
+  const inputRef = useRef<any>();
 
   useEffect(() => {
     if (data.isReply) inputRef.current.focus();
@@ -45,6 +44,8 @@ const OpenOtherPostShareDetail = (Props: Props) => {
   const handleSubmitComment = () => {
     const { post } = Props;
     const { isReply, idComment } = data;
+
+    if (checkEmpty()) return;
 
     mutateCommentPost({
       content: commentContent,
@@ -144,21 +145,24 @@ const OpenOtherPostShareDetail = (Props: Props) => {
                   />
                 </span>
               </Popover>
-            }></Input>
-          <span
-            className="sendComment cursor-pointer hover:text-blue-700"
-            {...(checkEmpty()
-              ? {
-                  style: {
-                    color: 'gray',
-                    //hover disabled
-                    cursor: 'not-allowed'
-                  }
-                }
-              : { transition: 'all 0.3s' })}
-            onClick={handleSubmitComment}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </span>
+            }
+            suffix={
+              <span
+                className="cursor-pointer hover:text-blue-700"
+                {...(checkEmpty()
+                  ? {
+                      style: {
+                        color: 'gray',
+                        //hover disabled
+                        cursor: 'not-allowed'
+                      }
+                    }
+                  : { transition: 'all 0.3s' })}
+                onClick={handleSubmitComment}>
+                <FontAwesomeIcon icon={faPaperPlane} />
+              </span>
+            }
+          />
         </div>
       </div>
     ),
@@ -166,25 +170,20 @@ const OpenOtherPostShareDetail = (Props: Props) => {
   );
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <Row className="py-10">
-          <Col offset={3} span={18}>
-            <div
-              style={{
-                backgroundColor: themeColorSet.colorBg2
-              }}
-              className="rounded-lg">
-              {memoizedComponent}
-              {memoizedInputComment}
-            </div>
-          </Col>
-        </Row>
-      </StyleTotal>
-    </ConfigProvider>
+    <StyleTotal theme={themeColorSet}>
+      <Row className="py-4">
+        <Col offset={3} span={18}>
+          <div
+            style={{
+              backgroundColor: themeColorSet.colorBg2
+            }}
+            className="rounded-lg">
+            {memoizedComponent}
+            {memoizedInputComment}
+          </div>
+        </Col>
+      </Row>
+    </StyleTotal>
   );
 };
 
