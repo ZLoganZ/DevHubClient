@@ -4,7 +4,7 @@ import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
 
-import StyleTotal from './cssAddContacts';
+import StyleProvider from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
@@ -146,7 +146,7 @@ const AddContacts = (Props: Props) => {
           controlHeight: 40
         }
       }}>
-      <StyleTotal theme={themeColorSet}>
+      <StyleProvider theme={themeColorSet}>
         <div className="flex flex-col mt-7">
           {addLinkArrTemp.map((item, index) => (
             <div key={index} className="flex flex-row items-center mb-4">
@@ -282,7 +282,7 @@ const AddContacts = (Props: Props) => {
             </ButtonActiveHover>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

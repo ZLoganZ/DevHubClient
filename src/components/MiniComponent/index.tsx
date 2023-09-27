@@ -2,7 +2,7 @@ import { Button } from 'antd';
 
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssMiniComponent';
+import StyleProvider from './cssMiniComponent';
 
 // ===========================================
 
@@ -29,7 +29,7 @@ export const ButtonActiveHover = ({
   const { themeColorSet } = getTheme();
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Button
         type={type}
         className="ButtonActiveHover font-bold px-6 py-2"
@@ -42,7 +42,7 @@ export const ButtonActiveHover = ({
         }}>
         {children}
       </Button>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 
@@ -70,7 +70,7 @@ export const ButtonCancelHover = ({
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Button
         className={`ButtonCancelHover font-bold px-6 py-2 rounded-3xl ${className}`}
         onClick={onClick}
@@ -78,7 +78,7 @@ export const ButtonCancelHover = ({
         disabled={disabled}>
         {children}
       </Button>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

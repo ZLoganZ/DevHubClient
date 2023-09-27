@@ -4,7 +4,7 @@ import { Checkbox, ConfigProvider, Space, Spin } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
-import StyleTotal from './cssAddRepositoryForm';
+import StyleProvider from './cssAddRepositoryForm';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
 import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
@@ -169,7 +169,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className="addRepositories">
         {!access_token_github || repos.length === 0 ? (
           <div className="py-20">
@@ -198,7 +198,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
           </div>
         )}
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

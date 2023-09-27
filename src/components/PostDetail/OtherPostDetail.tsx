@@ -7,7 +7,7 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
-import StyleTotal from './cssPostDetail';
+import StyleProvider from './cssPostDetail';
 import { Skeleton } from 'antd';
 
 interface PostProps {
@@ -39,7 +39,7 @@ const OtherPostDetail = (Props: PostProps) => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className="postDetail">
         {Props.isShared ? (
           <OtherPostShare
@@ -99,7 +99,7 @@ const OtherPostDetail = (Props: PostProps) => {
           )}
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -36,13 +36,12 @@ import {
   useUserInfo
 } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssHeaders';
+import StyleProvider from './cssHeaders';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
-  const { algorithm } = getTheme();
 
   const switchTheme = localStorage.getItem('theme')
     ? localStorage.getItem('theme') === 'dark'
@@ -234,12 +233,11 @@ const Headers = () => {
   return (
     <ConfigProvider
       theme={{
-        algorithm: algorithm,
         token: {
           controlHeight: 38
         }
       }}>
-      <StyleTotal theme={themeColorSet}>
+      <StyleProvider theme={themeColorSet}>
         {contextHolder}
         <Header
           className="header"
@@ -323,7 +321,7 @@ const Headers = () => {
             </Col>
           </Row>
         </Header>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

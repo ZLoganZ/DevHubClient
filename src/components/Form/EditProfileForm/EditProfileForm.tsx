@@ -37,7 +37,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
 import { useUserInfo } from '@/hooks/fetch';
 import { ContactType, ExperienceType } from '@/types';
-import StyleTotal from './cssEditProfileForm';
+import StyleProvider from './cssEditProfileForm';
 
 const EditProfileForm = () => {
   const dispatch = useAppDispatch();
@@ -329,7 +329,7 @@ const EditProfileForm = () => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {contextHolder}
       <div className="editProfileForm">
         <section className="coverSection">
@@ -898,7 +898,7 @@ const EditProfileForm = () => {
             )}
           </section> */}
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

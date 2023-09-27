@@ -1,6 +1,6 @@
+import { Space } from 'antd';
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ConfigProvider, Space } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
@@ -8,7 +8,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssSelectCommunity';
+import StyleProvider from './cssSelectCommunity';
 
 const SelectCommunity = () => {
   const communityArray = [
@@ -131,173 +131,165 @@ const SelectCommunity = () => {
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div className="flex justify-center w-full h-full selectInterest">
-          <div className="content w-1/2 pt-10 h-full relative">
-            <div>
-              <span
-                className="mr-3"
-                style={{ color: themeColorSet.colorText2 }}>
-                Step 04:
-              </span>
-              <span style={{ color: themeColorSet.colorText3 }}>
-                Select communities
-              </span>
-            </div>
-            <div className="slide w-full flex justify-between mt-2">
-              <span
-                style={{
-                  width: '19.4%',
-                  height: '2px',
-                  backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block'
-                }}></span>
-              <span
-                style={{
-                  width: '19.4%',
-                  height: '2px',
-                  backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block'
-                }}></span>
-              <span
-                style={{
-                  width: '19.4%',
-                  height: '2px',
-                  backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block'
-                }}></span>
-              <span
-                style={{
-                  width: '19.4%',
-                  height: '2px',
-                  backgroundColor: commonColor.colorBlue1,
-                  display: 'inline-block'
-                }}></span>
-              <span
-                style={{
-                  width: '19.4%',
-                  height: '2px',
-                  backgroundColor: commonColor.colorGreen1,
-                  display: 'inline-block'
-                }}></span>
-            </div>
-            <div
-              className="textMax mt-4"
+    <StyleProvider theme={themeColorSet}>
+      <div className="flex justify-center w-full h-full selectInterest">
+        <div className="content w-1/2 pt-10 h-full relative">
+          <div>
+            <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+              Step 04:
+            </span>
+            <span style={{ color: themeColorSet.colorText3 }}>
+              Select communities
+            </span>
+          </div>
+          <div className="slide w-full flex justify-between mt-2">
+            <span
               style={{
-                color: themeColorSet.colorText1,
-                fontSize: '1.8rem',
-                fontWeight: '600'
-              }}>
-              Here are some relevant communities for you
-            </div>
-            <div className="communities mt-10">
-              {communityArray.map((item, index) => {
-                return (
-                  <div key={index} className="group mt-10">
-                    <div
-                      className="groupName font-semibold"
-                      style={{
-                        color: themeColorSet.colorText2,
-                        fontSize: '1.3rem'
-                      }}>
-                      {item.groupName}
-                    </div>
-                    <div className="groupContent">
-                      {item.data.map((item, index) => {
-                        return (
+                width: '19.4%',
+                height: '2px',
+                backgroundColor: commonColor.colorGreen1,
+                display: 'inline-block'
+              }}></span>
+            <span
+              style={{
+                width: '19.4%',
+                height: '2px',
+                backgroundColor: commonColor.colorGreen1,
+                display: 'inline-block'
+              }}></span>
+            <span
+              style={{
+                width: '19.4%',
+                height: '2px',
+                backgroundColor: commonColor.colorGreen1,
+                display: 'inline-block'
+              }}></span>
+            <span
+              style={{
+                width: '19.4%',
+                height: '2px',
+                backgroundColor: commonColor.colorBlue1,
+                display: 'inline-block'
+              }}></span>
+            <span
+              style={{
+                width: '19.4%',
+                height: '2px',
+                backgroundColor: commonColor.colorGreen1,
+                display: 'inline-block'
+              }}></span>
+          </div>
+          <div
+            className="textMax mt-4"
+            style={{
+              color: themeColorSet.colorText1,
+              fontSize: '1.8rem',
+              fontWeight: '600'
+            }}>
+            Here are some relevant communities for you
+          </div>
+          <div className="communities mt-10">
+            {communityArray.map((item, index) => {
+              return (
+                <div key={index} className="group mt-10">
+                  <div
+                    className="groupName font-semibold"
+                    style={{
+                      color: themeColorSet.colorText2,
+                      fontSize: '1.3rem'
+                    }}>
+                    {item.groupName}
+                  </div>
+                  <div className="groupContent">
+                    {item.data.map((item, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className="groupItem flex justify-between items-center mt-5 px-4 "
+                          style={{
+                            backgroundColor: themeColorSet.colorBg2,
+                            width: '100%',
+                            height: '120px'
+                          }}>
                           <div
-                            key={index}
-                            className="groupItem flex justify-between items-center mt-5 px-4 "
+                            className="groupImage text-center"
                             style={{
-                              backgroundColor: themeColorSet.colorBg2,
-                              width: '100%',
-                              height: '120px'
+                              width: '10%',
+                              backgroundColor: themeColorSet.colorText1
                             }}>
-                            <div
-                              className="groupImage text-center"
-                              style={{
-                                width: '10%',
-                                backgroundColor: themeColorSet.colorText1
-                              }}>
-                              <img src={item.image} alt="" />
-                            </div>
-                            <div
-                              className="groupInfo"
-                              style={{
-                                width: '75%'
-                              }}>
-                              <Space className="top mb-2">
-                                <span
-                                  className="name"
-                                  style={{
-                                    color: themeColorSet.colorText1,
-                                    fontSize: '1.3rem',
-                                    fontWeight: '600'
-                                  }}>
-                                  {item.name}
-                                </span>
-                                <span
-                                  className="icon"
-                                  style={{
-                                    color: themeColorSet.colorText3
-                                  }}>
-                                  <FontAwesomeIcon
-                                    icon={faUserFriends}
-                                    size={'xs'}
-                                  />
-                                </span>
-                                <span
-                                  className="member"
-                                  style={{
-                                    color: themeColorSet.colorText3
-                                  }}>
-                                  {item.members}
-                                </span>
-                              </Space>
-                              <div
-                                className="bottom"
+                            <img src={item.image} alt="" />
+                          </div>
+                          <div
+                            className="groupInfo"
+                            style={{
+                              width: '75%'
+                            }}>
+                            <Space className="top mb-2">
+                              <span
+                                className="name"
                                 style={{
-                                  color: themeColorSet.colorText3,
-                                  fontSize: '0.9rem'
+                                  color: themeColorSet.colorText1,
+                                  fontSize: '1.3rem',
+                                  fontWeight: '600'
                                 }}>
-                                {item.description.length > 100
-                                  ? item.description.slice(0, 100) + '...'
-                                  : item.description}
-                              </div>
-                            </div>
+                                {item.name}
+                              </span>
+                              <span
+                                className="icon"
+                                style={{
+                                  color: themeColorSet.colorText3
+                                }}>
+                                <FontAwesomeIcon
+                                  icon={faUserFriends}
+                                  size={'xs'}
+                                />
+                              </span>
+                              <span
+                                className="member"
+                                style={{
+                                  color: themeColorSet.colorText3
+                                }}>
+                                {item.members}
+                              </span>
+                            </Space>
                             <div
-                              className="groupBtn text-center"
+                              className="bottom"
                               style={{
-                                width: '10%'
+                                color: themeColorSet.colorText3,
+                                fontSize: '0.9rem'
                               }}>
-                              <ButtonActiveHover rounded>
-                                Joined
-                              </ButtonActiveHover>
+                              {item.description.length > 100
+                                ? item.description.slice(0, 100) + '...'
+                                : item.description}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
+                          <div
+                            className="groupBtn text-center"
+                            style={{
+                              width: '10%'
+                            }}>
+                            <ButtonActiveHover rounded>
+                              Joined
+                            </ButtonActiveHover>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
-            <div className="button mt-16 mr-4 mb-10 text-right">
-              <NavLink to="/select-follow">
-                <ButtonActiveHover rounded>Next</ButtonActiveHover>
-              </NavLink>
-            </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="button mt-16 mr-4 mb-10 text-right">
+            <NavLink to="/select-follow">
+              <ButtonActiveHover rounded>Next</ButtonActiveHover>
+            </NavLink>
           </div>
         </div>
-      </StyleTotal>
-    </ConfigProvider>
+      </div>
+    </StyleProvider>
   );
 };
 

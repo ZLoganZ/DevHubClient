@@ -10,7 +10,7 @@ import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { UserRegisterDataType } from '@/types';
 import { useAppDispatch } from '@/hooks/special';
 
-import StyleTotal from './cssRegister';
+import StyleProvider from './cssRegister';
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -39,7 +39,7 @@ const Register = () => {
           controlHeight: 40
         }
       }}>
-      <StyleTotal className="w-screen h-screen">
+      <StyleProvider className="w-screen h-screen">
         <div className="register relative">
           <div className="cover absolute top-0 left-0">
             <div className="content">
@@ -183,7 +183,7 @@ const Register = () => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

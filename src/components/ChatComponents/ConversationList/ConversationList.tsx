@@ -6,7 +6,7 @@ import { find } from 'lodash';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
-import StyleTotal from './cssConversationList';
+import StyleProvider from './cssConversationList';
 import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
@@ -217,7 +217,7 @@ const ConversationList = (Props: ConversationListProps) => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {isOpenPostDetail && <OpenGroupModal users={Props.followers} />}
       <div className="searchChat h-screen">
         <Space
@@ -353,7 +353,7 @@ const ConversationList = (Props: ConversationListProps) => {
         </div>
         <div className="listUser"></div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

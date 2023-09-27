@@ -6,7 +6,7 @@ import {
   commonColor
 } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   background-color: ${darkThemeSet.colorBg1};
   height: 100vh;
   position: relative;
@@ -152,4 +152,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

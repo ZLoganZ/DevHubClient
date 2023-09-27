@@ -7,7 +7,7 @@ import Menu from '@/components/Menu';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
-import StyleTotal from './cssMainLayout';
+import StyleProvider from './cssMainLayout';
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;
@@ -31,7 +31,7 @@ const MainLayout = (props: PropsMainTemplate) => {
       theme={{
         token: themeColor
       }}>
-      <StyleTotal className="abcdef" theme={themeColorSet}>
+      <StyleProvider className="abcdef" theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
           <FloatButton.BackTop />
           <Headers />
@@ -49,7 +49,7 @@ const MainLayout = (props: PropsMainTemplate) => {
             <Component />
           </Content>
         </Layout>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

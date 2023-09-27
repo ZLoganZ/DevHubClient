@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .popupInfoUser {
     .popupInfoUser__content {
       .button_Total {
@@ -28,4 +28,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

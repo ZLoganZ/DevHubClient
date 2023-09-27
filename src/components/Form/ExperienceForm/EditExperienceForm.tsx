@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { DatePicker, message } from 'antd';
 
-import StyleTotal from './cssAddExperienceForm';
+import StyleProvider from './cssAddExperienceForm';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -88,7 +88,7 @@ const EditExperienceForm = (Props: EditProps) => {
   }, [position_name, company_name, start_date, end_date]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {contextHolder}
 
       <div className="editPositionForm">
@@ -184,7 +184,7 @@ const EditExperienceForm = (Props: EditProps) => {
           </button>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

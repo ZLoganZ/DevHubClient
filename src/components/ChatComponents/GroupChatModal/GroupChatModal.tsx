@@ -3,7 +3,7 @@ import { ConfigProvider, Input, Select } from 'antd';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
-import StyleTotal from './cssGroupChatModal';
+import StyleProvider from './cssGroupChatModal';
 
 interface GroupChatModalProps {
   users: UserInfoType[];
@@ -23,7 +23,7 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
           colorBorder: themeColorSet.colorBg4
         }
       }}>
-      <StyleTotal>
+      <StyleProvider>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <p className="mt-1 text-sm leading-6 text-gray-300">
@@ -53,7 +53,7 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

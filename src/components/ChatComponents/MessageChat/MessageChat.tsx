@@ -14,7 +14,7 @@ import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import { useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssMessageChat';
+import StyleProvider from './cssMessageChat';
 
 interface IParams {
   conversationID: string;
@@ -124,7 +124,7 @@ const MessageChat = (Props: IParams) => {
   }, []);
 
   return (
-    <StyleTotal className="h-full" theme={themeColorSet}>
+    <StyleProvider className="h-full" theme={themeColorSet}>
       {isLoadingCurrentConversation ? (
         <></>
       ) : (
@@ -195,7 +195,7 @@ const MessageChat = (Props: IParams) => {
           </div>
         </>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -33,7 +33,7 @@ import { useOtherUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 
-import StyleTotal from './cssProfile';
+import StyleProvider from './cssProfile';
 
 interface Props {
   userID: string;
@@ -79,7 +79,7 @@ const Profile = (Props: Props) => {
   }, [isLoadingUserPosts, isLoadingOtherUserInfo]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {!userPosts ||
       !otherUserInfo ||
       isLoadingUserPosts ||
@@ -427,7 +427,7 @@ const Profile = (Props: Props) => {
           </Row>
         </>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -1,10 +1,9 @@
-
 import Title from 'antd/es/typography/Title';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
-import StyleTotal from './cssLoadingLogo';
+import StyleProvider from './cssLoadingLogo';
 import { useAppSelector } from '@/hooks/special';
 
 const LoadingLogo = () => {
@@ -12,7 +11,7 @@ const LoadingLogo = () => {
   const { themeColorSet } = getTheme();
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div
         className="flex justify-center items-center h-screen w-screen"
         style={{
@@ -35,7 +34,7 @@ const LoadingLogo = () => {
           DevHub
         </Title>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

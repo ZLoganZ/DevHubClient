@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .time-message {
     opacity: 0;
     transition: opacity 0.4s;
@@ -27,4 +27,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

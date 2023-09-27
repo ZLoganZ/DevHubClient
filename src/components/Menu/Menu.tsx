@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
-import StyleTotal from './cssMenu';
+import StyleProvider from './cssMenu';
 
 const MenuMain = () => {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const MenuMain = () => {
   }, [location, userInfo]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Sider
         trigger={null}
         collapsible
@@ -284,7 +284,7 @@ const MenuMain = () => {
           ]}
         />
       </Sider>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

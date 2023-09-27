@@ -21,7 +21,7 @@ import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
-import StyleTotal from './cssPost';
+import StyleProvider from './cssPost';
 
 interface PostShareProps {
   postShared: PostType;
@@ -118,7 +118,7 @@ const PostShare = (PostProps: PostShareProps) => {
   const { userID } = useAppSelector((state) => state.auth);
 
   return (
-    <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
           key={PostProps.postShared._id}
@@ -360,7 +360,7 @@ const PostShare = (PostProps: PostShareProps) => {
           </div>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

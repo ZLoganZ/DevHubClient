@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentPost } from '@/hooks/mutation';
 import { useUserInfo } from '@/hooks/fetch';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
-import StyleTotal from './cssOpenPostDetailModal';
+import StyleProvider from './cssOpenPostDetailModal';
 import { openModal, setFooter } from '@/redux/Slice/ModalHOCSlice';
 
 interface PostProps {
@@ -101,7 +101,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
 
   const memoizedInputComment = useMemo(
     () => (
-      <StyleTotal theme={themeColorSet}>
+      <StyleProvider theme={themeColorSet}>
         <div className="commentInput text-right flex items-center">
           <Avatar className="mr-2" size={40} src={userInfo.user_image} />
           <div className="input w-full">
@@ -184,7 +184,7 @@ const OpenOtherPostDetailModal = (PostProps: PostProps) => {
             />
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     ),
     [commentContent, cursor]
   );

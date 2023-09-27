@@ -26,7 +26,7 @@ import { getTheme } from '@/util/theme';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
-import StyleTotal from './cssNewPost';
+import StyleProvider from './cssNewPost';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -207,7 +207,7 @@ const NewPost = (Props: Props) => {
         }
       }}>
       {contextHolder}
-      <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+      <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
         <div className="newPost px-4 py-3">
           <div
             className="newPostHeader text-center text-xl font-bold"
@@ -311,7 +311,7 @@ const NewPost = (Props: Props) => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

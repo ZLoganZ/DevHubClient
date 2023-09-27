@@ -10,7 +10,7 @@ import Icon, {
 
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
-import StyleTotal from '@/components/Post/cssPost';
+import StyleProvider from '@/components/Post/cssPost';
 import { useAppSelector } from '@/hooks/special';
 import { useLikeComment } from '@/hooks/mutation';
 import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
@@ -159,7 +159,7 @@ const CommentDetail = (Props: CommentProps) => {
   ];
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className="commentDetail">
         <Comment
           actions={actions}
@@ -199,7 +199,7 @@ const CommentDetail = (Props: CommentProps) => {
           {Props.children}
         </Comment>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

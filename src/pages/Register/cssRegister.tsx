@@ -5,7 +5,7 @@ import {
   commonColor
 } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   background-color: ${darkThemeSet.colorBg1};
   ${flex_center_column};
 
@@ -91,4 +91,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .ql-editor {
     font-size: 14px;
     color: ${(props) => props.theme.colorText1};
@@ -180,4 +180,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

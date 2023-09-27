@@ -16,7 +16,7 @@ import { getTheme } from '@/util/theme';
 import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
-import StyleTotal from './cssNewsFeed';
+import StyleProvider from './cssNewsFeed';
 
 const popular_time = [
   {
@@ -162,7 +162,7 @@ const NewFeed = () => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {!allPostsNewsfeed ||
       !userInfo ||
       !popular ||
@@ -428,7 +428,7 @@ const NewFeed = () => {
           </Col>
         </Row>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

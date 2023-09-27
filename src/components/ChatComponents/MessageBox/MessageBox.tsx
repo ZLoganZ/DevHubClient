@@ -1,7 +1,7 @@
 import { Image } from 'antd';
 import { NavLink } from 'react-router-dom';
 
-import StyleTotal from './cssMessageBox';
+import StyleProvider from './cssMessageBox';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -40,7 +40,7 @@ const MessageBox = (Props: MessageBoxProps) => {
     }`;
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className={container}>
         <NavLink className={avatar} to={`/user/${Props.data.sender._id}`}>
           <Avatar key={Props.data.sender._id} user={Props.data.sender} />
@@ -91,7 +91,7 @@ const MessageBox = (Props: MessageBoxProps) => {
           )}
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

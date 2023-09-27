@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor, change_color_autoFill } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   ${change_color_autoFill}
   .form__group {
     position: relative;
@@ -82,4 +82,4 @@ const StyleTotal = styled.div`
   } */
 `;
 
-export default StyleTotal;
+export default StyleProvider;

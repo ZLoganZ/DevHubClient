@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg2};
   .ql-toolbar {
     svg {
@@ -54,4 +54,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

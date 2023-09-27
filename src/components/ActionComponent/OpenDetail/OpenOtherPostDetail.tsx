@@ -9,7 +9,7 @@ import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentPost } from '@/hooks/mutation';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
-import StyleTotal from './cssOpenPostDetail';
+import StyleProvider from './cssOpenPostDetail';
 
 interface Props {
   post: PostType;
@@ -166,7 +166,7 @@ const OpenOtherPostDetail = (Props: Props) => {
   );
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Row className="py-4">
         <Col offset={3} span={18}>
           <div
@@ -179,7 +179,7 @@ const OpenOtherPostDetail = (Props: Props) => {
           </div>
         </Col>
       </Row>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

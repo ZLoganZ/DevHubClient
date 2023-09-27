@@ -28,7 +28,7 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import formatDateTime from '@/util/formatDateTime';
-import StyleTotal from './cssPost';
+import StyleProvider from './cssPost';
 
 interface PostProps {
   post: PostType;
@@ -168,7 +168,7 @@ const OtherPost = (PostProps: PostProps) => {
   const { userID } = useAppSelector((state) => state.auth);
 
   return (
-    <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
           key={PostProps.post._id}
@@ -412,7 +412,7 @@ const OtherPost = (PostProps: PostProps) => {
           </div>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -7,7 +7,7 @@ import {
   ButtonCancelHover
 } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssModalHOC';
+import StyleProvider from './cssModalHOC';
 
 const ModalHOC = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ const ModalHOC = () => {
       theme={{
         token: themeColor
       }}>
-      <StyleTotal theme={themeColorSet}>
+      <StyleProvider theme={themeColorSet}>
         <Modal
           key={title}
           centered
@@ -62,7 +62,7 @@ const ModalHOC = () => {
           }>
           {ComponentContentModal}
         </Modal>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

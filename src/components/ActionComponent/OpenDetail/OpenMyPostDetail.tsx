@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import Picker from '@emoji-mart/react';
 
-import StyleTotal from './cssOpenPostDetail';
+import StyleProvider from './cssOpenPostDetail';
 import { getTheme } from '@/util/theme';
 import MyPostDetail from '@/components/PostDetail/MyPostDetail';
 import { useAppSelector } from '@/hooks/special';
@@ -166,7 +166,7 @@ const OpenMyPostDetail = (Props: Props) => {
   );
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Row className="py-4">
         <Col offset={3} span={18}>
           <div
@@ -179,7 +179,7 @@ const OpenMyPostDetail = (Props: Props) => {
           </div>
         </Col>
       </Row>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

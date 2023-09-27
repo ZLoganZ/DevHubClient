@@ -16,7 +16,7 @@ import { darkThemeSet } from '@/util/cssVariable';
 import { useAppDispatch } from '@/hooks/special';
 import { UserLoginDataType } from '@/types';
 
-import StyleTotal from './cssLogin';
+import StyleProvider from './cssLogin';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -95,7 +95,7 @@ const Login = () => {
           borderRadius: 0
         }
       }}>
-      <StyleTotal>
+      <StyleProvider>
         <div className="login">
           <div className="loginForm">
             <div className="welcomeBack mb-12">
@@ -191,7 +191,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

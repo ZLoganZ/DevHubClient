@@ -1,7 +1,7 @@
 import { Skeleton } from 'antd';
 
 import { getTheme } from '@/util/theme';
-import StyleTotal from './cssLoadingDetailPost';
+import StyleProvider from './cssLoadingDetailPost';
 import { useAppSelector } from '@/hooks/special';
 
 const LoadingDetailPost = () => {
@@ -10,7 +10,7 @@ const LoadingDetailPost = () => {
   const { themeColorSet } = getTheme();
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div
         className="loadingPostDetail px-4 py-3"
         style={{
@@ -29,7 +29,7 @@ const LoadingDetailPost = () => {
           <Skeleton className="mb-6" active avatar paragraph={{ rows: 1 }} />
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

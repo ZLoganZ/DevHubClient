@@ -9,7 +9,7 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentPost } from '@/hooks/mutation';
 import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
-import StyleTotal from './cssOpenPostDetail';
+import StyleProvider from './cssOpenPostDetail';
 
 interface Props {
   post: PostType;
@@ -167,7 +167,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
   );
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Row className="py-4">
         <Col offset={3} span={18}>
           <div
@@ -180,7 +180,7 @@ const OpenMyPostShareDetail = (Props: Props) => {
           </div>
         </Col>
       </Row>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

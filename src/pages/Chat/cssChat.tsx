@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { custom_scrollBar, flex_center_row } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   height: fit-content;
   background-color: ${(props) => props.theme.colorBg1};
 
@@ -78,4 +78,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

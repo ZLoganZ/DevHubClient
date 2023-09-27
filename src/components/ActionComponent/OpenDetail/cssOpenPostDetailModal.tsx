@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .input {
     display: flex;
     flex-direction: row;
@@ -20,4 +20,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .ButtonActiveHover {
     color: ${commonColor.colorWhile1};
     background-color: ${commonColor.colorBlue1};
@@ -25,4 +25,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

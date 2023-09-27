@@ -1,5 +1,3 @@
-import { theme } from 'antd';
-
 import { LIGHT_THEME } from '@/util/constants/SettingSystem';
 import {
   lightTheme,
@@ -10,12 +8,12 @@ import {
 
 export const getTheme = () => {
   const themeLocal = localStorage.getItem('theme');
-  const themeSet = themeLocal === LIGHT_THEME ? lightTheme : darkTheme;
-  const algorithm =
-    themeLocal === LIGHT_THEME ? theme.defaultAlgorithm : theme.darkAlgorithm;
+  const themeColor = themeLocal === LIGHT_THEME ? lightTheme : darkTheme;
+  const themeColorSet =
+    themeColor === lightTheme ? lightThemeSet : darkThemeSet;
+
   return {
-    themeColor: themeSet,
-    themeColorSet: themeSet === lightTheme ? lightThemeSet : darkThemeSet,
-    algorithm
+    themeColor,
+    themeColorSet
   };
 };

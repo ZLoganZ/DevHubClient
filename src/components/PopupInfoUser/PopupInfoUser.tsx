@@ -13,7 +13,7 @@ import { commonColor } from '@/util/cssVariable';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 import { UserInfoType } from '@/types';
-import StyleTotal from './cssPopupInfoUser';
+import StyleProvider from './cssPopupInfoUser';
 
 interface Props {
   userInfo: UserInfoType;
@@ -33,7 +33,7 @@ const PopupInfoUser = ({ userInfo, userID }: Props) => {
   }, [userInfo]);
 
   return (
-    <StyleTotal theme={themeColorSet} className="flex justify-center">
+    <StyleProvider theme={themeColorSet} className="flex justify-center">
       <div className="popupInfoUser flex" style={{ width: '95%' }}>
         <NavLink to={`/user/${userInfo._id}`}>
           <div className="popupInfoUser__avatar mr-5 mt-3">
@@ -118,7 +118,7 @@ const PopupInfoUser = ({ userInfo, userID }: Props) => {
           )}
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

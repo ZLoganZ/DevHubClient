@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import StyleTotal from './cssAddTags';
+import StyleProvider from './cssAddTags';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/util/Descriptions/Tags';
@@ -34,7 +34,7 @@ const AddTags = (Props: Props) => {
   }, [addTagArr]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className="flex flex-wrap">
         {descArray.map((item, index) => (
           <span
@@ -61,7 +61,7 @@ const AddTags = (Props: Props) => {
           </span>
         ))}
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

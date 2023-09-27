@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .titleContent {
     color: ${commonColor.colorWhile1};
     font-weight: 600;
@@ -21,4 +21,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

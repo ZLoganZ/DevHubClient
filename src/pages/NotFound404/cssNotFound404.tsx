@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .notFound404 {
     * {
       -webkit-box-sizing: border-box;
@@ -108,4 +108,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

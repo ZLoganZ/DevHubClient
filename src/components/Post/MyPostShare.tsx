@@ -31,7 +31,7 @@ import { commonColor } from '@/util/cssVariable';
 import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useDeletePost, useLikePost, useViewPost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
-import StyleTotal from './cssPost';
+import StyleProvider from './cssPost';
 
 interface PostShareProps {
   postShared: PostType;
@@ -171,7 +171,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
   const { userID } = useAppSelector((state) => state.auth);
 
   return (
-    <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
       {contextHolder}
       <Modal
         title={
@@ -441,7 +441,7 @@ const MyPostShare = (PostProps: PostShareProps) => {
           </div>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -23,7 +23,7 @@ import { callBackSubmitDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssEditPostForm';
+import StyleProvider from './cssEditPostForm';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -232,7 +232,7 @@ const EditPostForm = (PostProps: PostProps) => {
         }
       }}>
       {contextHolder}
-      <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+      <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
         <div className="newPost px-4 py-3">
           <div className="newPostBody">
             <div className="AddTitle mt-4 z-10">
@@ -304,7 +304,7 @@ const EditPostForm = (PostProps: PostProps) => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

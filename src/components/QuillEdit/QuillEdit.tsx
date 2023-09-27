@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssQuillEdit';
+import StyleProvider from './cssQuillEdit';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -97,9 +97,9 @@ const QuillEdit = (Props: QuillEditProps) => {
   };
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div id="editorDrawer" />
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

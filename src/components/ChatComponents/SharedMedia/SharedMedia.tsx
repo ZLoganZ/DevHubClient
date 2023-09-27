@@ -9,7 +9,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
-import StyleTotal from './cssSharedMedia';
+import StyleProvider from './cssSharedMedia';
 import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { pusherClient } from '@/util/pusher';
@@ -75,7 +75,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
   };
 
   return (
-    <StyleTotal>
+    <StyleProvider>
       {isLoadingCurrentConversation ? (
         <>
           <div
@@ -388,7 +388,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
           </div>
         </>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

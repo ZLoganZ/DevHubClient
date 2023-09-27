@@ -7,7 +7,7 @@ import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
-import StyleTotal from './cssAddExperienceForm';
+import StyleProvider from './cssAddExperienceForm';
 
 interface EditProps {
   experiences: ExperienceType[];
@@ -82,7 +82,7 @@ const AddExperienceForm = (Props: EditProps) => {
   }, [position_name, company_name, start_date, end_date]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {contextHolder}
       <div className="editPositionForm">
         <div className="flex justify-between">
@@ -173,7 +173,7 @@ const AddExperienceForm = (Props: EditProps) => {
           </button>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

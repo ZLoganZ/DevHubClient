@@ -48,7 +48,7 @@ import {
 } from '@/hooks/mutation';
 import formatDateTime from '@/util/formatDateTime';
 import { PostType, UserInfoType } from '@/types';
-import StyleTotal from './cssPost';
+import StyleProvider from './cssPost';
 
 interface PostProps {
   post: PostType;
@@ -289,7 +289,7 @@ const MyPost = (PostProps: PostProps) => {
   const { userID } = useAppSelector((state) => state.auth);
 
   return (
-    <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
+    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
       {contextHolder}
       <Modal
         title={
@@ -548,7 +548,7 @@ const MyPost = (PostProps: PostProps) => {
           </div>
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

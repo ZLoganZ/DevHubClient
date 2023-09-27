@@ -34,7 +34,7 @@ import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUserInfo, useUserPostsData } from '@/hooks/fetch';
 
-import StyleTotal from './cssMyProfile';
+import StyleProvider from './cssMyProfile';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
@@ -68,7 +68,7 @@ const MyProfile = () => {
   }, [isLoadingUserPosts, isLoadingUserInfo]);
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       {!userPosts ||
       !userInfo ||
       isLoadingUserPosts ||
@@ -414,7 +414,7 @@ const MyProfile = () => {
           </Row>
         </>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

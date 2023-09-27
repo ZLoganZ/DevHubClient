@@ -7,7 +7,7 @@ import {
   ButtonCancelHover
 } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleTotal from './cssDrawerHOC';
+import StyleProvider from './cssDrawerHOC';
 
 const DrawerHOC = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ const DrawerHOC = () => {
       theme={{
         token: themeColor
       }}>
-      <StyleTotal theme={themeColorSet}>
+      <StyleProvider theme={themeColorSet}>
         <Drawer
           title={title}
           width={720}
@@ -54,7 +54,7 @@ const DrawerHOC = () => {
           }>
           {ComponentContentDrawer}
         </Drawer>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };
