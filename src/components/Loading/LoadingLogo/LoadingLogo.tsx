@@ -13,19 +13,19 @@ const LoadingLogo = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div
-        className="flex justify-center items-center h-screen w-screen"
+        className='flex justify-center items-center h-screen w-screen'
         style={{
           backgroundColor: themeColorSet.colorBg2
         }}>
         <FontAwesomeIcon
-          className="iconLogo text-3xl"
+          className='iconLogo text-3xl'
           icon={faSnowflake}
           style={{ color: themeColorSet.colorText1 }}
         />
         <Title
           level={1}
           disabled
-          className="title ml-2"
+          className='title ml-2'
           style={{
             color: themeColorSet.colorText1,
             marginBottom: 0,

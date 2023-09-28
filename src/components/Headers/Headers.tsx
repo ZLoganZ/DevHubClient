@@ -1,16 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Col,
-  ConfigProvider,
-  Dropdown,
-  Empty,
-  Row,
-  Space,
-  notification
-} from 'antd';
+import { Avatar, Badge, Button, Col, ConfigProvider, Dropdown, Empty, Row, Space, notification } from 'antd';
 import type { MenuProps } from 'antd';
 import { format } from 'date-fns';
 import { Header } from 'antd/es/layout/layout';
@@ -30,11 +19,7 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 
-import {
-  useAllPostsNewsfeedData,
-  useConversationsData,
-  useUserInfo
-} from '@/hooks/fetch';
+import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
@@ -43,9 +28,7 @@ const Headers = () => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const switchTheme = localStorage.getItem('theme')
-    ? localStorage.getItem('theme') === 'dark'
-    : true;
+  const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
   const { userInfo } = useUserInfo();
 
   // Switch theme
@@ -77,16 +60,16 @@ const Headers = () => {
       label: (
         <NavLink to={`/user/${userInfo._id}`}>
           <div
-            className="myInfo flex items-center py-1 px-1"
+            className='flex items-center py-1 px-1'
             style={{
               height: '12%'
             }}>
-            <div className="avatar relative">
+            <div className='avatar relative'>
               <Avatar key={userInfo._id} src={userInfo.user_image} />
             </div>
-            <div className="name_career">
+            <div className='name_career'>
               <div
-                className="name ml-4"
+                className='name ml-4'
                 style={{
                   color: themeColorSet.colorText1,
                   fontWeight: 600
@@ -101,7 +84,7 @@ const Headers = () => {
     {
       key: '2',
       label: (
-        <Button className="w-full h-full " onClick={handleLogout}>
+        <Button className='w-full h-full' onClick={handleLogout}>
           Log Out
         </Button>
       )
@@ -111,12 +94,7 @@ const Headers = () => {
   const itemsNoti: MenuProps['items'] = [
     {
       key: '-1',
-      label: (
-        <Empty
-          className="cursor-default px-40"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      )
+      label: <Empty className='cursor-default px-40' image={Empty.PRESENTED_IMAGE_SIMPLE} />
     }
   ];
 
@@ -163,8 +141,7 @@ const Headers = () => {
 
   const popupNotification = (message: any, conversation: any) => {
     api.open({
-      message:
-        message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
+      message: message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
       description: message.body ? message.body : 'Sent an image',
       duration: 5,
       icon: conversation.isGroup ? (
@@ -175,8 +152,8 @@ const Headers = () => {
       placement: 'bottomRight',
       btn: (
         <Button
-          type="primary"
-          size="small"
+          type='primary'
+          size='small'
           onClick={() => {
             navigate(`/message/${conversation._id}`);
           }}>
@@ -196,10 +173,7 @@ const Headers = () => {
         current.map((currentConversation: any) => {
           if (currentConversation._id === conversation.id) {
             playNotiMessage.play();
-            popupNotification(
-              conversation.messages[conversation.messages.length - 1],
-              currentConversation
-            );
+            popupNotification(conversation.messages[conversation.messages.length - 1], currentConversation);
             return {
               ...currentConversation,
               messages: conversation.messages
@@ -240,78 +214,74 @@ const Headers = () => {
       <StyleProvider theme={themeColorSet}>
         {contextHolder}
         <Header
-          className="header"
+          className='header'
           style={{
             backgroundColor: themeColorSet.colorBg2,
             position: 'fixed',
             top: 0,
             left: 0,
-            zIndex: 1000,
+            zIndex: 999,
             width: '100%',
             height: '5rem'
           }}>
-          <Row align="middle">
+          <Row align='middle'>
             <Col span={16} offset={4}>
-              <Row align="middle">
+              <Row align='middle'>
                 <Col span={4}>
-                  <NavLink to="/" onClick={handleClick}>
+                  <NavLink to='/' onClick={handleClick}>
                     <FontAwesomeIcon
-                      className="iconLogo text-3xl"
+                      className='iconLogo text-3xl'
                       icon={faSnowflake}
                       style={{ color: themeColorSet.colorText1 }}
                     />
                     <Title
                       onClick={handleClick}
                       level={2}
-                      className="title inline-block ml-2"
+                      className='title inline-block ml-2'
                       style={{ color: themeColorSet.colorText1 }}>
-                      <div className="animated-word">
-                        <div className="letter">D</div>
-                        <div className="letter">e</div>
-                        <div className="letter">v</div>
-                        <div className="letter">H</div>
-                        <div className="letter">u</div>
-                        <div className="letter">b</div>
+                      <div className='animated-word'>
+                        <div className='letter'>D</div>
+                        <div className='letter'>e</div>
+                        <div className='letter'>v</div>
+                        <div className='letter'>H</div>
+                        <div className='letter'>u</div>
+                        <div className='letter'>b</div>
                       </div>
                     </Title>
                   </NavLink>
                 </Col>
-                <Col span={15} className="px-4">
-                  <Search placeholder="Search" />
+                <Col span={15} className='px-4'>
+                  <Search placeholder='Search' />
                 </Col>
-                <Col span={5} className="pl-3">
+                <Col span={5} className='pl-3'>
                   <Space size={25}>
-                    <NavLink to="/message">
+                    <NavLink to='/message'>
                       <Badge count={countUnseen}>
                         <Avatar
-                          className="messageButton cursor-pointer"
-                          shape="circle"
-                          icon={<CommentOutlined className="text-xl" />}
+                          className='messageButton cursor-pointer'
+                          shape='circle'
+                          icon={<CommentOutlined className='text-xl' />}
                         />
                       </Badge>
                     </NavLink>
-                    <Dropdown
-                      menu={{ items: itemsNoti }}
-                      trigger={['click']}
-                      placement="bottom">
+                    <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
                       <Badge count={countNoti}>
                         <Avatar
-                          className="notiButton cursor-pointer"
-                          icon={<BellOutlined className="text-xl" />}
+                          className='notiButton cursor-pointer'
+                          icon={<BellOutlined className='text-xl' />}
                         />
                       </Badge>
                     </Dropdown>
                     <Dropdown
+                      arrow
                       menu={{ items }}
                       trigger={['click']}
-                      placement="bottom"
-                      arrow
-                      destroyPopupOnHide
+                      placement='bottom'
                       overlayStyle={{ paddingTop: '0.5rem' }}>
                       <Avatar
-                        className="avatarButton cursor-pointer"
+                        className='avatarButton cursor-pointer'
                         icon={<UserOutlined />}
-                        size="default"
+                        size='default'
                       />
                     </Dropdown>
                     <DayNightSwitch checked={switchTheme} onChange={onChange} />

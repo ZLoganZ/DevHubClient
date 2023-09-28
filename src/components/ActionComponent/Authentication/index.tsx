@@ -7,7 +7,7 @@ export const NotAuth = () => {
 
   const user = useAppSelector((state) => state.auth.userID);
 
-  if (user) return <Navigate to="/" replace state={{ from: location }} />;
+  if (user) return <Navigate to='/' replace state={{ from: location }} />;
   else return <Outlet />;
 };
 
@@ -16,6 +16,6 @@ export const Auth = () => {
 
   const user = useAppSelector((state) => state.auth.userID);
 
-  if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
+  if (!user) return <Navigate to='/login' replace state={{ from: location }} />;
   else return <Outlet />;
 };

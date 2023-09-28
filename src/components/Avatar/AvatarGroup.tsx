@@ -25,7 +25,7 @@ const AvatarGroup = (Props: AvatarProps) => {
   };
 
   return (
-    <div className="relative h-11 w-11">
+    <div className='relative h-11 w-11'>
       {slicedUsers.map((user, index) => (
         <div
           key={user._id}
@@ -34,10 +34,8 @@ const AvatarGroup = (Props: AvatarProps) => {
           }`}>
           <Image
             preview={false}
-            src={
-              user?.user_image || './images/DefaultAvatar/default_avatar.png'
-            }
-            alt="Avatar"
+            src={user?.user_image || '/images/DefaultAvatar/default_avatar.png'}
+            alt='Avatar'
             style={{
               width: '100%',
               height: '100%',
@@ -47,7 +45,7 @@ const AvatarGroup = (Props: AvatarProps) => {
         </div>
       ))}
       {isActive.indexOf(true) !== -1 ? (
-        <span className="absolute block rounded-full bg-green-500 ring-2 ring-white top-0 left-9 h-2 w-2 md:h-3 md:w-3" />
+        <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 left-9 h-2 w-2 md:h-3 md:w-3' />
       ) : null}
     </div>
   );

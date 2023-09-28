@@ -35,7 +35,7 @@ const AddTags = (Props: Props) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="flex flex-wrap">
+      <div className='flex flex-wrap'>
         {descArray.map((item, index) => (
           <span
             key={index}
@@ -56,7 +56,7 @@ const AddTags = (Props: Props) => {
                 return;
               }
             }}>
-            <span className="mr-2">{item.svg}</span>
+            <span className='mr-2'>{item.svg}</span>
             <span>{item.title}</span>
           </span>
         ))}

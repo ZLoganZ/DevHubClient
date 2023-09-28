@@ -19,7 +19,8 @@ import {
   DARK_THEME,
   STATUS_CODE,
   AUTHORIZATION,
-  GITHUB_TOKEN
+  GITHUB_TOKEN,
+  CLIENT_ID
 } from '@/util/constants/SettingSystem';
 
 // LoginSaga
@@ -29,13 +30,14 @@ function* LoginSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
       localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
+      localStorage.setItem(CLIENT_ID, data.metadata.user._id);
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
       yield put(setUserID(data.metadata.user._id));
 
-      const { location } = yield select((state) => state.functionReducer);
+      const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
       const from = state?.from?.pathname || '/';
@@ -56,7 +58,10 @@ function* RegisterSaga({ payload }: any) {
   try {
     const { data, status } = yield call(authService.register, payload);
     if (status === STATUS_CODE.CREATED) {
+      // Lưu token vào localStorage
       localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
+      localStorage.setItem(CLIENT_ID, data.metadata.user._id);
+
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
@@ -81,6 +86,7 @@ function* LogoutSaga() {
     if (status === STATUS_CODE.SUCCESS) {
       localStorage.removeItem(AUTHORIZATION);
       localStorage.removeItem(GITHUB_TOKEN);
+      localStorage.removeItem(CLIENT_ID);
 
       window.location.replace('/login');
     }
@@ -99,15 +105,12 @@ function* LoginWithGoogleSaga({ payload }: any) {
     const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(
-        AUTHORIZATION,
-        JSON.stringify(data.metadata?.accessToken)
-      );
+      localStorage.setItem(AUTHORIZATION, data.metadata?.accessToken);
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
-      const { location } = yield select((state) => state.functionReducer);
+      const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
       const from = state?.from.pathname || '/';
@@ -128,7 +131,7 @@ function* ForgotPasswordSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.forgotPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate({
         pathname: '/verify',
@@ -151,7 +154,7 @@ function* VerifyCodeSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.verifyCode, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate({
         pathname: '/reset',
@@ -174,7 +177,7 @@ function* ResetPasswordSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.resetPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/login');
     }
@@ -194,12 +197,12 @@ function* CheckVerifyCodeSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/forgot');
     }
   } catch (err: any) {
-    const { navigate } = yield select((state) => state.functionReducer);
+    const { navigate } = yield select((state) => state.hook);
 
     navigate('/forgot');
     console.log(err);
@@ -217,12 +220,12 @@ function* CheckResetPasswordSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/forgot');
     }
   } catch (err: any) {
-    const { navigate } = yield select((state) => state.functionReducer);
+    const { navigate } = yield select((state) => state.hook);
 
     navigate('/forgot');
     console.log(err);

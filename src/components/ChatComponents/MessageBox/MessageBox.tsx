@@ -47,7 +47,7 @@ const MessageBox = (Props: MessageBoxProps) => {
         </NavLink>
         <div className={body}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
-            <div className="flex items-center gap-1 mb-1">
+            <div className='flex items-center gap-1 mb-1'>
               <div
                 className={`text-sm `}
                 style={{
@@ -59,10 +59,10 @@ const MessageBox = (Props: MessageBoxProps) => {
             <div className={message}>
               {Props.data.image ? (
                 <Image
-                  alt="Image"
+                  alt='Image'
                   src={Props.data.image}
                   draggable={false}
-                  className="object-cover cursor-pointer"
+                  className='object-cover cursor-pointer'
                   style={{
                     borderRadius: '2rem',
                     border: '0.2px solid',

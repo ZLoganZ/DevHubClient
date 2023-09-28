@@ -9,12 +9,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import ReactQuill, { Value } from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBriefcase,
-  faEdit,
-  faPlus,
-  faTrash
-} from '@fortawesome/free-solid-svg-icons';
+import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { RcFile } from 'antd/es/upload';
 import { sha1 } from 'crypto-hash';
@@ -64,23 +59,17 @@ const EditProfileForm = () => {
 
   const [location, setLocation] = useState(userInfo.location || '');
 
-  const [avatar, setAvatar] = useState(
-    userInfo.user_image || '/images/TimeLinePage/avatar.jpg'
-  );
+  const [avatar, setAvatar] = useState(userInfo.user_image || '/images/TimeLinePage/avatar.jpg');
   const [fileAvatar, setFileAvatar] = useState(null);
 
-  const [cover, setCover] = useState(
-    userInfo.cover_image || '/images/ProfilePage/cover.jpg'
-  );
+  const [cover, setCover] = useState(userInfo.cover_image || '/images/ProfilePage/cover.jpg');
   const [fileCover, setFileCover] = useState(null);
 
   const [about, setAbout] = useState(userInfo.about || '');
 
   const [experiences, setExperiences] = useState(userInfo?.experiences || []);
 
-  const [repositories, setRepositories] = useState(
-    userInfo?.repositories || []
-  );
+  const [repositories, setRepositories] = useState(userInfo?.repositories || []);
 
   const initialAvatar = useMemo(() => {
     return userInfo.user_image || null;
@@ -109,13 +98,10 @@ const EditProfileForm = () => {
 
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data.secure_url,
@@ -135,17 +121,12 @@ const EditProfileForm = () => {
     formData.append('public_id', public_id!);
     const timestamp = String(Date.now());
     formData.append('timestamp', timestamp);
-    const signature = await sha1(
-      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
-    );
+    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
     formData.append('signature', signature);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data,
@@ -244,9 +225,9 @@ const EditProfileForm = () => {
     callBackFunction: React.MouseEventHandler
   ) => {
     return (
-      <div className="componentNoInfo text-center px-16">
+      <div className='componentNoInfo text-center px-16'>
         <div
-          className="title mb-3"
+          className='title mb-3'
           style={{
             fontSize: '1.1rem',
             fontWeight: 600,
@@ -254,14 +235,11 @@ const EditProfileForm = () => {
           }}>
           {title}
         </div>
-        <div className="tags" style={{ color: themeColorSet.colorText3 }}>
+        <div className='tags' style={{ color: themeColorSet.colorText3 }}>
           {description}
         </div>
-        <div className="mt-4">
-          <ButtonActiveHover onClick={callBackFunction}>
-            {' '}
-            {buttonContent}
-          </ButtonActiveHover>
+        <div className='mt-4'>
+          <ButtonActiveHover onClick={callBackFunction}> {buttonContent}</ButtonActiveHover>
         </div>
       </div>
     );
@@ -269,22 +247,20 @@ const EditProfileForm = () => {
 
   const RenderExperience = (item: ExperienceType, index: number) => {
     return (
-      <div className="item mt-2 flex" key={index}>
+      <div className='item mt-2 flex' key={index}>
         <div style={{ color: themeColorSet.colorText1 }}>
           <FontAwesomeIcon
-            className="icon mr-2"
+            className='icon mr-2'
             icon={faBriefcase}
             style={{ color: commonColor.colorBlue1 }}
           />
-          <span className="company mr-2 font-semibold">
-            {item.company_name}
-          </span>
-          <span className="position mr-2">{item.position_name} |</span>
-          <span className="date">
+          <span className='company mr-2 font-semibold'>{item.company_name}</span>
+          <span className='position mr-2'>{item.position_name} |</span>
+          <span className='date'>
             {item.start_date} ~ {item.end_date}
           </span>
         </div>
-        <div className="ml-2">
+        <div className='ml-2'>
           <span
             onClick={() => {
               dispatch(
@@ -305,21 +281,19 @@ const EditProfileForm = () => {
             }}>
             <FontAwesomeIcon
               icon={faEdit}
-              className="ml-2 cursor-pointer"
-              size="sm"
+              className='ml-2 cursor-pointer'
+              size='sm'
               style={{ color: themeColorSet.colorText3 }}
             />
           </span>
           <span
             onClick={() => {
-              setExperiences(
-                experiences.filter((_, indexFilter) => indexFilter !== index)
-              );
+              setExperiences(experiences.filter((_, indexFilter) => indexFilter !== index));
             }}>
             <FontAwesomeIcon
               icon={faTrash}
-              className="ml-2 cursor-pointer"
-              size="sm"
+              className='ml-2 cursor-pointer'
+              size='sm'
               style={{ color: themeColorSet.colorText3 }}
             />
           </span>
@@ -331,10 +305,10 @@ const EditProfileForm = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       {contextHolder}
-      <div className="editProfileForm">
-        <section className="coverSection">
+      <div className='editProfileForm'>
+        <section className='coverSection'>
           <div
-            className="mainTitle mb-2"
+            className='mainTitle mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -342,37 +316,32 @@ const EditProfileForm = () => {
             }}>
             Update Profile Cover Image
           </div>
-          <div
-            className="subTitle mb-3"
-            style={{ color: themeColorSet.colorText2 }}>
+          <div className='subTitle mb-3' style={{ color: themeColorSet.colorText2 }}>
             Recommended dimensions 1500px x 400px (max. 3MB)
           </div>
-          <div className="cover relative flex w-full h-72 mb-8 justify-center items-center bg-black rounded-lg">
+          <div className='cover relative flex w-full h-72 mb-8 justify-center items-center bg-black rounded-lg'>
             <Image
-              className="coverImage rounded-xl"
+              className='coverImage rounded-xl'
               src={cover}
               style={{
                 objectFit: 'cover',
                 maxHeight: '18rem',
                 width: '100%'
-              }}></Image>
-            <Space className="coverButton absolute bottom-8 right-5">
+              }}
+            />
+            <Space className='coverButton absolute bottom-8 right-5'>
               <Upload
-                className="btnChangeCover px-4 py-2"
+                className='btnChangeCover px-4 py-2'
                 customRequest={() => {}}
                 maxCount={1}
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={(file) =>
-                  handleChangeCover(file?.file?.originFileObj)
-                }
+                accept='image/png, image/jpeg, image/jpg'
+                onChange={(file) => handleChangeCover(file?.file?.originFileObj)}
                 showUploadList={false}
                 beforeUpload={beforeUpload}>
-                <span style={{ color: commonColor.colorWhile1 }}>
-                  Change Cover Image
-                </span>
+                <span style={{ color: commonColor.colorWhile1 }}>Change Cover Image</span>
               </Upload>
               <button
-                className="btnRemove px-4 py-2"
+                className='btnRemove px-4 py-2'
                 style={{
                   backgroundColor: commonColor.colorRed1,
                   fontWeight: 600
@@ -382,22 +351,21 @@ const EditProfileForm = () => {
             </Space>
           </div>
         </section>
-        <section className="avatar mt-3 flex items-center">
-          <div className="avatarImage">
+        <section className='avatar mt-3 flex items-center'>
+          <div className='avatarImage rounded-full overflow-hidden flex'>
             <Image
               src={avatar}
-              alt="avatar"
+              alt='avatar'
               style={{
                 width: '7rem',
                 height: '7rem',
-                borderRadius: '50%',
                 objectFit: 'cover'
               }}
             />
           </div>
-          <Space className="changeAvatar ml-3" direction="vertical">
+          <Space className='changeAvatar ml-3' direction='vertical'>
             <div
-              className="mb-2"
+              className='mb-2'
               style={{
                 fontSize: '1.2rem',
                 fontWeight: 600,
@@ -406,19 +374,17 @@ const EditProfileForm = () => {
               Set profile photo
             </div>
             <Upload
-              accept="image/png, image/jpeg, image/jpg"
+              accept='image/png, image/jpeg, image/jpg'
               customRequest={() => {}}
               maxCount={1}
               onChange={(file) => handleChangeAvatar(file?.file?.originFileObj)}
               showUploadList={false}
-              className="btnChange px-4 py-2">
-              <span style={{ color: commonColor.colorWhile1 }}>
-                Change Avatar
-              </span>
+              className='btnChange px-4 py-2'>
+              <span style={{ color: commonColor.colorWhile1 }}>Change Avatar</span>
             </Upload>
           </Space>
         </section>
-        <section className="links mt-3 flex items-center">
+        <section className='links mt-3 flex items-center'>
           {contacts.map((item, index) => {
             switch (item.key) {
               case '0':
@@ -429,7 +395,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       openInNewTab(item.link);
                     }}
-                    className="item"
+                    className='item'
                     icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
                   />
                 );
@@ -441,7 +407,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       openInNewTab(item.link);
                     }}
-                    className="item"
+                    className='item'
                     icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                   />
                 );
@@ -453,7 +419,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       openInNewTab(item.link);
                     }}
-                    className="item"
+                    className='item'
                     icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                   />
                 );
@@ -465,7 +431,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       openInNewTab(item.link);
                     }}
-                    className="item"
+                    className='item'
                     icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
                   />
                 );
@@ -476,7 +442,7 @@ const EditProfileForm = () => {
                     onClick={() => {
                       openInNewTab(item.link);
                     }}
-                    className="item"
+                    className='item'
                     icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
                   />
                 );
@@ -485,17 +451,13 @@ const EditProfileForm = () => {
             }
           })}
           <button
-            className="addLinks px-4 py-1 cursor-pointer"
+            className='addLinks px-4 py-1 cursor-pointer'
             onClick={() => {
               dispatch(
                 openModal({
                   title: 'Update Social Links',
                   component: (
-                    <AddContacts
-                      key={Math.random()}
-                      callback={handleChangeLinks}
-                      contacts={contacts}
-                    />
+                    <AddContacts key={Math.random()} callback={handleChangeLinks} contacts={contacts} />
                   ),
                   footer: false
                 })
@@ -506,13 +468,13 @@ const EditProfileForm = () => {
               border: '1px solid',
               borderColor: themeColorSet.colorBg4
             }}>
-            <FontAwesomeIcon icon={faPlus} className="mr-2" />
+            <FontAwesomeIcon icon={faPlus} className='mr-2' />
             {contacts.length === 0 ? 'Add Contacts' : 'Edit Contacts'}
           </button>
         </section>
-        <section className="inputInformation mt-5">
+        <section className='inputInformation mt-5'>
           <div
-            className="title mb-2"
+            className='title mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -520,23 +482,21 @@ const EditProfileForm = () => {
             }}>
             Information
           </div>
-          <div className="line1 flex justify-between items-center mb-5">
-            <div
-              className="LastName form__group field"
-              style={{ width: '48%' }}>
+          <div className='line1 flex justify-between items-center mb-5'>
+            <div className='LastName form__group field' style={{ width: '48%' }}>
               <input
                 defaultValue={userInfo.name}
-                pattern="[A-Za-z ]*"
-                type="input"
-                className="form__field"
-                placeholder="User Name"
-                name="name"
-                id="name"
+                pattern='[A-Za-z ]*'
+                type='input'
+                className='form__field'
+                placeholder='User Name'
+                name='name'
+                id='name'
                 required
                 onChange={handleChangeLastName}
-                autoComplete="off"
+                autoComplete='off'
               />
-              <label htmlFor="name" className="form__label">
+              <label htmlFor='name' className='form__label'>
                 Username
               </label>
             </div>
@@ -560,48 +520,46 @@ const EditProfileForm = () => {
                 </label>
               </div> */}
           </div>
-          <div className="line2 flex justify-between items-center">
-            <div className="alias form__group field" style={{ width: '48%' }}>
+          <div className='line2 flex justify-between items-center'>
+            <div className='alias form__group field' style={{ width: '48%' }}>
               <input
                 defaultValue={userInfo.alias}
-                type="input"
-                className="form__field"
-                placeholder="ex: johndoe"
-                name="alias"
-                id="alias"
+                type='input'
+                className='form__field'
+                placeholder='ex: johndoe'
+                name='alias'
+                id='alias'
                 required
                 onChange={handleChangeAlias}
-                autoComplete="off"
+                autoComplete='off'
               />
-              <label htmlFor="alias" className="form__label">
+              <label htmlFor='alias' className='form__label'>
                 Alias
               </label>
             </div>
-            <div
-              className="location form__group field"
-              style={{ width: '48%' }}>
+            <div className='location form__group field' style={{ width: '48%' }}>
               <input
                 defaultValue={userInfo.location}
-                pattern="[A-Za-z ]*"
-                type="input"
-                className="form__field"
-                placeholder="ex: Viet Nam"
-                name="location"
-                id="location"
+                pattern='[A-Za-z ]*'
+                type='input'
+                className='form__field'
+                placeholder='ex: Viet Nam'
+                name='location'
+                id='location'
                 required
                 onChange={handleChangeLocation}
-                autoComplete="off"
+                autoComplete='off'
               />
-              <label htmlFor="location" className="form__label">
+              <label htmlFor='location' className='form__label'>
                 Location
               </label>
             </div>
           </div>
-          <div className="line2"></div>
+          <div className='line2'></div>
         </section>
-        <section className="expertise mt-7">
+        <section className='expertise mt-7'>
           <div
-            className="title mb-2"
+            className='title mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -609,12 +567,12 @@ const EditProfileForm = () => {
             }}>
             Expertise
           </div>
-          <div className="tags flex flex-wrap items-center">
+          <div className='tags flex flex-wrap items-center'>
             {descArray.map((item, index) => {
               if (tags.indexOf(item.title) !== -1) {
                 return (
                   <Tag
-                    className="item mx-2 my-2 px-4 py-1"
+                    className='item mx-2 my-2 px-4 py-1'
                     key={index}
                     color={themeColorSet.colorBg1}
                     style={{
@@ -629,7 +587,7 @@ const EditProfileForm = () => {
               return null;
             })}
             <button
-              className="addTags px-4 py-1 cursor-pointer"
+              className='addTags px-4 py-1 cursor-pointer'
               style={{
                 border: '1px solid',
                 borderColor: themeColorSet.colorBg4
@@ -638,25 +596,19 @@ const EditProfileForm = () => {
                 dispatch(
                   openModal({
                     title: 'Add Tags',
-                    component: (
-                      <AddTags
-                        key={Math.random()}
-                        callback={handleChangeTags}
-                        tags={tags}
-                      />
-                    ),
+                    component: <AddTags key={Math.random()} callback={handleChangeTags} tags={tags} />,
                     footer: true
                   })
                 );
               }}>
-              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              <FontAwesomeIcon icon={faPlus} className='mr-2' />
               {tags.length === 0 ? 'Add Tags' : 'Edit Tags'}
             </button>
           </div>
         </section>
-        <section className="about mt-7">
+        <section className='about mt-7'>
           <div
-            className="title mb-2"
+            className='title mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -673,7 +625,7 @@ const EditProfileForm = () => {
                       component: (
                         <QuillEdit
                           key={Math.random()}
-                          placeholder="Write something about yourself..."
+                          placeholder='Write something about yourself...'
                           content={about as string}
                           callbackFunction={handleChangeAbout}
                         />
@@ -684,8 +636,8 @@ const EditProfileForm = () => {
                 }}>
                 <FontAwesomeIcon
                   icon={faEdit}
-                  className="ml-2 cursor-pointer"
-                  size="xs"
+                  className='ml-2 cursor-pointer'
+                  size='xs'
                   style={{ color: themeColorSet.colorText3 }}
                 />
               </span>
@@ -693,13 +645,8 @@ const EditProfileForm = () => {
           </div>
           {about ? (
             // About có nội dung
-            <div className="content__text">
-              <ReactQuill
-                value={about as Value}
-                readOnly={true}
-                theme={'bubble'}
-                modules={{}}
-              />
+            <div className='content__text'>
+              <ReactQuill value={about as Value} readOnly={true} theme={'bubble'} modules={{}} />
             </div>
           ) : (
             // About không có nội dung
@@ -714,8 +661,8 @@ const EditProfileForm = () => {
                     component: (
                       <QuillEdit
                         key={Math.random()}
-                        placeholder="Write something about yourself..."
-                        content=""
+                        placeholder='Write something about yourself...'
+                        content=''
                         callbackFunction={handleChangeAbout}
                       />
                     ),
@@ -726,9 +673,9 @@ const EditProfileForm = () => {
             )
           )}
         </section>
-        <section className="experiences mt-7">
+        <section className='experiences mt-7'>
           <div
-            className="title mb-2"
+            className='title mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -755,8 +702,8 @@ const EditProfileForm = () => {
                 }}>
                 <FontAwesomeIcon
                   icon={faPlus}
-                  className="ml-2 cursor-pointer buttonAddExperience"
-                  size="xs"
+                  className='ml-2 cursor-pointer buttonAddExperience'
+                  size='xs'
                 />
               </span>
             )}
@@ -785,7 +732,7 @@ const EditProfileForm = () => {
             )
           ) : (
             // Nếu có experience
-            <div className="mt-5 ml-3">
+            <div className='mt-5 ml-3'>
               {experiences.map((item, index) => {
                 return RenderExperience(item, index);
               })}
@@ -810,9 +757,9 @@ const EditProfileForm = () => {
               () => {},
             )}
           </section> */}
-        <section className="repositories mt-7">
+        <section className='repositories mt-7'>
           <div
-            className="title mb-2"
+            className='title mb-2'
             style={{
               color: themeColorSet.colorText1,
               fontWeight: 600,
@@ -840,8 +787,8 @@ const EditProfileForm = () => {
                   }}>
                   <FontAwesomeIcon
                     icon={faEdit}
-                    className="ml-2 cursor-pointer"
-                    size="xs"
+                    className='ml-2 cursor-pointer'
+                    size='xs'
                     style={{ color: themeColorSet.colorText3 }}
                   />
                 </span>
@@ -872,7 +819,7 @@ const EditProfileForm = () => {
             )
           ) : (
             // Nếu có repository
-            <div className="flex flex-wrap justify-between mt-5">
+            <div className='flex flex-wrap justify-between mt-5'>
               {repositories.map((item, index) => {
                 return RenderRepositoryIem(item, index);
               })}

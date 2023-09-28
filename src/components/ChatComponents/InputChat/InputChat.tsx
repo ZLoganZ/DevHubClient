@@ -2,11 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Input, Popover, Space } from 'antd';
 import { useState } from 'react';
 import Picker from '@emoji-mart/react';
-import {
-  faFaceSmile,
-  faMicrophone,
-  faPaperclip
-} from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faMicrophone, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
@@ -51,49 +47,39 @@ const InputChat = (Props: Props) => {
 
   return (
     <div
-      className="footer flex justify-between items-center"
+      className='footer flex justify-between items-center'
       style={{
         height: '8%'
       }}>
       <div
-        className="iconEmoji text-center"
+        className='iconEmoji text-center'
         style={{
           width: '5%'
         }}>
         <Popover
-          placement="top"
-          trigger="click"
+          placement='top'
+          trigger='click'
           title={'Emoji'}
           content={
             <Picker
               data={async () => {
-                const response = await fetch(
-                  'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                );
+                const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                 return response.json();
               }}
               onEmojiSelect={(emoji: any) => {
-                setMessage(
-                  message.slice(0, cursor) +
-                    emoji.native +
-                    message.slice(cursor)
-                );
+                setMessage(message.slice(0, cursor) + emoji.native + message.slice(cursor));
               }}
               theme={themeColorSet.colorPicker}
             />
           }>
-          <span className="emoji">
-            <FontAwesomeIcon
-              className="item mr-3 ml-3"
-              size="lg"
-              icon={faFaceSmile}
-            />
+          <span className='emoji'>
+            <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
           </span>
         </Popover>
       </div>
       <div
-        className="input"
+        className='input'
         style={{
           width: '100%'
         }}>
@@ -106,7 +92,7 @@ const InputChat = (Props: Props) => {
           }}>
           <Input
             allowClear
-            placeholder="Write a message"
+            placeholder='Write a message'
             value={message}
             onKeyUp={(e) => {
               // get cursor position
@@ -131,25 +117,17 @@ const InputChat = (Props: Props) => {
         </ConfigProvider>
       </div>
       <Space
-        className="extension flex justify-center items-center"
+        className='extension flex justify-center items-center'
         style={{
           width: '12%'
         }}>
         <UploadComponent onUpload={handleUpload}>
-          <div className="upload">
-            <FontAwesomeIcon
-              className="item mr-3"
-              size="lg"
-              icon={faPaperclip}
-            />
+          <div className='upload'>
+            <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} />
           </div>
         </UploadComponent>
-        <div className="micro">
-          <FontAwesomeIcon
-            className="item ml-3"
-            size="lg"
-            icon={faMicrophone}
-          />
+        <div className='micro'>
+          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} />
         </div>
       </Space>
     </div>

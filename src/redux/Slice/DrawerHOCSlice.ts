@@ -38,6 +38,5 @@ const drawerHOCSlide = createSlice({
   }
 });
 
-export const { openDrawer, callBackSubmitDrawer, closeDrawer, setLoading } =
-  drawerHOCSlide.actions;
+export const { openDrawer, callBackSubmitDrawer, closeDrawer, setLoading } = drawerHOCSlide.actions;
 export default drawerHOCSlide.reducer;

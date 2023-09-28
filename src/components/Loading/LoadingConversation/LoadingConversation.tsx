@@ -9,13 +9,13 @@ const LoadingConversation = () => {
   const { themeColorSet } = getTheme();
 
   return (
-    <div className="px-4">
-      <Skeleton className="mt-8" active />
-      <Skeleton className="mt-8" active />
-      <Skeleton className="mt-8" active />
-      <Skeleton className="mt-8" active />
+    <div className='px-4'>
+      <Skeleton className='mt-8' active />
+      <Skeleton className='mt-8' active />
+      <Skeleton className='mt-8' active />
+      <Skeleton className='mt-8' active />
       <div
-        className="shared"
+        className='shared'
         style={{
           width: '23%',
           height: '100vh',
@@ -24,90 +24,60 @@ const LoadingConversation = () => {
           backgroundColor: themeColorSet.colorBg1
         }}>
         <div
-          className="extension px-3 flex items-center"
+          className='extension px-3 flex items-center'
           style={{
             height: '12%',
             borderBottom: '1px solid',
             borderColor: themeColorSet.colorBg4
           }}>
-          <div className="flex justify-center items-center w-full">
+          <div className='flex justify-center items-center w-full'>
             <div
-              className="setting text-center"
+              className='setting text-center'
               style={{
                 width: '25%'
               }}>
-              <Skeleton.Button active size="large" shape="circle" />
+              <Skeleton.Button active size='large' shape='circle' />
             </div>
             <div
-              className="notification text-center"
+              className='notification text-center'
               style={{
                 width: '25%'
               }}>
-              <Skeleton.Button active size="large" shape="circle" />
+              <Skeleton.Button active size='large' shape='circle' />
             </div>
             <div
-              className="warning text-center"
+              className='warning text-center'
               style={{
                 width: '25%'
               }}>
-              <Skeleton.Button active size="large" shape="circle" />
+              <Skeleton.Button active size='large' shape='circle' />
             </div>
             <div
-              className="logout text-center"
+              className='logout text-center'
               style={{
                 width: '25%'
               }}>
-              <Skeleton.Button active size="large" shape="circle" />
+              <Skeleton.Button active size='large' shape='circle' />
             </div>
           </div>
         </div>
-        <div className="fileShare px-3 py-4">
-          <div className="sharedMedia">
-            <Space className="content" size={20}>
+        <div className='fileShare px-3 py-4'>
+          <div className='sharedMedia'>
+            <Space className='content' size={20}>
               <Skeleton.Image active />
               <Skeleton.Image active />
               <Skeleton.Image active />
             </Space>
           </div>
-          <div className="sharedFile mt-5">
-            <div className="flex justify-between items-center mb-3"></div>
-            <div className="content">
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
-              <Skeleton
-                className="mb-3"
-                active
-                avatar
-                paragraph={{ rows: 1 }}
-              />
+          <div className='sharedFile mt-5'>
+            <div className='flex justify-between items-center mb-3'></div>
+            <div className='content'>
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+              <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
             </div>
           </div>
         </div>

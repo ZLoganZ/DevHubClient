@@ -7,8 +7,8 @@ const initialState = {
   location: () => {}
 };
 
-const functionSlice = createSlice({
-  name: 'function',
+const hookSlice = createSlice({
+  name: 'hook',
   initialState,
   reducers: {
     setNavigate: (state, action) => {
@@ -26,6 +26,5 @@ const functionSlice = createSlice({
   }
 });
 
-export const { setNavigate, setDispatch, setUseSelector, setLocation } =
-  functionSlice.actions;
-export default functionSlice.reducer;
+export const { setNavigate, setDispatch, setUseSelector, setLocation } = hookSlice.actions;
+export default hookSlice.reducer;

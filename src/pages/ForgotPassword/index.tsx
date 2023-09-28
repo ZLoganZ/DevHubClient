@@ -33,21 +33,14 @@ export const ForgotPassword = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       <h1>ForgotPassword</h1>
-      <label htmlFor="email" className="mr-3">
+      <label htmlFor='email' className='mr-3'>
         Email
       </label>
-      <input
-        type="email"
-        name="email"
-        id="email"
-        onChange={handleChangeEmail}
-      />
-      <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
+      <input type='email' name='email' id='email' onChange={handleChangeEmail} />
+      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
         Send
       </button>
-      <button
-        className="btnBack mr-3 px-3 py-1"
-        onClick={() => navigate('/login')}>
+      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/login')}>
         Back
       </button>
     </StyleProvider>
@@ -74,9 +67,7 @@ export const ResetPassword = () => {
 
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleChangeConfirmPassword = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value);
   };
 
@@ -104,30 +95,23 @@ export const ResetPassword = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       <h1>ResetPassword</h1>
-      <label htmlFor="password" className="mr-3">
+      <label htmlFor='password' className='mr-3'>
         Password
       </label>
-      <input
-        type="password"
-        name="password"
-        id="password"
-        onChange={handleChangePassword}
-      />
-      <label htmlFor="confirmPassword" className="mr-3">
+      <input type='password' name='password' id='password' onChange={handleChangePassword} />
+      <label htmlFor='confirmPassword' className='mr-3'>
         Confirm Password
       </label>
       <input
-        type="password"
-        name="confirmPassword"
-        id="confirmPassword"
+        type='password'
+        name='confirmPassword'
+        id='confirmPassword'
         onChange={handleChangeConfirmPassword}
       />
-      <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
+      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
         Next
       </button>
-      <button
-        className="btnBack mr-3 px-3 py-1"
-        onClick={() => navigate('/forgot')}>
+      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/forgot')}>
         Back
       </button>
     </StyleProvider>
@@ -164,9 +148,7 @@ export const VerifyCode = () => {
 
   const handleSubmit = () => {
     if (code === params.get('code')) {
-      window.alert(
-        'Lêu lêu, bị lừa rồi đó, đừng nhập code này nữa nha, đọc note kìa!'
-      );
+      window.alert('Lêu lêu, bị lừa rồi đó, đừng nhập code này nữa nha, đọc note kìa!');
     }
     dispatch(VERIFY_CODE_SAGA({ email: email!, code: code }));
   };
@@ -174,16 +156,14 @@ export const VerifyCode = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       <h1>VerifyCode</h1>
-      <label htmlFor="code" className="mr-3">
+      <label htmlFor='code' className='mr-3'>
         Code
       </label>
-      <input type="text" name="code" id="code" onChange={handleChangeCode} />
-      <button className="btnNext ml-3 mr-3 px-3 py-1" onClick={handleSubmit}>
+      <input type='text' name='code' id='code' onChange={handleChangeCode} />
+      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
         Next
       </button>
-      <button
-        className="btnBack mr-3 px-3 py-1"
-        onClick={() => navigate('/forgot')}>
+      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/forgot')}>
         Back
       </button>
     </StyleProvider>

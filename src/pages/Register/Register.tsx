@@ -39,31 +39,29 @@ const Register = () => {
           controlHeight: 40
         }
       }}>
-      <StyleProvider className="w-screen h-screen">
-        <div className="register relative">
-          <div className="cover absolute top-0 left-0">
-            <div className="content">
-              <div className="lineTop mt-5">
-                <span className="anyWhere">
-                  <span className="circle ml-5 mr-2">
-                    <FontAwesomeIcon className="icon" icon={faSnowflake} />
+      <StyleProvider className='w-screen h-screen'>
+        <div className='register relative'>
+          <div className='cover absolute top-0 left-0'>
+            <div className='content'>
+              <div className='lineTop mt-5'>
+                <span className='anyWhere'>
+                  <span className='circle ml-5 mr-2'>
+                    <FontAwesomeIcon className='icon' icon={faSnowflake} />
                   </span>
                   <span>DevHub</span>
                 </span>
               </div>
-              <div className="account mt-12 px-14">
-                <div className="startFree">START FOR FREE</div>
-                <div className="createAccount">Create new account</div>
-                <div className="member mt-3">
-                  <span className="memberEd">Already a member?</span>
-                  <NavLink to="/login">
-                    <span className="login ml-1">Login</span>
+              <div className='account mt-12 px-14'>
+                <div className='startFree'>START FOR FREE</div>
+                <div className='createAccount'>Create new account</div>
+                <div className='member mt-3'>
+                  <span className='memberEd'>Already a member?</span>
+                  <NavLink to='/login'>
+                    <span className='login ml-1'>Login</span>
                   </NavLink>
                 </div>
 
-                <Form
-                  className="mt-5 formAccount"
-                  onFinish={form.handleSubmit(onSubmit)}>
+                <Form className='mt-5 formAccount' onFinish={form.handleSubmit(onSubmit)}>
                   <Form.Item>
                     <Form.Item
                       style={{
@@ -71,7 +69,7 @@ const Register = () => {
                         width: 'calc(50% - 8px)',
                         marginRight: '16px'
                       }}
-                      name="lastname"
+                      name='lastname'
                       rules={[
                         {
                           required: true,
@@ -79,7 +77,7 @@ const Register = () => {
                         }
                       ]}>
                       <Input
-                        placeholder="Last name"
+                        placeholder='Last name'
                         allowClear
                         prefix={<UserOutlined />}
                         onChange={(e) => {
@@ -92,7 +90,7 @@ const Register = () => {
                         display: 'inline-block',
                         width: 'calc(50% - 8px)'
                       }}
-                      name="firstname"
+                      name='firstname'
                       rules={[
                         {
                           required: true,
@@ -100,7 +98,7 @@ const Register = () => {
                         }
                       ]}>
                       <Input
-                        placeholder="First name"
+                        placeholder='First name'
                         allowClear
                         prefix={<UserOutlined />}
                         onChange={(e) => {
@@ -110,7 +108,7 @@ const Register = () => {
                     </Form.Item>
                   </Form.Item>
                   <Form.Item
-                    name="email"
+                    name='email'
                     rules={[
                       {
                         required: true,
@@ -122,7 +120,7 @@ const Register = () => {
                       }
                     ]}>
                     <Input
-                      placeholder="Email"
+                      placeholder='Email'
                       allowClear
                       prefix={<MailOutlined />}
                       onChange={(e) => {
@@ -131,7 +129,7 @@ const Register = () => {
                     />
                   </Form.Item>
                   <Form.Item
-                    name="password"
+                    name='password'
                     rules={[
                       {
                         required: true,
@@ -140,14 +138,14 @@ const Register = () => {
                     ]}
                     hasFeedback>
                     <Input.Password
-                      placeholder="Password"
+                      placeholder='Password'
                       onChange={(e) => {
                         form.setValue('password', e.target.value);
                       }}
                     />
                   </Form.Item>
                   <Form.Item
-                    name="confirm"
+                    name='confirm'
                     dependencies={['password']}
                     hasFeedback
                     rules={[
@@ -161,21 +159,19 @@ const Register = () => {
                             return Promise.resolve();
                           }
                           return Promise.reject(
-                            new Error(
-                              'The two passwords that you entered do not match!'
-                            )
+                            new Error('The two passwords that you entered do not match!')
                           );
                         }
                       })
                     ]}>
                     <Input.Password
-                      placeholder="Confirm Password"
+                      placeholder='Confirm Password'
                       onChange={(e) => {
                         form.setValue('confirm', e.target.value);
                       }}
                     />
                   </Form.Item>
-                  <button className="buttonCreate mt-3" type="submit">
+                  <button className='buttonCreate mt-3' type='submit'>
                     Create account
                   </button>
                 </Form>

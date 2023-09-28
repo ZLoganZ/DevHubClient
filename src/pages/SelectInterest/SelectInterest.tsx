@@ -31,17 +31,15 @@ const SelectInterest = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       {contextHolder}
-      <div className="flex justify-center w-full h-full selectInterest">
-        <div className="content w-1/2 pt-10 h-full relative">
+      <div className='flex justify-center w-full h-full selectInterest'>
+        <div className='content w-1/2 pt-10 h-full relative'>
           <div>
-            <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+            <span className='mr-3' style={{ color: themeColorSet.colorText2 }}>
               Step 03:
             </span>
-            <span style={{ color: themeColorSet.colorText3 }}>
-              Select interest
-            </span>
+            <span style={{ color: themeColorSet.colorText3 }}>Select interest</span>
           </div>
-          <div className="slide w-full flex justify-between mt-2">
+          <div className='slide w-full flex justify-between mt-2'>
             <span
               style={{
                 width: '19.4%',
@@ -79,7 +77,7 @@ const SelectInterest = () => {
               }}></span>
           </div>
           <div
-            className="textMax mt-4"
+            className='textMax mt-4'
             style={{
               fontSize: '1.8rem',
               fontWeight: '600',
@@ -88,18 +86,18 @@ const SelectInterest = () => {
             Select your interest
           </div>
           <div
-            className="textMin mt-5"
+            className='textMin mt-5'
             style={{
               fontSize: '1rem',
               color: themeColorSet.colorText3
             }}>
             Choose at least 5 interest to get started
           </div>
-          <div className="interest mt-7">
-            <div className="flex flex-wrap">
+          <div className='interest mt-7'>
+            <div className='flex flex-wrap'>
               {descArray.map((item, index) => (
                 <div
-                  className="interestItem px-4 py-2 mr-2 mb-3"
+                  className='interestItem px-4 py-2 mr-2 mb-3'
                   key={index}
                   onClick={(e) => {
                     if (e.currentTarget.classList.contains('active')) {
@@ -117,7 +115,7 @@ const SelectInterest = () => {
               ))}
             </div>
           </div>
-          <div className="btnNext absolute">
+          <div className='btnNext absolute'>
             <ButtonActiveHover
               rounded
               onClick={() => {

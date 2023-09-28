@@ -1,8 +1,6 @@
 import { PostType, UserInfoType } from '@/types';
 
-const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(
-  obj: T
-): T => {
+const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(obj: T): T => {
   const defaultValues: UserInfoType | PostType = {
     _id: '',
     email: '',

@@ -33,10 +33,7 @@ const AddExperienceForm = (Props: EditProps) => {
   const [pastDate, setPastDate] = useState('');
 
   const [untilNow, setUntilNow] = useState(false);
-  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([
-    false,
-    false
-  ]);
+  const [disablePicker, setDisablePicker] = useState<[boolean, boolean]>([false, false]);
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -54,12 +51,7 @@ const AddExperienceForm = (Props: EditProps) => {
   };
 
   const handleSetExperience = () => {
-    if (
-      position_name === '' ||
-      company_name === '' ||
-      start_date === '' ||
-      end_date === ''
-    ) {
+    if (position_name === '' || company_name === '' || start_date === '' || end_date === '') {
       // console.log('position_name', position_name);
       // console.log('company_name', company_name);
       // console.log('start_date', start_date);
@@ -84,19 +76,17 @@ const AddExperienceForm = (Props: EditProps) => {
   return (
     <StyleProvider theme={themeColorSet}>
       {contextHolder}
-      <div className="editPositionForm">
-        <div className="flex justify-between">
-          <div
-            className="PositionName form__group field"
-            style={{ width: '48%' }}>
+      <div className='editPositionForm'>
+        <div className='flex justify-between'>
+          <div className='PositionName form__group field' style={{ width: '48%' }}>
             <input
               //   defaultValue={}
-              pattern="[A-Za-z ]*"
-              type="input"
-              className="form__field"
-              placeholder="Position Name"
-              name="position_name"
-              id="position_name"
+              pattern='[A-Za-z ]*'
+              type='input'
+              className='form__field'
+              placeholder='Position Name'
+              name='position_name'
+              id='position_name'
               required
               onChange={(e) => {
                 if (searchRef.current) {
@@ -106,23 +96,21 @@ const AddExperienceForm = (Props: EditProps) => {
                   setPositionName(e.target.value);
                 }, 300);
               }}
-              autoComplete="off"
+              autoComplete='off'
             />
-            <label htmlFor="position_name" className="form__label">
+            <label htmlFor='position_name' className='form__label'>
               Position Name
             </label>
           </div>
-          <div
-            className="CompanyName form__group field"
-            style={{ width: '48%' }}>
+          <div className='CompanyName form__group field' style={{ width: '48%' }}>
             <input
               //   defaultValue={}
-              pattern="[A-Za-z ]*"
-              type="input"
-              className="form__field"
-              placeholder="Company Name"
-              name="company_name"
-              id="company_name"
+              pattern='[A-Za-z ]*'
+              type='input'
+              className='form__field'
+              placeholder='Company Name'
+              name='company_name'
+              id='company_name'
               required
               onChange={(e) => {
                 if (searchRef.current) {
@@ -132,22 +120,22 @@ const AddExperienceForm = (Props: EditProps) => {
                   setCompanyName(e.target.value);
                 }, 300);
               }}
-              autoComplete="off"
+              autoComplete='off'
             />
-            <label htmlFor="company_name" className="form__label">
+            <label htmlFor='company_name' className='form__label'>
               Company Name
             </label>
           </div>
         </div>
-        <div className="mt-7">
+        <div className='mt-7'>
           <RangePicker
-            picker="month"
+            picker='month'
             format={dateFormat}
             disabled={disablePicker}
             disabledDate={(current) => {
               return current && current > dayjs().endOf('day');
             }}
-            size="large"
+            size='large'
             onChange={(_, dateString) => {
               setStartDate(dateString[0]);
               untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
@@ -155,7 +143,7 @@ const AddExperienceForm = (Props: EditProps) => {
             }}
           />
           <button
-            className="untilButton ml-8 px-4 py-2 rounded-md"
+            className='untilButton ml-8 px-4 py-2 rounded-md'
             onClick={(e) => {
               if (!untilNow) {
                 e.currentTarget.classList.add('untilActive');

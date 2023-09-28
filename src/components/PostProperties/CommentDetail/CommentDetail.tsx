@@ -1,19 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Comment } from '@ant-design/compatible';
 import { Avatar, Tooltip } from 'antd';
-import Icon, {
-  DislikeFilled,
-  DislikeOutlined,
-  LikeFilled,
-  LikeOutlined
-} from '@ant-design/icons';
+import Icon, { DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined } from '@ant-design/icons';
+import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
-import StyleProvider from '@/components/Post/cssPost';
 import { useAppSelector } from '@/hooks/special';
 import { useLikeComment } from '@/hooks/mutation';
 import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
+import StyleProvider from './cssCommentDetail';
 
 interface CommentProps {
   comment: CommentType;
@@ -36,13 +32,15 @@ const CommentDetail = (Props: CommentProps) => {
 
   const [likes, setLike] = useState(Props.comment.like_number || 0);
   const [dislikes, setDislike] = useState(Props.comment.like_number || 0);
-  const [action, setAction] = useState(
-    Props.comment.is_liked || Props.comment.is_disliked
-      ? Props.comment.is_liked
-        ? 'liked'
-        : 'disliked'
-      : ''
-  );
+  const [action, setAction] = useState('');
+
+  useEffect(() => {
+    if (Props.comment.is_liked) {
+      setAction('liked');
+    } else if (Props.comment.is_disliked) {
+      setAction('disliked');
+    }
+  }, [Props.comment.is_liked, Props.comment.is_disliked]);
 
   const like = () => {
     if (action === 'liked') {
@@ -83,8 +81,7 @@ const CommentDetail = (Props: CommentProps) => {
   };
 
   const setReply = () => {
-    const selectedCommentID =
-      Props.selectedCommentID === Props.comment._id ? null : Props.comment._id;
+    const selectedCommentID = Props.selectedCommentID === Props.comment._id ? null : Props.comment._id;
     Props.handleData({
       isReply: selectedCommentID ? true : false,
       idComment: selectedCommentID
@@ -93,10 +90,10 @@ const CommentDetail = (Props: CommentProps) => {
   };
 
   const actions = [
-    <span key="comment-basic-like">
-      <Tooltip title="Like">
+    <span key='comment-basic-like'>
+      <Tooltip title='Like'>
         <Icon
-          type="like"
+          type='like'
           component={
             action === 'liked'
               ? (LikeFilled as React.ForwardRefExoticComponent<any>)
@@ -110,10 +107,10 @@ const CommentDetail = (Props: CommentProps) => {
       </Tooltip>
       <span style={{ paddingLeft: 8, cursor: 'auto' }}>{likes}</span>
     </span>,
-    <span key="comment-basic-dislike">
-      <Tooltip title="Dislike">
+    <span key='comment-basic-dislike'>
+      <Tooltip title='Dislike'>
         <Icon
-          type="dislike"
+          type='dislike'
           component={
             action === 'disliked'
               ? (DislikeFilled as React.ForwardRefExoticComponent<any>)
@@ -132,8 +129,8 @@ const CommentDetail = (Props: CommentProps) => {
         <></>
       ) : (
         <span
-          id="reply"
-          key="comment-basic-reply-to"
+          id='reply'
+          key='comment-basic-reply-to'
           onClick={setReply}
           {...(Props.selectedCommentID === Props.comment._id
             ? {
@@ -160,18 +157,19 @@ const CommentDetail = (Props: CommentProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="commentDetail">
+      <div className='commentDetail'>
         <Comment
           actions={actions}
           author={
-            <div
+            <NavLink
+              to={`/user/${Props.comment.user._id}`}
               style={{
                 fontWeight: 600,
                 color: themeColorSet.colorText1,
                 fontSize: '0.8rem'
               }}>
               {Props.comment.user.name}
-            </div>
+            </NavLink>
           }
           datetime={
             <div
@@ -183,16 +181,9 @@ const CommentDetail = (Props: CommentProps) => {
           }
           avatar={
             Props.comment.user.user_image ? (
-              <Avatar
-                src={Props.comment.user.user_image}
-                alt={Props.comment.user.name}
-              />
+              <Avatar src={Props.comment.user.user_image} alt={Props.comment.user.name} />
             ) : (
-              <Avatar
-                style={{ backgroundColor: '#87d068' }}
-                icon="user"
-                alt={Props.comment.user.name}
-              />
+              <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={Props.comment.user.name} />
             )
           }
           content={Props.comment.content}>

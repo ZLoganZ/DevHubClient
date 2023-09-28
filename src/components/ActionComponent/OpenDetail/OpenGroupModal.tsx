@@ -2,10 +2,7 @@ import { useState, useLayoutEffect } from 'react';
 
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { messageService } from '@/services/MessageService';
-import {
-  ButtonActiveHover,
-  ButtonCancelHover
-} from '@/components/MiniComponent';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
@@ -56,14 +53,10 @@ const OpenGroupModal = (Props: Props) => {
       openModal({
         title: 'Create a new group chat',
         component: (
-          <GroupChatModal
-            setName={handleSetName}
-            setValue={handleSetGroupMember}
-            users={Props.users}
-          />
+          <GroupChatModal setName={handleSetName} setValue={handleSetGroupMember} users={Props.users} />
         ),
         footer: (
-          <div className="mt-6 flex items-center justify-end gap-x-3">
+          <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover
               onClick={() => {
                 dispatch(closeModal());

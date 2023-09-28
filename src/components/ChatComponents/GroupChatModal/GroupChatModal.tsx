@@ -24,12 +24,10 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
         }
       }}>
       <StyleProvider>
-        <div className="space-y-12">
-          <div className="border-b border-gray-900/10 pb-12">
-            <p className="mt-1 text-sm leading-6 text-gray-300">
-              Create a chat with more than 2 people.
-            </p>
-            <div className="mt-10 flex flex-col gap-y-8">
+        <div className='space-y-12'>
+          <div className='border-b border-gray-900/10 pb-12'>
+            <p className='mt-1 text-sm leading-6 text-gray-300'>Create a chat with more than 2 people.</p>
+            <div className='mt-10 flex flex-col gap-y-8'>
               <Input
                 style={{ boxShadow: 'none' }}
                 placeholder={`Group's name`}
@@ -39,8 +37,8 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
                 }}
               />
               <Select
-                mode="multiple"
-                placeholder="Select members"
+                mode='multiple'
+                placeholder='Select members'
                 options={Props.users.map((user) => ({
                   label: user.name,
                   value: user.name,

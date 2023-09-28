@@ -44,6 +44,5 @@ const modalHOCSlide = createSlice({
   }
 });
 
-export const { openModal, setFooter, closeModal, setHandleSubmit } =
-  modalHOCSlide.actions;
+export const { openModal, setFooter, closeModal, setHandleSubmit } = modalHOCSlide.actions;
 export default modalHOCSlide.reducer;

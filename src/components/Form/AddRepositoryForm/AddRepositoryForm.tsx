@@ -24,9 +24,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [access_token_github, setAccess_token_github] = useState(
-    localStorage.getItem(GITHUB_TOKEN)
-  );
+  const [access_token_github, setAccess_token_github] = useState(localStorage.getItem(GITHUB_TOKEN));
 
   const { repository, isLoadingRepository } = useGetRepository();
 
@@ -92,18 +90,17 @@ const AddRepositoryForm = (Props: ReposProps) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <div
-        className="repositoriesItem px-3 py-4 flex justify-between items-center"
+        className='repositoriesItem px-3 py-4 flex justify-between items-center'
         key={index}
         style={{
           border: `1px solid ${themeColorSet.colorBg4}`,
-          borderTop:
-            index === 0 ? `1px solid ${themeColorSet.colorBg4}` : 'none',
+          borderTop: index === 0 ? `1px solid ${themeColorSet.colorBg4}` : 'none',
           height: '100px'
         }}>
-        <Space className="left" direction="vertical">
-          <div className="top">
+        <Space className='left' direction='vertical'>
+          <div className='top'>
             <span
-              className="name"
+              className='name'
               style={{
                 fontSize: '1rem',
                 color: themeColorSet.colorText1,
@@ -112,7 +109,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
               {item.name}
             </span>
             <span
-              className="rounded-lg ml-3"
+              className='rounded-lg ml-3'
               style={{
                 color: themeColorSet.colorText3,
                 border: `1px solid ${themeColorSet.colorBg4}`,
@@ -122,24 +119,24 @@ const AddRepositoryForm = (Props: ReposProps) => {
               {item.private ? 'Private' : 'Public'}
             </span>
           </div>
-          <div className="bottom flex items-center">
-            <span className="mr-3 flex items-center">
-              <span className="mr-2 text-2xl" style={{ color: colorLanguage }}>
+          <div className='bottom flex items-center'>
+            <span className='mr-3 flex items-center'>
+              <span className='mr-2 text-2xl' style={{ color: colorLanguage }}>
                 •
               </span>
               {item.languages}
             </span>
-            <span className="star mr-3">
-              <FontAwesomeIcon size="xs" icon={faStar} />
-              <span className="ml-1">{item.watchersCount}</span>
+            <span className='star mr-3'>
+              <FontAwesomeIcon size='xs' icon={faStar} />
+              <span className='ml-1'>{item.watchersCount}</span>
             </span>
-            <span className="fork">
-              <FontAwesomeIcon size="xs" icon={faCodeFork} />
-              <span className="ml-1">{item.forksCount}</span>
+            <span className='fork'>
+              <FontAwesomeIcon size='xs' icon={faCodeFork} />
+              <span className='ml-1'>{item.forksCount}</span>
             </span>
           </div>
         </Space>
-        <div className="right">
+        <div className='right'>
           <ConfigProvider
             theme={{
               token: {
@@ -170,23 +167,21 @@ const AddRepositoryForm = (Props: ReposProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="addRepositories">
+      <div className='addRepositories'>
         {!access_token_github || repos.length === 0 ? (
-          <div className="py-20">
-            <Spin tip="Loading" size="large">
-              <div className="content" />
+          <div className='py-20'>
+            <Spin tip='Loading' size='large'>
+              <div className='content' />
             </Spin>
           </div>
         ) : (
           // Nếu có access_token_github
           <div>
-            <div
-              className="title mt-5"
-              style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
+            <div className='title mt-5' style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
               Select the repositories you want to feature
             </div>
             <div
-              className="repositories mt-5 mb-6 px-2"
+              className='repositories mt-5 mb-6 px-2'
               style={{
                 maxHeight: '402px',
                 overflow: 'auto'

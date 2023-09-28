@@ -43,10 +43,10 @@ export const useCreatePost = () => {
         ]);
 
       if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(
-          ['allPostsNewsfeed'],
-          (oldData) => [...(oldData || []), newPost.metadata]
-        );
+        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], (oldData) => [
+          ...(oldData || []),
+          newPost.metadata
+        ]);
     }
   });
   return {
@@ -113,10 +113,7 @@ export const useUpdatePost = () => {
       );
 
       if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(
-          ['allPostsNewsfeed'],
-          updatePostData
-        );
+        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
 
       queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
     }
@@ -155,10 +152,7 @@ export const useDeletePost = () => {
       queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
 
       if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(
-          ['allPostsNewsfeed'],
-          updatePostData
-        );
+        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
     }
   });
   return {

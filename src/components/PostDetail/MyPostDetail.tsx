@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import MyPostShare from '@/components/Post/MyPostShare';
-import CommentDetail from '@/components/CommentDetail';
+import CommentDetail from '@/components/PostProperties/CommentDetail';
 import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
@@ -24,9 +24,7 @@ const MyPostDetail = (Props: PostProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
-    Props.data.idComment
-  );
+  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(Props.data.idComment);
 
   const { comments, isLoadingComments } = useCommentsData(Props.post._id);
 
@@ -40,7 +38,7 @@ const MyPostDetail = (Props: PostProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="postDetail">
+      <div className='postDetail'>
         {Props.isShared ? (
           <MyPostShare
             key={Props.post._id}
@@ -52,13 +50,12 @@ const MyPostDetail = (Props: PostProps) => {
           <MyPost post={Props.post} userInfo={Props.userInfo} />
         )}
         <div
-          className="commentTotal px-3 ml-4"
+          className='commentTotal px-3 ml-4'
           style={{
-            maxHeight: '30rem',
-            overflow: 'auto'
+            maxHeight: '30rem'
+            // overflow: 'auto'
           }}>
-          {isLoadingComments &&
-          Props.post.post_attributes.comment_number > 0 ? (
+          {isLoadingComments && Props.post.post_attributes.comment_number > 0 ? (
             <Skeleton avatar paragraph={{ rows: 2 }} active />
           ) : (
             comments?.map((item) => {

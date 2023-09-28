@@ -2,11 +2,7 @@ import { useState, useEffect } from 'react';
 import { Channel, Members } from 'pusher-js';
 
 import { pusherClient } from './pusher';
-import {
-  setMembers,
-  addMember,
-  removeMember
-} from '@/redux/Slice/ActiveListSlice';
+import { setMembers, addMember, removeMember } from '@/redux/Slice/ActiveListSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 const ActiveChannel = () => {
@@ -29,19 +25,13 @@ const ActiveChannel = () => {
     channel.bind('pusher:subscription_succeeded', (members: Members) => {
       const initialMembers: String[] = [];
 
-      members.each((member: Record<string, any>) =>
-        initialMembers.push(member.id)
-      );
+      members.each((member: Record<string, any>) => initialMembers.push(member.id));
       dispatch(setMembers(initialMembers));
     });
 
-    channel.bind('pusher:member_added', (member: Record<string, any>) =>
-      dispatch(addMember(member.id))
-    );
+    channel.bind('pusher:member_added', (member: Record<string, any>) => dispatch(addMember(member.id)));
 
-    channel.bind('pusher:member_removed', (member: Record<string, any>) =>
-      dispatch(removeMember(member.id))
-    );
+    channel.bind('pusher:member_removed', (member: Record<string, any>) => dispatch(removeMember(member.id)));
 
     return () => {
       if (activeChannel) {

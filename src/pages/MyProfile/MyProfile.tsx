@@ -3,12 +3,7 @@ import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSnowflake,
-  faFileLines,
-  faLocationDot,
-  faBriefcase
-} from '@fortawesome/free-solid-svg-icons';
+import { faSnowflake, faFileLines, faLocationDot, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebookF,
   faTwitter,
@@ -47,8 +42,7 @@ const MyProfile = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } =
-    useUserPostsData('me');
+  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData('me');
 
   useEffect(() => {
     if (isLoadingUserPosts) {
@@ -62,40 +56,29 @@ const MyProfile = () => {
   const { userInfo, isLoadingUserInfo } = useUserInfo();
 
   useEffect(() => {
-    document.title = isLoadingUserPosts
-      ? 'DevHub'
-      : `${userInfo?.name} | DevHub`;
+    document.title = isLoadingUserPosts ? 'DevHub' : `${userInfo?.name} | DevHub`;
   }, [isLoadingUserPosts, isLoadingUserInfo]);
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!userPosts ||
-      !userInfo ||
-      isLoadingUserPosts ||
-      isFetchingUserPosts ||
-      isLoadingUserInfo ? (
+      {!userPosts || !userInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingUserInfo ? (
         <LoadingProfileComponent />
       ) : (
         <>
           <Row>
-            <Col span={24} className="avatar_cover relative">
+            <Col span={24} className='avatar_cover relative'>
               <div
-                className="cover w-full h-80 rounded-br-lg rounded-bl-lg"
+                className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${
-                    userInfo.cover_image || `/images/ProfilePage/cover.jpg`
-                  }")`,
+                  backgroundImage: `url("${userInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
-              <div className="avatar rounded-full overflow-hidden object-cover flex">
+              <div className='avatar rounded-full overflow-hidden flex'>
                 <Image
-                  src={
-                    userInfo.user_image ||
-                    './images/DefaultAvatar/default_avatar.png'
-                  }
-                  alt="avt"
+                  src={userInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
+                  alt='avt'
                   style={{
                     width: '100%',
                     height: '100%',
@@ -105,18 +88,14 @@ const MyProfile = () => {
               </div>
             </Col>
             <Col offset={3} span={18}>
-              <Row className="py-5 name_Editprofile">
+              <Row className='py-5 name_Editprofile'>
                 <Col offset={6} span={12}>
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: themeColorSet.colorText1 }}>
+                  <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
                     {userInfo.name}
                   </div>
-                  <div className="position mt-2">
-                    <FontAwesomeIcon className="icon" icon={faSnowflake} />
-                    <span
-                      style={{ color: themeColorSet.colorText3 }}
-                      className="ml-2">
+                  <div className='position mt-2'>
+                    <FontAwesomeIcon className='icon' icon={faSnowflake} />
+                    <span style={{ color: themeColorSet.colorText3 }} className='ml-2'>
                       {userInfo.experiences && userInfo.experiences.length > 0
                         ? userInfo.experiences.length > 1
                           ? userInfo.experiences[0].position_name +
@@ -126,18 +105,18 @@ const MyProfile = () => {
                         : 'No job position'}
                     </span>
                   </div>
-                  <div className="viewResume mt-2">
-                    <FontAwesomeIcon className="icon" icon={faFileLines} />
-                    <NavLink to="/resume" className="ml-2">
+                  <div className='viewResume mt-2'>
+                    <FontAwesomeIcon className='icon' icon={faFileLines} />
+                    <NavLink to='/resume' className='ml-2'>
                       View Resume
                     </NavLink>
                   </div>
                 </Col>
                 <Col span={6}>
-                  <div className="chat_Follow flex justify-around items-center w-full h-full">
-                    <div className="editProfile">
+                  <div className='chat_Follow flex justify-around items-center w-full h-full'>
+                    <div className='editProfile'>
                       <button
-                        className="btnEditProfile px-6 py-3 rounded-full"
+                        className='btnEditProfile px-6 py-3 rounded-full'
                         onClick={() => {
                           dispatch(
                             openDrawer({
@@ -152,35 +131,31 @@ const MyProfile = () => {
                   </div>
                 </Col>
               </Row>
-              <div className="id_address_join">
-                <span className="id item mr-2">
-                  @{userInfo.alias || 'user'}
-                </span>
-                <span className="address item mr-2">
-                  <FontAwesomeIcon className="icon mr-2" icon={faLocationDot} />
+              <div className='id_address_join'>
+                <span className='id item mr-2'>@{userInfo.alias || 'user'}</span>
+                <span className='address item mr-2'>
+                  <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
                   {userInfo.location || 'Global'}
                 </span>
-                <span className="join">
-                  <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
+                <span className='join'>
+                  <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
                   Joined {format(new Date(userInfo.createdAt), 'MMM yyyy')}
                 </span>
               </div>
-              <Col span={18} className="mt-5">
-                <div className="tags flex flex-wrap">
+              <Col span={18} className='mt-5'>
+                <div className='tags flex flex-wrap'>
                   {descArray.map((item, index) => {
                     if (userInfo.tags?.indexOf(item.title) !== -1) {
                       return (
                         <Tag
-                          className="item mx-2 my-2 px-4 py-1"
+                          className='item mx-2 my-2 px-4 py-1'
                           key={index}
                           color={themeColorSet.colorBg2}
                           style={{
                             border: 'none'
                           }}>
                           {item.svg} &nbsp;
-                          <span style={{ color: themeColorSet.colorText1 }}>
-                            {item.title}
-                          </span>
+                          <span style={{ color: themeColorSet.colorText1 }}>{item.title}</span>
                         </Tag>
                       );
                     }
@@ -188,41 +163,37 @@ const MyProfile = () => {
                   })}
                 </div>
               </Col>
-              <div className="follow mt-5">
-                <span className="follower item mr-2">
-                  <span className="mr-1">{userInfo?.follower_number || 0}</span>{' '}
+              <div className='follow mt-5'>
+                <span className='follower item mr-2'>
+                  <span className='mr-1'>{userInfo?.follower_number || 0}</span>{' '}
                   {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
                 </span>
-                <span className="following item mr-2">
-                  <span className="mr-1">
-                    {userInfo?.following_number || 0}
-                  </span>{' '}
+                <span className='following item mr-2'>
+                  <span className='mr-1'>{userInfo?.following_number || 0}</span>{' '}
                   {userInfo?.following_number > 1 ? 'Followings' : 'Following'}
                 </span>
-                <span className="post mr-2">
-                  <span className="mr-1">{userInfo?.post_number || 0}</span>{' '}
+                <span className='post mr-2'>
+                  <span className='mr-1'>{userInfo?.post_number || 0}</span>{' '}
                   {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
                 </span>
               </div>
-              <div className="experience mt-5">
+              <div className='experience mt-5'>
                 {userInfo.experiences.map((item, index) => (
-                  <div className="item mt-2" key={index}>
+                  <div className='item mt-2' key={index}>
                     <FontAwesomeIcon
-                      className="icon mr-2"
+                      className='icon mr-2'
                       icon={faBriefcase}
                       style={{ color: commonColor.colorBlue1 }}
                     />
-                    <span className="company mr-2">{item.company_name}</span>
-                    <span className="position mr-2">
-                      {item.position_name} |
-                    </span>
-                    <span className="date">
+                    <span className='company mr-2'>{item.company_name}</span>
+                    <span className='position mr-2'>{item.position_name} |</span>
+                    <span className='date'>
                       {item.start_date} ~ {item.end_date}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="contact mt-5">
+              <div className='contact mt-5'>
                 <Space>
                   {userInfo.contacts.map((item, index) => {
                     switch (item.key) {
@@ -234,7 +205,7 @@ const MyProfile = () => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
                           />
                         );
@@ -246,7 +217,7 @@ const MyProfile = () => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                           />
                         );
@@ -258,7 +229,7 @@ const MyProfile = () => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                           />
                         );
@@ -270,7 +241,7 @@ const MyProfile = () => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
                           />
                         );
@@ -282,7 +253,7 @@ const MyProfile = () => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
                           />
                         );
@@ -292,26 +263,25 @@ const MyProfile = () => {
                   })}
                 </Space>
               </div>
-              <div className="mainContain mt-5">
+              <div className='mainContain mt-5'>
                 <Tabs
-                  defaultActiveKey="2"
+                  defaultActiveKey='2'
                   items={[
                     {
                       key: '1',
                       label: 'Introduction',
                       children: (
-                        <div className="mt-10 mb-20">
-                          {!userInfo.about &&
-                            userInfo.repositories.length === 0 && (
-                              <div className="w-8/12 mb-10">
-                                <Empty
-                                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                  description={<span>No introduction</span>}
-                                />
-                              </div>
-                            )}
+                        <div className='mt-10 mb-20'>
+                          {!userInfo.about && userInfo.repositories.length === 0 && (
+                            <div className='w-8/12 mb-10'>
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_DEFAULT}
+                                description={<span>No introduction</span>}
+                              />
+                            </div>
+                          )}
                           {userInfo.about && (
-                            <div className="w-8/12">
+                            <div className='w-8/12'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -323,13 +293,13 @@ const MyProfile = () => {
                               <ReactQuill
                                 value={userInfo.about}
                                 readOnly={true}
-                                theme="bubble"
+                                theme='bubble'
                                 modules={{}}
                               />
                             </div>
                           )}
                           {userInfo.repositories.length !== 0 && (
-                            <div className="w-8/12 mt-5">
+                            <div className='w-8/12 mt-5'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -338,7 +308,7 @@ const MyProfile = () => {
                                 }}>
                                 Repositories
                               </div>
-                              <div className="flex flex-wrap justify-between mt-5">
+                              <div className='flex flex-wrap justify-between mt-5'>
                                 {userInfo.repositories.map((item, index) => {
                                   return RenderRepositoryIem(item, index);
                                 })}
@@ -352,22 +322,22 @@ const MyProfile = () => {
                       key: '2',
                       label: 'Posts',
                       children: (
-                        <div className="mt-5">
-                          <div className="w-8/12">
+                        <div className='mt-5'>
+                          <div className='w-8/12'>
                             <NewPost userInfo={userInfo} />
                           </div>
                           {userPosts.length === 0 && (
-                            <div className="w-8/12">
+                            <div className='w-8/12'>
                               <Empty
-                                className="mt-10 mb-20"
+                                className='mt-10 mb-20'
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No post</span>}
+                                description={<span>No posts available</span>}
                               />
                             </div>
                           )}
                           {userPosts.map((item) => {
                             return (
-                              <div key={item._id} className="w-8/12">
+                              <div key={item._id} className='w-8/12'>
                                 {item.type === 'Share' && (
                                   <MyPostShare
                                     key={item._id}
@@ -377,11 +347,7 @@ const MyProfile = () => {
                                   />
                                 )}
                                 {item.type === 'Post' && (
-                                  <MyPost
-                                    key={item._id}
-                                    post={item}
-                                    userInfo={userInfo}
-                                  />
+                                  <MyPost key={item._id} post={item} userInfo={userInfo} />
                                 )}
                               </div>
                             );

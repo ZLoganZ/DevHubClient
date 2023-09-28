@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, RootState } from '@/redux/configStore';
@@ -16,101 +17,83 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 /**
  * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
- * API to detect when a target element intersects with the viewport and triggers a callback function
- * after a specified time.
- * @param targetRef - The targetRef is a mutable ref object that represents the element that you want
- * to observe for intersection. It is typically created using the useRef() hook and passed as a
- * parameter to the useIntersectionObserver hook.
+ * API to detect when a target element intersects with the viewport and triggers a callback function.
+ * @param targetRef - A React ref object that references the target element to be observed for
+ * intersection.
  * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It is a function that you can define and provide to the
- * `useIntersectionObserver` hook.
- * @param {number} [time=5000] - The `time` parameter is an optional parameter that specifies the
- * duration in milliseconds for which the target element needs to be continuously intersecting with the
- * viewport before triggering the `onIntersect` callback. If the target element is continuously
- * intersecting for the specified duration, the `onIntersect` callback will
- * be triggered. Otherwise, the `onIntersect` callback will not be triggered.
+ * target element intersects with the viewport. It is typically used to trigger some action or update
+ * the UI when the element becomes visible to the user.
+ * @param options - The `options` parameter is an object that allows you to customize the behavior of
+ * the `useIntersectionObserver` hook. It has the following properties:
+ * - `threshold` - The `threshold` property is a number between 0 and 1 that represents the percentage
+ * of the target element that must be visible to the user before the intersection is detected. The
+ * default value is 0.9, which means that 90% of the target element must be visible to the user before
+ * the intersection is detected.
+ * - `delay` - The `delay` property is a number that represents the number of milliseconds that the
+ * target element must be visible to the user before the intersection is detected. The default value
+ * is 5000, which means that the target element must be visible to the user for 5 seconds before the
+ * intersection is detected.
+ * - `pauseOnTabChange` - The `pauseOnTabChange` property is a boolean that determines whether the
+ * intersection detection should be paused when the user switches tabs. The default value is true,
+ * which means that the intersection detection will be paused when the user switches tabs.
  */
 export const useIntersectionObserver = (
-  targetRef: React.MutableRefObject<null>,
+  targetRef: React.RefObject<HTMLDivElement>,
   onIntersect: () => void,
-  time: number = 5000
+  options: {
+    threshold?: number;
+    delay?: number;
+    pauseOnTabChange?: boolean;
+  } = {}
 ) => {
+  const { threshold = 0.85, delay = 5000, pauseOnTabChange = true } = options;
+
   useEffect(() => {
     let intersectTimeoutID: NodeJS.Timeout;
     let intersectTime: number = 0;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          intersectTime = intersectTime || Date.now();
-          intersectTimeoutID = setInterval(() => {
-            if (Date.now() - intersectTime >= time) {
-              clearInterval(intersectTimeoutID);
-              onIntersect();
-            }
-          }, 100);
-        } else {
-          clearInterval(intersectTimeoutID);
-          intersectTime = 0;
-        }
-      },
-      {
-        rootMargin: '0px',
-        threshold: 1.0
+    const handleIntersect = debounce(([entry]) => {
+      if (entry.isIntersecting && document.hasFocus()) {
+        intersectTime = intersectTime || Date.now();
+
+        intersectTimeoutID = setInterval(() => {
+          if (Date.now() - intersectTime >= delay) {
+            clearInterval(intersectTimeoutID);
+            onIntersect();
+          }
+        }, 100);
+      } else {
+        clearInterval(intersectTimeoutID);
+        intersectTime = 0;
       }
-    );
+    }, delay);
+
+    const observer = new IntersectionObserver(handleIntersect, {
+      threshold
+    });
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && pauseOnTabChange) {
+        observer.unobserve(targetRef.current!);
+      } else {
+        observer.observe(targetRef.current!);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     if (targetRef.current) {
       observer.observe(targetRef.current);
     }
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(intersectTimeoutID);
       if (targetRef.current) {
         observer.unobserve(targetRef.current);
       }
     };
-  }, [targetRef, onIntersect, time]);
-};
-
-/**
- * The `useIntersectionObserverNow` function is a custom React hook that uses the Intersection Observer
- * API to detect when a target element intersects with the viewport and calls a callback function when
- * it does.
- * @param targetRef - The targetRef is a React ref object that references the HTMLDivElement that you
- * want to observe for intersection. It allows you to access and manipulate the DOM element in your
- * component.
- * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It can be used to perform some action or trigger some
- * behavior when the intersection occurs.
- */
-export const useIntersectionObserverNow = (
-  targetRef: React.RefObject<HTMLDivElement>,
-  onIntersect: () => void
-) => {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          onIntersect();
-        }
-      },
-      {
-        rootMargin: '0px',
-        threshold: 1.0
-      }
-    );
-
-    if (targetRef.current) {
-      observer.observe(targetRef.current);
-    }
-
-    return () => {
-      if (targetRef.current) {
-        observer.unobserve(targetRef.current);
-      }
-    };
-  }, [targetRef, onIntersect]);
+  }, [targetRef, onIntersect, threshold, delay, pauseOnTabChange]);
 };
 
 /**
@@ -127,9 +110,7 @@ export const useOtherUser = (conversation: any) => {
   const otherUser = useMemo(() => {
     const currentUser = userInfo._id;
 
-    const otherUser = conversation?.users?.filter(
-      (user: any) => user._id !== currentUser
-    );
+    const otherUser = conversation?.users?.filter((user: any) => user._id !== currentUser);
 
     return otherUser[0];
   }, [userInfo, conversation.users]);

@@ -19,19 +19,16 @@ import { useAppSelector } from './special';
  * - `isFetchingUserInfo` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserInfo = () => {
-  const userID =
-    useAppSelector((state) => state.auth.userID) ||
-    localStorage.getItem('x-client-id');
+  const userID = useAppSelector((state) => state.auth.userID) || localStorage.getItem('x-client-id');
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      const [{ data: Followers }, { data: Following }, { data: userInfo }] =
-        await Promise.all([
-          userService.getFollowers(userID!),
-          userService.getFollowing(userID!),
-          userService.getUserInfoByID(userID!)
-        ]);
+      const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
+        userService.getFollowers(userID!),
+        userService.getFollowing(userID!),
+        userService.getUserInfoByID(userID!)
+      ]);
 
       userInfo.metadata.followers = Followers.metadata;
       userInfo.metadata.following = Following.metadata;
@@ -63,12 +60,11 @@ export const useOtherUserInfo = (userID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
-      const [{ data: Followers }, { data: Following }, { data: userInfo }] =
-        await Promise.all([
-          userService.getFollowers(userID),
-          userService.getFollowing(userID),
-          userService.getUserInfoByID(userID)
-        ]);
+      const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
+        userService.getFollowers(userID),
+        userService.getFollowing(userID),
+        userService.getUserInfoByID(userID)
+      ]);
 
       userInfo.metadata.followers = Followers.metadata;
       userInfo.metadata.following = Following.metadata;
@@ -131,7 +127,7 @@ export const useAllPostsNewsfeedData = () => {
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPostsNewsfeed'],
     queryFn: async () => {
-      const { data } = await postService.GetAllPostNewsFeed();
+      const { data } = await postService.getAllPostNewsFeed();
       return ApplyDefaults(data.metadata);
     },
     staleTime: Infinity,
@@ -167,9 +163,7 @@ export const useUserPostsData = (userID: string) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
     queryFn: async () => {
-      const { data } = await postService.getAllPostByUserID(
-        userID === 'me' ? client_id! : userID
-      );
+      const { data } = await postService.getAllPostByUserID(userID === 'me' ? client_id! : userID);
       return ApplyDefaults(data.metadata);
     },
     enabled: !!userID,
@@ -315,9 +309,7 @@ export const useConversationsData = () => {
  * - `currentConversation` is an object that contains information about the current conversation.
  * - `isFetchingCurrentConversation` is a boolean that indicates whether the query is currently fetching.
  */
-export const useCurrentConversationData = (
-  conversationID: string | undefined
-) => {
+export const useCurrentConversationData = (conversationID: string | undefined) => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {

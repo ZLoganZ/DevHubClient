@@ -54,9 +54,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     <div
       className={`w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer`}
       style={{
-        backgroundColor: Props.selected
-          ? themeColorSet.colorBg2
-          : themeColorSet.colorBg1
+        backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
       }}>
       {Props.data.isGroup ? (
         <AvatarGroup key={Props.data._id} users={Props.data.users} />
@@ -64,26 +62,24 @@ const ConversationBox = (Props: ConversationBoxProps) => {
         <Avatar key={Props.data._id} user={otherUser} />
       )}
 
-      <div className="min-w-0 flex-1">
-        <div className="focus:outline-none">
-          <span className="absolute inset-0" aria-hidden="true" />
-          <div className="flex justify-between items-center mb-1">
+      <div className='min-w-0 flex-1'>
+        <div className='focus:outline-none'>
+          <span className='absolute inset-0' aria-hidden='true' />
+          <div className='flex justify-between items-center mb-1'>
             <p
               className={`text-md font-medium`}
               style={{
                 color: themeColorSet.colorText1
               }}>
-              <span style={{ color: themeColorSet.colorText1 }}>
-                {Props.data.name || otherUser.name}
-              </span>
+              <span style={{ color: themeColorSet.colorText1 }}>{Props.data.name || otherUser.name}</span>
             </p>
             {lastMessage?.createdAt && (
               <p
-                className="
+                className='
                   text-xs 
                   text-gray-400 
                   font-light
-                "
+                '
                 style={{ color: themeColorSet.colorText3 }}>
                 {formatDateTime(lastMessage.createdAt)}
               </p>
@@ -91,9 +87,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
           </div>
           <p
             className={`truncate text-sm ${
-              hasSeen
-                ? themeColorSet.colorText1
-                : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
+              hasSeen ? themeColorSet.colorText1 : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
             }`}>
             <span style={{ color: themeColorSet.colorText2 }}>
               {isOwn ? `You: ${lastMessageText}` : lastMessageText}

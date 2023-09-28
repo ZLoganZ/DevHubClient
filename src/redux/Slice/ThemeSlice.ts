@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 const initialState = {
-  change: true,
+  change: true
 };
 
 const themeSlice = createSlice({
@@ -27,8 +27,8 @@ const themeSlice = createSlice({
           break;
         }
       }
-    },
-  },
+    }
+  }
 });
 
 export const { setTheme } = themeSlice.actions;

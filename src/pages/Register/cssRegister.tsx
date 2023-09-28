@@ -22,7 +22,7 @@ const StyleProvider = styled.div`
     height: 85%;
     border-radius: 15px;
     overflow: hidden;
-    background-image: url('./images/registerPage/background.jpg');
+    background-image: url('/images/registerPage/background.jpg');
     background-size: cover;
     .cover {
       width: 100%;

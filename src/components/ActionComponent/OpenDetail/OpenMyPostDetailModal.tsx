@@ -102,13 +102,13 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
   const memoizedInputComment = useMemo(
     () => (
       <StyleProvider theme={themeColorSet}>
-        <div className="commentInput text-right flex items-center">
-          <Avatar className="mr-2" size={40} src={userInfo.user_image} />
-          <div className="input w-full">
+        <div className='commentInput text-right flex items-center'>
+          <Avatar className='mr-2' size={40} src={userInfo.user_image} />
+          <div className='input w-full'>
             <Input
               ref={inputRef}
               value={commentContent}
-              placeholder="Add a Comment"
+              placeholder='Add a Comment'
               onKeyUp={(e) => {
                 const cursorPosition = e.currentTarget.selectionStart;
                 setCursor(cursorPosition || 0);
@@ -129,44 +129,36 @@ const OpenMyPostDetailModal = (PostProps: PostProps) => {
               maxLength={150}
               addonAfter={
                 <Popover
-                  placement="right"
-                  trigger="click"
+                  placement='right'
+                  trigger='click'
                   title={'Emoji'}
                   content={
                     <Picker
                       data={async () => {
-                        const response = await fetch(
-                          'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                        );
+                        const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                         return response.json();
                       }}
                       onEmojiSelect={(emoji: any) => {
                         setCursor(cursor + emoji.native.length);
                         setCommentContent(
-                          commentContent.slice(0, cursor) +
-                            emoji.native +
-                            commentContent.slice(cursor)
+                          commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor)
                         );
                       }}
                     />
                   }>
                   <span
-                    className="emoji cursor-pointer hover:text-blue-700"
+                    className='emoji cursor-pointer hover:text-blue-700'
                     style={{
                       transition: 'all 0.3s'
                     }}>
-                    <FontAwesomeIcon
-                      className="item mr-3 ml-3"
-                      size="lg"
-                      icon={faFaceSmile}
-                    />
+                    <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                   </span>
                 </Popover>
               }
               suffix={
                 <span
-                  className="cursor-pointer hover:text-blue-700"
+                  className='cursor-pointer hover:text-blue-700'
                   {...(checkEmpty()
                     ? {
                         style: {

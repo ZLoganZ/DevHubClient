@@ -30,8 +30,7 @@ const SelectCommunity = () => {
           image:
             'https://img.freepik.com/premium-vector/blockchain-line-icon-logo-concept-dark-background_516670-196.jpg',
           members: 3648,
-          description:
-            'Resource about Web3 and Blockchains development, design, and business.'
+          description: 'Resource about Web3 and Blockchains development, design, and business.'
         }
       ]
     },
@@ -40,27 +39,22 @@ const SelectCommunity = () => {
       data: [
         {
           id: 1,
-          name: 'Kubernetes Zome',
-          image:
-            'https://foghornconsulting.com/wp-content/uploads/2022/01/kubernetes-1.png',
+          name: 'Kubernetes Zone',
+          image: 'https://foghornconsulting.com/wp-content/uploads/2022/01/kubernetes-1.png',
           members: 9394,
-          description:
-            'Sharing kubernetes tips and tricks, and other infrastructure related topics.'
+          description: 'Sharing kubernetes tips and tricks, and other infrastructure related topics.'
         },
         {
           id: 2,
           name: 'AWS',
-          image:
-            'https://ih1.redbubble.net/image.2107976074.2036/st,small,507x507-pad,600x600,f8f8f8.jpg',
+          image: 'https://ih1.redbubble.net/image.2107976074.2036/st,small,507x507-pad,600x600,f8f8f8.jpg',
           members: 3033,
-          description:
-            'A place to discuss all things AWS, including the AWS SDKs, AWS CLI, and more.'
+          description: 'A place to discuss all things AWS, including the AWS SDKs, AWS CLI, and more.'
         },
         {
           id: 3,
           name: 'DevOps',
-          image:
-            'https://cdn.dribbble.com/users/13574/screenshots/9711275/logo-devops.png',
+          image: 'https://cdn.dribbble.com/users/13574/screenshots/9711275/logo-devops.png',
           members: 3835,
           description: 'DevOps Community'
         }
@@ -91,8 +85,7 @@ const SelectCommunity = () => {
           image:
             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png',
           members: 1776,
-          description:
-            'Angular is a platform for building mobile and desktop web applications.'
+          description: 'Angular is a platform for building mobile and desktop web applications.'
         },
         {
           id: 4,
@@ -110,8 +103,7 @@ const SelectCommunity = () => {
         {
           id: 1,
           name: 'Node.JS',
-          image:
-            'https://ih1.redbubble.net/image.1637717834.1604/pp,840x830-pad,1000x1000,f8f8f8.u1.jpg',
+          image: 'https://ih1.redbubble.net/image.1637717834.1604/pp,840x830-pad,1000x1000,f8f8f8.u1.jpg',
           members: 3508,
           description:
             'Node.js is an open-source, cross-platform, back-end JavaScript runtime environment that runs on the V8 engine and executes JavaScript code outside a web browser.'
@@ -134,17 +126,15 @@ const SelectCommunity = () => {
   const { themeColorSet } = getTheme();
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="flex justify-center w-full h-full selectInterest">
-        <div className="content w-1/2 pt-10 h-full relative">
+      <div className='flex justify-center w-full h-full selectInterest'>
+        <div className='content w-1/2 pt-10 h-full relative'>
           <div>
-            <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+            <span className='mr-3' style={{ color: themeColorSet.colorText2 }}>
               Step 04:
             </span>
-            <span style={{ color: themeColorSet.colorText3 }}>
-              Select communities
-            </span>
+            <span style={{ color: themeColorSet.colorText3 }}>Select communities</span>
           </div>
-          <div className="slide w-full flex justify-between mt-2">
+          <div className='slide w-full flex justify-between mt-2'>
             <span
               style={{
                 width: '19.4%',
@@ -182,7 +172,7 @@ const SelectCommunity = () => {
               }}></span>
           </div>
           <div
-            className="textMax mt-4"
+            className='textMax mt-4'
             style={{
               color: themeColorSet.colorText1,
               fontSize: '1.8rem',
@@ -190,45 +180,45 @@ const SelectCommunity = () => {
             }}>
             Here are some relevant communities for you
           </div>
-          <div className="communities mt-10">
+          <div className='communities mt-10'>
             {communityArray.map((item, index) => {
               return (
-                <div key={index} className="group mt-10">
+                <div key={index} className='group mt-10'>
                   <div
-                    className="groupName font-semibold"
+                    className='groupName font-semibold'
                     style={{
                       color: themeColorSet.colorText2,
                       fontSize: '1.3rem'
                     }}>
                     {item.groupName}
                   </div>
-                  <div className="groupContent">
+                  <div className='groupContent'>
                     {item.data.map((item, index) => {
                       return (
                         <div
                           key={index}
-                          className="groupItem flex justify-between items-center mt-5 px-4 "
+                          className='groupItem flex justify-between items-center mt-5 px-4 '
                           style={{
                             backgroundColor: themeColorSet.colorBg2,
                             width: '100%',
                             height: '120px'
                           }}>
                           <div
-                            className="groupImage text-center"
+                            className='groupImage text-center'
                             style={{
                               width: '10%',
                               backgroundColor: themeColorSet.colorText1
                             }}>
-                            <img src={item.image} alt="" />
+                            <img src={item.image} alt='' />
                           </div>
                           <div
-                            className="groupInfo"
+                            className='groupInfo'
                             style={{
                               width: '75%'
                             }}>
-                            <Space className="top mb-2">
+                            <Space className='top mb-2'>
                               <span
-                                className="name"
+                                className='name'
                                 style={{
                                   color: themeColorSet.colorText1,
                                   fontSize: '1.3rem',
@@ -237,17 +227,14 @@ const SelectCommunity = () => {
                                 {item.name}
                               </span>
                               <span
-                                className="icon"
+                                className='icon'
                                 style={{
                                   color: themeColorSet.colorText3
                                 }}>
-                                <FontAwesomeIcon
-                                  icon={faUserFriends}
-                                  size={'xs'}
-                                />
+                                <FontAwesomeIcon icon={faUserFriends} size={'xs'} />
                               </span>
                               <span
-                                className="member"
+                                className='member'
                                 style={{
                                   color: themeColorSet.colorText3
                                 }}>
@@ -255,7 +242,7 @@ const SelectCommunity = () => {
                               </span>
                             </Space>
                             <div
-                              className="bottom"
+                              className='bottom'
                               style={{
                                 color: themeColorSet.colorText3,
                                 fontSize: '0.9rem'
@@ -266,13 +253,11 @@ const SelectCommunity = () => {
                             </div>
                           </div>
                           <div
-                            className="groupBtn text-center"
+                            className='groupBtn text-center'
                             style={{
                               width: '10%'
                             }}>
-                            <ButtonActiveHover rounded>
-                              Joined
-                            </ButtonActiveHover>
+                            <ButtonActiveHover rounded>Joined</ButtonActiveHover>
                           </div>
                         </div>
                       );
@@ -282,8 +267,8 @@ const SelectCommunity = () => {
               );
             })}
           </div>
-          <div className="button mt-16 mr-4 mb-10 text-right">
-            <NavLink to="/select-follow">
+          <div className='button mt-16 mr-4 mb-10 text-right'>
+            <NavLink to='/select-follow'>
               <ButtonActiveHover rounded>Next</ButtonActiveHover>
             </NavLink>
           </div>

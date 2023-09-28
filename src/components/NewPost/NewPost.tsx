@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Button,
-  ConfigProvider,
-  Input,
-  message,
-  Popover,
-  Upload
-} from 'antd';
+import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
 import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
@@ -50,12 +42,7 @@ const NewPost = (Props: Props) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const {
-    mutateCreatePost,
-    isLoadingCreatePost,
-    isSuccessCreatePost,
-    isErrorCreatePost
-  } = useCreatePost();
+  const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
 
   const [random, setRandom] = useState(0);
 
@@ -160,13 +147,10 @@ const NewPost = (Props: Props) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data.secure_url,
@@ -207,34 +191,29 @@ const NewPost = (Props: Props) => {
         }
       }}>
       {contextHolder}
-      <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
-        <div className="newPost px-4 py-3">
+      <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+        <div className='newPost px-4 py-3'>
           <div
-            className="newPostHeader text-center text-xl font-bold"
+            className='newPostHeader text-center text-xl font-bold'
             style={{ color: themeColorSet.colorText1 }}>
             Create Post
           </div>
-          <div className="newPostBody">
-            <div className="name_avatar flex items-center">
+          <div className='newPostBody'>
+            <div className='name_avatar flex items-center'>
               <Avatar
                 size={50}
-                src={
-                  Props.userInfo.user_image ||
-                  './images/DefaultAvatar/default_avatar.png'
-                }
+                src={Props.userInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
               />
-              <div className="name font-bold ml-2">
-                <NavLink to={`/user/${Props.userInfo._id}`}>
-                  {Props.userInfo.name}
-                </NavLink>
+              <div className='name font-bold ml-2'>
+                <NavLink to={`/user/${Props.userInfo._id}`}>{Props.userInfo.name}</NavLink>
               </div>
             </div>
-            <div className="AddTitle mt-4 z-10">
+            <div className='AddTitle mt-4 z-10'>
               <Input
                 key={random}
-                name="title"
-                placeholder="Add a Title"
-                autoComplete="off"
+                name='title'
+                placeholder='Add a Title'
+                autoComplete='off'
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
@@ -243,45 +222,36 @@ const NewPost = (Props: Props) => {
                 }}
               />
             </div>
-            <div className="AddContent mt-4">
-              <div id="editor" />
+            <div className='AddContent mt-4'>
+              <div id='editor' />
             </div>
           </div>
-          <div className="newPostFooter mt-3 flex justify-between items-center">
-            <div className="newPostFooter__left">
+          <div className='newPostFooter mt-3 flex justify-between items-center'>
+            <div className='newPostFooter__left'>
               <Popover
-                placement="top"
-                trigger="click"
+                placement='top'
+                trigger='click'
                 title={'Emoji'}
                 content={
                   <Picker
                     data={async () => {
-                      const response = await fetch(
-                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                      );
+                      const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
-                      quill.insertText(
-                        quill.getSelection().index,
-                        emoji.native
-                      );
+                      quill.insertText(quill.getSelection().index, emoji.native);
                     }}
                   />
                 }>
-                <span className="emoji">
-                  <FontAwesomeIcon
-                    className="item mr-3 ml-3"
-                    size="lg"
-                    icon={faFaceSmile}
-                  />
+                <span className='emoji'>
+                  <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
               <span>
                 <Upload
-                  accept="image/*"
+                  accept='image/*'
                   key={random}
                   maxCount={1}
                   customRequest={async ({ onSuccess }: any) => {
@@ -290,7 +260,7 @@ const NewPost = (Props: Props) => {
                   data={() => {
                     return {};
                   }}
-                  listType="picture"
+                  listType='picture'
                   onChange={handleUpload}
                   onRemove={() => {
                     setFile(null);
@@ -299,11 +269,8 @@ const NewPost = (Props: Props) => {
                 </Upload>
               </span>
             </div>
-            <div className="newPostFooter__right">
-              <ButtonActiveHover
-                rounded
-                onClick={form.handleSubmit(onSubmit)}
-                loading={isLoadingCreatePost}>
+            <div className='newPostFooter__right'>
+              <ButtonActiveHover rounded onClick={form.handleSubmit(onSubmit)} loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhile1 }}>
                   {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>

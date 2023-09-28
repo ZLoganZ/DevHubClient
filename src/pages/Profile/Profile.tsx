@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSnowflake,
-  faFileLines,
-  faLocationDot,
-  faBriefcase
-} from '@fortawesome/free-solid-svg-icons';
+import { faSnowflake, faFileLines, faLocationDot, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import {
   faFacebookF,
@@ -48,8 +43,7 @@ const Profile = (Props: Props) => {
 
   const { mutateFollowUser } = useFollowUser();
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } =
-    useUserPostsData(userID);
+  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
 
   useEffect(() => {
     if (isLoadingUserPosts) {
@@ -73,40 +67,30 @@ const Profile = (Props: Props) => {
   };
 
   useEffect(() => {
-    document.title = isLoadingUserPosts
-      ? 'DevHub'
-      : `${otherUserInfo?.name} | DevHub`;
+    document.title = isLoadingUserPosts ? 'DevHub' : `${otherUserInfo?.name} | DevHub`;
   }, [isLoadingUserPosts, isLoadingOtherUserInfo]);
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!userPosts ||
-      !otherUserInfo ||
-      isLoadingUserPosts ||
-      isFetchingUserPosts ||
-      isLoadingOtherUserInfo ? (
+      {!userPosts || !otherUserInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
         <LoadingProfileComponent />
       ) : (
         <>
           <Row>
-            <Col span={24} className="avatar_cover relative">
+            <Col span={24} className='avatar_cover relative'>
               <div
-                className="cover w-full h-80 rounded-br-lg rounded-bl-lg"
+                className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${
-                    otherUserInfo.cover_image || `/images/ProfilePage/cover.jpg`
-                  }")`,
+                  backgroundImage: `url("${otherUserInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
-              <div className="avatar rounded-full overflow-hidden object-cover flex">
+              <div className='avatar rounded-full overflow-hidden object-cover flex'>
                 <Image
-                  src={
-                    otherUserInfo.user_image ||
-                    './images/DefaultAvatar/default_avatar.png'
-                  }
-                  alt="avt"
+                  src={otherUserInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
+                  preview={otherUserInfo.user_image ? true : false}
+                  alt='avt'
                   style={{
                     width: '100%',
                     height: '100%',
@@ -116,20 +100,15 @@ const Profile = (Props: Props) => {
               </div>
             </Col>
             <Col offset={3} span={18}>
-              <Row className="py-5">
+              <Row className='py-5'>
                 <Col offset={6} span={12}>
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: themeColorSet.colorText1 }}>
+                  <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
                     {otherUserInfo.name}
                   </div>
-                  <div className="position mt-2">
-                    <FontAwesomeIcon className="icon" icon={faSnowflake} />
-                    <span
-                      style={{ color: themeColorSet.colorText3 }}
-                      className="ml-2">
-                      {otherUserInfo.experiences &&
-                      otherUserInfo.experiences.length > 0
+                  <div className='position mt-2'>
+                    <FontAwesomeIcon className='icon' icon={faSnowflake} />
+                    <span style={{ color: themeColorSet.colorText3 }} className='ml-2'>
+                      {otherUserInfo.experiences && otherUserInfo.experiences.length > 0
                         ? otherUserInfo.experiences.length > 1
                           ? otherUserInfo.experiences[0].position_name +
                             ' & ' +
@@ -138,17 +117,17 @@ const Profile = (Props: Props) => {
                         : 'No job position'}
                     </span>
                   </div>
-                  <div className="viewResume mt-2">
-                    <FontAwesomeIcon className="icon" icon={faFileLines} />
-                    <NavLink to="/resume" className="ml-2">
+                  <div className='viewResume mt-2'>
+                    <FontAwesomeIcon className='icon' icon={faFileLines} />
+                    <NavLink to='/resume' className='ml-2'>
                       View Resume
                     </NavLink>
                   </div>
                 </Col>
                 <Col span={6}>
-                  <div className="chat_Follow flex justify-around items-center w-full h-full">
+                  <div className='chat_Follow flex justify-around items-center w-full h-full'>
                     <div
-                      className="follow px-4 py-2 rounded-full"
+                      className='follow px-4 py-2 rounded-full'
                       onClick={() => {
                         setIsFollowing(!isFollowing);
                         mutateFollowUser(userID);
@@ -158,35 +137,31 @@ const Profile = (Props: Props) => {
                   </div>
                 </Col>
               </Row>
-              <div className="id_address_join">
-                <span className="id item mr-2">
-                  @{otherUserInfo.alias || 'user'}
-                </span>
-                <span className="address item mr-2">
-                  <FontAwesomeIcon className="icon mr-2" icon={faLocationDot} />
+              <div className='id_address_join'>
+                <span className='id item mr-2'>@{otherUserInfo.alias || 'user'}</span>
+                <span className='address item mr-2'>
+                  <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
                   {otherUserInfo.location || 'Global'}
                 </span>
-                <span className="join">
-                  <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
+                <span className='join'>
+                  <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
                   Joined {format(new Date(otherUserInfo.createdAt), 'MMM yyyy')}
                 </span>
               </div>
-              <Col span={18} className="mt-5">
-                <div className="tags flex flex-wrap">
+              <Col span={18} className='mt-5'>
+                <div className='tags flex flex-wrap'>
                   {descArray.map((item, index) => {
                     if (otherUserInfo.tags?.indexOf(item.title) !== -1) {
                       return (
                         <Tag
-                          className="item mx-2 my-2 px-4 py-1"
+                          className='item mx-2 my-2 px-4 py-1'
                           key={index}
                           color={themeColorSet.colorBg2}
                           style={{
                             border: 'none'
                           }}>
                           {item.svg} &nbsp;
-                          <span style={{ color: themeColorSet.colorText1 }}>
-                            {item.title}
-                          </span>
+                          <span style={{ color: themeColorSet.colorText1 }}>{item.title}</span>
                         </Tag>
                       );
                     }
@@ -194,49 +169,37 @@ const Profile = (Props: Props) => {
                   })}
                 </div>
               </Col>
-              <div className="follow mt-5">
-                <span className="follower item mr-2">
-                  <span className="mr-1">
-                    {otherUserInfo?.follower_number || 0}
-                  </span>{' '}
-                  {otherUserInfo?.follower_number > 1
-                    ? 'Followers'
-                    : 'Follower'}
+              <div className='follow mt-5'>
+                <span className='follower item mr-2'>
+                  <span className='mr-1'>{otherUserInfo?.follower_number || 0}</span>{' '}
+                  {otherUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
                 </span>
-                <span className="following item mr-2">
-                  <span className="mr-1">
-                    {otherUserInfo?.following_number || 0}
-                  </span>{' '}
-                  {otherUserInfo?.following_number > 1
-                    ? 'Followings'
-                    : 'Following'}
+                <span className='following item mr-2'>
+                  <span className='mr-1'>{otherUserInfo?.following_number || 0}</span>{' '}
+                  {otherUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
                 </span>
-                <span className="post mr-2">
-                  <span className="mr-1">
-                    {otherUserInfo?.post_number || 0}
-                  </span>{' '}
+                <span className='post mr-2'>
+                  <span className='mr-1'>{otherUserInfo?.post_number || 0}</span>{' '}
                   {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
                 </span>
               </div>
-              <div className="experience mt-5">
+              <div className='experience mt-5'>
                 {otherUserInfo.experiences.map((item, index) => (
-                  <div className="item mt-2" key={index}>
+                  <div className='item mt-2' key={index}>
                     <FontAwesomeIcon
-                      className="icon mr-2"
+                      className='icon mr-2'
                       icon={faBriefcase}
                       style={{ color: commonColor.colorBlue1 }}
                     />
-                    <span className="company mr-2">{item.company_name}</span>
-                    <span className="position mr-2">
-                      {item.position_name} |
-                    </span>
-                    <span className="date">
+                    <span className='company mr-2'>{item.company_name}</span>
+                    <span className='position mr-2'>{item.position_name} |</span>
+                    <span className='date'>
                       {item.start_date} ~ {item.end_date}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="contact mt-5">
+              <div className='contact mt-5'>
                 <Space>
                   {otherUserInfo.contacts.map((item, index) => {
                     switch (item.key) {
@@ -248,7 +211,7 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
                           />
                         );
@@ -260,7 +223,7 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                           />
                         );
@@ -272,7 +235,7 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                           />
                         );
@@ -284,7 +247,7 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
                           />
                         );
@@ -296,7 +259,7 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
+                            className='item'
                             icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
                           />
                         );
@@ -306,26 +269,25 @@ const Profile = (Props: Props) => {
                   })}
                 </Space>
               </div>
-              <div className="mainContain mt-5">
+              <div className='mainContain mt-5'>
                 <Tabs
-                  defaultActiveKey="2"
+                  defaultActiveKey='2'
                   items={[
                     {
                       key: '1',
                       label: 'Introduction',
                       children: (
-                        <div className="mt-10 mb-20">
-                          {!otherUserInfo.about &&
-                            otherUserInfo.repositories.length === 0 && (
-                              <div className="w-8/12 mb-10">
-                                <Empty
-                                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                  description={<span>No introduction</span>}
-                                />
-                              </div>
-                            )}
+                        <div className='mt-10 mb-20'>
+                          {!otherUserInfo.about && otherUserInfo.repositories.length === 0 && (
+                            <div className='w-8/12 mb-10'>
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_DEFAULT}
+                                description={<span>No introduction</span>}
+                              />
+                            </div>
+                          )}
                           {otherUserInfo.about && (
-                            <div className="w-8/12">
+                            <div className='w-8/12'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -337,13 +299,13 @@ const Profile = (Props: Props) => {
                               <ReactQuill
                                 value={otherUserInfo.about}
                                 readOnly={true}
-                                theme="bubble"
+                                theme='bubble'
                                 modules={{}}
                               />
                             </div>
                           )}
                           {otherUserInfo.repositories.length !== 0 && (
-                            <div className="w-8/12 mt-5">
+                            <div className='w-8/12 mt-5'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -352,12 +314,10 @@ const Profile = (Props: Props) => {
                                 }}>
                                 Repositories
                               </div>
-                              <div className="flex flex-wrap justify-between mt-5">
-                                {otherUserInfo.repositories.map(
-                                  (item, index) => {
-                                    return RenderRepositoryIem(item, index);
-                                  }
-                                )}
+                              <div className='flex flex-wrap justify-between mt-5'>
+                                {otherUserInfo.repositories.map((item, index) => {
+                                  return RenderRepositoryIem(item, index);
+                                })}
                               </div>
                             </div>
                           )}
@@ -368,19 +328,19 @@ const Profile = (Props: Props) => {
                       key: '2',
                       label: 'Posts',
                       children: (
-                        <div className="mt-5">
+                        <div className='mt-5'>
                           {userPosts.length === 0 && (
-                            <div className="w-8/12">
+                            <div className='w-8/12'>
                               <Empty
-                                className="mt-10 mb-20"
+                                className='mt-10 mb-20'
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No post</span>}
+                                description={<span>No posts available</span>}
                               />
                             </div>
                           )}
                           {userPosts.map((item) => {
                             return (
-                              <div key={item._id} className="w-8/12">
+                              <div key={item._id} className='w-8/12'>
                                 {item.type === 'Share' && (
                                   <OtherPostShare
                                     key={item._id}
@@ -390,11 +350,7 @@ const Profile = (Props: Props) => {
                                   />
                                 )}
                                 {item.type === 'Post' && (
-                                  <OtherPost
-                                    key={item._id}
-                                    post={item}
-                                    userInfo={otherUserInfo}
-                                  />
+                                  <OtherPost key={item._id} post={item} userInfo={otherUserInfo} />
                                 )}
                               </div>
                             );

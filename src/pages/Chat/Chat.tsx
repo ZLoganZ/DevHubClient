@@ -3,11 +3,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { faSun } from '@fortawesome/free-regular-svg-icons';
-import {
-  CommentOutlined,
-  SearchOutlined,
-  SettingOutlined
-} from '@ant-design/icons';
+import { CommentOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -18,11 +14,7 @@ import MessageChat from '@/components/ChatComponents/MessageChat';
 import InputChat from '@/components/ChatComponents/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
-import {
-  useConversationsData,
-  useCurrentConversationData,
-  useFollowersData
-} from '@/hooks/fetch';
+import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
@@ -51,9 +43,9 @@ const Chat = () => {
       {isLoadingConversations || isLoadingFollowers ? (
         <LoadingChat />
       ) : (
-        <div className="chat flex">
+        <div className='chat flex'>
           <div
-            className="slider flex flex-col justify-between items-center h-screen py-3"
+            className='slider flex flex-col justify-between items-center h-screen py-3'
             style={{
               width: '5%',
               borderRight: '1px solid',
@@ -61,30 +53,30 @@ const Chat = () => {
               position: 'fixed',
               backgroundColor: themeColorSet.colorBg1
             }}>
-            <div className="logo">
-              <NavLink to="/" className="icon_logo">
-                <FontAwesomeIcon className="icon" icon={faSnowflake} />
+            <div className='logo'>
+              <NavLink to='/' className='icon_logo'>
+                <FontAwesomeIcon className='icon' icon={faSnowflake} />
               </NavLink>
             </div>
-            <div className="option">
-              <Space size={30} direction="vertical">
-                <div className="message optionItem">
-                  <CommentOutlined className="text-2xl" />
+            <div className='option'>
+              <Space size={30} direction='vertical'>
+                <div className='message optionItem'>
+                  <CommentOutlined className='text-2xl' />
                 </div>
-                <div className="Search optionItem">
-                  <SearchOutlined className="text-2xl" />
+                <div className='Search optionItem'>
+                  <SearchOutlined className='text-2xl' />
                 </div>
-                <div className="Setting optionItem">
-                  <SettingOutlined className="text-2xl" />
+                <div className='Setting optionItem'>
+                  <SettingOutlined className='text-2xl' />
                 </div>
               </Space>
             </div>
-            <div className="mode">
-              <FontAwesomeIcon className="icon" icon={faSun} />
+            <div className='mode'>
+              <FontAwesomeIcon className='icon' icon={faSun} />
             </div>
           </div>
           <div
-            className="insteadComponent"
+            className='insteadComponent'
             style={{
               marginLeft: '5%',
               width: '23%',
@@ -101,7 +93,7 @@ const Chat = () => {
             />
           </div>
           <div
-            className="chatBox"
+            className='chatBox'
             style={{
               width: isDisplayShare ? '49%' : '72%',
               marginLeft: '28%',
@@ -130,14 +122,7 @@ const Chat = () => {
               </>
             )}
           </div>
-          {isDisplayShare ? (
-            <SharedMedia
-              key={conversationID}
-              conversationID={conversationID!}
-            />
-          ) : (
-            <></>
-          )}
+          {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
         </div>
       )}
     </StyleProvider>

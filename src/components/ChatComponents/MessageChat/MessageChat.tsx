@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 
 import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
-import { useIntersectionObserverNow } from '@/hooks/special';
+import { useIntersectionObserver } from '@/hooks/special';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentConversationData, useMessagesData } from '@/hooks/fetch';
 import { messageService } from '@/services/MessageService';
@@ -29,8 +29,9 @@ const MessageChat = (Props: IParams) => {
 
   const { members } = useAppSelector((state) => state.activeList);
 
-  const { currentConversation, isLoadingCurrentConversation } =
-    useCurrentConversationData(Props.conversationID);
+  const { currentConversation, isLoadingCurrentConversation } = useCurrentConversationData(
+    Props.conversationID
+  );
 
   const { messages, isLoadingMessages } = useMessagesData(Props.conversationID);
 
@@ -97,11 +98,10 @@ const MessageChat = (Props: IParams) => {
     };
   }, [Props.conversationID]);
 
-  useIntersectionObserverNow(bottomRef, seenMessage);
+  useIntersectionObserver(bottomRef, seenMessage, { delay: 0 });
 
   const scrollToBottom = (type: ScrollBehavior) => {
-    if (bottomRef?.current)
-      bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
+    if (bottomRef?.current) bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
   };
 
   useEffect(() => {
@@ -124,39 +124,34 @@ const MessageChat = (Props: IParams) => {
   }, []);
 
   return (
-    <StyleProvider className="h-full" theme={themeColorSet}>
+    <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingCurrentConversation ? (
         <></>
       ) : (
         <>
           <div
-            className="header flex justify-between items-center py-6 px-6"
+            className='header flex justify-between items-center py-6 px-6'
             style={{
               height: '13%',
               borderBottom: '1px solid',
               borderColor: themeColorSet.colorBg4
             }}>
-            <div className="flex gap-3 items-center">
+            <div className='flex gap-3 items-center'>
               {currentConversation.isGroup ? (
-                <AvatarGroup
-                  key={currentConversation._id}
-                  users={currentConversation.users}
-                />
+                <AvatarGroup key={currentConversation._id} users={currentConversation.users} />
               ) : (
                 <NavLink to={`/user/${otherUser._id}`}>
                   <Avatar key={otherUser} user={otherUser} />
                 </NavLink>
               )}
-              <div className="flex flex-col">
+              <div className='flex flex-col'>
                 <div style={{ color: themeColorSet.colorText1 }}>
                   {currentConversation.name || (
-                    <NavLink to={`/user/${otherUser._id}`}>
-                      {otherUser.name}
-                    </NavLink>
+                    <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
                   )}
                 </div>
                 <div
-                  className="text-sm"
+                  className='text-sm'
                   style={{
                     color: styleStatus,
                     fontWeight: 400
@@ -165,9 +160,9 @@ const MessageChat = (Props: IParams) => {
                 </div>
               </div>
             </div>
-            <div className="displayShare">
+            <div className='displayShare'>
               <FontAwesomeIcon
-                className="text-xl mr-0 cursor-pointer"
+                className='text-xl mr-0 cursor-pointer'
                 icon={faBars}
                 onClick={() => {
                   Props.setIsDisplayShare(!Props.isDisplayShare);
@@ -176,21 +171,17 @@ const MessageChat = (Props: IParams) => {
             </div>
           </div>
           <div
-            className="body px-3"
+            className='body px-3'
             style={{
               height: '88%',
               overflow: 'auto'
             }}>
-            <div className="flex-1 overflow-y-auto">
+            <div className='flex-1 overflow-y-auto'>
               {messagesState?.length !== 0 &&
                 messagesState?.map((message: any, i: any) => (
-                  <MessageBox
-                    isLast={i === messagesState.length - 1}
-                    key={message._id}
-                    data={message}
-                  />
+                  <MessageBox isLast={i === messagesState.length - 1} key={message._id} data={message} />
                 ))}
-              <div className="pt-1" ref={bottomRef} />
+              <div className='pt-1' ref={bottomRef} />
             </div>
           </div>
         </>

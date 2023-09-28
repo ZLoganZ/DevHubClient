@@ -20,28 +20,28 @@ const RenderPeopleItem = ({ item }: any) => {
 
   return (
     <div>
-      <div className="peopleItem flex justify-between items-center mt-5 p-2">
+      <div className='peopleItem flex justify-between items-center mt-5 p-2'>
         <div
-          className="peopleImage p-3"
+          className='peopleImage p-3'
           style={{
             width: '10%'
           }}>
           <img
-            src={item.userImage || './images/DefaultAvatar/default_avatar.png'}
-            alt=""
+            src={item.userImage || '/images/DefaultAvatar/default_avatar.png'}
+            alt=''
             style={{
               borderRadius: '50%'
             }}
           />
         </div>
         <div
-          className="peopleInfo"
+          className='peopleInfo'
           style={{
             width: '75%'
           }}>
-          <Space className="top mb-2">
+          <Space className='top mb-2'>
             <span
-              className="name"
+              className='name'
               style={{
                 color: themeColorSet.colorText1,
                 fontSize: '1.1rem',
@@ -50,7 +50,7 @@ const RenderPeopleItem = ({ item }: any) => {
               {item.name}
             </span>
             <span
-              className="icon"
+              className='icon'
               style={{
                 color: themeColorSet.colorText3
               }}>
@@ -66,7 +66,7 @@ const RenderPeopleItem = ({ item }: any) => {
               )}
             </span>
             <span
-              className="alias"
+              className='alias'
               style={{
                 color: themeColorSet.colorText3
               }}>
@@ -74,22 +74,20 @@ const RenderPeopleItem = ({ item }: any) => {
             </span>
           </Space>
           <div
-            className="bottom"
+            className='bottom'
             style={{
               color: themeColorSet.colorText3,
               fontSize: '0.9rem'
             }}>
             {item?.experiences.length > 0
               ? item?.experiences.length > 1
-                ? item?.experiences[0].position_name +
-                  ' & ' +
-                  item?.experiences[1].position_name
+                ? item?.experiences[0].position_name + ' & ' + item?.experiences[1].position_name
                 : item?.experiences[0].position_name
               : ''}
           </div>
         </div>
         <div
-          className="followBtn text-center"
+          className='followBtn text-center'
           style={{
             width: '10%'
           }}>

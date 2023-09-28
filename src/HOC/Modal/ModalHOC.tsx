@@ -2,10 +2,7 @@ import { ConfigProvider, Modal } from 'antd';
 
 import { getTheme } from '@/util/theme';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
-import {
-  ButtonActiveHover,
-  ButtonCancelHover
-} from '@/components/MiniComponent';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssModalHOC';
 
@@ -17,8 +14,9 @@ const ModalHOC = () => {
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Modal
-  const { visible, ComponentContentModal, footer, title, handleSubmit, type } =
-    useAppSelector((state) => state.modalHOC);
+  const { visible, ComponentContentModal, footer, title, handleSubmit, type } = useAppSelector(
+    (state) => state.modalHOC
+  );
 
   const onClose = () => {
     dispatch(closeModal());
@@ -39,9 +37,9 @@ const ModalHOC = () => {
           open={visible}
           footer={
             footer === true ? (
-              <div className="flex justify-end">
+              <div className='flex justify-end'>
                 <ButtonCancelHover
-                  className="mr-4"
+                  className='mr-4'
                   onClick={() => {
                     onClose();
                   }}>

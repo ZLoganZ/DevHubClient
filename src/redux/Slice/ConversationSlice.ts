@@ -15,7 +15,7 @@ const initialState: State = {
   currentConversationId: null,
 
   message: null,
-  messages: [],
+  messages: []
 };
 
 const messageSlice = createSlice({
@@ -31,7 +31,7 @@ const messageSlice = createSlice({
     SetCurrentConversation: (state, action) => {
       return {
         ...state,
-        currentConversation: action.payload.conversation,
+        currentConversation: action.payload.conversation
       };
     },
     SetMessages: (state, action) => {
@@ -39,8 +39,8 @@ const messageSlice = createSlice({
     },
     SetMessage: (state, action) => {
       return { ...state, message: action.payload.message };
-    },
-  },
+    }
+  }
 });
 
 export const { SetConversations, SetCurrentConversation, SetMessages, AddConversations, SetMessage } =

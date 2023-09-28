@@ -6,10 +6,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import {
-  LOGIN_SAGA,
-  LOGIN_WITH_GOOGLE_SAGA
-} from '@/redux/ActionSaga/AuthActionSaga';
+import { LOGIN_SAGA, LOGIN_WITH_GOOGLE_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
 import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
@@ -96,21 +93,18 @@ const Login = () => {
         }
       }}>
       <StyleProvider>
-        <div className="login">
-          <div className="loginForm">
-            <div className="welcomeBack mb-12">
-              <div className="icon_logo">
-                <FontAwesomeIcon className="icon" icon={faSnowflake} />
+        <div className='login'>
+          <div className='loginForm'>
+            <div className='welcomeBack mb-12'>
+              <div className='icon_logo'>
+                <FontAwesomeIcon className='icon' icon={faSnowflake} />
               </div>
-              <h2 className="title">Welcome back!</h2>
+              <h2 className='title'>Welcome back!</h2>
             </div>
 
-            <Form
-              className="w-full"
-              style={{ width: '70%' }}
-              onFinish={form.handleSubmit(onSubmit)}>
+            <Form className='w-full' style={{ width: '70%' }} onFinish={form.handleSubmit(onSubmit)}>
               <Form.Item
-                name="email"
+                name='email'
                 rules={[
                   {
                     required: true,
@@ -122,7 +116,7 @@ const Login = () => {
                   }
                 ]}>
                 <Input
-                  placeholder="Email"
+                  placeholder='Email'
                   allowClear
                   prefix={<MailOutlined />}
                   onChange={(e) => {
@@ -131,7 +125,7 @@ const Login = () => {
                 />
               </Form.Item>
               <Form.Item
-                name="password"
+                name='password'
                 rules={[
                   {
                     required: true,
@@ -139,54 +133,46 @@ const Login = () => {
                   }
                 ]}>
                 <Input.Password
-                  placeholder="Password"
+                  placeholder='Password'
                   onChange={(e) => {
                     form.setValue('password', e.target.value);
                   }}
                 />
               </Form.Item>
-              <button
-                type="submit"
-                className="btn btn-primary w-full h-9 mb-4 mt-3 font-bold">
+              <button type='submit' className='btn btn-primary w-full h-9 mb-4 mt-3 font-bold'>
                 Login
               </button>
-              <NavLink to="/forgot">
-                <span className="forgot flex justify-center align-middle">
-                  Forgot your password?
-                </span>
+              <NavLink to='/forgot'>
+                <span className='forgot flex justify-center align-middle'>Forgot your password?</span>
               </NavLink>
             </Form>
-            <div className="anotherLogin mt-10">
-              <div className="title relative">
-                <span
-                  className="absolute"
-                  style={{ color: darkThemeSet.colorText2 }}>
+            <div className='anotherLogin mt-10'>
+              <div className='title relative'>
+                <span className='absolute' style={{ color: darkThemeSet.colorText2 }}>
                   Or
                 </span>
                 <hr />
               </div>
-              <div className="loginTool mt-10 w-full">
-                <div
-                  className="google h-10"
-                  onClick={() => handleSignInWithGoogle()}>
-                  <span className="icon mr-2">
-                    <img src="./images/google.svg" alt="google" />
+              <div className='loginTool mt-10 w-full'>
+                <div className='google h-10' onClick={() => handleSignInWithGoogle()}>
+                  <span className='icon mr-2'>
+                    <img src='/SVG/google.svg' alt='google' />
                   </span>
                   <span>Continue with Gmail</span>
                 </div>
-                <div className="github mt-4 h-10" onClick={() => openPopup()}>
-                  <span className="icon mr-2">
-                    <img src="./images/github.svg" alt="github" />
+                <div className='github mt-4 h-10' onClick={() => openPopup()}>
+                  <span className='icon mr-2'>
+                    <img src='/SVG/github.svg' alt='github' />
                   </span>
                   <span>Continue with Github</span>
                 </div>
               </div>
             </div>
 
-            <div className="noAccount text-center mt-8">
+            <div className='noAccount text-center mt-8'>
               <span>Don't you have an account yet? </span>
-              <span className="signUp ml-1">
-                <NavLink to="/register">Sign up</NavLink>
+              <span className='signUp ml-1'>
+                <NavLink to='/register'>Sign up</NavLink>
               </span>
             </div>
           </div>

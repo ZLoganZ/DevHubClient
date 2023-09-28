@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import CommentDetail from '@/components/CommentDetail';
+import CommentDetail from '@/components/PostProperties/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import { getTheme } from '@/util/theme';
@@ -24,9 +24,7 @@ const OtherPostDetail = (Props: PostProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(
-    Props.data.idComment
-  );
+  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(Props.data.idComment);
 
   const { comments, isLoadingComments } = useCommentsData(Props.post._id);
 
@@ -40,7 +38,7 @@ const OtherPostDetail = (Props: PostProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="postDetail">
+      <div className='postDetail'>
         {Props.isShared ? (
           <OtherPostShare
             key={Props.post._id}
@@ -49,20 +47,15 @@ const OtherPostDetail = (Props: PostProps) => {
             ownerInfo={Props.ownerInfo!}
           />
         ) : (
-          <OtherPost
-            key={Props.post._id}
-            post={Props.post}
-            userInfo={Props.userInfo}
-          />
+          <OtherPost key={Props.post._id} post={Props.post} userInfo={Props.userInfo} />
         )}
         <div
-          className="commentTotal px-3 ml-4"
+          className='commentTotal px-3 ml-4'
           style={{
-            maxHeight: '30rem',
-            overflow: 'auto'
+            maxHeight: '30rem'
+            // overflow: 'auto'
           }}>
-          {isLoadingComments &&
-          Props.post.post_attributes.comment_number > 0 ? (
+          {isLoadingComments && Props.post.post_attributes.comment_number > 0 ? (
             <Skeleton avatar paragraph={{ rows: 2 }} active />
           ) : (
             comments?.map((item) => {

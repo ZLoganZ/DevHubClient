@@ -6,7 +6,7 @@ export const darkTheme = {
   colorTextBase: '#d4d4d4',
   colorBgBase: '#1D1D1D',
 
-  controlItemBgActive: '#3b3a3a',
+  controlItemBgActive: '#3b3a3a'
 };
 export const darkThemeSet = {
   colorText1: '#FFFFFFD9',
@@ -18,7 +18,7 @@ export const darkThemeSet = {
   colorBg4: '#3b3a3a',
 
   colorSVG: `invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)`,
-  colorPicker: 'dark',
+  colorPicker: 'dark'
 };
 
 // export const darkTheme = {
@@ -46,7 +46,7 @@ export const lightTheme = {
   colorTextBase: '#1f1f23',
   colorBgBase: '#FFFFFF',
 
-  controlItemBgActive: '#d7d7d7',
+  controlItemBgActive: '#d7d7d7'
 };
 export const lightThemeSet = {
   colorText1: '#101011',
@@ -58,7 +58,7 @@ export const lightThemeSet = {
   colorBg4: '#D8D9DF',
 
   colorSVG: `invert(0%) sepia(0%) saturate(100%) hue-rotate(0deg) brightness(100%) contrast(100%)`,
-  colorPicker: 'light',
+  colorPicker: 'light'
 };
 
 // export const lightTheme = {
@@ -91,7 +91,7 @@ export const commonColor = {
   colorRed2: '#aa052c',
   colorWhile1: '#FFFFFFD9',
   colorWhile2: '#d4d4d4',
-  colorWarning1: '#ff6b6b',
+  colorWarning1: '#ff6b6b'
 };
 
 //--------------------------------------------

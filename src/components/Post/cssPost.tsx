@@ -26,17 +26,6 @@ const StyleProvider = styled.div`
   .post {
     .postHeader {
       .postHeader__left {
-        .name_avatar {
-          .name__top {
-            a {
-              color: ${(props) => props.theme.colorText1};
-              :hover {
-                text-decoration: underline;
-                transition: all 0.5s;
-              }
-            }
-          }
-        }
       }
       .postHeader__right {
         .icon {
@@ -51,21 +40,6 @@ const StyleProvider = styled.div`
     .postBody {
     }
     .postFooter {
-      .item {
-        :hover {
-          cursor: pointer;
-        }
-      }
-      .comment_view {
-        .emoji {
-          color: ${(props) => props.theme.colorText3};
-          :hover {
-            cursor: pointer;
-            color: ${(props) => props.theme.colorText2};
-            transition: all 0.5s;
-          }
-        }
-      }
     }
   }
 `;

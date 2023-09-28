@@ -44,10 +44,7 @@ const AddContacts = (Props: Props) => {
     Props.callback(addLinkArr);
   };
   const handleDropClick = (e: any, index: number) => {
-    if (
-      addTooltipsTemp[index].tooltip ===
-      contactArray[parseInt(addTooltipsTemp[index].key)].label
-    ) {
+    if (addTooltipsTemp[index].tooltip === contactArray[parseInt(addTooltipsTemp[index].key)].label) {
       switch (e.key) {
         case '0':
           addTooltipsTemp[index].tooltip = contactArray[0].label;
@@ -88,10 +85,7 @@ const AddContacts = (Props: Props) => {
     setAddTooltips(addTooltipsTemp);
   };
 
-  const handleEnterLink = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleEnterLink = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (isValidLink(e.target.value)) {
       addLinkArrTemp[index].link = e.target.value;
       // addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
@@ -147,9 +141,9 @@ const AddContacts = (Props: Props) => {
         }
       }}>
       <StyleProvider theme={themeColorSet}>
-        <div className="flex flex-col mt-7">
+        <div className='flex flex-col mt-7'>
           {addLinkArrTemp.map((item, index) => (
-            <div key={index} className="flex flex-row items-center mb-4">
+            <div key={index} className='flex flex-row items-center mb-4'>
               <Dropdown
                 menu={{
                   items: contactArray,
@@ -160,13 +154,13 @@ const AddContacts = (Props: Props) => {
                 trigger={['click']}>
                 <a onClick={(e) => e.preventDefault()}>
                   <Button
-                    className="flex items-center"
+                    className='flex items-center'
                     style={{
                       color: themeColorSet.colorText1
                     }}>
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
-                      className="item"
+                      className='item'
                       icon={contactArray[parseInt(item.key)].icon}
                       size={'small'}
                     />
@@ -176,10 +170,10 @@ const AddContacts = (Props: Props) => {
               </Dropdown>
               <Input
                 key={index + '1'}
-                className="w-full ml-2 pl-2 inputlink"
+                className='w-full ml-2 pl-2 inputlink'
                 placeholder={contactArray[parseInt(item.key)].linkDefault}
                 defaultValue={addLinkArr[index]?.link}
-                inputMode="url"
+                inputMode='url'
                 onChange={(e) => {
                   handleEnterLink(e, index);
                 }}
@@ -199,14 +193,13 @@ const AddContacts = (Props: Props) => {
                     ? 'w-full ml-2 pl-2 inputlink'
                     : 'w-full ml-2 pl-2 inputlink hidden'
                 }
-                inputMode="text"
+                inputMode='text'
                 value={addTooltips[index]?.tooltip}
                 onChange={(e) => {
                   addTooltipsTemp[index].tooltip = e.target.value;
                   setAddTooltips(addTooltipsTemp);
 
-                  addLinkArrTemp[index].tooltip =
-                    addTooltipsTemp[index].tooltip;
+                  addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
                   setAddLinkArr(addLinkArrTemp);
                 }}
                 style={{
@@ -220,8 +213,8 @@ const AddContacts = (Props: Props) => {
               />
 
               <Button
-                className="icon-edit-tooltip ml-3"
-                shape="circle"
+                className='icon-edit-tooltip ml-3'
+                shape='circle'
                 style={{
                   border: 'none',
                   backgroundColor: themeColorSet.colorBg3
@@ -229,48 +222,33 @@ const AddContacts = (Props: Props) => {
                 onClick={() => {
                   handleShowTooltip(index);
                 }}
-                size="small">
-                <FontAwesomeIcon
-                  icon={faInfo}
-                  style={{ color: commonColor.colorBlue2, fontSize: '1rem' }}
-                />
+                size='small'>
+                <FontAwesomeIcon icon={faInfo} style={{ color: commonColor.colorBlue2, fontSize: '1rem' }} />
               </Button>
 
               <Button
-                className="icon-trash"
+                className='icon-trash'
                 style={{ border: 'none' }}
                 onClick={() => {
                   handleDelete(index);
                 }}>
-                <FontAwesomeIcon icon={faTrashCan} size="lg" />
+                <FontAwesomeIcon icon={faTrashCan} size='lg' />
               </Button>
             </div>
           ))}
           <Button
-            className="my-3"
+            className='my-3'
             onClick={() => {
-              setAddLinkArr([
-                ...addLinkArr,
-                { key: '0', tooltip: 'Facebook', link: '' }
-              ]);
-              addLinkArrTemp = [
-                ...addLinkArr,
-                { key: '0', tooltip: 'Facebook', link: '' }
-              ];
+              setAddLinkArr([...addLinkArr, { key: '0', tooltip: 'Facebook', link: '' }]);
+              addLinkArrTemp = [...addLinkArr, { key: '0', tooltip: 'Facebook', link: '' }];
 
-              setAddTooltips([
-                ...addTooltips,
-                { key: '0', tooltip: 'Facebook', state: false, link: '' }
-              ]);
-              addTooltipsTemp = [
-                ...addTooltips,
-                { key: '0', tooltip: 'Facebook', state: false, link: '' }
-              ];
+              setAddTooltips([...addTooltips, { key: '0', tooltip: 'Facebook', state: false, link: '' }]);
+              addTooltipsTemp = [...addTooltips, { key: '0', tooltip: 'Facebook', state: false, link: '' }];
             }}>
-            <FontAwesomeIcon icon={faPlus} className="mr-2" />
+            <FontAwesomeIcon icon={faPlus} className='mr-2' />
             Add
           </Button>
-          <div className="mt-3">
+          <div className='mt-3'>
             <ButtonActiveHover
               onClick={() => {
                 handleClickSubmit();

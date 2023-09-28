@@ -89,51 +89,26 @@ export const PostWrapper = () => {
         style={{
           backgroundColor: themeColorSet.colorBg1
         }}>
-        <Row className="py-10">
+        <Row className='py-10'>
           <Col offset={3} span={18}>
             <Skeleton avatar paragraph={{ rows: 1 }} active />
-            <div className="mt-10">
-              <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-              <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-              <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
+            <div className='mt-10'>
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
             </div>
-            <div className="w-8/12 mt-5">
-              <Skeleton
-                className="mb-3"
-                avatar
-                paragraph={{ rows: 1 }}
-                active
-              />
-              <Skeleton
-                className="mb-3"
-                avatar
-                paragraph={{ rows: 1 }}
-                active
-              />
-              <Skeleton
-                className="mb-3"
-                avatar
-                paragraph={{ rows: 1 }}
-                active
-              />
+            <div className='w-8/12 mt-5'>
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
             </div>
           </Col>
         </Row>
       </div>
     );
   } else {
-    if (post.type === 'Post')
-      return (
-        <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />
-      );
-    else
-      return (
-        <OpenOtherPostShareDetail
-          key={post._id}
-          post={post}
-          userInfo={userInfo}
-        />
-      );
+    if (post.type === 'Post') return <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />;
+    else return <OpenOtherPostShareDetail key={post._id} post={post} userInfo={userInfo} />;
   }
 };
 
@@ -150,8 +125,7 @@ export const ProfileWrapper = () => {
 
   const path = location.pathname;
 
-  if (path === '/me' || path === '/user/me')
-    navigate(`/user/${userIDFromStore}`);
+  if (path === '/me' || path === '/user/me') navigate(`/user/${userIDFromStore}`);
 
   return (
     <div style={{ backgroundColor: themeColorSet.colorBg1 }}>

@@ -31,23 +31,27 @@ const MainLayout = (props: PropsMainTemplate) => {
       theme={{
         token: themeColor
       }}>
-      <StyleProvider className="abcdef" theme={themeColorSet}>
+      <StyleProvider className='abcdef' theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
-          <FloatButton.BackTop />
           <Headers />
-          <Menu />
-          <Content
-            style={{
-              marginLeft: '5rem',
-              marginTop: '5rem',
-              backgroundImage: 'url(/images/ProfilePage/cover.jpg)',
-              backgroundAttachment: 'fixed',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}>
-            <Component />
-          </Content>
+          <Layout>
+            <Menu />
+            <Layout>
+              <FloatButton.BackTop />
+              <Content
+                style={{
+                  marginLeft: '5rem',
+                  marginTop: '5rem'
+                  // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
+                  // backgroundAttachment: 'fixed',
+                  // backgroundRepeat: 'no-repeat',
+                  // backgroundSize: 'cover',
+                  // backgroundPosition: 'center'
+                }}>
+                <Component />
+              </Content>
+            </Layout>
+          </Layout>
         </Layout>
       </StyleProvider>
     </ConfigProvider>

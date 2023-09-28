@@ -46,15 +46,15 @@ const GetStarted = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       {contextHolder}
-      <div className="flex justify-center w-full h-full getStarted ">
-        <div className="content w-1/2 pt-10 h-full relative">
+      <div className='flex justify-center w-full h-full getStarted '>
+        <div className='content w-1/2 pt-10 h-full relative'>
           <div>
-            <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+            <span className='mr-3' style={{ color: themeColorSet.colorText2 }}>
               Step 02:
             </span>
             <span style={{ color: themeColorSet.colorText3 }}>Get started</span>
           </div>
-          <div className="slide w-full flex justify-between mt-2 ">
+          <div className='slide w-full flex justify-between mt-2 '>
             <span
               style={{
                 width: '19.4%',
@@ -92,7 +92,7 @@ const GetStarted = () => {
               }}></span>
           </div>
           <div
-            className="text mt-4"
+            className='text mt-4'
             style={{
               color: themeColorSet.colorText1,
               fontSize: '1.8rem',
@@ -100,15 +100,15 @@ const GetStarted = () => {
             }}>
             How would you like to get started?
           </div>
-          <div className="option mt-5">
+          <div className='option mt-5'>
             <div
-              className="optionItem h-32 flex items-center pl-5 mb-3 cursor-pointer"
+              className='optionItem h-32 flex items-center pl-5 mb-3 cursor-pointer'
               style={{
                 backgroundColor: themeColorSet.colorBg2
               }}
               onClick={handleChooseRadio1}>
-              <Space className="content" size={15}>
-                <span className="redioButton">
+              <Space className='content' size={15}>
+                <span className='radioButton'>
                   <ConfigProvider
                     theme={{
                       token: {
@@ -116,35 +116,24 @@ const GetStarted = () => {
                         colorBorder: themeColorSet.colorBg3
                       }
                     }}>
-                    <Radio
-                      value={1}
-                      checked={radio1}
-                      onClick={handleChooseRadio1}
-                    />
+                    <Radio value={1} checked={radio1} onClick={handleChooseRadio1} />
                   </ConfigProvider>
                 </span>
-                <span className="icon">
+                <span className='icon'>
                   <Avatar
-                    className="messageButton"
-                    shape="circle"
+                    className='messageButton'
+                    shape='circle'
                     style={{ backgroundColor: themeColorSet.colorBg1 }}
-                    icon={
-                      <FontAwesomeIcon
-                        icon={faPeopleGroup}
-                        color={commonColor.colorBlue1}
-                      />
-                    }
+                    icon={<FontAwesomeIcon icon={faPeopleGroup} color={commonColor.colorBlue1} />}
                     size={45}
                   />
                 </span>
-                <span className="contentText">
-                  <div
-                    className="top font-semibold"
-                    style={{ color: themeColorSet.colorText1 }}>
+                <span className='contentText'>
+                  <div className='top font-semibold' style={{ color: themeColorSet.colorText1 }}>
                     Connect with developers and the community
                   </div>
                   <div
-                    className="bottom mt-2"
+                    className='bottom mt-2'
                     style={{
                       color: themeColorSet.colorText3,
                       fontSize: '0.9rem'
@@ -155,13 +144,13 @@ const GetStarted = () => {
               </Space>
             </div>
             <div
-              className="optionItem h-32 flex items-center pl-5 mb-3 cursor-pointer"
+              className='optionItem h-32 flex items-center pl-5 mb-3 cursor-pointer'
               style={{
                 backgroundColor: themeColorSet.colorBg2
               }}
               onClick={handleChooseRadio2}>
-              <Space className="content" size={15}>
-                <span className="redioButton">
+              <Space className='content' size={15}>
+                <span className='radioButton'>
                   <ConfigProvider
                     theme={{
                       token: {
@@ -169,47 +158,36 @@ const GetStarted = () => {
                         colorBorder: themeColorSet.colorBg3
                       }
                     }}>
-                    <Radio
-                      value={2}
-                      checked={radio2}
-                      onClick={handleChooseRadio2}
-                    />
+                    <Radio value={2} checked={radio2} onClick={handleChooseRadio2} />
                   </ConfigProvider>
                 </span>
-                <span className="icon">
+                <span className='icon'>
                   <Avatar
-                    className="messageButton"
+                    className='messageButton'
                     style={{ backgroundColor: themeColorSet.colorBg1 }}
-                    shape="circle"
-                    icon={
-                      <FontAwesomeIcon
-                        icon={faBriefcase}
-                        color={commonColor.colorGreen1}
-                      />
-                    }
+                    shape='circle'
+                    icon={<FontAwesomeIcon icon={faBriefcase} color={commonColor.colorGreen1} />}
                     size={45}
                   />
                 </span>
-                <span className="contentText">
-                  <div
-                    className="top font-semibold"
-                    style={{ color: themeColorSet.colorText1 }}>
+                <span className='contentText'>
+                  <div className='top font-semibold' style={{ color: themeColorSet.colorText1 }}>
                     Connect with developers and the community
                   </div>
                   <div
-                    className="bottom mt-2"
+                    className='bottom mt-2'
                     style={{
                       color: themeColorSet.colorText3,
                       fontSize: '0.9rem'
                     }}>
-                    Set preferencdes and explorer jobs tailored for you.
+                    Set preferences and explorer jobs tailored for you.
                   </div>
                 </span>
               </Space>
             </div>
           </div>
 
-          <span className="btnNext absolute">
+          <span className='btnNext absolute'>
             <ButtonActiveHover
               rounded
               onClick={() => {

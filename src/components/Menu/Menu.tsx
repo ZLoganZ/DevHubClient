@@ -66,9 +66,9 @@ const MenuMain = () => {
         collapsible
         collapsed={collapsed}
         width={240}
-        className="sider"
+        className='sider'
         style={{
-          overflow: 'auto',
+          // overflow: 'auto',
           height: '100vh',
           position: 'fixed',
           left: 0,
@@ -79,14 +79,14 @@ const MenuMain = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}>
         <Menu
-          mode="inline"
+          mode='inline'
           defaultSelectedKeys={[key]}
           selectedKeys={[key]}
-          className="h-full"
+          className='h-full'
           items={[
             {
               key: '1',
-              icon: <FontAwesomeIcon className="icon" icon={faHouse} />,
+              icon: <FontAwesomeIcon className='icon' icon={faHouse} />,
               label: 'Home',
               title: '',
               onClick: () => {
@@ -96,14 +96,9 @@ const MenuMain = () => {
             {
               key: '2',
               icon: userInfo.user_image ? (
-                <Avatar
-                  className="icon"
-                  src={userInfo.user_image}
-                  shape="circle"
-                  size={20}
-                />
+                <Avatar className='icon' src={userInfo.user_image} shape='circle' size={20} />
               ) : (
-                <FontAwesomeIcon className="icon" icon={faUser} />
+                <FontAwesomeIcon className='icon' icon={faUser} />
               ),
               label: userInfo.name,
               title: '',
@@ -113,31 +108,31 @@ const MenuMain = () => {
             },
             {
               key: '3',
-              icon: <FontAwesomeIcon className="icon" icon={faMaximize} />,
+              icon: <FontAwesomeIcon className='icon' icon={faMaximize} />,
               label: 'Explore',
               title: ''
             },
             {
               key: '4',
-              icon: <FontAwesomeIcon className="icon" icon={faGlobe} />,
+              icon: <FontAwesomeIcon className='icon' icon={faGlobe} />,
               label: 'Collaborations',
               title: ''
             },
             {
               key: '5',
-              icon: <FontAwesomeIcon className="icon" icon={faBriefcase} />,
+              icon: <FontAwesomeIcon className='icon' icon={faBriefcase} />,
               label: 'Works',
               title: ''
             },
             {
               key: '6',
-              icon: <FontAwesomeIcon className="icon" icon={faBookmark} />,
+              icon: <FontAwesomeIcon className='icon' icon={faBookmark} />,
               label: 'Bookmarks',
               title: ''
             },
             {
               key: '7',
-              icon: <FontAwesomeIcon className="icon" icon={faPeopleGroup} />,
+              icon: <FontAwesomeIcon className='icon' icon={faPeopleGroup} />,
               label: 'All Communities',
               title: ''
             },
@@ -150,134 +145,68 @@ const MenuMain = () => {
             },
             {
               key: '8',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/javascript.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/javascript.png' shape='square' size={20} />,
               label: 'Javascript',
               title: ''
             },
             {
               key: '9',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/graphQL.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/graphQL.png' shape='square' size={20} />,
               label: 'GraphQL',
               title: ''
             },
             {
               key: '10',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/git.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/git.png' shape='square' size={20} />,
               label: 'Git',
               title: ''
             },
             {
               key: '11',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/github.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/github.png' shape='square' size={20} />,
               label: 'Github',
               title: ''
             },
 
             {
               key: '12',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/python.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
               label: 'Python',
               title: ''
             },
             {
               key: '13',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/reactjs.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
               label: 'React',
               title: ''
             },
             {
               key: '14',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/python.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
               label: 'Python',
               title: ''
             },
             {
               key: '15',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/reactjs.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
               label: 'React',
               title: ''
             },
             {
               key: '16',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/python.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
               label: 'Python',
               title: ''
             },
             {
               key: '17',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/reactjs.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
               label: 'React',
               title: ''
             },
             {
               key: '18',
-              icon: (
-                <Avatar
-                  src="/images/MainLayout/Sider/reactjs.png"
-                  shape="square"
-                  size={20}
-                />
-              ),
+              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
               label: 'React',
               title: ''
             }

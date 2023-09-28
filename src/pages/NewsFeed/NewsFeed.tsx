@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Col, Dropdown, MenuProps, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFileLines /* faUserFriends */
-} from '@fortawesome/free-solid-svg-icons';
+import { faFileLines /* faUserFriends */ } from '@fortawesome/free-solid-svg-icons';
 import { DownOutlined } from '@ant-design/icons';
 
 import OtherPostShare from '@/components/Post/OtherPostShare';
@@ -13,6 +11,7 @@ import OtherPost from '@/components/Post/OtherPost';
 import LoadingNewFeed from '@/components/Loading/LoadingNewFeed';
 
 import { getTheme } from '@/util/theme';
+import ConvertNumber from '@/util/convertNumber';
 import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
@@ -46,61 +45,52 @@ const community = [
     image:
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGiauApOpu95sj6IxatDeXrrAfCVznCpX41g&usqp=CAU',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 3760
   },
   {
     image: 'https://cdn-icons-png.flaticon.com/512/5556/5556468.png',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 1376
   },
   {
     image:
       'https://static.vecteezy.com/system/resources/previews/002/002/403/original/man-with-beard-avatar-character-isolated-icon-free-vector.jpg',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 13154
   },
   {
     image:
       'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 3757
   },
   {
     image:
       'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 7573
   },
   {
     image:
       'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80',
     name: 'Water Cooler chats',
-    description:
-      'Hang out and chat with your fellow developers in this general community',
+    description: 'Hang out and chat with your fellow developers in this general community',
     member: 9343
   }
 ];
 
-const NewFeed = () => {
+const NewsFeed = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const {
-    isLoadingAllPostsNewsfeed,
-    isFetchingAllPostsNewsfeed,
-    allPostsNewsfeed
-  } = useAllPostsNewsfeedData();
+  const { isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed, allPostsNewsfeed } =
+    useAllPostsNewsfeedData();
 
   const { userInfo } = useUserInfo();
 
@@ -146,9 +136,7 @@ const NewFeed = () => {
       }
       return true;
     })
-    .sort(
-      (a, b) => b.post_attributes.view_number - a.post_attributes.view_number
-    )
+    .sort((a, b) => b.post_attributes.view_number - a.post_attributes.view_number)
     .slice(0, 3);
 
   const handlePopularClick: MenuProps['onClick'] = (e) => {
@@ -173,22 +161,18 @@ const NewFeed = () => {
       ) : (
         <Row>
           <Col offset={3} span={18}>
-            <div className="new-feed flex justify-between mt-10">
-              <div className="new-feed-left w-8/12">
-                <div className="">
+            <div className='news-feed flex justify-between mt-10'>
+              <div className='news-feed-left w-8/12'>
+                <div className=''>
                   <NewPost userInfo={userInfo} />
                 </div>
 
-                <div className="show">
+                <div className='show'>
                   {allPostsNewsfeed.map((item, index) => {
                     return (
                       <div key={index}>
                         {item.type === 'Post' && (
-                          <OtherPost
-                            key={item._id}
-                            post={item}
-                            userInfo={item.post_attributes.user}
-                          />
+                          <OtherPost key={item._id} post={item} userInfo={item.post_attributes.user} />
                         )}
                         {item.type === 'Share' && (
                           <OtherPostShare
@@ -203,9 +187,9 @@ const NewFeed = () => {
                   })}
                 </div>
               </div>
-              <div className="new-feed-right w-4/12 pl-3">
+              <div className='news-feed-right w-4/12 pl-3'>
                 <div
-                  className="popular-post flex justify-between items-center"
+                  className='popular-post flex justify-between items-center'
                   style={{
                     backgroundColor: themeColorSet.colorBg2,
                     borderStartStartRadius: 10,
@@ -220,7 +204,6 @@ const NewFeed = () => {
                     }}>
                     Popular Post
                   </span>
-
                   <Dropdown
                     menu={{
                       items: popular_time,
@@ -252,7 +235,7 @@ const NewFeed = () => {
                   </Dropdown>
                 </div>
                 <div
-                  className="popular-post-body"
+                  className='popular-post-body'
                   style={{
                     backgroundColor: themeColorSet.colorBg2,
                     borderEndEndRadius: 10,
@@ -260,15 +243,14 @@ const NewFeed = () => {
                     padding: 10
                   }}>
                   {popular.length === 0 && (
-                    <div className="flex justify-center items-center no-post">
+                    <div className='flex justify-center items-center no-post'>
                       <span
                         style={{
                           fontSize: '1.2rem',
                           fontWeight: 600,
                           color: themeColorSet.colorText1
                         }}>
-                        No popular post {popularvalue === 'All time' && 'for'}{' '}
-                        {popularvalue.toLowerCase()}
+                        No popular post {popularvalue === 'All time' && 'for'} {popularvalue.toLowerCase()}
                       </span>
                     </div>
                   )}
@@ -277,7 +259,7 @@ const NewFeed = () => {
                       <div key={index}>
                         <NavLink to={`/post/${item._id}`}>
                           <div
-                            className="popular-post-item flex items-center pt-3 pb-3"
+                            className='popular-post-item flex items-center pt-3 pb-3'
                             style={{
                               borderBottom: '1px solid',
                               borderColor: themeColorSet.colorBg4
@@ -290,13 +272,13 @@ const NewFeed = () => {
                                 marginLeft: 10,
                                 objectFit: 'cover'
                               }}
-                              className="popular-post-item-image"
+                              className='popular-post-item-image'
                               src={`${item.post_attributes.user.user_image}`}
-                              alt=""
+                              alt=''
                             />
-                            <div className="content ml-4  ">
+                            <div className='content ml-4  '>
                               <div
-                                className="name"
+                                className='name'
                                 style={{
                                   color: themeColorSet.colorText1,
                                   fontWeight: 600
@@ -304,19 +286,18 @@ const NewFeed = () => {
                                 <span>{item.post_attributes.user.name}</span>
                               </div>
                               <div
-                                className="popular-post-item-desc mt-1"
+                                className='popular-post-item-desc mt-1'
                                 style={{
                                   color: themeColorSet.colorText2,
                                   fontSize: '0.9rem'
                                 }}>
                                 <span>
                                   {item.post_attributes.title!.length > 28
-                                    ? item.post_attributes.title?.slice(0, 28) +
-                                      '...'
+                                    ? item.post_attributes.title?.slice(0, 28) + '...'
                                     : item.post_attributes.title}
                                 </span>
                               </div>
-                              <div className="popular-post-item-view mt-1">
+                              <div className='popular-post-item-view mt-1'>
                                 <FontAwesomeIcon
                                   icon={faFileLines}
                                   style={{
@@ -329,10 +310,8 @@ const NewFeed = () => {
                                     marginLeft: 5,
                                     color: themeColorSet.colorText3
                                   }}>
-                                  {item.post_attributes.view_number}{' '}
-                                  {item.post_attributes.view_number! > 0
-                                    ? 'Views'
-                                    : 'View'}
+                                  {ConvertNumber(item.post_attributes.view_number)} view
+                                  {item.post_attributes.view_number! > 0 ? 's' : ''}
                                 </span>
                               </div>
                             </div>
@@ -432,4 +411,4 @@ const NewFeed = () => {
   );
 };
 
-export default NewFeed;
+export default NewsFeed;

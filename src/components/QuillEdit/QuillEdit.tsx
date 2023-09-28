@@ -79,8 +79,7 @@ const QuillEdit = (Props: QuillEditProps) => {
 
   // Kiểm tra nội dung của value để set callback
   const handleQuillChangeValue = () => {
-    const HTML = new DOMParser().parseFromString(value, 'text/html').body
-      .innerText;
+    const HTML = new DOMParser().parseFromString(value, 'text/html').body.innerText;
     if (HTML === '') Props.callbackFunction('');
     else Props.callbackFunction(value);
     dispatch(closeModal());
@@ -98,7 +97,7 @@ const QuillEdit = (Props: QuillEditProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div id="editorDrawer" />
+      <div id='editorDrawer' />
     </StyleProvider>
   );
 };

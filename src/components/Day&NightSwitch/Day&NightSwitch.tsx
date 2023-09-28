@@ -11,13 +11,13 @@ const DayNightSwitch = (Props: Props) => {
   useAppSelector((state) => state.theme.change);
 
   return (
-    <div className="containerButton inline">
-      <div className="switch">
-        <label htmlFor="toggle">
+    <div className='containerButton inline'>
+      <div className='switch'>
+        <label htmlFor='toggle'>
           <input
-            id="toggle"
-            className="toggle-switch"
-            type="checkbox"
+            id='toggle'
+            className='toggle-switch'
+            type='checkbox'
             defaultChecked={!Props.checked}
             onClick={() => {
               if (Props && Props.onChange) {
@@ -25,12 +25,12 @@ const DayNightSwitch = (Props: Props) => {
               }
             }}
           />
-          <div className="sun-moon">
-            <div className="dots" />
+          <div className='sun-moon'>
+            <div className='dots' />
           </div>
-          <div className="background">
-            <div className="stars1" />
-            <div className="stars2" />
+          <div className='background'>
+            <div className='stars1' />
+            <div className='stars2' />
           </div>
         </label>
       </div>

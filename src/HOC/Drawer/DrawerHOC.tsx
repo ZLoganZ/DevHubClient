@@ -2,10 +2,7 @@ import { ConfigProvider, Drawer, Space } from 'antd';
 
 import { getTheme } from '@/util/theme';
 import { closeDrawer } from '@/redux/Slice/DrawerHOCSlice';
-import {
-  ButtonActiveHover,
-  ButtonCancelHover
-} from '@/components/MiniComponent';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssDrawerHOC';
 
@@ -17,8 +14,9 @@ const DrawerHOC = () => {
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Drawer
-  const { visible, ComponentContentDrawer, callBackSubmit, title, loading } =
-    useAppSelector((state) => state.drawerHOC);
+  const { visible, ComponentContentDrawer, callBackSubmit, title, loading } = useAppSelector(
+    (state) => state.drawerHOC
+  );
 
   const onClose = () => {
     dispatch(closeDrawer());

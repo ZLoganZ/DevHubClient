@@ -10,7 +10,7 @@ const EmptyChat = () => {
       style={{
         backgroundColor: themeColorSet.colorBg1
       }}>
-      <div className="text-center items-center flex flex-col">
+      <div className='text-center items-center flex flex-col'>
         <h3
           className={`mt-2 text-2xl font-semibold`}
           style={{

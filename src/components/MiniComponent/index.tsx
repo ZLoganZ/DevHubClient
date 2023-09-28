@@ -32,7 +32,7 @@ export const ButtonActiveHover = ({
     <StyleProvider theme={themeColorSet}>
       <Button
         type={type}
-        className="ButtonActiveHover font-bold px-6 py-2"
+        className='ButtonActiveHover font-bold px-6 py-2'
         onClick={onClick}
         loading={loading}
         style={{
@@ -61,12 +61,7 @@ type ButtonCancelHoverProps = {
   className?: string;
 };
 
-export const ButtonCancelHover = ({
-  className,
-  children,
-  onClick,
-  disabled
-}: ButtonCancelHoverProps) => {
+export const ButtonCancelHover = ({ className, children, onClick, disabled }: ButtonCancelHoverProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (

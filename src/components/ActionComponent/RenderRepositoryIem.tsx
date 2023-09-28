@@ -14,23 +14,19 @@ const RenderRepositoryIem = (item: RepositoryType, index: number) => {
   return (
     <a
       key={index}
-      className="renderRepositoryIem mb-5"
+      className='renderRepositoryIem mb-5'
       style={{
         borderBottom: `1px solid ${themeColorSet.colorBg4}`,
         width: '48%'
       }}
       href={item.url}
-      target="_blank">
-      <div className="top">
+      target='_blank'>
+      <div className='top'>
         <span>
-          <img
-            className="iconRepos inline"
-            style={{ color: 'red' }}
-            src="/images/Common/repos.svg"
-          />
+          <img className='iconRepos inline' style={{ color: 'red' }} src='/SVG/repos.svg' />
         </span>
         <span
-          className="name ml-2"
+          className='name ml-2'
           style={{
             color: commonColor.colorBlue3,
             fontWeight: 600,
@@ -39,7 +35,7 @@ const RenderRepositoryIem = (item: RepositoryType, index: number) => {
           {item.name}
         </span>
         <span
-          className="rounded-lg ml-3"
+          className='rounded-lg ml-3'
           style={{
             color: themeColorSet.colorText3,
             border: `1px solid ${themeColorSet.colorBg4}`,
@@ -49,22 +45,20 @@ const RenderRepositoryIem = (item: RepositoryType, index: number) => {
           {item.private ? 'Private' : 'Public'}
         </span>
       </div>
-      <div
-        className="bottom mt-3 flex items-center"
-        style={{ color: themeColorSet.colorText2 }}>
-        <div className="language mr-4 flex items-center">
-          <span className="mr-2 pb-2 text-4xl" style={{ color: colorLanguage }}>
+      <div className='bottom mt-3 flex items-center' style={{ color: themeColorSet.colorText2 }}>
+        <div className='language mr-4 flex items-center'>
+          <span className='mr-2 pb-2 text-4xl' style={{ color: colorLanguage }}>
             •
           </span>
           <span>{item.languages}</span>
         </div>
-        <span className="star mr-3" style={{ color: themeColorSet.colorText3 }}>
-          <FontAwesomeIcon size="xs" icon={faStar} />
-          <span className="ml-1">{item.stargazersCount}</span>
+        <span className='star mr-3' style={{ color: themeColorSet.colorText3 }}>
+          <FontAwesomeIcon size='xs' icon={faStar} />
+          <span className='ml-1'>{item.stargazersCount}</span>
         </span>
-        <span className="fork" style={{ color: themeColorSet.colorText3 }}>
-          <FontAwesomeIcon size="xs" icon={faCodeFork} />
-          <span className="ml-1">{item.forksCount}</span>
+        <span className='fork' style={{ color: themeColorSet.colorText3 }}>
+          <FontAwesomeIcon size='xs' icon={faCodeFork} />
+          <span className='ml-1'>{item.forksCount}</span>
         </span>
       </div>
     </a>
