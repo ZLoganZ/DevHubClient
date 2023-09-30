@@ -40,9 +40,7 @@ export function* theoDoiChooseGetInterestSaga() {
 // Choose Should Followers Saga
 function* chooseShouldFollowerSaga({ payload }: any) {
   try {
-    const { data, status } = yield getStartedService.chooseShouldFollowPeople(
-      payload
-    );
+    const { data, status } = yield getStartedService.chooseShouldFollowPeople(payload);
   } catch (err: any) {
     console.log(err);
   }

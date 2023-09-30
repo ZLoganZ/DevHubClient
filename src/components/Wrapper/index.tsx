@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
-import { Col, ConfigProvider, Row, Skeleton } from 'antd';
+import { useEffect, useMemo, lazy, Suspense } from 'react';
+import { Col, Row, Skeleton } from 'antd';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
-import { GET_USER_ID } from '@/redux/ActionSaga/AuthActionSaga';
-import { GET_POST_BY_ID_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
 import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
-import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import { useAppDispatch, useAppSelector, useUserInfo } from '@/hooks';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { usePostData, useUserInfo } from '@/hooks/fetch';
+import { getTheme } from '@/util/theme';
 
 const CommunityAdmin = lazy(() =>
   import('@/pages/Community').then((module) => ({
@@ -36,8 +35,7 @@ export const CommunityWrapper = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { communityID } = useParams();
@@ -55,251 +53,91 @@ export const CommunityWrapper = () => {
     }
   }, [userInfo]);
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
+    <div
+      style={{
+        backgroundColor: themeColorSet.colorBg1
       }}>
-      <div
-        style={{
-          backgroundColor: themeColorSet.colorBg1
-        }}>
-        <Suspense fallback={<LoadingProfileComponent />}>
-          {role === 'ADMIN' ? (
-            <CommunityAdmin />
-          ) : role === 'MEMBER' ? (
-            <CommunityMember />
-          ) : role === 'NO_MEMBER' ? (
-            <CommunityNoMember />
-          ) : (
-            <LoadingProfileComponent />
-          )}
-        </Suspense>
-      </div>
-    </ConfigProvider>
+      <Suspense fallback={<LoadingProfileComponent />}>
+        {role === 'ADMIN' ? (
+          <CommunityAdmin />
+        ) : role === 'MEMBER' ? (
+          <CommunityMember />
+        ) : role === 'NO_MEMBER' ? (
+          <CommunityNoMember />
+        ) : (
+          <LoadingProfileComponent />
+        )}
+      </Suspense>
+    </div>
   );
-};
-
-export const PostShareWrapper = () => {
-  const { postID } = useParams();
-  const dispatch = useAppDispatch();
-  // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
-  const { themeColorSet } = getTheme();
-
-  const postSlice = useAppSelector((state) => state.postReducer.post);
-  const userInfoSlice = useAppSelector((state) => state.userReducer.userInfo);
-
-  const post = useMemo(() => postSlice, [postSlice]);
-  const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
-
-  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = useState(true);
-
-  const postRef = useRef(post);
-
-  useEffect(() => {
-    dispatch(
-      GET_POST_BY_ID_SAGA({
-        id: postID!
-      })
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!isNotAlreadyChanged) return;
-
-    setIsNotAlreadyChanged(postRef.current === post);
-  }, [post, isNotAlreadyChanged]);
-
-  useEffect(() => {
-    if (!isNotAlreadyChanged) {
-      postRef.current = post;
-    }
-  }, [isNotAlreadyChanged, post]);
-
-  if (!post || !userInfo || isNotAlreadyChanged) {
-    return (
-      <ConfigProvider
-        theme={{
-          token: themeColor
-        }}>
-        <div
-          style={{
-            backgroundColor: themeColorSet.colorBg1
-          }}>
-          <Row className="py-10">
-            <Col offset={3} span={18}>
-              <Skeleton avatar paragraph={{ rows: 1 }} active />
-              <div className="mt-10">
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-              </div>
-              <div className="w-8/12 mt-5">
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </ConfigProvider>
-    );
-  } else {
-    return (
-      <OpenOtherPostShareDetail
-        key={post._id}
-        post={post}
-        userInfo={userInfo}
-      />
-    );
-  }
 };
 
 export const PostWrapper = () => {
   const { postID } = useParams();
-  const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const postSlice = useAppSelector((state) => state.postReducer.post);
-  const userInfoSlice = useAppSelector((state) => state.userReducer.userInfo);
+  const { userInfo, isLoadingUserInfo } = useUserInfo();
 
-  const post = useMemo(() => postSlice, [postSlice]);
-  const userInfo = useMemo(() => userInfoSlice, [userInfoSlice]);
+  const { post, isLoadingPost } = usePostData(postID!);
 
-  const [isNotAlreadyChanged, setIsNotAlreadyChanged] = useState(true);
-
-  const postRef = useRef(post);
-
-  useEffect(() => {
-    dispatch(
-      GET_POST_BY_ID_SAGA({
-        id: postID!
-      })
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!isNotAlreadyChanged) return;
-
-    setIsNotAlreadyChanged(postRef.current === post);
-  }, [post, isNotAlreadyChanged]);
-
-  useEffect(() => {
-    if (!isNotAlreadyChanged) {
-      postRef.current = post;
-    }
-  }, [isNotAlreadyChanged, post]);
-
-  if (!post || !userInfo || isNotAlreadyChanged) {
+  if (isLoadingPost || isLoadingUserInfo || !userInfo || !post) {
     return (
-      <ConfigProvider
-        theme={{
-          token: themeColor
+      <div
+        style={{
+          backgroundColor: themeColorSet.colorBg1
         }}>
-        <div
-          style={{
-            backgroundColor: themeColorSet.colorBg1
-          }}>
-          <Row className="py-10">
-            <Col offset={3} span={18}>
-              <Skeleton avatar paragraph={{ rows: 1 }} active />
-              <div className="mt-10">
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-                <Skeleton className="mb-8" active paragraph={{ rows: 3 }} />
-              </div>
-              <div className="w-8/12 mt-5">
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-                <Skeleton
-                  className="mb-3"
-                  avatar
-                  paragraph={{ rows: 1 }}
-                  active
-                />
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </ConfigProvider>
+        <Row className='py-10'>
+          <Col offset={3} span={18}>
+            <Skeleton avatar paragraph={{ rows: 1 }} active />
+            <div className='mt-10'>
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
+              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
+            </div>
+            <div className='w-8/12 mt-5'>
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+            </div>
+          </Col>
+        </Row>
+      </div>
     );
   } else {
-    return (
-      <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />
-    );
+    if (post.type === 'Post') return <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />;
+    else return <OpenOtherPostShareDetail key={post._id} post={post} userInfo={userInfo} />;
   }
 };
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userID: userIDFromStore } = useAppSelector(
-    (state) => state.authReducer
-  );
-
-  useEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
+  const { userID: userIDFromStore } = useAppSelector((state) => state.auth);
 
   const path = location.pathname;
 
-  if (path === '/me' || path === '/user/me')
-    navigate(`/user/${userIDFromStore}`);
+  if (path === '/me' || path === '/user/me') navigate(`/user/${userIDFromStore}`);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
-        <Suspense fallback={<LoadingProfileComponent />}>
-          {!userIDFromStore ? (
-            <LoadingProfileComponent />
-          ) : userID === 'me' || userID === userIDFromStore ? (
-            <MyProfile key={userID} />
-          ) : (
-            <Profile key={userID} userID={userID!} />
-          )}
-        </Suspense>
-      </div>
-    </ConfigProvider>
+    <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
+      <Suspense fallback={<LoadingProfileComponent />}>
+        {!userIDFromStore ? (
+          <LoadingProfileComponent />
+        ) : userID === 'me' || userID === userIDFromStore ? (
+          <MyProfile key={userID} />
+        ) : (
+          <Profile key={userID} userID={userID!} />
+        )}
+      </Suspense>
+    </div>
   );
 };

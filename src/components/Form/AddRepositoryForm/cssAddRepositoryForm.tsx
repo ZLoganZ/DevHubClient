@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor, custom_scrollBar } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .form__group {
     position: relative;
     padding: 15px 0 0;
@@ -68,4 +68,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

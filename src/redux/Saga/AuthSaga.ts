@@ -4,7 +4,6 @@ import {
   CHECK_RESET_PASSWORD_SAGA,
   CHECK_VERIFY_CODE_SAGA,
   FORGOT_PASSWORD_SAGA,
-  GET_USER_ID,
   LOGIN_SAGA,
   LOGIN_WITH_GOOGLE_SAGA,
   LOGOUT_SAGA,
@@ -17,11 +16,11 @@ import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { authService } from '@/services/AuthService';
 import {
-  CLIENT_ID,
   DARK_THEME,
   STATUS_CODE,
-  TOKEN,
-  TOKEN_GITHUB
+  AUTHORIZATION,
+  GITHUB_TOKEN,
+  CLIENT_ID
 } from '@/util/constants/SettingSystem';
 
 // LoginSaga
@@ -30,17 +29,15 @@ function* LoginSaga({ payload }: any) {
     const { data, status } = yield call(authService.login, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(
-        TOKEN,
-        JSON.stringify(data.metadata.tokens.accessToken)
-      );
+      localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
+      localStorage.setItem(CLIENT_ID, data.metadata.user._id);
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
       yield put(setUserID(data.metadata.user._id));
 
-      const { location } = yield select((state) => state.functionReducer);
+      const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
       const from = state?.from?.pathname || '/';
@@ -61,10 +58,10 @@ function* RegisterSaga({ payload }: any) {
   try {
     const { data, status } = yield call(authService.register, payload);
     if (status === STATUS_CODE.CREATED) {
-      localStorage.setItem(
-        TOKEN,
-        JSON.stringify(data.metadata.tokens.accessToken)
-      );
+      // Lưu token vào localStorage
+      localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
+      localStorage.setItem(CLIENT_ID, data.metadata.user._id);
+
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
@@ -73,7 +70,7 @@ function* RegisterSaga({ payload }: any) {
       window.location.replace('/');
     }
   } catch (err: any) {
-    localStorage.removeItem(TOKEN);
+    localStorage.removeItem(AUTHORIZATION);
     console.log(err);
   }
 }
@@ -87,8 +84,9 @@ function* LogoutSaga() {
   try {
     const { status } = yield call(authService.logout);
     if (status === STATUS_CODE.SUCCESS) {
-      localStorage.removeItem(TOKEN);
-      localStorage.removeItem(TOKEN_GITHUB);
+      localStorage.removeItem(AUTHORIZATION);
+      localStorage.removeItem(GITHUB_TOKEN);
+      localStorage.removeItem(CLIENT_ID);
 
       window.location.replace('/login');
     }
@@ -107,12 +105,12 @@ function* LoginWithGoogleSaga({ payload }: any) {
     const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(TOKEN, JSON.stringify(data.metadata?.accessToken));
+      localStorage.setItem(AUTHORIZATION, data.metadata?.accessToken);
 
       // Lưu theme vào localStorage
       yield put(setTheme({ theme: DARK_THEME }));
 
-      const { location } = yield select((state) => state.functionReducer);
+      const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
       const from = state?.from.pathname || '/';
@@ -133,7 +131,7 @@ function* ForgotPasswordSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.forgotPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate({
         pathname: '/verify',
@@ -156,7 +154,7 @@ function* VerifyCodeSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.verifyCode, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate({
         pathname: '/reset',
@@ -179,7 +177,7 @@ function* ResetPasswordSaga({ payload }: any) {
   try {
     const { status } = yield call(authService.resetPassword, payload);
     if (status === STATUS_CODE.SUCCESS) {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/login');
     }
@@ -199,12 +197,12 @@ function* CheckVerifyCodeSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/forgot');
     }
   } catch (err: any) {
-    const { navigate } = yield select((state) => state.functionReducer);
+    const { navigate } = yield select((state) => state.hook);
 
     navigate('/forgot');
     console.log(err);
@@ -222,12 +220,12 @@ function* CheckResetPasswordSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Do nothing
     } else {
-      const { navigate } = yield select((state) => state.functionReducer);
+      const { navigate } = yield select((state) => state.hook);
 
       navigate('/forgot');
     }
   } catch (err: any) {
-    const { navigate } = yield select((state) => state.functionReducer);
+    const { navigate } = yield select((state) => state.hook);
 
     navigate('/forgot');
     console.log(err);
@@ -236,17 +234,4 @@ function* CheckResetPasswordSaga({ payload }: any) {
 
 export function* theoDoiCheckResetPasswordSaga() {
   yield takeLatest(CHECK_RESET_PASSWORD_SAGA, CheckResetPasswordSaga);
-}
-
-function* GetUserIDSaga() {
-  try {
-    const userID = localStorage.getItem(CLIENT_ID);
-    yield put(setUserID(userID));
-  } catch (err: any) {
-    console.log(err);
-  }
-}
-
-export function* theoDoiGetUserIDSaga() {
-  yield takeLatest(GET_USER_ID, GetUserIDSaga);
 }

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   min-height: 100vh;
   height: fit-content;
   background-color: ${(props) => props.theme.colorBg1};
 `;
 
-export default StyleTotal;
+export default StyleProvider;

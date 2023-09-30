@@ -1,7 +1,6 @@
 import {
   GoogleLoginDataType,
   UserLoginDataType,
-  UserATokenType,
   UserRegisterDataType,
   VerifyCodeDataType,
   ForgotPasswordDataType,
@@ -23,7 +22,7 @@ export class AuthService extends BaseService {
     return this.post(`/auth/googleV2`, token);
   };
   logout = () => {
-    return this.post(`/logout`);
+    return this.post(`/auth/logout`);
   };
   forgotPassword = (email: string) => {
     return this.post(`/forgot`, email);

@@ -1,27 +1,25 @@
 import { ConfigProvider, Drawer, Space } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { closeDrawer } from '@/redux/Slice/DrawerHOCSlice';
-import {
-  ButtonActiveHover,
-  ButtonCancelHover
-} from '@/components/MiniComponent';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import StyleTotal from './cssDrawerHOC';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import StyleProvider from './cssDrawerHOC';
 
 const DrawerHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.theme.change);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
   // Hàm xử lý Drawer
-  const { visible, ComponentContentDrawer, callBackSubmit, title, loading } =
-    useAppSelector((state) => state.drawerHOCReducer);
+  const { visible, ComponentContentDrawer, callBackSubmit, title, loading } = useAppSelector(
+    (state) => state.drawerHOC
+  );
 
   const onClose = () => {
-    dispatch(closeDrawer({}));
+    dispatch(closeDrawer());
   };
 
   return (
@@ -29,34 +27,32 @@ const DrawerHOC = () => {
       theme={{
         token: themeColor
       }}>
-      <StyleTotal theme={themeColorSet}>
-        <div>
-          <Drawer
-            title={title}
-            width={720}
-            onClose={onClose}
-            open={visible}
-            footer={
-              <div style={{ textAlign: 'right' }}>
-                <Space>
-                  <ButtonCancelHover onClick={onClose} disabled={loading}>
-                    Cancel
-                  </ButtonCancelHover>
-                  <ButtonActiveHover
-                    onClick={() => {
-                      callBackSubmit();
-                    }}
-                    loading={loading}
-                    rounded>
-                    Submit
-                  </ButtonActiveHover>
-                </Space>
-              </div>
-            }>
-            {ComponentContentDrawer}
-          </Drawer>
-        </div>
-      </StyleTotal>
+      <StyleProvider theme={themeColorSet}>
+        <Drawer
+          title={title}
+          width={720}
+          onClose={onClose}
+          open={visible}
+          footer={
+            <div style={{ textAlign: 'right' }}>
+              <Space>
+                <ButtonCancelHover onClick={onClose} disabled={loading}>
+                  Cancel
+                </ButtonCancelHover>
+                <ButtonActiveHover
+                  onClick={() => {
+                    callBackSubmit();
+                  }}
+                  loading={loading}
+                  rounded>
+                  Submit
+                </ButtonActiveHover>
+              </Space>
+            </div>
+          }>
+          {ComponentContentDrawer}
+        </Drawer>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

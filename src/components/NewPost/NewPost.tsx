@@ -1,18 +1,10 @@
-import {
-  Avatar,
-  Button,
-  ConfigProvider,
-  Input,
-  message,
-  Popover,
-  Upload
-} from 'antd';
+import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
 import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
-import { sha1 } from 'crypto-hash';
+// import { sha1 } from 'crypto-hash';
 import ImageCompress from 'quill-image-compress';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,10 +13,10 @@ import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
-import { CREATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
 import { commonColor } from '@/util/cssVariable';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { getTheme } from '@/util/theme';
+import { useCreatePost } from '@/hooks/mutation';
+import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleTotal from './cssNewPost';
 import { useMediaQuery } from "react-responsive";
@@ -45,15 +37,17 @@ interface Props {
 //===================================================
 
 const NewPost = (Props: Props) => {
-  const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
+  const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
+
   const [random, setRandom] = useState(0);
+
+  const [file, setFile]: any = useState(null);
 
   // Quill Editor
   let [quill, setQuill]: any = useState(null);
@@ -74,7 +68,13 @@ const NewPost = (Props: Props) => {
     quill.root.addEventListener('paste', (event: any) => {
       event.preventDefault();
       const text = event.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, text);
+
+      const textToHTMLWithTabAndSpace = text
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        .replace(/ /g, '&nbsp;');
+
+      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
     });
 
     setQuill(quill);
@@ -105,31 +105,32 @@ const NewPost = (Props: Props) => {
     if (quill.root.innerHTML === '<p><br></p>') {
       error();
     } else {
-      setLoading(true);
       const result = await handleUploadImage(file);
       if (result.status === 'done') {
-        dispatch(
-          CREATE_POST_SAGA({
-            title: values.title,
-            content: values.content,
-            img: result.url
-          })
-        );
-        setLoading(false);
-        quill.root.innerHTML = '<p><br></p>';
-        setRandom(Math.random());
-        setFile(null);
-        form.setValue('title', '');
-        form.setValue('content', '');
-        form.setValue('linkImage', null);
-        messageApi.success('Create post successfully');
+        mutateCreatePost({
+          title: values.title,
+          content: values.content,
+          img: result.url
+        });
       }
     }
   };
 
-  const [file, setFile]: any = useState(null);
+  useEffect(() => {
+    if (isSuccessCreatePost) {
+      quill.root.innerHTML = '<p><br></p>';
+      setRandom(Math.random());
+      setFile(null);
+      form.setValue('title', '');
+      form.setValue('content', '');
+      form.setValue('linkImage', null);
+      messageApi.success('Create post successfully');
+    }
 
-  const [loading, setLoading] = useState(false);
+    if (isErrorCreatePost) {
+      messageApi.error('Create post failed');
+    }
+  }, [isSuccessCreatePost, isErrorCreatePost]);
 
   const handleUpload = (info: any) => {
     if (info.fileList.length === 0) return;
@@ -147,13 +148,10 @@ const NewPost = (Props: Props) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data.secure_url,
@@ -189,22 +187,21 @@ const NewPost = (Props: Props) => {
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           borderRadius: 0,
           lineWidth: 0
         }
       }}>
       {contextHolder}
-      <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
-        <div className="newPost px-4 py-3">
+      <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+        <div className='newPost px-4 py-3'>
           <div
-            className="newPostHeader text-center text-xl font-bold"
+            className='newPostHeader text-center text-xl font-bold'
             style={{ color: themeColorSet.colorText1 }}>
             Create Post
           </div>
-          <div className="newPostBody">
-            <div className="name_avatar flex items-center">
+          <div className='newPostBody'>
+            <div className='name_avatar flex items-center'>
               <Avatar
                 size={isXsScreen ? 40 : 50}
                 src={
@@ -212,17 +209,16 @@ const NewPost = (Props: Props) => {
                   './images/DefaultAvatar/default_avatar.png'
                 }
               />
-              <div className="name font-bold ml-2">
-                <NavLink to={`/user/${Props.userInfo._id}`}>
-                  {Props.userInfo.name}
-                </NavLink>
+              <div className='name font-bold ml-2'>
+                <NavLink to={`/user/${Props.userInfo._id}`}>{Props.userInfo.name}</NavLink>
               </div>
             </div>
-            <div className="AddTitle mt-4 z-10">
+            <div className='AddTitle mt-4 z-10'>
               <Input
                 key={random}
-                name="title"
-                placeholder="Add a Title"
+                name='title'
+                placeholder='Add a Title'
+                autoComplete='off'
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
@@ -231,59 +227,45 @@ const NewPost = (Props: Props) => {
                 }}
               />
             </div>
-            <div className="AddContent mt-4">
-              <div id="editor" />
+            <div className='AddContent mt-4'>
+              <div id='editor' />
             </div>
           </div>
-          <div className="newPostFooter mt-3 flex justify-between items-center">
-            <div className="newPostFooter__left">
+          <div className='newPostFooter mt-3 flex justify-between items-center'>
+            <div className='newPostFooter__left'>
               <Popover
-                placement="top"
-                trigger="click"
+                placement='top'
+                trigger='click'
                 title={'Emoji'}
                 content={
                   <Picker
                     data={async () => {
-                      const response = await fetch(
-                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                      );
+                      const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
-                      quill.insertText(
-                        quill.getSelection().index,
-                        emoji.native
-                      );
+                      quill.insertText(quill.getSelection().index, emoji.native);
                     }}
                   />
                 }>
-                <span className="emoji">
-                  <FontAwesomeIcon
-                    className="item mr-3 ml-3"
-                    size="lg"
-                    icon={faFaceSmile}
-                  />
+                <span className='emoji'>
+                  <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
               <span>
                 <Upload
-                  accept="image/*"
+                  accept='image/*'
                   key={random}
                   maxCount={1}
-                  customRequest={async ({
-                    file,
-                    onSuccess,
-                    onError,
-                    onProgress
-                  }: any) => {
+                  customRequest={async ({ onSuccess }: any) => {
                     onSuccess('ok');
                   }}
-                  data={(file) => {
+                  data={() => {
                     return {};
                   }}
-                  listType="picture"
+                  listType='picture'
                   onChange={handleUpload}
                   onRemove={() => {
                     setFile(null);
@@ -292,19 +274,16 @@ const NewPost = (Props: Props) => {
                 </Upload>
               </span>
             </div>
-            <div className="newPostFooter__right">
-              <ButtonActiveHover
-                rounded
-                onClick={form.handleSubmit(onSubmit)}
-                loading={loading}>
+            <div className='newPostFooter__right'>
+              <ButtonActiveHover rounded onClick={form.handleSubmit(onSubmit)} loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhile1 }}>
-                  {loading ? 'Creating..' : 'Create'}
+                  {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>
               </ButtonActiveHover>
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .itemAddTag {
     background-color: ${(props) => props.theme.colorBg1};
     font-size: 0.9rem;
@@ -18,4 +18,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

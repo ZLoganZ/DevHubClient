@@ -1,8 +1,8 @@
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 
 const EmptyChat = () => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
     <div
@@ -10,7 +10,7 @@ const EmptyChat = () => {
       style={{
         backgroundColor: themeColorSet.colorBg1
       }}>
-      <div className="text-center items-center flex flex-col">
+      <div className='text-center items-center flex flex-col'>
         <h3
           className={`mt-2 text-2xl font-semibold`}
           style={{

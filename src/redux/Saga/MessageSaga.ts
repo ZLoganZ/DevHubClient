@@ -38,10 +38,7 @@ export function* theoDoiGetConversationsSaga() {
 // Create conversation Saga
 export function* createConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(
-      messageService.createConversation,
-      payload
-    );
+    const { data, status } = yield call(messageService.createConversation, payload);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(AddConversations(data.metadata));
       yield put(SetCurrentConversation(data.metadata));
@@ -58,10 +55,7 @@ export function* theoDoiCreateConversationSaga() {
 // Get conversation Saga
 export function* getConversationSaga({ payload }: any) {
   try {
-    const { data, status } = yield call(
-      messageService.getConversation,
-      payload
-    );
+    const { data, status } = yield call(messageService.getConversation, payload);
     if (status === STATUS_CODE.SUCCESS) {
       yield put(SetCurrentConversation(data.metadata));
     }

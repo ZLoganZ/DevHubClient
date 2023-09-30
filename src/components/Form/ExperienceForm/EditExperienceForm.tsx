@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { ConfigProvider, DatePicker, message } from 'antd';
+import { DatePicker, message } from 'antd';
 
-import StyleTotal from './cssAddExperienceForm';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleProvider from './cssAddExperienceForm';
+import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
 
 interface EditProps {
@@ -25,16 +25,11 @@ const EditExperienceForm = (Props: EditProps) => {
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [position_name, setPositionName] = useState(
-    Props.itemCurrent.position_name
-  );
-  const [company_name, setCompanyName] = useState(
-    Props.itemCurrent.company_name
-  );
+  const [position_name, setPositionName] = useState(Props.itemCurrent.position_name);
+  const [company_name, setCompanyName] = useState(Props.itemCurrent.company_name);
   const [start_date, setStartDate] = useState(Props.itemCurrent.start_date);
   const [end_date, setEndDate] = useState(Props.itemCurrent.end_date);
   const [pastDate, setPastDate] = useState('');
@@ -42,9 +37,7 @@ const EditExperienceForm = (Props: EditProps) => {
   const checkUntilNow = Props.itemCurrent.end_date === 'Now';
   const [untilNow, setUntilNow] = useState(checkUntilNow);
 
-  const checkDisablePicker: [boolean, boolean] = checkUntilNow
-    ? [false, true]
-    : [false, false];
+  const checkDisablePicker: [boolean, boolean] = checkUntilNow ? [false, true] : [false, false];
   const [disablePicker, setDisablePicker] = useState(checkDisablePicker);
 
   // Hàm hiển thị mesage
@@ -62,14 +55,8 @@ const EditExperienceForm = (Props: EditProps) => {
     end_date: ''
   };
 
-  const handleSetExperience = (e: any) => {
-    e.preventDefault();
-    if (
-      position_name === '' ||
-      company_name === '' ||
-      start_date === '' ||
-      end_date === ''
-    ) {
+  const handleSetExperience = () => {
+    if (position_name === '' || company_name === '' || start_date === '' || end_date === '') {
       error();
       return;
     } else {
@@ -90,107 +77,96 @@ const EditExperienceForm = (Props: EditProps) => {
   }, [position_name, company_name, start_date, end_date]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
+    <StyleProvider theme={themeColorSet}>
       {contextHolder}
-      <StyleTotal theme={themeColorSet}>
-        <div className="editPositionForm">
-          <div className="flex justify-between">
-            <div
-              className="PositionName form__group field"
-              style={{ width: '48%' }}>
-              <input
-                defaultValue={position_name}
-                pattern="[A-Za-z ]*"
-                type="input"
-                className="form__field"
-                placeholder="Position Name"
-                name="position_name"
-                id="position_name"
-                required
-                onChange={(e) => {
-                  if (searchRef.current) {
-                    clearTimeout(searchRef.current);
-                  }
-                  searchRef.current = setTimeout(() => {
-                    setPositionName(e.target.value);
-                  }, 300);
-                }}
-                autoComplete="off"
-              />
-              <label htmlFor="position_name" className="form__label">
-                Position Name
-              </label>
-            </div>
-            <div
-              className="CompanyName form__group field"
-              style={{ width: '48%' }}>
-              <input
-                defaultValue={company_name}
-                pattern="[A-Za-z ]*"
-                type="input"
-                className="form__field"
-                placeholder="Company Name"
-                name="company_name"
-                id="company_name"
-                required
-                onChange={(e) => {
-                  if (searchRef.current) {
-                    clearTimeout(searchRef.current);
-                  }
-                  searchRef.current = setTimeout(() => {
-                    setCompanyName(e.target.value);
-                  }, 300);
-                }}
-                autoComplete="off"
-              />
-              <label htmlFor="company_name" className="form__label">
-                Company Name
-              </label>
-            </div>
-          </div>
-          <div className="mt-7">
-            <RangePicker
-              picker="month"
-              format={dateFormat}
-              disabled={disablePicker}
-              size="large"
-              onChange={(value, dateString) => {
-                setStartDate(dateString[0]);
-                untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
-                setPastDate(dateString[1]);
-              }}
-              defaultValue={[
-                dayjs(start_date, dateFormat),
-                end_date === 'Now' ? dayjs() : dayjs(end_date, dateFormat)
-              ]}
-            />
-            <button
-              className={
-                'untilButton ml-8 px-4 py-2 rounded-md' +
-                (untilNow ? ' untilActive' : '')
-              }
-              onClick={(e) => {
-                if (!untilNow) {
-                  e.currentTarget.classList.add('untilActive');
-                  setEndDate('Now');
-                  setDisablePicker([false, true]);
-                  setUntilNow(true);
-                } else {
-                  e.currentTarget.classList.remove('untilActive');
-                  setEndDate(pastDate);
-                  setDisablePicker([false, false]);
-                  setUntilNow(false);
+
+      <div className='editPositionForm'>
+        <div className='flex justify-between'>
+          <div className='PositionName form__group field' style={{ width: '48%' }}>
+            <input
+              defaultValue={position_name}
+              pattern='[A-Za-z ]*'
+              type='input'
+              className='form__field'
+              placeholder='Position Name'
+              name='position_name'
+              id='position_name'
+              required
+              onChange={(e) => {
+                if (searchRef.current) {
+                  clearTimeout(searchRef.current);
                 }
-              }}>
-              Until Now
-            </button>
+                searchRef.current = setTimeout(() => {
+                  setPositionName(e.target.value);
+                }, 300);
+              }}
+              autoComplete='off'
+            />
+            <label htmlFor='position_name' className='form__label'>
+              Position Name
+            </label>
+          </div>
+          <div className='CompanyName form__group field' style={{ width: '48%' }}>
+            <input
+              defaultValue={company_name}
+              pattern='[A-Za-z ]*'
+              type='input'
+              className='form__field'
+              placeholder='Company Name'
+              name='company_name'
+              id='company_name'
+              required
+              onChange={(e) => {
+                if (searchRef.current) {
+                  clearTimeout(searchRef.current);
+                }
+                searchRef.current = setTimeout(() => {
+                  setCompanyName(e.target.value);
+                }, 300);
+              }}
+              autoComplete='off'
+            />
+            <label htmlFor='company_name' className='form__label'>
+              Company Name
+            </label>
           </div>
         </div>
-      </StyleTotal>
-    </ConfigProvider>
+        <div className='mt-7'>
+          <RangePicker
+            picker='month'
+            format={dateFormat}
+            disabled={disablePicker}
+            size='large'
+            onChange={(_, dateString) => {
+              setStartDate(dateString[0]);
+              untilNow ? setEndDate('Now') : setEndDate(dateString[1]);
+              setPastDate(dateString[1]);
+            }}
+            defaultValue={[
+              dayjs(start_date, dateFormat),
+              end_date === 'Now' ? dayjs() : dayjs(end_date, dateFormat)
+            ]}
+          />
+          <button
+            className={'untilButton ml-8 px-4 py-2 rounded-md' + (untilNow ? ' untilActive' : '')}
+            onClick={(e) => {
+              if (!untilNow) {
+                e.currentTarget.classList.add('untilActive');
+                setEndDate('Now');
+                setDisablePicker([false, true]);
+                setUntilNow(true);
+              } else {
+                e.currentTarget.classList.remove('untilActive');
+                setEndDate(pastDate);
+                setDisablePicker([false, false]);
+                setUntilNow(false);
+              }
+            }}>
+            Until Now
+          </button>
+        </div>
+      </div>
+    </StyleProvider>
   );
 };
 

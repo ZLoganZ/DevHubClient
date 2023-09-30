@@ -1,16 +1,10 @@
-import { ConfigProvider } from 'antd';
 import { useState, useLayoutEffect } from 'react';
 
-import StyleTotal from './cssOpenPostDetailModal';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
 import { messageService } from '@/services/MessageService';
-import {
-  ButtonActiveHover,
-  ButtonCancelHover
-} from '@/components/MiniComponent';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 
 interface Props {
@@ -20,9 +14,7 @@ interface Props {
 const OpenGroupModal = (Props: Props) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
-  const { themeColorSet } = getTheme();
+  useAppSelector((state) => state.theme.change);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,14 +53,10 @@ const OpenGroupModal = (Props: Props) => {
       openModal({
         title: 'Create a new group chat',
         component: (
-          <GroupChatModal
-            setName={handleSetName}
-            setValue={handleSetGroupMember}
-            users={Props.users}
-          />
+          <GroupChatModal setName={handleSetName} setValue={handleSetGroupMember} users={Props.users} />
         ),
         footer: (
-          <div className="mt-6 flex items-center justify-end gap-x-3">
+          <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover
               onClick={() => {
                 dispatch(closeModal());
@@ -85,16 +73,7 @@ const OpenGroupModal = (Props: Props) => {
     );
   }, [isLoading, name, membersGroup]);
 
-  return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div></div>
-      </StyleTotal>
-    </ConfigProvider>
-  );
+  return <></>;
 };
 
 export default OpenGroupModal;

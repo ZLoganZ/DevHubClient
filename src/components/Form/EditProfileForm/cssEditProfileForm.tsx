@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .ql-editor {
     font-size: 14px;
     color: ${(props) => props.theme.colorText1};
@@ -107,8 +107,9 @@ const StyleTotal = styled.div`
         }
       }
     }
-    .addLinks {
+    .links {
       .addLinks {
+        border-radius: 2rem;
         :hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;
@@ -127,6 +128,11 @@ const StyleTotal = styled.div`
     .expertise {
       .addTags {
         color: ${(props) => props.theme.colorText3};
+        border-radius: 2rem;
+        :hover {
+          color: ${(props) => props.theme.colorText2};
+          transition: all 0.5s;
+        }
         :hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;
@@ -174,4 +180,4 @@ const StyleTotal = styled.div`
   }
 `;
 
-export default StyleTotal;
+export default StyleProvider;

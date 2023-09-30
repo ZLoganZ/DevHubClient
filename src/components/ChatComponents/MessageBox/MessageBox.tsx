@@ -1,11 +1,12 @@
 import { Image } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { isThisYear, isThisWeek, isToday, format } from 'date-fns';
 
-import StyleTotal from './cssMessageBox';
-import { getTheme } from '@/util/functions/ThemeFunction';
+import StyleProvider from './cssMessageBox';
+import { getTheme } from '@/util/theme';
+import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { useAppSelector, useUserInfo } from '@/hooks';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
 
 interface MessageBoxProps {
   data: any;
@@ -14,7 +15,7 @@ interface MessageBoxProps {
 
 const MessageBox = (Props: MessageBoxProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { userInfo } = useUserInfo();
@@ -38,27 +39,15 @@ const MessageBox = (Props: MessageBoxProps) => {
         : 'bg-gray-700 text-white mr-7'
     }`;
 
-  const formatDateTime = (date: any) => {
-    if (isToday(date)) {
-      return format(date, 'p'); // Display only time for today
-    } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, 'iiii, p'); // Display full day of the week and time for this week
-    } else if (isThisYear(date)) {
-      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
-    } else {
-      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
-    }
-  };
-
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <div className={container}>
         <NavLink className={avatar} to={`/user/${Props.data.sender._id}`}>
           <Avatar key={Props.data.sender._id} user={Props.data.sender} />
         </NavLink>
         <div className={body}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
-            <div className="flex items-center gap-1 mb-1">
+            <div className='flex items-center gap-1 mb-1'>
               <div
                 className={`text-sm `}
                 style={{
@@ -70,10 +59,10 @@ const MessageBox = (Props: MessageBoxProps) => {
             <div className={message}>
               {Props.data.image ? (
                 <Image
-                  alt="Image"
+                  alt='Image'
                   src={Props.data.image}
                   draggable={false}
-                  className="object-cover cursor-pointer"
+                  className='object-cover cursor-pointer'
                   style={{
                     borderRadius: '2rem',
                     border: '0.2px solid',
@@ -90,7 +79,7 @@ const MessageBox = (Props: MessageBoxProps) => {
               style={{
                 color: themeColorSet.colorText2
               }}>
-              {formatDateTime(new Date(Props?.data?.createdAt))}
+              {formatDateTime(Props.data.createdAt)}
             </div>
           </div>
           {Props.isLast && isOwn && seenList.length > 0 && (
@@ -102,7 +91,7 @@ const MessageBox = (Props: MessageBoxProps) => {
           )}
         </div>
       </div>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -1,9 +1,9 @@
 import { ConfigProvider, Input, Select } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
-import StyleTotal from './cssGroupChatModal';
+import StyleProvider from './cssGroupChatModal';
 
 interface GroupChatModalProps {
   users: UserInfoType[];
@@ -13,25 +13,21 @@ interface GroupChatModalProps {
 
 const GroupChatModal = (Props: GroupChatModalProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           colorBorder: themeColorSet.colorBg4
         }
       }}>
-      <StyleTotal>
-        <div className="space-y-12">
-          <div className="border-b border-gray-900/10 pb-12">
-            <p className="mt-1 text-sm leading-6 text-gray-300">
-              Create a chat with more than 2 people.
-            </p>
-            <div className="mt-10 flex flex-col gap-y-8">
+      <StyleProvider>
+        <div className='space-y-12'>
+          <div className='border-b border-gray-900/10 pb-12'>
+            <p className='mt-1 text-sm leading-6 text-gray-300'>Create a chat with more than 2 people.</p>
+            <div className='mt-10 flex flex-col gap-y-8'>
               <Input
                 style={{ boxShadow: 'none' }}
                 placeholder={`Group's name`}
@@ -41,8 +37,8 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
                 }}
               />
               <Select
-                mode="multiple"
-                placeholder="Select members"
+                mode='multiple'
+                placeholder='Select members'
                 options={Props.users.map((user) => ({
                   label: user.name,
                   value: user.name,
@@ -55,7 +51,7 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

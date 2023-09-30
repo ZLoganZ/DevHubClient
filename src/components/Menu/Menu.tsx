@@ -26,8 +26,7 @@ const MenuMain = () => {
   const location = useLocation();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const { userInfo } = useUserInfo();

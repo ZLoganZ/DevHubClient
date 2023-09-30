@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg2};
   .space-align-block {
     flex: none;
@@ -26,17 +26,6 @@ const StyleTotal = styled.div`
   .post {
     .postHeader {
       .postHeader__left {
-        .name_avatar {
-          .name__top {
-            a {
-              color: ${(props) => props.theme.colorText1};
-              :hover {
-                text-decoration: underline;
-                transition: all 0.5s;
-              }
-            }
-          }
-        }
       }
       .postHeader__right {
         .icon {
@@ -51,21 +40,6 @@ const StyleTotal = styled.div`
     .postBody {
     }
     .postFooter {
-      .item {
-        :hover {
-          cursor: pointer;
-        }
-      }
-      .comment_view {
-        .emoji {
-          color: ${(props) => props.theme.colorText3};
-          :hover {
-            cursor: pointer;
-            color: ${(props) => props.theme.colorText2};
-            transition: all 0.5s;
-          }
-        }
-      }
     }
   }
 
@@ -73,4 +47,4 @@ const StyleTotal = styled.div`
 
 `;
 
-export default StyleTotal;
+export default StyleProvider;

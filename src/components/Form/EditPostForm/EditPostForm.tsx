@@ -1,12 +1,4 @@
-import {
-  Button,
-  ConfigProvider,
-  Input,
-  message,
-  Popover,
-  Upload,
-  UploadFile
-} from 'antd';
+import { Button, ConfigProvider, Input, message, Popover, Upload, UploadFile } from 'antd';
 import Quill from 'quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState, useMemo } from 'react';
@@ -19,11 +11,11 @@ import { UploadOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
-import { UPDATE_POST_SAGA } from '@/redux/ActionSaga/PostActionSaga';
-import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import StyleTotal from './cssEditPostForm';
+import { callBackSubmitDrawer } from '@/redux/Slice/DrawerHOCSlice';
+import { getTheme } from '@/util/theme';
+import { useUpdatePost } from '@/hooks/mutation';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import StyleProvider from './cssEditPostForm';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -46,9 +38,10 @@ const EditPostForm = (PostProps: PostProps) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const { mutateUpdatePost } = useUpdatePost();
 
   const handleUploadImage = async (file: RcFile | string) => {
     if (!file)
@@ -59,13 +52,10 @@ const EditPostForm = (PostProps: PostProps) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data.secure_url,
@@ -85,17 +75,12 @@ const EditPostForm = (PostProps: PostProps) => {
     formData.append('public_id', public_id!);
     const timestamp = String(Date.now());
     formData.append('timestamp', timestamp);
-    const signature = await sha1(
-      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
-    );
+    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
     formData.append('signature', signature);
-    const res = await fetch(
-      'https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data,
@@ -115,7 +100,6 @@ const EditPostForm = (PostProps: PostProps) => {
     if (quill.root.innerHTML === '<p><br></p>') {
       error();
     } else {
-      dispatch(setLoading(true));
       if (form.getValues('img') !== PostProps.img) {
         if (form.getValues('img')) {
           const result = await handleUploadImage(form.getValues('img')!);
@@ -124,16 +108,15 @@ const EditPostForm = (PostProps: PostProps) => {
         if (PostProps.img) await handleRemoveImage(PostProps.img);
       }
       values.img = form.getValues('img');
-      dispatch(
-        UPDATE_POST_SAGA({
-          id: PostProps.id,
-          postUpdate: values
-        })
-      );
+
+      mutateUpdatePost({
+        id: PostProps.id,
+        postUpdate: values
+      });
     }
   };
 
-  const beforeUpload = (file: any) => {
+  const beforeUpload = (file: RcFile) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
       messageApi.error('Image must smaller than 3MB!');
@@ -227,20 +210,19 @@ const EditPostForm = (PostProps: PostProps) => {
     <ConfigProvider
       theme={{
         token: {
-          ...themeColor,
           controlHeight: 40,
           borderRadius: 0,
           lineWidth: 0
         }
       }}>
       {contextHolder}
-      <StyleTotal theme={themeColorSet} className="rounded-lg mb-4">
-        <div className="newPost px-4 py-3">
-          <div className="newPostBody">
-            <div className="AddTitle mt-4 z-10">
+      <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+        <div className='newPost px-4 py-3'>
+          <div className='newPostBody'>
+            <div className='AddTitle mt-4 z-10'>
               <Input
-                name="title"
-                placeholder="Add a Title"
+                name='title'
+                placeholder='Add a Title'
                 defaultValue={PostProps.title}
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
@@ -250,57 +232,45 @@ const EditPostForm = (PostProps: PostProps) => {
                 }}
               />
             </div>
-            <div className="AddContent mt-4">
-              <div id="editorDrawer" />
+            <div className='AddContent mt-4'>
+              <div id='editorDrawer' />
             </div>
           </div>
-          <div className="newPostFooter mt-3 flex justify-between items-center">
-            <div className="newPostFooter__left">
+          <div className='newPostFooter mt-3 flex justify-between items-center'>
+            <div className='newPostFooter__left'>
               <Popover
-                placement="top"
-                trigger="click"
+                placement='top'
+                trigger='click'
                 title={'Members'}
                 content={
                   <Picker
                     data={async () => {
-                      const response = await fetch(
-                        'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                      );
+                      const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
                       quill.focus();
-                      quill.insertText(
-                        quill.getSelection().index,
-                        emoji.native
-                      );
+                      quill.insertText(quill.getSelection().index, emoji.native);
                     }}
                   />
                 }>
-                <span className="emoji">
-                  <FontAwesomeIcon
-                    className="item mr-3 ml-3"
-                    size="lg"
-                    icon={faFaceSmile}
-                  />
+                <span className='emoji'>
+                  <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
               <span>
                 <Upload
-                  name="img"
-                  listType="picture"
+                  name='img'
+                  listType='picture'
                   onChange={handleUpload}
-                  accept="image/png, image/jpeg, image/jpg"
+                  accept='image/png, image/jpeg, image/jpg'
                   defaultFileList={PostProps.img ? [...fileList] : []}
                   maxCount={1}
-                  customRequest={async ({
-                    file,
-                    onSuccess,
-                    onError,
-                    onProgress
-                  }: any) => {
-                    onSuccess('ok');
+                  customRequest={async ({ onSuccess }) => {
+                    if (onSuccess) {
+                      onSuccess('ok');
+                    }
                   }}
                   beforeUpload={beforeUpload}>
                   <Button icon={<UploadOutlined />}>Upload</Button>
@@ -309,7 +279,7 @@ const EditPostForm = (PostProps: PostProps) => {
             </div>
           </div>
         </div>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

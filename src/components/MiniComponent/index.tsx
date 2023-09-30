@@ -1,17 +1,16 @@
-import { ReactNode } from 'react';
 import { Button } from 'antd';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { useAppSelector } from '@/hooks';
-import StyleTotal from './cssMiniComponent';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
+import StyleProvider from './cssMiniComponent';
 
 // ===========================================
 
 type ButtonNormalHoverProps = 'primary' | 'text' | 'default' | 'dashed';
 
 type ButtonActiveHoverProps = {
-  children?: ReactNode;
-  onClick?: any;
+  children?: React.ReactNode;
+  onClick?: React.MouseEventHandler;
   loading?: boolean;
   rounded?: boolean;
   block?: boolean;
@@ -26,14 +25,14 @@ export const ButtonActiveHover = ({
   block,
   type
 }: ButtonActiveHoverProps) => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Button
         type={type}
-        className="ButtonActiveHover font-bold px-6 py-2"
+        className='ButtonActiveHover font-bold px-6 py-2'
         onClick={onClick}
         loading={loading}
         style={{
@@ -43,7 +42,7 @@ export const ButtonActiveHover = ({
         }}>
         {children}
       </Button>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 
@@ -56,28 +55,25 @@ export const ButtonActiveNonHover = () => {
 // ===========================================
 
 type ButtonCancelHoverProps = {
-  children?: ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
+  className?: string;
 };
 
-export const ButtonCancelHover = ({
-  children,
-  onClick,
-  disabled
-}: ButtonCancelHoverProps) => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+export const ButtonCancelHover = ({ className, children, onClick, disabled }: ButtonCancelHoverProps) => {
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
-    <StyleTotal theme={themeColorSet}>
+    <StyleProvider theme={themeColorSet}>
       <Button
-        className="ButtonCancelHover font-bold px-6 py-2 rounded-3xl"
+        className={`ButtonCancelHover font-bold px-6 py-2 rounded-3xl ${className}`}
         onClick={onClick}
         style={{ height: '100%' }}
         disabled={disabled}>
         {children}
       </Button>
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -1,117 +1,42 @@
 import axios from 'axios';
-import {
-  API_KEY,
-  CLIENT_ID,
-  DOMAIN_NAME,
-  TOKEN,
-  TOKEN_GITHUB
-} from '@/util/constants/SettingSystem';
+import { API_KEY, CLIENT_ID, DOMAIN_NAME, AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
+
+const headers = {
+  Authorization: localStorage.getItem(AUTHORIZATION),
+  'x-api-key': localStorage.getItem(API_KEY),
+  'x-client-id': localStorage.getItem(CLIENT_ID)
+};
+
+const githubHeaders = {
+  'x-github-token': localStorage.getItem(GITHUB_TOKEN),
+  ...headers
+};
 
 export class BaseService {
-  put(url: string, model: any) {
-    // return axios({
-    //   url: `${DOMAIN_NAME}${url}`,
-    //   method: 'PUT',
-    //   data: model,
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: localStorage.getItem(TOKEN),
-    //     'x-api-key': localStorage.getItem(API_KEY),
-    //     'x-client-id': localStorage.getItem(CLIENT_ID)
-    //   }
-    // });
-    return axios.put(`${DOMAIN_NAME}${url}`, model, {
-      headers: {
-        Authorization: localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY),
-        'x-client-id': localStorage.getItem(CLIENT_ID)
-      },
-      withCredentials: true
-    });
+  private request(method: string, url: string, data?: object | string, customHeaders?: object) {
+    const requestHeaders = customHeaders ? { ...headers, ...customHeaders } : headers;
+    const requestConfig = { headers: requestHeaders, data };
+    const requestUrl = `${DOMAIN_NAME}${url}`;
+    return axios.request({ method, url: requestUrl, ...requestConfig });
   }
-  post(url: string, model?: any) {
-    // return axios({
-    //   url: `${DOMAIN_NAME}${url}`,
-    //   method: 'POST',
-    //   data: model,
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: localStorage.getItem(TOKEN),
-    //     'x-api-key': localStorage.getItem(API_KEY),
-    //     'x-client-id': localStorage.getItem(CLIENT_ID)
-    //   }
-    // });
-    return axios.post(`${DOMAIN_NAME}${url}`, model, {
-      headers: {
-        Authorization: localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY),
-        'x-client-id': localStorage.getItem(CLIENT_ID)
-      },
-      withCredentials: true
-    });
+
+  put(url: string, model?: object | string) {
+    return this.request('put', url, model);
   }
-  get(url: string, model?: any) {
-    // return axios({
-    //   url: `${DOMAIN_NAME}${url}`,
-    //   method: 'GET',
-    //   data: model,
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: localStorage.getItem(TOKEN),
-    //     'x-api-key': localStorage.getItem(API_KEY),
-    //     'x-client-id': localStorage.getItem(CLIENT_ID)
-    //   }
-    // });
-    return axios.get(`${DOMAIN_NAME}${url}`, {
-      headers: {
-        Authorization: localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY),
-        'x-client-id': localStorage.getItem(CLIENT_ID)
-      },
-      data: model,
-      withCredentials: true
-    });
+
+  post(url: string, model?: object | string) {
+    return this.request('post', url, model);
   }
+
+  get(url: string, model?: object | string) {
+    return this.request('get', url, model);
+  }
+
   delete(url: string) {
-    // return axios({
-    //   url: `${DOMAIN_NAME}${url}`,
-    //   method: 'DELETE',
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: localStorage.getItem(TOKEN),
-    //     'x-api-key': localStorage.getItem(API_KEY),
-    //     'x-client-id': localStorage.getItem(CLIENT_ID)
-    //   }
-    // });
-    return axios.delete(`${DOMAIN_NAME}${url}`, {
-      headers: {
-        Authorization: localStorage.getItem(TOKEN),
-        'x-api-key': localStorage.getItem(API_KEY),
-        'x-client-id': localStorage.getItem(CLIENT_ID)
-      },
-      withCredentials: true
-    });
+    return this.request('delete', url);
   }
-  getgithub(url: string) {
-    // return axios({
-    //   url: `${DOMAIN_NAME}${url}`,
-    //   method: 'GET',
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: localStorage.getItem(TOKEN),
-    //     access_token_github: localStorage.getItem(TOKEN_GITHUB),
-    //     'x-api-key': localStorage.getItem(API_KEY),
-    //     'x-client-id': localStorage.getItem(CLIENT_ID)
-    //   }
-    // });
-    return axios.get(`${DOMAIN_NAME}${url}`, {
-      headers: {
-        Authorization: localStorage.getItem(TOKEN),
-        access_token_github: localStorage.getItem(TOKEN_GITHUB),
-        'x-api-key': localStorage.getItem(API_KEY),
-        'x-client-id': localStorage.getItem(CLIENT_ID)
-      },
-      withCredentials: true
-    });
+
+  getGithub(url: string) {
+    return this.request('get', url, undefined, githubHeaders);
   }
 }

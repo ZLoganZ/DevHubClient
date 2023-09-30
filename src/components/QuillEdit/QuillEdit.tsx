@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Quill from 'quill';
-import { ConfigProvider } from 'antd';
 import ImageCompress from 'quill-image-compress';
 import 'react-quill/dist/quill.snow.css';
 
-import { getTheme } from '@/util/functions/ThemeFunction';
+import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import StyleTotal from './cssQuillEdit';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import StyleProvider from './cssQuillEdit';
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -28,8 +27,7 @@ const QuillEdit = (Props: QuillEditProps) => {
   const dispatch = useAppDispatch();
   const searchRef = useRef<any>(null);
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const [value, setValue] = useState<any>(Props.content);
@@ -81,8 +79,7 @@ const QuillEdit = (Props: QuillEditProps) => {
 
   // Kiểm tra nội dung của value để set callback
   const handleQuillChangeValue = () => {
-    const HTML = new DOMParser().parseFromString(value, 'text/html').body
-      .innerText;
+    const HTML = new DOMParser().parseFromString(value, 'text/html').body.innerText;
     if (HTML === '') Props.callbackFunction('');
     else Props.callbackFunction(value);
     dispatch(closeModal());
@@ -99,14 +96,9 @@ const QuillEdit = (Props: QuillEditProps) => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
-      <StyleTotal theme={themeColorSet}>
-        <div id="editorDrawer" />
-      </StyleTotal>
-    </ConfigProvider>
+    <StyleProvider theme={themeColorSet}>
+      <div id='editorDrawer' />
+    </StyleProvider>
   );
 };
 

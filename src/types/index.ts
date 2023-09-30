@@ -48,11 +48,6 @@ export type UserUpdateDataType = {
   location?: string;
 };
 
-export type UpdateUserType = {
-  id: string;
-  userUpdate: UserUpdateDataType;
-};
-
 export type RepositoryType = {
   id: string;
   name: string;
@@ -100,7 +95,10 @@ export type UserInfoType = {
   notifications: string[];
   followers: UserInfoType[];
   following: UserInfoType[];
-  is_following: boolean;
+  follower_number: number;
+  following_number: number;
+  post_number: number;
+  is_followed: boolean;
 };
 
 type TypeofPost = 'Post' | 'Share';
@@ -201,6 +199,7 @@ export type CommentType = {
   likes: LikeType[];
   like_number: number;
   dislike_number: number;
+  createdAt: string;
 };
 
 export type SelectedCommentValues = {

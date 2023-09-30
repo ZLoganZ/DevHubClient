@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   .sider {
     &::-webkit-scrollbar {
       display: none;
@@ -12,4 +12,4 @@ const StyleTotal = styled.div`
   
 `;
 
-export default StyleTotal;
+export default StyleProvider;

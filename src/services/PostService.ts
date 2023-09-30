@@ -17,60 +17,49 @@ export class PostService extends BaseService {
     super();
   }
 
-  getAllPostByUserID = (
-    id: string
-  ): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPostByUserID = (id: string): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
     return this.get(`/posts/user/${id}`);
   };
   getAllPost = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
     return this.get(`/posts/all`);
   };
-  GetAllPostNewsFeed = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPostNewsFeed = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
     return this.get(`/posts/newsfeed`);
   };
-  createPost = (post: CreatePostDataType) => {
+  createPost = (post: CreatePostDataType): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.post(`/posts`, post);
   };
-  updatePost = (
-    id: string,
-    post: CreatePostDataType
-  ): Promise<AxiosResponse<ResponseType<PostType>>> => {
+  updatePost = (id: string, post: CreatePostDataType): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.put(`/posts/update/${id}`, post);
   };
   deletePost = (id: string) => {
     return this.delete(`/posts/delete/${id}`);
   };
   likePost = (post: SharePostDataType) => {
-    return this.post(`/users/likepost`, post);
+    return this.put(`/users/likepost`, post);
   };
   sharePost = (sharepost: SharePostDataType) => {
     return this.post(`/posts/share`, sharepost);
   };
   savePost = (id: string) => {
-    return this.post(`/users/savepost/${id}`);
+    return this.put(`/users/savepost/${id}`);
   };
-  getParentComments = (
-    id: string
-  ): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
+  getParentComments = (id: string): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
     return this.get(`/comments/parents/${id}`);
   };
-  getChildComments = (
-    comment: GetChildCommentsType
-  ): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
+  getChildComments = (comment: GetChildCommentsType): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
     return this.get(`/comments/children`, comment);
   };
-  saveComment = (comment: CreateCommentDataType) => {
+  createComment = (comment: CreateCommentDataType) => {
     return this.post(`/comments/create`, comment);
   };
-  getPostById = (
-    id: string
-  ): Promise<AxiosResponse<ResponseType<PostType>>> => {
+  getPostByID = (id: string): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.get(`/posts/find/${id}`);
   };
-  increaseViewPost = (id: string) => {
-    return this.put(`/posts/view/${id}`, null);
+  viewPost = (id: string) => {
+    return this.put(`/posts/view/${id}`);
   };
-  likeCommentPost = (id: string, payload: LikeCommentType) => {
+  likeComment = (id: string, payload: LikeCommentType) => {
     return this.post(`/comments/like/${id}`, payload);
   };
   dislikeCommentPost = (id: string, payload: LikeCommentType) => {

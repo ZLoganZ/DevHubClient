@@ -1,31 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  BellOutlined,
-  ExclamationCircleOutlined,
-  LogoutOutlined,
-  SettingOutlined
-} from '@ant-design/icons';
+import { BellOutlined, ExclamationCircleOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { format, isThisWeek, isThisYear, isToday } from 'date-fns';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
-import StyleTotal from './cssSharedMedia';
-import { useCurrentConversationData, useUserInfo } from '@/hooks';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { pusherClient } from '@/util/functions/Pusher';
-import { useAppSelector } from '@/hooks';
+import StyleProvider from './cssSharedMedia';
+import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
+import { getTheme } from '@/util/theme';
+import { pusherClient } from '@/util/pusher';
+import formatDateTime from '@/util/formatDateTime';
+import { useAppSelector } from '@/hooks/special';
 
 interface SharedMediaProps {
   conversationID: string;
 }
 
 const SharedMedia = (Props: SharedMediaProps) => {
-  const { change } = useAppSelector((state) => state.themeReducer);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { isLoadingCurrentConversation, currentConversation } =
-    useCurrentConversationData(Props.conversationID);
+  const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(
+    Props.conversationID
+  );
 
   const { userInfo } = useUserInfo();
 
@@ -55,18 +51,6 @@ const SharedMedia = (Props: SharedMediaProps) => {
     pusherClient.bind('conversation-update-media', updateHandler);
   }, [Props.conversationID, isLoadingCurrentConversation]);
 
-  const formatDateTime = (date: any) => {
-    if (isToday(date)) {
-      return format(date, 'p'); // Display only time for today
-    } else if (isThisWeek(date, { weekStartsOn: 1 })) {
-      return format(date, 'iiii, p'); // Display full day of the week and time for this week
-    } else if (isThisYear(date)) {
-      return format(date, 'eeee, MMMM d • p'); // Display full day of the week, date, and time for this year
-    } else {
-      return format(date, 'eeee, MMMM d, yyyy • p'); // Display full day of the week, date, year, and time for other cases
-    }
-  };
-
   const downloadImage = async (url: any) => {
     const originalImage = url;
     const image = await fetch(originalImage);
@@ -87,11 +71,11 @@ const SharedMedia = (Props: SharedMediaProps) => {
   };
 
   return (
-    <StyleTotal>
+    <StyleProvider>
       {isLoadingCurrentConversation ? (
         <>
           <div
-            className="shared"
+            className='shared'
             style={{
               width: '23%',
               height: '100vh',
@@ -100,90 +84,60 @@ const SharedMedia = (Props: SharedMediaProps) => {
               backgroundColor: themeColorSet.colorBg1
             }}>
             <div
-              className="extension px-3 flex items-center"
+              className='extension px-3 flex items-center'
               style={{
                 height: '12%',
                 borderBottom: '1px solid',
                 borderColor: themeColorSet.colorBg4
               }}>
-              <div className="flex justify-center items-center w-full">
+              <div className='flex justify-center items-center w-full'>
                 <div
-                  className="setting text-center"
+                  className='setting text-center'
                   style={{
                     width: '25%'
                   }}>
-                  <Skeleton.Button active size="large" shape="circle" />
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
                 <div
-                  className="notification text-center"
+                  className='notification text-center'
                   style={{
                     width: '25%'
                   }}>
-                  <Skeleton.Button active size="large" shape="circle" />
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
                 <div
-                  className="warning text-center"
+                  className='warning text-center'
                   style={{
                     width: '25%'
                   }}>
-                  <Skeleton.Button active size="large" shape="circle" />
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
                 <div
-                  className="logout text-center"
+                  className='logout text-center'
                   style={{
                     width: '25%'
                   }}>
-                  <Skeleton.Button active size="large" shape="circle" />
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
               </div>
             </div>
-            <div className="fileShare px-3 py-4">
-              <div className="sharedMedia">
-                <Space className="content" size={20}>
+            <div className='fileShare px-3 py-4'>
+              <div className='sharedMedia'>
+                <Space className='content' size={20}>
                   <Skeleton.Image active />
                   <Skeleton.Image active />
                   <Skeleton.Image active />
                 </Space>
               </div>
-              <div className="sharedFile mt-5">
-                <div className="flex justify-between items-center mb-3"></div>
-                <div className="content">
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
-                  <Skeleton
-                    className="mb-3"
-                    active
-                    avatar
-                    paragraph={{ rows: 1 }}
-                  />
+              <div className='sharedFile mt-5'>
+                <div className='flex justify-between items-center mb-3'></div>
+                <div className='content'>
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
                 </div>
               </div>
             </div>
@@ -192,7 +146,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
       ) : (
         <>
           <div
-            className="shared"
+            className='shared'
             style={{
               width: '23%',
               height: '100vh',
@@ -201,60 +155,60 @@ const SharedMedia = (Props: SharedMediaProps) => {
               backgroundColor: themeColorSet.colorBg1
             }}>
             <div
-              className="extension px-3 flex items-center"
+              className='extension px-3 flex items-center'
               style={{
                 height: '12%',
                 borderBottom: '1px solid',
                 borderColor: themeColorSet.colorBg4
               }}>
               <div
-                className="flex justify-center items-center w-full"
+                className='flex justify-center items-center w-full'
                 style={{
                   color: themeColorSet.colorText3
                 }}>
                 <div
-                  className="setting text-center"
+                  className='setting text-center'
                   style={{
                     width: '25%'
                   }}>
                   <SettingOutlined
-                    className="extensionItem"
+                    className='extensionItem'
                     style={{
                       fontSize: '1.5rem'
                     }}
                   />
                 </div>
                 <div
-                  className="notification text-center"
+                  className='notification text-center'
                   style={{
                     width: '25%'
                   }}>
                   <BellOutlined
-                    className="extensionItem"
+                    className='extensionItem'
                     style={{
                       fontSize: '1.5rem'
                     }}
                   />
                 </div>
                 <div
-                  className="warning text-center"
+                  className='warning text-center'
                   style={{
                     width: '25%'
                   }}>
                   <ExclamationCircleOutlined
-                    className="extensionItem"
+                    className='extensionItem'
                     style={{
                       fontSize: '1.5rem'
                     }}
                   />
                 </div>
                 <div
-                  className="logout text-center"
+                  className='logout text-center'
                   style={{
                     width: '25%'
                   }}>
                   <LogoutOutlined
-                    className="extensionItem"
+                    className='extensionItem'
                     style={{
                       fontSize: '1.5rem'
                     }}
@@ -262,18 +216,18 @@ const SharedMedia = (Props: SharedMediaProps) => {
                 </div>
               </div>
             </div>
-            <div className="fileShare px-3 py-4">
-              <div className="sharedFile mt-5">
-                <div className="flex justify-between items-center mb-3">
+            <div className='fileShare px-3 py-4'>
+              <div className='sharedFile mt-5'>
+                <div className='flex justify-between items-center mb-3'>
                   <div
-                    className="titleContent font-bold"
+                    className='titleContent font-bold'
                     style={{
                       color: themeColorSet.colorText1
                     }}>
                     Images
                   </div>
                 </div>
-                <div className="content">
+                <div className='content'>
                   {items.length === 0 ? (
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                   ) : (
@@ -281,13 +235,13 @@ const SharedMedia = (Props: SharedMediaProps) => {
                       {items?.map((item: any, index: any) => {
                         if (index > 3) return;
                         return (
-                          <div className="fileContent flex justify-between items-center mb-2">
-                            <div className="left flex justify-between items-center">
-                              <div className="image mr-2">
+                          <div className='fileContent flex justify-between items-center mb-2'>
+                            <div className='left flex justify-between items-center'>
+                              <div className='image mr-2'>
                                 <Image
                                   key={item._id}
                                   src={item.image}
-                                  alt="image"
+                                  alt='image'
                                   style={{
                                     height: '3.5rem',
                                     borderRadius: '10px',
@@ -296,9 +250,9 @@ const SharedMedia = (Props: SharedMediaProps) => {
                                   }}
                                 />
                               </div>
-                              <Space className="info" direction="vertical">
+                              <Space className='info' direction='vertical'>
                                 <div
-                                  className="name"
+                                  className='name'
                                   style={{
                                     color: themeColorSet.colorText1,
                                     fontWeight: '600'
@@ -309,14 +263,12 @@ const SharedMedia = (Props: SharedMediaProps) => {
                                   style={{
                                     color: themeColorSet.colorText3
                                   }}>
-                                  <div className="date">
-                                    {formatDateTime(new Date(item.createdAt))}
-                                  </div>
+                                  <div className='date'>{formatDateTime(item.createdAt)}</div>
                                 </Space>
                               </Space>
                             </div>
                             <div
-                              className="right cursor-pointer"
+                              className='right cursor-pointer'
                               onClick={() => {
                                 downloadImage(item.image);
                               }}>
@@ -326,13 +278,13 @@ const SharedMedia = (Props: SharedMediaProps) => {
                         );
                       })}
                       <div
-                        className="seeAll flex items-end justify-end"
+                        className='seeAll flex items-end justify-end'
                         style={{
                           color: themeColorSet.colorText2,
                           fontSize: '0.8rem',
                           textDecoration: 'underline'
                         }}>
-                        <p className="cursor-pointer">See all</p>
+                        <p className='cursor-pointer'>See all</p>
                       </div>
                     </>
                   )}
@@ -400,7 +352,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
           </div>
         </>
       )}
-    </StyleTotal>
+    </StyleProvider>
   );
 };
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { commonColor, change_color_autoFill } from '@/util/cssVariable';
 
-const StyleTotal = styled.div`
+const StyleProvider = styled.div`
   ${change_color_autoFill}
   .form__group {
     position: relative;
@@ -76,9 +76,10 @@ const StyleTotal = styled.div`
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px ${(props) => props.theme.colorBg2} inset !important;
+    -webkit-box-shadow: 0 0 0 30px ${(props) =>
+    props.theme.colorBg2} inset !important;
     -webkit-text-fill-color: ${(props) => props.theme.colorText1} !important;
   } */
 `;
 
-export default StyleTotal;
+export default StyleProvider;

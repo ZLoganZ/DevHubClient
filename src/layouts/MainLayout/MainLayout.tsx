@@ -1,62 +1,61 @@
-import { Content } from "antd/es/layout/layout";
-import { useLayoutEffect } from "react";
-import { ConfigProvider, FloatButton, Layout } from "antd";
+import { Content } from 'antd/es/layout/layout';
+import { ConfigProvider, FloatButton, Layout } from 'antd';
 
-import Headers from "@/components/Headers";
-import LoadingLogo from "@/components/GlobalSetting/LoadingLogo";
-import Menu from "@/components/Menu";
-import { getTheme } from "@/util/functions/ThemeFunction";
-import { useAppDispatch, useAppSelector, useUserInfo } from "@/hooks";
-import StyleTotal from "./cssMainLayout";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
+import Headers from '@/components/Headers';
+import LoadingLogo from '@/components/Loading/LoadingLogo';
+import Menu from '@/components/Menu';
+import { getTheme } from '@/util/theme';
+import { useAppSelector } from '@/hooks/special';
+import { useUserInfo } from '@/hooks/fetch';
+import StyleProvider from './cssMainLayout';
 
 interface PropsMainTemplate {
   Component: () => JSX.Element;
 }
 
 const MainLayout = (props: PropsMainTemplate) => {
-  const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  const { change } = useAppSelector((state) => state.themeReducer);
-  const { themeColor } = getTheme();
-  const { themeColorSet } = getTheme();
-
-  useLayoutEffect(() => {
-    dispatch(GET_USER_ID());
-  }, []);
+  useAppSelector((state) => state.theme.change);
+  const { themeColor, themeColorSet } = getTheme();
 
   const { isLoadingUserInfo } = useUserInfo();
 
   if (isLoadingUserInfo) return <LoadingLogo />;
 
-  document.title = "DevHub";
+  document.title = 'DevHub';
 
   const { Component } = props;
+
+  if (isLoadingUserInfo) return <LoadingLogo />;
 
   return (
     <ConfigProvider
       theme={{
         token: themeColor,
       }}>
-      <StyleTotal className="abcdef" theme={themeColorSet}>
+      <StyleProvider className='abcdef' theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
-          <FloatButton.BackTop />
           <Headers />
-          <Menu />
-          <Content
-            className="xs:ml-0 xs:mt-20 ml-20"
-            style={{
-              marginTop: "5rem",
-              backgroundImage: "url(/images/ProfilePage/cover.jpg)",
-              backgroundAttachment: "fixed",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}>
-            <Component />
-          </Content>
+          <Layout>
+            <Menu />
+            <Layout>
+              <FloatButton.BackTop />
+              <Content
+                style={{
+                  marginLeft: '5rem',
+                  marginTop: '5rem'
+                  // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
+                  // backgroundAttachment: 'fixed',
+                  // backgroundRepeat: 'no-repeat',
+                  // backgroundSize: 'cover',
+                  // backgroundPosition: 'center'
+                }}>
+                <Component />
+              </Content>
+            </Layout>
+          </Layout>
         </Layout>
-      </StyleTotal>
+      </StyleProvider>
     </ConfigProvider>
   );
 };

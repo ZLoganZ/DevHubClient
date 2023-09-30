@@ -31,9 +31,7 @@ const activeListSlice = createSlice({
     removeMember: (state, action) => {
       return {
         ...state,
-        members: state.members.filter(
-          (memberId: any) => memberId !== action.payload
-        )
+        members: state.members.filter((memberId: any) => memberId !== action.payload)
       };
     },
     setFollowers: (state, action) => {
@@ -45,6 +43,5 @@ const activeListSlice = createSlice({
   }
 });
 
-export const { setMembers, addMember, removeMember, setFollowers } =
-  activeListSlice.actions;
+export const { setMembers, addMember, removeMember, setFollowers } = activeListSlice.actions;
 export default activeListSlice.reducer;

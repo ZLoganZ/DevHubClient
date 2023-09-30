@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  arrayShouldFollowers: [],
+  arrayShouldFollowers: []
 };
 
 const getStartedSlice = createSlice({
@@ -10,8 +10,8 @@ const getStartedSlice = createSlice({
   reducers: {
     setShouldFollowers: (state, action) => {
       return { ...state, arrayShouldFollowers: action.payload.users };
-    },
-  },
+    }
+  }
 });
 
 export const { setShouldFollowers } = getStartedSlice.actions;
