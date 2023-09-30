@@ -18,6 +18,8 @@ import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssNewPost';
+import { sha1 } from 'crypto-hash';
+import { useMediaQuery } from 'react-responsive';
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike', 'blockquote'],

@@ -84,6 +84,13 @@ const StyleProvider = styled.div`
       }
     }
   }
+  @media screen {
+    @media (max-width: 639px) {
+      .ant-tabs-nav {
+        padding-left: 4px;
+      }
+    }
+  }
 `;
 
 export default StyleProvider;

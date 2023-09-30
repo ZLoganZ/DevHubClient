@@ -144,7 +144,7 @@ const MyProfile = () => {
                 </span>
               </div>
               <Col span={18} className='mt-5'>
-                <div className='tags flex flex-wrap'>
+                <div className='tags flex flex-wrap xs:pl-1'>
                   {descArray.map((item, index) => {
                     if (userInfo.tags?.indexOf(item.title) !== -1) {
                       return (
@@ -178,7 +178,7 @@ const MyProfile = () => {
                   {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
                 </span>
               </div>
-              <div className='experience mt-5'>
+              <div className='experience mt-5 xs:pl-1'>
                 {userInfo.experiences.map((item, index) => (
                   <div className='item mt-2' key={index}>
                     <FontAwesomeIcon
@@ -194,7 +194,7 @@ const MyProfile = () => {
                   </div>
                 ))}
               </div>
-              <div className='contact mt-5'>
+              <div className='contact mt-5 xs:pl-1'>
                 <Space>
                   {userInfo.contacts.map((item, index) => {
                     switch (item.key) {
