@@ -1,14 +1,20 @@
-FROM node:20-alpine
+# Use an official Node runtime as a parent image
+FROM node:14
 
-# Add your application files to the image
-COPY . /app
-
-# Set the working directory to the app directory
+# Set the working directory to /app
 WORKDIR /app
 
-# Install dependencies
+# Install any needed packages specified in package.json
 RUN npm install
 
-# Start the application
-CMD ["npm","run","dev"]
+# Copy the current directory contents into the container at /app
+COPY . .
 
+# Make port 3000 available to the world outside this container
+EXPOSE 3000
+
+# Define environment variable
+ENV REACT_APP_API_URL=http://localhost:4052
+
+# Run app when the container launches
+CMD ["npm", "run", "dev"]

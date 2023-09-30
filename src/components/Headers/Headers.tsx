@@ -23,6 +23,7 @@ import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/ho
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 import { useMediaQuery } from 'react-responsive';
+import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css

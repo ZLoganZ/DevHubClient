@@ -92,7 +92,7 @@ const OtherPost = ({ post, userInfo }: PostProps) => {
           />
           <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
         </div>
-        <div className='postFooter'>
+        <div className='postFooter '>
           <PostFooter post={post} setIsOpenPostDetail={setIsOpenPostDetail} />
         </div>
       </div>
