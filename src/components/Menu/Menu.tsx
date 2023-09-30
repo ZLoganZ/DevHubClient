@@ -13,12 +13,12 @@ import { Avatar, Menu } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMenu';
-import { useMediaQuery } from 'react-responsive';
 
 const MenuMain = () => {
   const navigate = useNavigate();
@@ -35,6 +35,9 @@ const MenuMain = () => {
   const [collapsed, setCollapsed] = useState(true);
   const handleMouseEnter = () => {
     setCollapsed(false);
+    if (isXsScreen) {
+      setShowMenu(true);
+    }
   };
   const handleMouseLeave = () => {
     if (isXsScreen) {
@@ -125,6 +128,8 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate('/');
+              }
+                navigate('/');
                 if (isXsScreen) setShowMenu(false);
               }
             },
@@ -139,6 +144,7 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate(`/user/${userInfo._id}`);
+              }
                 if (isXsScreen) setShowMenu(false);
               }
             },

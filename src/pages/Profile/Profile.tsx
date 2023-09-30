@@ -11,6 +11,7 @@ import {
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
 import { NavLink } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 import 'react-quill/dist/quill.bubble.css';
 
@@ -26,9 +27,7 @@ import { commonColor } from '@/util/cssVariable';
 import { useOtherUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
-import { useMediaQuery } from 'react-responsive';
 import StyleProvider from './cssProfile';
-import { is } from 'date-fns/locale';
 
 interface Props {
   userID: string;
@@ -36,6 +35,8 @@ interface Props {
 
 const Profile = (Props: Props) => {
   const { userID } = Props;
+
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
@@ -67,9 +68,9 @@ const Profile = (Props: Props) => {
   };
 
   useEffect(() => {
-    document.title = isLoadingUserPosts ? 'DevHub' : `${otherUserInfo?.name} | DevHub`;
-  }, [isLoadingUserPosts, isLoadingOtherUserInfo]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+    document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo?.name} | DevHub`;
+  }, [isLoadingOtherUserInfo]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       {!userPosts || !otherUserInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
@@ -297,7 +298,7 @@ const Profile = (Props: Props) => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill value={otherUserInfo.about} readOnly={true} theme='bubble' />
+                              <ReactQuill value={otherUserInfo.about} readOnly theme='bubble' />
                             </div>
                           )}
                           {otherUserInfo.repositories.length !== 0 && (

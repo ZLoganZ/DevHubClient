@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { store } from '@/redux/configStore';
 import App from '@/App.tsx';
-import './index.css';
+import '@/index.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

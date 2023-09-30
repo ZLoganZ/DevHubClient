@@ -9,31 +9,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Dropdown, Modal, notification } from 'antd';
 import type { MenuProps } from 'antd';
 import { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import { sha1 } from 'crypto-hash';
 
-import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
-import EditPostForm from "@/components/Form/EditPostForm";
-import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-import UserInfoPost from "@/components/PostProperties/PostUserInfo";
-import ContentPost from "@/components/PostProperties/PostContent";
-import PostFooter from "@/components/PostProperties/PostFooter";
-import { getTheme } from "@/util/theme";
-import { commonColor } from "@/util/cssVariable";
-import { useAppDispatch, useAppSelector } from "@/hooks/special";
-import { useDeletePost } from "@/hooks/mutation";
-import formatDateTime from "@/util/formatDateTime";
-import { PostType, UserInfoType } from "@/types";
-import StyleProvider from "./cssPost";
-
-import { useMediaQuery } from "react-responsive";
-
+import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
+import EditPostForm from '@/components/Form/EditPostForm';
+import UserInfoPost from '@/components/PostProperties/PostUserInfo';
+import ContentPost from '@/components/PostProperties/PostContent';
+import PostFooter from '@/components/PostProperties/PostFooter';
+import { getTheme } from '@/util/theme';
+import { commonColor } from '@/util/cssVariable';
+import formatDateTime from '@/util/formatDateTime';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useDeletePost } from '@/hooks/mutation';
+import { PostType, UserInfoType } from '@/types';
+import StyleProvider from './cssPost';
 
 interface PostProps {
   post: PostType;
   userInfo: UserInfoType;
 }
 
-type NotificationType = "success" | "info" | "warning" | "error";
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 // -----------------------------------------------------
 
@@ -57,44 +54,40 @@ const MyPost = ({ post, userInfo }: PostProps) => {
     setIsModalOpen(true);
   };
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   const handleRemoveImage = async (imageURL: any) => {
-    const nameSplit = imageURL.split("/");
+    const nameSplit = imageURL.split('/');
     const duplicateName = nameSplit.pop();
 
     // Remove .
-    const public_id = duplicateName?.split(".").slice(0, -1).join(".");
+    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
 
     const formData = new FormData();
-    formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
+    formData.append('api_key', '235531261932754');
+    formData.append('public_id', public_id);
     const timestamp = String(Date.now());
-    formData.append("timestamp", timestamp);
-    const signature = await sha1(
-      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
-    );
-    formData.append("signature", signature);
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    formData.append('timestamp', timestamp);
+    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
+    formData.append('signature', signature);
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data,
-      status: "done",
+      status: 'done'
     };
   };
 
   const handleOk = async () => {
-    if (post.post_attributes.img)
-      await handleRemoveImage(post.post_attributes.img);
+    if (post.post_attributes.img) await handleRemoveImage(post.post_attributes.img);
 
     mutateDeletePost(post._id);
 
     setIsModalOpen(false);
-    openNotificationWithIcon("success");
+    openNotificationWithIcon('success');
   };
 
   const handleCancel = () => {
@@ -102,31 +95,31 @@ const MyPost = ({ post, userInfo }: PostProps) => {
   };
 
   // post setting
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
-        <div className="item flex items-center px-4 py-2">
-          <FontAwesomeIcon className="icon" icon={faUpRightFromSquare} />
-          <span className="ml-2">Open post in new tab</span>
+        <div className='item flex items-center px-4 py-2'>
+          <FontAwesomeIcon className='icon' icon={faUpRightFromSquare} />
+          <span className='ml-2'>Open post in new tab</span>
         </div>
       ),
       onClick: () => {
-        window.open(`/post/${post._id}`, "_blank")?.focus();
-      },
+        window.open(`/post/${post._id}`, '_blank')?.focus();
+      }
     },
     {
-      key: "2",
+      key: '2',
       label: (
-        <div className="item flex items-center px-4 py-2">
-          <FontAwesomeIcon className="icon" icon={faPenToSquare} />
-          <span className="ml-2">Edit post</span>
+        <div className='item flex items-center px-4 py-2'>
+          <FontAwesomeIcon className='icon' icon={faPenToSquare} />
+          <span className='ml-2'>Edit post</span>
         </div>
       ),
       onClick: () => {
         dispatch(
           openDrawer({
-            title: "Edit post",
+            title: 'Edit post',
             component: (
               <EditPostForm
                 key={Math.random()}
@@ -135,36 +128,33 @@ const MyPost = ({ post, userInfo }: PostProps) => {
                 content={post.post_attributes.content!}
                 img={post.post_attributes.img}
               />
-            ),
+            )
           })
         );
-      },
+      }
     },
     {
-      key: "3",
+      key: '3',
       label: (
-        <div key="3" className="item flex items-center px-4 py-2">
-          <FontAwesomeIcon className="icon" icon={faTrash} />
-          <span className="ml-2">Delete post</span>
+        <div key='3' className='item flex items-center px-4 py-2'>
+          <FontAwesomeIcon className='icon' icon={faTrash} />
+          <span className='ml-2'>Delete post</span>
         </div>
       ),
       onClick: () => {
         showModal();
-      },
-    },
+      }
+    }
   ];
 
   // Notification delete post
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type: NotificationType) => {
     api[type]({
-      message: "Delete Successfully",
-      placement: "bottomRight",
+      message: 'Delete Successfully',
+      placement: 'bottomRight'
     });
   };
-
-  // Open OtherPostDetailModal
-  const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
 
   /*   function removeCode(htmlString: any): any {
     const doc = new DOMParser().parseFromString(htmlString, 'text/html');
@@ -172,15 +162,15 @@ const MyPost = ({ post, userInfo }: PostProps) => {
     while (elements.length > 0) elements[0].remove();
     return doc.body.innerHTML;
   } */
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   return (
-    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
+    <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {contextHolder}
       <Modal
         title={
           <>
             <FontAwesomeIcon
-              className="icon mr-2"
+              className='icon mr-2'
               icon={faTriangleExclamation}
               style={{ color: commonColor.colorWarning1 }}
             />
@@ -193,43 +183,31 @@ const MyPost = ({ post, userInfo }: PostProps) => {
         okButtonProps={{
           style: {
             color: themeColorSet.colorText1,
-            backgroundColor: commonColor.colorBlue1,
-          },
+            backgroundColor: commonColor.colorBlue1
+          }
         }}
         cancelButtonProps={{
           style: {
             color: themeColorSet.colorText1,
-            backgroundColor: themeColorSet.colorBg3,
-          },
+            backgroundColor: themeColorSet.colorBg3
+          }
         }}>
         <p>You will not be able to recover the post after deleted!</p>
       </Modal>
-      {isOpenPostDetail && (
-        <OpenMyPostDetailModal
-          key={post._id + 'Modal'}
-          post={post}
-          userInfo={userInfo}
-          visible={isOpenPostDetail}
-          setVisible={setIsOpenPostDetail}
-        />
-      )}
-      <div className="post px-4 py-3">
-        <div className="postHeader flex justify-between items-center">
-          <div className="postHeader__left">
+      <div className='post px-4 py-3'>
+        <div className='postHeader flex justify-between items-center'>
+          <div className='postHeader__left'>
             <UserInfoPost userInfo={userInfo} postID={post._id} date={date} />
           </div>
-          <div className="postHeader__right">
-            <div className="icon">
-              <Dropdown
-                menu={{ items }}
-                placement="bottomRight"
-                trigger={["click"]}>
-                <FontAwesomeIcon size="lg" icon={faEllipsis} />
+          <div className='postHeader__right'>
+            <div className='icon'>
+              <Dropdown menu={{ items }} placement='bottomRight' trigger={['click']}>
+                <FontAwesomeIcon size='lg' icon={faEllipsis} />
               </Dropdown>
             </div>
           </div>
         </div>
-        <div className="postBody mt-5">
+        <div className='postBody mt-5'>
           <ContentPost
             postID={post._id}
             title={post.post_attributes.title!}
@@ -239,8 +217,8 @@ const MyPost = ({ post, userInfo }: PostProps) => {
           />
           <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
         </div>
-        <div className="postFooter">
-          <PostFooter post={post} setIsOpenPostDetail={setIsOpenPostDetail} />
+        <div className='postFooter'>
+          <PostFooter post={post} userInfo={userInfo} />
         </div>
       </div>
     </StyleProvider>

@@ -11,6 +11,7 @@ import {
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
 import { NavLink } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
 import 'react-quill/dist/quill.bubble.css';
 
@@ -28,19 +29,19 @@ import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUserInfo, useUserPostsData } from '@/hooks/fetch';
 
-import { useMediaQuery } from "react-responsive";
-
 import StyleProvider from './cssMyProfile';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
+
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noreferrer");
+    window.open(url, '_blank', 'noreferrer');
   };
 
   const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData('me');
@@ -49,7 +50,7 @@ const MyProfile = () => {
     if (isLoadingUserPosts) {
       window.scrollTo({
         top: 0,
-        behavior: "smooth",
+        behavior: 'smooth'
       });
     }
   }, [isLoadingUserPosts]);
@@ -57,9 +58,9 @@ const MyProfile = () => {
   const { userInfo, isLoadingUserInfo } = useUserInfo();
 
   useEffect(() => {
-    document.title = isLoadingUserPosts ? 'DevHub' : `${userInfo?.name} | DevHub`;
-  }, [isLoadingUserPosts, isLoadingUserInfo]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+    document.title = isLoadingUserInfo ? 'DevHub' : `${userInfo?.name} | DevHub`;
+  }, [isLoadingUserInfo]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       {!userPosts || !userInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingUserInfo ? (
@@ -69,14 +70,14 @@ const MyProfile = () => {
           <Row>
             <Col span={24} className='avatar_cover relative'>
               <div
-                className="cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg"
+                className='cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg'
                 style={{
                   backgroundImage: `url("${userInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
-              <div className="avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6">
+              <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
                 <Image
                   src={userInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
                   alt='avt'
@@ -90,7 +91,7 @@ const MyProfile = () => {
             </Col>
             <Col offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
               <Row className='py-5 name_Editprofile'>
-              <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
+                <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
                   <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
                     {userInfo.name}
                   </div>
@@ -132,7 +133,7 @@ const MyProfile = () => {
                   </div>
                 </Col>
               </Row>
-              <div className="id_address_join xs:pl-3">
+              <div className='id_address_join xs:pl-3'>
                 <span className='id item mr-2'>@{userInfo.alias || 'user'}</span>
                 <span className='address item mr-2'>
                   <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
@@ -164,7 +165,7 @@ const MyProfile = () => {
                   })}
                 </div>
               </Col>
-              <div className="follow mt-5 xs:pl-3">
+              <div className='follow mt-5 xs:pl-3'>
                 <span className='follower item mr-2'>
                   <span className='mr-1'>{userInfo?.follower_number || 0}</span>{' '}
                   {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
@@ -274,7 +275,7 @@ const MyProfile = () => {
                       children: (
                         <div className='mt-10 mb-20'>
                           {!userInfo.about && userInfo.repositories.length === 0 && (
-                            <div className="w-8/12 mb-10 xs:w-full">
+                            <div className='w-8/12 mb-10 xs:w-full'>
                               <Empty
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}
                                 description={<span>No introduction</span>}
@@ -282,7 +283,7 @@ const MyProfile = () => {
                             </div>
                           )}
                           {userInfo.about && (
-                            <div className="w-8/12 mb-10 xs:w-full">
+                            <div className='w-8/12 mb-10 xs:w-full'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -291,11 +292,11 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill value={userInfo.about} readOnly={true} theme='bubble' />
+                              <ReactQuill value={userInfo.about} readOnly theme='bubble' />
                             </div>
                           )}
                           {userInfo.repositories.length !== 0 && (
-                           <div className="w-8/12 mt-5 xs:w-full">
+                            <div className='w-8/12 mt-5 xs:w-full'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -319,11 +320,11 @@ const MyProfile = () => {
                       label: 'Posts',
                       children: (
                         <div className='mt-5'>
-                          <div className="w-8/12 xs:w-full">
+                          <div className='w-8/12 xs:w-full'>
                             <NewPost userInfo={userInfo} />
                           </div>
                           {userPosts.length === 0 && (
-                            <div className="w-8/12 xs:w-full">
+                            <div className='w-8/12 xs:w-full'>
                               <Empty
                                 className='mt-10 mb-20'
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}

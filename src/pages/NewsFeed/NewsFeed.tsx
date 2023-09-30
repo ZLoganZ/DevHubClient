@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileLines /* faUserFriends */,
 } from "@fortawesome/free-solid-svg-icons";
+import { useMediaQuery } from "react-responsive";
 import { DownOutlined } from "@ant-design/icons";
 
 import OtherPostShare from "@/components/Post/OtherPostShare";
@@ -18,7 +19,6 @@ import { useAllPostsNewsfeedData, useUserInfo } from "@/hooks/fetch";
 import { useAppSelector } from "@/hooks/special";
 
 import StyleProvider from "./cssNewsFeed";
-import { useMediaQuery } from "react-responsive";
 
 const popular_time = [
   {

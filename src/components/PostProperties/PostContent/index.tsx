@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
@@ -28,12 +28,13 @@ const ContentPost = (Props: ContentPostProps) => {
 
   const { mutateViewPost } = useViewPost();
 
-  const isMoreThan250 = Props.content!.length > 250;
-  const displayContent = isMoreThan250
-    ? expanded
-      ? Props.content
-      : Props.content!.slice(0, 250) + '...'
-    : Props.content;
+  const isMoreThan250 = Props.content.length > 250;
+
+  const [displayContent, setDisplayContent] = useState(Props.content);
+
+  useEffect(() => {
+    setDisplayContent(isMoreThan250 && !expanded ? Props.content.slice(0, 250) : Props.content);
+  }, [expanded, Props.content]);
 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
@@ -50,8 +51,8 @@ const ContentPost = (Props: ContentPostProps) => {
       <div className='title font-bold'>{Props.title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill value={displayContent} readOnly={true} theme='bubble' />
-          {Props.content!.length > 250 && (
+          <ReactQuill value={displayContent} readOnly theme='bubble' />
+          {isMoreThan250 && (
             <a onClick={() => setExpanded(!expanded)}>{expanded ? 'Read less' : 'Read more'}</a>
           )}
         </div>
