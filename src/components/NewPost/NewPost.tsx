@@ -27,6 +27,7 @@ import { getTheme } from '@/util/functions/ThemeFunction';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { UserInfoType } from '@/types';
 import StyleTotal from './cssNewPost';
+import { useMediaQuery } from "react-responsive";
 
 Quill.register('modules/imageCompress', ImageCompress);
 
@@ -182,6 +183,7 @@ const NewPost = (Props: Props) => {
     const data = await res.json();
     setFile(data);
   };
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <ConfigProvider
@@ -204,7 +206,7 @@ const NewPost = (Props: Props) => {
           <div className="newPostBody">
             <div className="name_avatar flex items-center">
               <Avatar
-                size={50}
+                size={isXsScreen ? 40 : 50}
                 src={
                   Props.userInfo.user_image ||
                   './images/DefaultAvatar/default_avatar.png'

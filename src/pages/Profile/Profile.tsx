@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Col,
@@ -8,44 +8,45 @@ import {
   Row,
   Space,
   Tabs,
-  Tag
-} from 'antd';
-import ReactQuill from 'react-quill';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  Tag,
+} from "antd";
+import ReactQuill from "react-quill";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSnowflake,
   faFileLines,
   faLocationDot,
   faBriefcase,
   faStar,
-  faCodeFork
-} from '@fortawesome/free-solid-svg-icons';
-import GithubColors from 'github-colors';
-import { icon } from '@fortawesome/fontawesome-svg-core';
+  faCodeFork,
+} from "@fortawesome/free-solid-svg-icons";
+import GithubColors from "github-colors";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 import {
   faFacebookF,
   faTwitter,
   faGithub,
   faInstagram,
-  faLinkedin
-} from '@fortawesome/free-brands-svg-icons';
-import { NavLink } from 'react-router-dom';
-import { format } from 'date-fns';
+  faLinkedin,
+} from "@fortawesome/free-brands-svg-icons";
+import { NavLink } from "react-router-dom";
+import { format } from "date-fns";
 
-import OtherPost from '@/components/Post/OtherPost';
-import OtherPostShare from '@/components/Post/OtherPostShare';
-import LoadingProfileComponent from '@/components/GlobalSetting/LoadingProfile';
-import descArray from '@/components/GlobalSetting/ItemComponent/Description';
+import OtherPost from "@/components/Post/OtherPost";
+import OtherPostShare from "@/components/Post/OtherPostShare";
+import LoadingProfileComponent from "@/components/GlobalSetting/LoadingProfile";
+import descArray from "@/components/GlobalSetting/ItemComponent/Description";
 
-import { setIsInProfile } from '@/redux/Slice/PostSlice';
-import { FOLLOW_USER_SAGA } from '@/redux/ActionSaga/UserActionSaga';
-import { getTheme } from '@/util/functions/ThemeFunction';
-import { commonColor } from '@/util/cssVariable';
-import { useOtherUserInfo, usePopupInfoData, useUserPostsData } from '@/hooks';
-import { RepositoryType } from '@/types';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { setIsInProfile } from "@/redux/Slice/PostSlice";
+import { FOLLOW_USER_SAGA } from "@/redux/ActionSaga/UserActionSaga";
+import { getTheme } from "@/util/functions/ThemeFunction";
+import { commonColor } from "@/util/cssVariable";
+import { useOtherUserInfo, usePopupInfoData, useUserPostsData } from "@/hooks";
+import { RepositoryType } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useMediaQuery } from "react-responsive";
 
-import StyleTotal from './cssProfile';
+import StyleTotal from "./cssProfile";
 
 interface Props {
   userID: string;
@@ -74,7 +75,7 @@ const Profile = (Props: Props) => {
     if (isLoadingUserPosts) {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   }, [isLoadingUserPosts]);
@@ -90,12 +91,12 @@ const Profile = (Props: Props) => {
   }, [otherUserInfo]);
 
   const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
+    window.open(url, "_blank", "noreferrer");
   };
 
   useEffect(() => {
     document.title = isLoadingUserPosts
-      ? 'DevHub'
+      ? "DevHub"
       : `${otherUserInfo?.name} | DevHub`;
   }, [isLoadingUserPosts]);
 
@@ -106,7 +107,7 @@ const Profile = (Props: Props) => {
         className="renderRepositoryIem mb-5"
         style={{
           borderBottom: `1px solid ${themeColorSet.colorBg4}`,
-          width: '48%'
+          width: "48%",
         }}
         href={item.url}
         target="_blank">
@@ -114,7 +115,7 @@ const Profile = (Props: Props) => {
           <span>
             <img
               className="iconRepos inline"
-              style={{ color: 'red' }}
+              style={{ color: "red" }}
               src="/images/Common/repos.svg"
             />
           </span>
@@ -123,7 +124,7 @@ const Profile = (Props: Props) => {
             style={{
               color: commonColor.colorBlue3,
               fontWeight: 600,
-              fontSize: '1.1rem'
+              fontSize: "1.1rem",
             }}>
             {item.name}
           </span>
@@ -132,10 +133,10 @@ const Profile = (Props: Props) => {
             style={{
               color: themeColorSet.colorText3,
               border: `1px solid ${themeColorSet.colorBg4}`,
-              fontSize: '0.8rem',
-              padding: '0.1rem 0.5rem'
+              fontSize: "0.8rem",
+              padding: "0.1rem 0.5rem",
             }}>
-            {item.private ? 'Private' : 'Public'}
+            {item.private ? "Private" : "Public"}
           </span>
         </div>
         <div
@@ -163,11 +164,12 @@ const Profile = (Props: Props) => {
       </a>
     );
   };
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <ConfigProvider
       theme={{
-        token: themeColor
+        token: themeColor,
       }}>
       <StyleTotal theme={themeColorSet}>
         {!userPosts ||
@@ -182,34 +184,34 @@ const Profile = (Props: Props) => {
             <Row>
               <Col span={24} className="avatar_cover relative">
                 <div
-                  className="cover w-full h-80 rounded-br-lg rounded-bl-lg"
+                  className="cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg"
                   style={{
                     backgroundImage: `url("${
                       otherUserInfo.cover_image ||
                       `/images/ProfilePage/cover.jpg`
                     }")`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center'
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
                   }}></div>
-                <div className="avatar rounded-full overflow-hidden object-cover flex">
+                <div className="avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8">
                   <Image
                     src={
                       otherUserInfo.user_image ||
-                      './images/DefaultAvatar/default_avatar.png'
+                      "./images/DefaultAvatar/default_avatar.png"
                     }
                     alt="avt"
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
                     }}
                   />
                 </div>
               </Col>
-              <Col offset={3} span={18}>
-                <Row className="py-5">
-                  <Col offset={6} span={12}>
+              <Col offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
+                <Row className="py-5 xs:pt-8">
+                  <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
                     <div
                       className="text-2xl font-bold"
                       style={{ color: themeColorSet.colorText1 }}>
@@ -224,10 +226,10 @@ const Profile = (Props: Props) => {
                         otherUserInfo.experiences.length > 0
                           ? otherUserInfo.experiences.length > 1
                             ? otherUserInfo.experiences[0].position_name +
-                              ' & ' +
+                              " & " +
                               otherUserInfo.experiences[1].position_name
                             : otherUserInfo.experiences[0].position_name
-                          : 'No job position'}
+                          : "No job position"}
                       </span>
                     </div>
                     <div className="viewResume mt-2">
@@ -237,7 +239,7 @@ const Profile = (Props: Props) => {
                       </NavLink>
                     </div>
                   </Col>
-                  <Col span={6}>
+                  <Col span={8}>
                     <div className="chat_Follow flex justify-around items-center w-full h-full">
                       <div
                         className="follow px-4 py-2 rounded-full"
@@ -245,29 +247,29 @@ const Profile = (Props: Props) => {
                           setIsFollowing(!isFollowing);
                           dispatch(FOLLOW_USER_SAGA(otherUserInfo._id));
                         }}>
-                        <span>{isFollowing ? 'Following' : 'Follow'}</span>
+                        <span>{isFollowing ? "Following" : "Follow"}</span>
                       </div>
                     </div>
                   </Col>
                 </Row>
-                <div className="id_address_join">
+                <div className="id_address_join xs:pl-3">
                   <span className="id item mr-2">
-                    @{otherUserInfo.alias || 'user'}
+                    @{otherUserInfo.alias || "user"}
                   </span>
                   <span className="address item mr-2">
                     <FontAwesomeIcon
                       className="icon mr-2"
                       icon={faLocationDot}
                     />
-                    {otherUserInfo.location || 'Global'}
+                    {otherUserInfo.location || "Global"}
                   </span>
                   <span className="join">
                     <FontAwesomeIcon className="icon mr-2" icon={faBriefcase} />
-                    Joined{' '}
-                    {format(new Date(otherUserInfo.createdAt), 'MMM yyyy')}
+                    Joined{" "}
+                    {format(new Date(otherUserInfo.createdAt), "MMM yyyy")}
                   </span>
                 </div>
-                <Col span={18} className="mt-5">
+                <Col span={18} className="mt-5 ">
                   <div className="tags flex flex-wrap">
                     {descArray.map((item, index) => {
                       if (otherUserInfo.tags?.indexOf(item.title) !== -1) {
@@ -277,7 +279,7 @@ const Profile = (Props: Props) => {
                             key={index}
                             color={themeColorSet.colorBg2}
                             style={{
-                              border: 'none'
+                              border: "none",
                             }}>
                             {item.svg} &nbsp;
                             <span style={{ color: themeColorSet.colorText1 }}>
@@ -290,29 +292,29 @@ const Profile = (Props: Props) => {
                     })}
                   </div>
                 </Col>
-                <div className="follow mt-5">
+                <div className="follow mt-5 xs:pl-3">
                   <span className="follower item mr-2">
                     <span className="mr-1">
                       {otherUserInfo.followers.length}
-                    </span>{' '}
+                    </span>{" "}
                     {otherUserInfo.followers.length > 1
-                      ? 'Followers'
-                      : 'Follower'}
+                      ? "Followers"
+                      : "Follower"}
                   </span>
                   <span className="following item mr-2">
                     <span className="mr-1">
                       {otherUserInfo.following.length}
-                    </span>{' '}
+                    </span>{" "}
                     {otherUserInfo.following.length > 1
-                      ? 'Followings'
-                      : 'Following'}
+                      ? "Followings"
+                      : "Following"}
                   </span>
                   <span className="post mr-2">
-                    <span className="mr-1">{otherUserInfo.posts.length}</span>{' '}
-                    {otherUserInfo.posts.length > 1 ? 'Posts' : 'Post'}
+                    <span className="mr-1">{otherUserInfo.posts.length}</span>{" "}
+                    {otherUserInfo.posts.length > 1 ? "Posts" : "Post"}
                   </span>
                 </div>
-                <div className="experience mt-5">
+                <div className="experience mt-5 ">
                   {otherUserInfo.experiences.map((item) => (
                     <div className="item mt-2">
                       <FontAwesomeIcon
@@ -334,7 +336,7 @@ const Profile = (Props: Props) => {
                   <Space>
                     {otherUserInfo.contacts.map((item) => {
                       switch (item.key) {
-                        case '0':
+                        case "0":
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -347,7 +349,7 @@ const Profile = (Props: Props) => {
                               }
                             />
                           );
-                        case '1':
+                        case "1":
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -358,7 +360,7 @@ const Profile = (Props: Props) => {
                               icon={<FontAwesomeIcon icon={icon(faGithub)} />}
                             />
                           );
-                        case '2':
+                        case "2":
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -369,7 +371,7 @@ const Profile = (Props: Props) => {
                               icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
                             />
                           );
-                        case '3':
+                        case "3":
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -382,7 +384,7 @@ const Profile = (Props: Props) => {
                               }
                             />
                           );
-                        case '4':
+                        case "4":
                           return (
                             <Avatar
                               style={{ color: themeColorSet.colorText1 }}
@@ -404,13 +406,13 @@ const Profile = (Props: Props) => {
                     defaultActiveKey="2"
                     items={[
                       {
-                        key: '1',
-                        label: 'Introduction',
+                        key: "1",
+                        label: "Introduction",
                         children: (
                           <div className="mt-10 mb-20">
                             {!otherUserInfo.about &&
                               otherUserInfo.repositories.length === 0 && (
-                                <div className="w-8/12 mb-10">
+                                <div className="w-8/12 mb-10 xs:w-full">
                                   <Empty
                                     image={Empty.PRESENTED_IMAGE_DEFAULT}
                                     description={<span>No introduction</span>}
@@ -418,12 +420,12 @@ const Profile = (Props: Props) => {
                                 </div>
                               )}
                             {otherUserInfo.about && (
-                              <div className="w-8/12">
+                              <div className="w-8/12 xs:w-full">
                                 <div
                                   style={{
                                     color: themeColorSet.colorText1,
                                     fontWeight: 600,
-                                    fontSize: '1.2rem'
+                                    fontSize: "1.2rem",
                                   }}>
                                   About
                                 </div>
@@ -436,12 +438,12 @@ const Profile = (Props: Props) => {
                               </div>
                             )}
                             {otherUserInfo.repositories.length !== 0 && (
-                              <div className="w-8/12 mt-5">
+                              <div className="w-8/12 xs:w-full mt-5">
                                 <div
                                   style={{
                                     color: themeColorSet.colorText1,
                                     fontWeight: 600,
-                                    fontSize: '1.2rem'
+                                    fontSize: "1.2rem",
                                   }}>
                                   Repositories
                                 </div>
@@ -453,15 +455,15 @@ const Profile = (Props: Props) => {
                               </div>
                             )}
                           </div>
-                        )
+                        ),
                       },
                       {
-                        key: '2',
-                        label: 'Posts',
+                        key: "2",
+                        label: "Posts",
                         children: (
                           <div className="mt-5">
                             {userPosts.length === 0 && (
-                              <div className="w-8/12">
+                              <div className="w-8/12 xs:w-full">
                                 <Empty
                                   className="mt-10 mb-20"
                                   image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -471,8 +473,8 @@ const Profile = (Props: Props) => {
                             )}
                             {userPosts.map((item) => {
                               return (
-                                <div className="w-8/12">
-                                  {item.type === 'Share' && (
+                                <div className="w-8/12 xs:w-full">
+                                  {item.type === "Share" && (
                                     <OtherPostShare
                                       key={item._id}
                                       postShared={item}
@@ -482,7 +484,7 @@ const Profile = (Props: Props) => {
                                       }
                                     />
                                   )}
-                                  {item.type === 'Post' && (
+                                  {item.type === "Post" && (
                                     <OtherPost
                                       key={item._id}
                                       post={item}
@@ -493,26 +495,26 @@ const Profile = (Props: Props) => {
                               );
                             })}
                           </div>
-                        )
+                        ),
                       },
                       {
-                        key: '3',
-                        label: 'Show',
+                        key: "3",
+                        label: "Show",
                         children: <div>Show</div>,
-                        disabled: true
+                        disabled: true,
                       },
                       {
-                        key: '4',
-                        label: 'Seri',
+                        key: "4",
+                        label: "Seri",
                         children: <div>Seri</div>,
-                        disabled: true
+                        disabled: true,
                       },
                       {
-                        key: '5',
-                        label: 'Guestbook',
+                        key: "5",
+                        label: "Guestbook",
                         children: <div>Guestbook</div>,
-                        disabled: true
-                      }
+                        disabled: true,
+                      },
                     ]}
                   />
                 </div>

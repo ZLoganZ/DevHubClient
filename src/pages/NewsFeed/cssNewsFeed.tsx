@@ -5,9 +5,6 @@ const StyleTotal = styled.div`
   min-height: calc(100vh - 5rem);
   height: fit-content;
   color: ${(props) => props.theme.colorText1};
-  .btn-show {
-    margin: 6px;
-  }
 
   .popular-post-body {
     .popular-post-item {
@@ -31,7 +28,6 @@ const StyleTotal = styled.div`
       }
     }
   }
-
 `;
 
 export default StyleTotal;

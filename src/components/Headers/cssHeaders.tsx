@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const StyleTotal = styled.div`
   .messageButton,
@@ -26,7 +26,11 @@ const StyleTotal = styled.div`
 
   .letter:hover {
     transform: translateY(-1rem);
-    background: -webkit-linear-gradient(120deg, hsl(19, 90%, 52%), hsl(56, 100%, 50%));
+    background: -webkit-linear-gradient(
+      120deg,
+      hsl(19, 90%, 52%),
+      hsl(56, 100%, 50%)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

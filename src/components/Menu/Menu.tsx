@@ -6,6 +6,7 @@ import {
   faMaximize,
   faPeopleGroup,
   faUser,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, ConfigProvider, Menu } from "antd";
@@ -15,7 +16,10 @@ import { useState, useEffect } from "react";
 
 import { getTheme } from "@/util/functions/ThemeFunction";
 import { useAppSelector, useUserInfo } from "@/hooks";
+import { useMediaQuery } from "react-responsive";
+
 import StyleTotal from "./cssMenu";
+import { is } from "date-fns/locale";
 
 const MenuMain = () => {
   const navigate = useNavigate();
@@ -59,18 +63,45 @@ const MenuMain = () => {
     }
   }, [location, userInfo]);
 
+  const [showMenu, setShowMenu] = useState(false);
+  const handleShowMenu = () => {
+    setShowMenu(!showMenu);
+  };
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useEffect(() => {
+    if (isXsScreen) {
+      setShowMenu(false);
+    } else {
+      setShowMenu(true);
+    }
+  }, [isXsScreen]);
+
   return (
     <ConfigProvider
       theme={{
         token: themeColor,
       }}>
       <StyleTotal theme={themeColorSet}>
+        {/* create button to show menu when click */}
+        <div
+          className={isXsScreen ? "showMenuButton text-3xl" : "hidden"}
+          onClick={handleShowMenu}
+          style={{
+            color: themeColorSet.colorText1,
+            position: "fixed",
+            left: 10,
+            top: 20,
+            zIndex: 1000,
+          }}>
+          <FontAwesomeIcon icon={faBars} />
+        </div>
+        {/* create menu */}
         <Sider
           trigger={null}
           collapsible
           collapsed={collapsed}
           width={240}
-          className="sider xs:hidden"
+          className={showMenu ? "sider" : "hidden"}
           style={{
             overflow: "auto",
             height: "100vh",

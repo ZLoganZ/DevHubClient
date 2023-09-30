@@ -25,6 +25,9 @@ import { useIntersectionObserver } from "@/hooks";
 import { getTheme } from "@/util/functions/ThemeFunction";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { PostType, UserInfoType } from "@/types";
+
+import { useMediaQuery } from "react-responsive";
+
 import StyleTotal from "./cssPost";
 
 interface PostShareProps {
@@ -144,6 +147,7 @@ const PostShare = (PostProps: PostShareProps) => {
   }, []);
 
   const { userID } = useAppSelector((state) => state.authReducer);
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <ConfigProvider
@@ -166,7 +170,10 @@ const PostShare = (PostProps: PostShareProps) => {
           <div className="postHeader flex justify-between items-center">
             <div className="postHeader__left">
               <div className="name_avatar flex">
-                <Avatar size={50} src={PostProps.userInfo.user_image} />
+                <Avatar
+                  size={isXsScreen ? 40 : 50}
+                  src={PostProps.userInfo.user_image}
+                />
                 <div className="name ml-2">
                   <Popover
                     overlayInnerStyle={{
@@ -215,7 +222,10 @@ const PostShare = (PostProps: PostShareProps) => {
             <div className="postHeader flex justify-between items-center">
               <div className="postHeader__left">
                 <div className="name_avatar flex">
-                  <Avatar size={50} src={PostProps.ownerInfo.user_image} />
+                  <Avatar
+                    size={isXsScreen ? 40 : 50}
+                    src={PostProps.ownerInfo.user_image}
+                  />
                   <div className="name ml-2">
                     <Popover
                       overlayInnerStyle={{
@@ -327,7 +337,7 @@ const PostShare = (PostProps: PostShareProps) => {
             </div>
           </div>
           <div className="postFooter flex justify-between items-center">
-            <div className="like_share flex justify-between w-1/5">
+            <div className="like_share flex justify-between w-1/5 xs:w-2/5">
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {likeNumber}
@@ -358,7 +368,7 @@ const PostShare = (PostProps: PostShareProps) => {
                 />
               </Space>
             </div>
-            <div className="comment_view flex justify-between w-1/3">
+            <div className="comment_view flex justify-between w-1/3  xs:w-6/12">
               <Space className="like" direction="vertical" align="center">
                 <span>
                   {PostProps.postShared.post_attributes.comment_number}
@@ -389,7 +399,12 @@ const PostShare = (PostProps: PostShareProps) => {
                   <Avatar
                     className="item"
                     style={{ backgroundColor: "transparent" }}
-                    icon={<FontAwesomeIcon icon={faShareNodes} />}
+                    icon={
+                      <FontAwesomeIcon
+                        color={themeColorSet.colorText1}
+                        icon={faShareNodes}
+                      />
+                    }
                   />
                 </Space>
               </Space>
