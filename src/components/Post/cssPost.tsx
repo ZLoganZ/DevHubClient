@@ -42,6 +42,9 @@ const StyleProvider = styled.div`
     .postFooter {
     }
   }
+
+
+
 `;
 
 export default StyleProvider;

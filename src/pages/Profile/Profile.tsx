@@ -26,8 +26,9 @@ import { commonColor } from '@/util/cssVariable';
 import { useOtherUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
-
+import { useMediaQuery } from 'react-responsive';
 import StyleProvider from './cssProfile';
+import { is } from 'date-fns/locale';
 
 interface Props {
   userID: string;
@@ -68,7 +69,7 @@ const Profile = (Props: Props) => {
   useEffect(() => {
     document.title = isLoadingUserPosts ? 'DevHub' : `${otherUserInfo?.name} | DevHub`;
   }, [isLoadingUserPosts, isLoadingOtherUserInfo]);
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet}>
       {!userPosts || !otherUserInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
@@ -78,14 +79,14 @@ const Profile = (Props: Props) => {
           <Row>
             <Col span={24} className='avatar_cover relative'>
               <div
-                className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
+                className='cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg'
                 style={{
                   backgroundImage: `url("${otherUserInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
-              <div className='avatar rounded-full overflow-hidden object-cover flex'>
+              <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
                 <Image
                   src={otherUserInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
                   preview={otherUserInfo.user_image ? true : false}
@@ -98,9 +99,9 @@ const Profile = (Props: Props) => {
                 />
               </div>
             </Col>
-            <Col offset={3} span={18}>
-              <Row className='py-5'>
-                <Col offset={6} span={12}>
+            <Col offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
+              <Row className='py-5 xs:pt-8'>
+                <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
                   <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
                     {otherUserInfo.name}
                   </div>
@@ -136,7 +137,7 @@ const Profile = (Props: Props) => {
                   </div>
                 </Col>
               </Row>
-              <div className='id_address_join'>
+              <div className='id_address_join xs:pl-3'>
                 <span className='id item mr-2'>@{otherUserInfo.alias || 'user'}</span>
                 <span className='address item mr-2'>
                   <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
@@ -147,8 +148,8 @@ const Profile = (Props: Props) => {
                   Joined {format(new Date(otherUserInfo.createdAt), 'MMM yyyy')}
                 </span>
               </div>
-              <Col span={18} className='mt-5'>
-                <div className='tags flex flex-wrap'>
+              <Col span={isXsScreen ? 24 : 18} className='mt-5'>
+                <div className='tags flex flex-wrap xs:pl-1 xs:w-full'>
                   {descArray.map((item, index) => {
                     if (otherUserInfo.tags?.indexOf(item.title) !== -1) {
                       return (
@@ -168,7 +169,7 @@ const Profile = (Props: Props) => {
                   })}
                 </div>
               </Col>
-              <div className='follow mt-5'>
+              <div className='follow mt-5 xs:pl-3'>
                 <span className='follower item mr-2'>
                   <span className='mr-1'>{otherUserInfo?.follower_number || 0}</span>{' '}
                   {otherUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
@@ -182,7 +183,7 @@ const Profile = (Props: Props) => {
                   {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
                 </span>
               </div>
-              <div className='experience mt-5'>
+              <div className='experience mt-5 xs:pl-1'>
                 {otherUserInfo.experiences.map((item, index) => (
                   <div className='item mt-2' key={index}>
                     <FontAwesomeIcon
@@ -191,6 +192,7 @@ const Profile = (Props: Props) => {
                       style={{ color: commonColor.colorBlue1 }}
                     />
                     <span className='company mr-2'>{item.company_name}</span>
+                    {isXsScreen && <br />}
                     <span className='position mr-2'>{item.position_name} |</span>
                     <span className='date'>
                       {item.start_date} ~ {item.end_date}
@@ -198,7 +200,7 @@ const Profile = (Props: Props) => {
                   </div>
                 ))}
               </div>
-              <div className='contact mt-5'>
+              <div className='contact mt-5 xs:pl-1'>
                 <Space>
                   {otherUserInfo.contacts.map((item, index) => {
                     switch (item.key) {
@@ -278,7 +280,7 @@ const Profile = (Props: Props) => {
                       children: (
                         <div className='mt-10 mb-20'>
                           {!otherUserInfo.about && otherUserInfo.repositories.length === 0 && (
-                            <div className='w-8/12 mb-10'>
+                            <div className='w-8/12 mb-10 xs:w-full'>
                               <Empty
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}
                                 description={<span>No introduction</span>}
@@ -286,7 +288,7 @@ const Profile = (Props: Props) => {
                             </div>
                           )}
                           {otherUserInfo.about && (
-                            <div className='w-8/12'>
+                            <div className='w-8/12 xs:w-full'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -299,7 +301,7 @@ const Profile = (Props: Props) => {
                             </div>
                           )}
                           {otherUserInfo.repositories.length !== 0 && (
-                            <div className='w-8/12 mt-5'>
+                            <div className='w-8/12 mt-5 xs:w-full'>
                               <div
                                 style={{
                                   color: themeColorSet.colorText1,
@@ -324,7 +326,7 @@ const Profile = (Props: Props) => {
                       children: (
                         <div className='mt-5'>
                           {userPosts.length === 0 && (
-                            <div className='w-8/12'>
+                            <div className='w-8/12 xs:w-full'>
                               <Empty
                                 className='mt-10 mb-20'
                                 image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -334,7 +336,7 @@ const Profile = (Props: Props) => {
                           )}
                           {userPosts.map((item) => {
                             return (
-                              <div key={item._id} className='w-8/12'>
+                              <div key={item._id} className='w-8/12 xs:w-full'>
                                 {item.type === 'Share' && (
                                   <OtherPostShare
                                     key={item._id}

@@ -13,7 +13,7 @@ import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
-
+import { useMediaQuery } from "react-responsive";
 interface PostShareProps {
   postShared: PostType;
   userInfo: UserInfoType;
@@ -37,9 +37,9 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
   const postDate = formatDateTime(post!.createdAt);
 
   // postShared setting
-  const items: MenuProps['items'] = [
+  const items: MenuProps["items"] = [
     {
-      key: '1',
+      key: "1",
       label: (
         <div className='item flex items-center px-4 py-2'>
           <FontAwesomeIcon className='icon' icon={faUpRightFromSquare} />
@@ -54,7 +54,7 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
 
   // Open OtherPostDetailModal
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {isOpenPostDetail && (

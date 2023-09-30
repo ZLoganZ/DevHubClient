@@ -22,6 +22,7 @@ import { getTheme } from '@/util/theme';
 import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
+import { useMediaQuery } from 'react-responsive';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -204,6 +205,8 @@ const Headers = () => {
     pusherClient.bind('conversation-update-noti', updateHandler);
   }, [pusherKey]);
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   return (
     <ConfigProvider
       theme={{
@@ -214,7 +217,7 @@ const Headers = () => {
       <StyleProvider theme={themeColorSet}>
         {contextHolder}
         <Header
-          className='header'
+          className='header xs:px-2'
           style={{
             backgroundColor: themeColorSet.colorBg2,
             position: 'fixed',
@@ -225,19 +228,19 @@ const Headers = () => {
             height: '5rem'
           }}>
           <Row align='middle'>
-            <Col span={16} offset={4}>
+            <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
               <Row align='middle'>
-                <Col span={4}>
+                <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
                   <NavLink to='/' onClick={handleClick}>
                     <FontAwesomeIcon
-                      className='iconLogo text-3xl'
+                      className='iconLogo text-3xl xs:hidden'
                       icon={faSnowflake}
                       style={{ color: themeColorSet.colorText1 }}
                     />
                     <Title
                       onClick={handleClick}
                       level={2}
-                      className='title inline-block ml-2'
+                      className='title inline-block ml-2 xs:hidden'
                       style={{ color: themeColorSet.colorText1 }}>
                       <div className='animated-word'>
                         <div className='letter'>D</div>
@@ -250,11 +253,11 @@ const Headers = () => {
                     </Title>
                   </NavLink>
                 </Col>
-                <Col span={15} className='px-4'>
+                <Col span={isXsScreen ? 9 : 15} className='px-4'>
                   <Search placeholder='Search' />
                 </Col>
-                <Col span={5} className='pl-3'>
-                  <Space size={25}>
+                <Col span={5} className='pl-3 xs:pl-0'>
+                  <Space size={isXsScreen ? 8 : 25}>
                     <NavLink to='/message'>
                       <Badge count={countUnseen}>
                         <Avatar

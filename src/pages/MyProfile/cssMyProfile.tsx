@@ -15,11 +15,11 @@ const StyleProvider = styled.div`
 
   .avatar_cover {
     .avatar {
-      width: 170px;
-      height: 170px;
+      /* width: 170px; */
+      /* height: 170px; */
       position: absolute;
-      bottom: -6rem;
-      left: 15rem;
+      /* bottom: -6rem; */
+      /* left: 15rem; */
       z-index: 1;
     }
   }

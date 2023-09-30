@@ -20,6 +20,8 @@ const MainLayout = (props: PropsMainTemplate) => {
 
   const { isLoadingUserInfo } = useUserInfo();
 
+  if (isLoadingUserInfo) return <LoadingLogo />;
+
   document.title = 'DevHub';
 
   const { Component } = props;
@@ -29,7 +31,7 @@ const MainLayout = (props: PropsMainTemplate) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor
+        token: themeColor,
       }}>
       <StyleProvider className='abcdef' theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
@@ -39,8 +41,8 @@ const MainLayout = (props: PropsMainTemplate) => {
             <Layout>
               <FloatButton.BackTop />
               <Content
+              className="xs:ml-0 xs:mt-20 ml-20"
                 style={{
-                  marginLeft: '5rem',
                   marginTop: '5rem'
                   // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
                   // backgroundAttachment: 'fixed',

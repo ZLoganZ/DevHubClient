@@ -9,6 +9,7 @@ import { PostType } from '@/types';
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import StyleProvider from './cssPostFooter';
+import { useMediaQuery } from 'react-responsive';
 
 interface PostFooterProps {
   post: PostType;
@@ -60,11 +61,12 @@ const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps)
     setIsSaved(post.is_saved);
     post.is_saved ? setSaveColor('yellow') : setSaveColor(themeColorSet.colorText1);
   }, [post.is_saved, change]);
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='flex justify-between items-center'>
-        <div className='like_share flex justify-between w-1/5'>
+        <div className='like_share flex justify-between w-1/5 xs:w-2/5'>
           <Space className='like' direction='vertical' align='center'>
             <span>
               {ConvertNumber(likeNumber)} like{likeNumber > 1 ? 's' : ''}
@@ -114,7 +116,7 @@ const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps)
             />
           </Space>
         </div>
-        <div className='comment_view flex justify-between w-1/3'>
+        <div className='comment_view flex justify-between w-1/3 xs:w-6/12'>
           <Space className='like' direction='vertical' align='center'>
             <span>
               {ConvertNumber(commentNumber)} comment{commentNumber > 1 ? 's' : ''}

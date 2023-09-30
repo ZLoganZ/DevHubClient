@@ -9,6 +9,7 @@ const StyleProvider = styled.div`
       /* color: red; */
     }
   }
+  
 `;
 
 export default StyleProvider;

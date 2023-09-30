@@ -8,11 +8,11 @@ const StyleProvider = styled.div`
   color: ${(props) => props.theme.colorText1};
   .avatar_cover {
     .avatar {
-      width: 170px;
-      height: 170px;
+      /* width: 170px; */
+      /* height: 170px; */
       position: absolute;
-      bottom: -6rem;
-      left: 15rem;
+      /* bottom: -6rem; */
+      /* left: 15rem; */
       z-index: 1;
     }
   }
@@ -81,6 +81,13 @@ const StyleProvider = styled.div`
         background-color: ${(props) => props.theme.colorBg4};
         cursor: pointer;
         transition: all 0.3s;
+      }
+    }
+  }
+  @media screen {
+    @media (max-width: 639px) {
+      .ant-tabs-nav {
+        padding-left: 4px;
       }
     }
   }

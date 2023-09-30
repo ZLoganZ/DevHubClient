@@ -6,6 +6,7 @@ import StyleProvider from './cssPostUserInfo';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import { useMediaQuery } from 'react-responsive';
 
 interface UserInfoPostProps {
   userInfo: UserInfoType;
@@ -17,11 +18,11 @@ const UserInfoPost = (Props: UserInfoPostProps) => {
   const { themeColorSet } = getTheme();
 
   const userID = useAppSelector((state) => state.auth.userID);
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='name_avatar flex'>
-        <Avatar size={50} src={Props.userInfo.user_image} />
+        <Avatar size={isXsScreen ? 40 : 50} src={Props.userInfo.user_image} />
         <div className='name ml-2'>
           <Popover
             overlayInnerStyle={{
