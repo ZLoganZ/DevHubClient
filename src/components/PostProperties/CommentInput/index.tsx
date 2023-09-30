@@ -1,63 +1,39 @@
-import { Avatar, Input, Popover, Row, Col } from 'antd';
-import { useMemo, useEffect, useState, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Avatar, Input, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Picker from '@emoji-mart/react';
 
-import { getTheme } from '@/util/theme';
-import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppSelector } from '@/hooks/special';
+import { SelectedCommentValues, UserInfoType } from '@/types';
+import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
-import { PostType, UserInfoType, SelectedCommentValues } from '@/types';
-import StyleProvider from './cssOpenPostDetail';
+import StyleProvider from './cssCommentInput';
 
 interface Props {
-  post: PostType;
   userInfo: UserInfoType;
+  postID: string;
+  data: SelectedCommentValues;
 }
 
-const OpenOtherPostShareDetail = (Props: Props) => {
+const CommentInput = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [commentContent, setCommentContent] = useState('');
-  const [cursor, setCursor] = useState(0);
-
-  const [data, setData] = useState<SelectedCommentValues>({
-    isReply: false,
-    idComment: null
-  });
-
   const { mutateCommentPost } = useCommentPost();
 
+  const [commentContent, setCommentContent] = useState('');
+  const [cursor, setCursor] = useState(0);
+  const data = useMemo<SelectedCommentValues>(
+    () => ({
+      isReply: false,
+      idComment: null
+    }),
+    [Props.data]
+  );
+
   const inputRef = useRef<any>();
-
-  useEffect(() => {
-    if (data.isReply) inputRef.current.focus();
-  }, [data]);
-
-  const handleData = (data: SelectedCommentValues) => {
-    setData(data);
-  };
-
-  const handleSubmitComment = () => {
-    const { post } = Props;
-    const { isReply, idComment } = data;
-
-    if (checkEmpty()) return;
-
-    mutateCommentPost({
-      content: commentContent,
-      post: post._id,
-      type: isReply ? 'child' : 'parent',
-      parent: isReply ? idComment! : undefined
-    });
-
-    setTimeout(() => {
-      setCommentContent('');
-    }, 1000);
-  };
 
   const checkEmpty = () => {
     if (commentContent === '') {
@@ -67,22 +43,28 @@ const OpenOtherPostShareDetail = (Props: Props) => {
     }
   };
 
-  const memoizedComponent = useMemo(
-    () => (
-      <OtherPostDetail
-        handleData={handleData}
-        post={Props.post}
-        userInfo={Props.post.post_attributes.user}
-        data={data}
-        isShared={Props.post.type === 'Share'}
-        ownerInfo={Props.post.post_attributes.owner_post}
-      />
-    ),
-    [Props.post, data]
-  );
+  const handleSubmitComment = () => {
+    const { postID } = Props;
+    const { isReply, idComment } = data;
 
-  const memoizedInputComment = useMemo(
-    () => (
+    if (checkEmpty()) return;
+
+    mutateCommentPost({
+      content: commentContent,
+      post: postID,
+      type: isReply ? 'child' : 'parent',
+      parent: isReply ? idComment! : undefined
+    });
+
+    setCommentContent('');
+  };
+
+  useEffect(() => {
+    if (data.isReply) inputRef.current.focus();
+  }, [data]);
+
+  return (
+    <StyleProvider>
       <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4'>
         <Avatar className='mr-2' size={40} src={Props.userInfo.user_image} />
         <div className='input w-full'>
@@ -116,6 +98,7 @@ const OpenOtherPostShareDetail = (Props: Props) => {
                 title={'Emoji'}
                 content={
                   <Picker
+                    theme={themeColorSet.colorPicker}
                     data={async () => {
                       const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
@@ -145,7 +128,6 @@ const OpenOtherPostShareDetail = (Props: Props) => {
                   ? {
                       style: {
                         color: 'gray',
-                        //hover disabled
                         cursor: 'not-allowed'
                       }
                     }
@@ -157,26 +139,8 @@ const OpenOtherPostShareDetail = (Props: Props) => {
           />
         </div>
       </div>
-    ),
-    [commentContent, cursor]
-  );
-
-  return (
-    <StyleProvider theme={themeColorSet}>
-      <Row className='py-4'>
-        <Col offset={3} span={18}>
-          <div
-            style={{
-              backgroundColor: themeColorSet.colorBg2
-            }}
-            className='rounded-lg'>
-            {memoizedComponent}
-            {memoizedInputComment}
-          </div>
-        </Col>
-      </Row>
     </StyleProvider>
   );
 };
 
-export default OpenOtherPostShareDetail;
+export default CommentInput;

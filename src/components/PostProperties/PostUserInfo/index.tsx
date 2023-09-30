@@ -1,12 +1,12 @@
 import { Avatar, Popover } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 
 import PopupInfoUser from '@/components/PopupInfoUser';
 import StyleProvider from './cssPostUserInfo';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
-import { useMediaQuery } from 'react-responsive';
 
 interface UserInfoPostProps {
   userInfo: UserInfoType;

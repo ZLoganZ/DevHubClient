@@ -2,9 +2,8 @@ import { faUpRightFromSquare, faEllipsis } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
-import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
@@ -13,7 +12,6 @@ import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
-import { useMediaQuery } from "react-responsive";
 interface PostShareProps {
   postShared: PostType;
   userInfo: UserInfoType;
@@ -36,10 +34,12 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
   //format date to get full date
   const postDate = formatDateTime(post!.createdAt);
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   // postShared setting
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div className='item flex items-center px-4 py-2'>
           <FontAwesomeIcon className='icon' icon={faUpRightFromSquare} />
@@ -52,22 +52,8 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
     }
   ];
 
-  // Open OtherPostDetailModal
-  const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
-      {isOpenPostDetail && (
-        <OpenOtherPostDetailModal
-          key={postShared._id + 'Modal'}
-          isShared={true}
-          post={postShared}
-          userInfo={userInfo}
-          ownerInfo={ownerInfo}
-          visible={isOpenPostDetail}
-          setVisible={setIsOpenPostDetail}
-        />
-      )}
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
@@ -98,7 +84,7 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
           </div>
         </div>
         <div className='postFooter'>
-          <PostFooter post={postShared} setIsOpenPostDetail={setIsOpenPostDetail} isPostShare={true} />
+          <PostFooter post={postShared} userInfo={userInfo} isPostShare={true} />
         </div>
       </div>
     </StyleProvider>

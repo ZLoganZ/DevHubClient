@@ -7,6 +7,7 @@ const StyleProvider = styled.div`
     justify-content: space-between;
     align-items: center;
   }
+
   .sendComment {
     position: relative;
     left: -5.5rem;

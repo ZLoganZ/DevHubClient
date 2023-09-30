@@ -10,7 +10,7 @@ import StyleProvider from './cssConversationList';
 import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
-import OpenGroupModal from '@/components/ActionComponent/OpenDetail/OpenGroupModal';
+import OpenGroupModal from '@/components/GroupChatModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
 import { useAppSelector } from '@/hooks/special';

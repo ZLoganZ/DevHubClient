@@ -9,6 +9,7 @@ import Title from 'antd/es/typography/Title';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Search from 'antd/es/transfer/search';
 import { BellOutlined, CommentOutlined, UserOutlined } from '@ant-design/icons';
+import { useMediaQuery } from 'react-responsive';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { LOGOUT_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
@@ -22,7 +23,6 @@ import { getTheme } from '@/util/theme';
 import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
-import { useMediaQuery } from 'react-responsive';
 
 const Headers = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -101,6 +101,8 @@ const Headers = () => {
 
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
+
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   const [countUnseen, setCountUnseen] = useState(0);
   const [countNoti, setCountNoti] = useState(0);
@@ -204,8 +206,6 @@ const Headers = () => {
     pusherClient.bind('conversation-update-seen', updateHandlerSeen);
     pusherClient.bind('conversation-update-noti', updateHandler);
   }, [pusherKey]);
-
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <ConfigProvider

@@ -1,14 +1,18 @@
-FROM node:20-alpine
+# Use a Node image as the base
+FROM node:lts-alpine
 
-# Add your application files to the image
-COPY . /app
-
-# Set the working directory to the app directory
+# Set the working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package.json and install dependencies
+COPY package.json ./
 RUN npm install
 
-# Start the application
-CMD ["npm","run","dev"]
+# Copy app source code
+COPY . ./
 
+# Build the app for production
+# RUN npm run build
+
+# Serve the app using Vite
+CMD ["npm", "run", "dev"]

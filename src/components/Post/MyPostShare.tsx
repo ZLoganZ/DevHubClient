@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dropdown, Modal, notification } from 'antd';
 import type { MenuProps } from 'antd';
+import { useMediaQuery } from 'react-responsive';
 
-import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
@@ -20,14 +20,13 @@ import { useAppSelector } from '@/hooks/special';
 import { useDeletePost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
-import { useMediaQuery } from "react-responsive";
 interface PostShareProps {
   postShared: PostType;
   userInfo: UserInfoType;
   ownerInfo: UserInfoType;
 }
 
-type NotificationType = "success" | "info" | "warning" | "error";
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -50,6 +49,8 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
   // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -58,7 +59,7 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
     mutateDeletePost(postShared._id);
 
     setIsModalOpen(false);
-    openNotificationWithIcon("success");
+    openNotificationWithIcon('success');
   };
 
   const handleCancel = () => {
@@ -66,9 +67,9 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
   };
 
   // post setting
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
-      key: "1",
+      key: '1',
       label: (
         <div className='item flex items-center px-4 py-2'>
           <FontAwesomeIcon className='icon' icon={faUpRightFromSquare} />
@@ -80,7 +81,7 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
       }
     },
     {
-      key: "2",
+      key: '2',
       label: (
         <div key='2' className='item flex items-center px-4 py-2'>
           <FontAwesomeIcon className='icon' icon={faTrash} />
@@ -89,22 +90,19 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
       ),
       onClick: () => {
         showModal();
-      },
-    },
+      }
+    }
   ];
 
   // Notification delete post
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type: NotificationType) => {
     api[type]({
-      message: "Delete Successfully",
-      placement: "bottomRight",
+      message: 'Delete Successfully',
+      placement: 'bottomRight'
     });
   };
 
-  // Open OtherPostDetailModal
-  const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {contextHolder}
@@ -124,28 +122,17 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
         onCancel={handleCancel}
         okButtonProps={{
           style: {
-            backgroundColor: commonColor.colorBlue1,
-          },
+            backgroundColor: commonColor.colorBlue1
+          }
         }}
         cancelButtonProps={{
           style: {
             color: themeColorSet.colorText1,
-            backgroundColor: themeColorSet.colorBg3,
-          },
+            backgroundColor: themeColorSet.colorBg3
+          }
         }}>
         <p>You will not be able to recover files after deletion!</p>
       </Modal>
-      {isOpenPostDetail && (
-        <OpenMyPostDetailModal
-          key={postShared._id + 'Modal'}
-          isShared={true}
-          post={postShared}
-          userInfo={userInfo}
-          ownerInfo={ownerInfo}
-          visible={isOpenPostDetail}
-          setVisible={setIsOpenPostDetail}
-        />
-      )}
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
@@ -176,7 +163,7 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
           </div>
         </div>
         <div className='postFooter'>
-          <PostFooter post={postShared} setIsOpenPostDetail={setIsOpenPostDetail} isPostShare={true} />
+          <PostFooter post={postShared} userInfo={userInfo} isPostShare={true} />
         </div>
       </div>
     </StyleProvider>

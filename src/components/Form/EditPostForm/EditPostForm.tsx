@@ -42,6 +42,10 @@ const EditPostForm = (PostProps: PostProps) => {
 
   const [content, setContent] = useState(PostProps.content);
 
+  useEffect(() => {
+    setContent(PostProps.content);
+  }, [content]);
+
   const ReactQuillRef = useRef<any>();
 
   const handleUploadImage = async (file: RcFile | string) => {
@@ -224,6 +228,7 @@ const EditPostForm = (PostProps: PostProps) => {
                 title={'Members'}
                 content={
                   <Picker
+                    theme={themeColorSet.colorPicker}
                     data={async () => {
                       const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 

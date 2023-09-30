@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UploadOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
+// import { sha1 } from 'crypto-hash';
+import { useMediaQuery } from 'react-responsive';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
@@ -18,14 +20,12 @@ import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssNewPost';
-import { sha1 } from 'crypto-hash';
-import { useMediaQuery } from 'react-responsive';
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike', 'blockquote'],
   [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
   [{ align: [] }],
-  ["link"],
+  ['link']
 ];
 
 interface Props {
@@ -41,12 +41,7 @@ const NewPost = (Props: Props) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const {
-    mutateCreatePost,
-    isLoadingCreatePost,
-    isSuccessCreatePost,
-    isErrorCreatePost,
-  } = useCreatePost();
+  const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
 
   const [random, setRandom] = useState(0);
 
@@ -56,6 +51,8 @@ const NewPost = (Props: Props) => {
 
   const ReactQuillRef = useRef<any>();
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
   useEffect(() => {
     const quill = ReactQuillRef.current?.getEditor();
 
@@ -64,9 +61,9 @@ const NewPost = (Props: Props) => {
       const text = event.clipboardData!.getData('text/plain');
 
       const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, "<br>")
-        .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
-        .replace(/ /g, "&nbsp;");
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+        .replace(/ /g, '&nbsp;');
 
       // Instead parse and insert HTML
       const parser = new DOMParser();
@@ -79,8 +76,8 @@ const NewPost = (Props: Props) => {
   // Hàm hiển thị mesage
   const error = () => {
     messageApi.open({
-      type: "error",
-      content: "Please enter the content",
+      type: 'error',
+      content: 'Please enter the content'
     });
   };
 
@@ -96,7 +93,7 @@ const NewPost = (Props: Props) => {
       error();
     } else {
       const result = await handleUploadImage(file);
-      if (result.status === "done") {
+      if (result.status === 'done') {
         mutateCreatePost({
           title: values.title,
           content: content,
@@ -117,7 +114,7 @@ const NewPost = (Props: Props) => {
     }
 
     if (isErrorCreatePost) {
-      messageApi.error("Create post failed");
+      messageApi.error('Create post failed');
     }
   }, [isSuccessCreatePost, isErrorCreatePost]);
 
@@ -125,55 +122,46 @@ const NewPost = (Props: Props) => {
     if (info.fileList.length === 0) return;
 
     setFile(info?.fileList[0]?.originFileObj);
-    form.setValue("linkImage", info?.fileList[0]?.originFileObj);
+    form.setValue('linkImage', info?.fileList[0]?.originFileObj);
   };
 
   const handleUploadImage = async (file: RcFile) => {
     if (!file)
       return {
         url: null,
-        status: "done",
+        status: 'done'
       };
 
     const formData = new FormData();
-    formData.append("file", file);
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    formData.append('file', file);
+    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
+      method: 'POST',
+      body: formData
+    });
     const data = await res.json();
     return {
       url: data.secure_url,
-      status: "done",
+      status: 'done'
     };
   };
 
-  const handleRemoveImage = async () => {
-    form.setValue("linkImage", null);
-    const formData = new FormData();
-    const public_id = file.public_id;
-    formData.append("api_key", "235531261932754");
-    formData.append("public_id", public_id);
-    const timestamp = String(Date.now());
-    formData.append("timestamp", timestamp);
-    const signature = await sha1(
-      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
-    );
-    formData.append("signature", signature);
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    const data = await res.json();
-    setFile(data);
-  };
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  // const handleRemoveImage = async () => {
+  //   form.setValue('linkImage', null);
+  //   const formData = new FormData();
+  //   const public_id = file.public_id;
+  //   formData.append('api_key', '235531261932754');
+  //   formData.append('public_id', public_id);
+  //   const timestamp = String(Date.now());
+  //   formData.append('timestamp', timestamp);
+  //   const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
+  //   formData.append('signature', signature);
+  //   const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
+  //     method: 'POST',
+  //     body: formData
+  //   });
+  //   const data = await res.json();
+  //   setFile(data);
+  // };
 
   return (
     <ConfigProvider
@@ -181,43 +169,38 @@ const NewPost = (Props: Props) => {
         token: {
           controlHeight: 40,
           borderRadius: 0,
-          lineWidth: 0,
-        },
+          lineWidth: 0
+        }
       }}>
       {contextHolder}
-      <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
-        <div className="newPost px-4 py-3">
+      <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+        <div className='newPost px-4 py-3'>
           <div
-            className="newPostHeader text-center text-xl font-bold"
+            className='newPostHeader text-center text-xl font-bold'
             style={{ color: themeColorSet.colorText1 }}>
             Create Post
           </div>
-          <div className="newPostBody">
-            <div className="name_avatar flex items-center">
+          <div className='newPostBody'>
+            <div className='name_avatar flex items-center'>
               <Avatar
                 size={isXsScreen ? 40 : 50}
-                src={
-                  Props.userInfo.user_image ||
-                  "./images/DefaultAvatar/default_avatar.png"
-                }
+                src={Props.userInfo.user_image || './images/DefaultAvatar/default_avatar.png'}
               />
-              <div className="name font-bold ml-2">
-                <NavLink to={`/user/${Props.userInfo._id}`}>
-                  {Props.userInfo.name}
-                </NavLink>
+              <div className='name font-bold ml-2'>
+                <NavLink to={`/user/${Props.userInfo._id}`}>{Props.userInfo.name}</NavLink>
               </div>
             </div>
-            <div className="AddTitle mt-4 z-10">
+            <div className='AddTitle mt-4 z-10'>
               <Input
                 key={random}
-                name="title"
-                placeholder="Add a Title"
-                autoComplete="off"
+                name='title'
+                placeholder='Add a Title'
+                autoComplete='off'
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
                 onChange={(e) => {
-                  form.setValue("title", e.target.value);
+                  form.setValue('title', e.target.value);
                 }}
               />
             </div>
@@ -234,18 +217,17 @@ const NewPost = (Props: Props) => {
               />
             </div>
           </div>
-          <div className="newPostFooter mt-3 flex justify-between items-center">
-            <div className="newPostFooter__left">
+          <div className='newPostFooter mt-3 flex justify-between items-center'>
+            <div className='newPostFooter__left'>
               <Popover
-                placement="top"
-                trigger="click"
-                title={"Emoji"}
+                placement='top'
+                trigger='click'
+                title={'Emoji'}
                 content={
                   <Picker
+                    theme={themeColorSet.colorPicker}
                     data={async () => {
-                      const response = await fetch(
-                        "https://cdn.jsdelivr.net/npm/@emoji-mart/data"
-                      );
+                      const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                       return response.json();
                     }}
@@ -257,26 +239,22 @@ const NewPost = (Props: Props) => {
                     }}
                   />
                 }>
-                <span className="emoji">
-                  <FontAwesomeIcon
-                    className="item mr-3 ml-3"
-                    size="lg"
-                    icon={faFaceSmile}
-                  />
+                <span className='emoji'>
+                  <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
               <span>
                 <Upload
-                  accept="image/*"
+                  accept='image/*'
                   key={random}
                   maxCount={1}
                   customRequest={async ({ onSuccess }: any) => {
-                    onSuccess("ok");
+                    onSuccess('ok');
                   }}
                   data={() => {
                     return {};
                   }}
-                  listType="picture"
+                  listType='picture'
                   onChange={handleUpload}
                   onRemove={() => {
                     setFile(null);
@@ -285,13 +263,10 @@ const NewPost = (Props: Props) => {
                 </Upload>
               </span>
             </div>
-            <div className="newPostFooter__right">
-              <ButtonActiveHover
-                rounded
-                onClick={form.handleSubmit(onSubmit)}
-                loading={isLoadingCreatePost}>
+            <div className='newPostFooter__right'>
+              <ButtonActiveHover rounded onClick={form.handleSubmit(onSubmit)} loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhile1 }}>
-                  {isLoadingCreatePost ? "Creating.." : "Create"}
+                  {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>
               </ButtonActiveHover>
             </div>

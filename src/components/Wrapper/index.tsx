@@ -3,9 +3,9 @@ import { Col, Row, Skeleton } from 'antd';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
-import OpenOtherPostShareDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostShareDetail';
-import OpenOtherPostDetail from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetail';
 import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
+import MyPostDetail from '@/components/PostDetail/MyPostDetail';
+import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { usePostData, useUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
@@ -107,8 +107,9 @@ export const PostWrapper = () => {
       </div>
     );
   } else {
-    if (post.type === 'Post') return <OpenOtherPostDetail key={post._id} post={post} userInfo={userInfo} />;
-    else return <OpenOtherPostShareDetail key={post._id} post={post} userInfo={userInfo} />;
+    if (post.post_attributes.user._id === userInfo._id) {
+      return <MyPostDetail key={post._id} post={post} userInfo={userInfo} />;
+    } else return <OtherPostDetail key={post._id} post={post} userInfo={userInfo}/>;
   }
 };
 

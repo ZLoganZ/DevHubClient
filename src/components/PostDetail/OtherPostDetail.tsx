@@ -1,22 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Col, Row, Skeleton } from 'antd';
 
 import CommentDetail from '@/components/PostProperties/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
+import CommentInput from '@/components/PostProperties/CommentInput';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
-import { Skeleton } from 'antd';
 
 interface PostProps {
   post: PostType;
   userInfo: UserInfoType;
-  data: SelectedCommentValues;
-  handleData: (data: SelectedCommentValues) => void;
-  isShared?: boolean;
-  ownerInfo?: UserInfoType;
 }
 
 const OtherPostDetail = (Props: PostProps) => {
@@ -24,13 +21,17 @@ const OtherPostDetail = (Props: PostProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentID, setSelectedCommentId] = useState<string | null>(Props.data.idComment);
+  const [selectedCommentID, setSelectedCommentId] = useState<string | null>();
+  const [data, setData] = useState<SelectedCommentValues>({
+    isReply: false,
+    idComment: null
+  });
 
   const { comments, isLoadingComments } = useCommentsData(Props.post._id);
 
   useEffect(() => {
-    setSelectedCommentId(Props.data.idComment);
-  }, [Props.data]);
+    setSelectedCommentId(data.idComment);
+  }, [data]);
 
   const handleSelectComment = (commentID: string | null) => {
     setSelectedCommentId(commentID);
@@ -38,55 +39,53 @@ const OtherPostDetail = (Props: PostProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className='postDetail'>
-        {Props.isShared ? (
-          <OtherPostShare postShared={Props.post} userInfo={Props.userInfo} ownerInfo={Props.ownerInfo!} />
-        ) : (
-          <OtherPost key={Props.post._id} post={Props.post} userInfo={Props.userInfo} />
-        )}
-        <div
-          className='commentTotal px-3 ml-4'
-          style={{
-            maxHeight: '30rem'
-            // overflow: 'auto'
-          }}>
-          {isLoadingComments && Props.post.post_attributes.comment_number > 0 ? (
-            <Skeleton avatar paragraph={{ rows: 2 }} active />
-          ) : (
-            comments?.map((item) => {
-              return (
-                <div key={item._id}>
-                  {item ? (
-                    <CommentDetail
-                      key={item._id}
-                      handleData={Props.handleData}
-                      comment={item}
-                      userInfo={Props.userInfo}
-                      selectedCommentID={selectedCommentID}
-                      onSelectComment={handleSelectComment}
-                      postID={Props.post._id}>
-                      {/* {item.listReply?.map((item: any) => {
-                      return (
+      <Row className='py-4'>
+        <Col offset={3} span={18}>
+          <div
+            className='postDetail rounded-lg'
+            style={{
+              backgroundColor: themeColorSet.colorBg2
+            }}>
+            {Props.post.type === 'Share' ? (
+              <OtherPostShare
+                postShared={Props.post}
+                userInfo={Props.userInfo}
+                ownerInfo={Props.post.post_attributes.owner_post!}
+              />
+            ) : (
+              <OtherPost post={Props.post} userInfo={Props.userInfo} />
+            )}
+            <div
+              className='commentTotal px-3 ml-4'
+              style={{
+                maxHeight: '30rem'
+                // overflow: 'auto'
+              }}>
+              {isLoadingComments && Props.post.post_attributes.comment_number > 0 ? (
+                <Skeleton avatar paragraph={{ rows: 2 }} active />
+              ) : (
+                comments?.map((item) => {
+                  return (
+                    <div key={item._id}>
+                      {item ? (
                         <CommentDetail
-                          key={item?._id}
-                          handleData={Props.handleData}
+                          key={item._id}
+                          handleData={setData}
                           comment={item}
                           userInfo={Props.userInfo}
                           selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
-                          isReply={true}
-                          postID={Props.post._id}
-                        />
-                      );
-                    })} */}
-                    </CommentDetail>
-                  ) : null}
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+                          postID={Props.post._id}></CommentDetail>
+                      ) : null}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <CommentInput key={Math.random()} data={data} postID={Props.post._id} userInfo={Props.userInfo} />
+          </div>
+        </Col>
+      </Row>
     </StyleProvider>
   );
 };

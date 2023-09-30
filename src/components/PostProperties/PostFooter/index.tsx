@@ -2,24 +2,28 @@ import { Avatar, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faComment, faHeart, faShare, faShareNodes } from '@fortawesome/free-solid-svg-icons';
+import { useMediaQuery } from 'react-responsive';
 
-import { useAppSelector } from '@/hooks/special';
+import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useLikePost, useSavePost, useSharePost } from '@/hooks/mutation';
-import { PostType } from '@/types';
+import { PostType, UserInfoType } from '@/types';
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import StyleProvider from './cssPostFooter';
-import { useMediaQuery } from 'react-responsive';
+import { openModal } from '@/redux/Slice/ModalHOCSlice';
 
 interface PostFooterProps {
   post: PostType;
-  setIsOpenPostDetail: (isOpen: boolean) => void;
+  userInfo: UserInfoType;
   isPostShare?: boolean;
 }
 
-const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps) => {
+const PostFooter = ({ post, userInfo, isPostShare }: PostFooterProps) => {
   const change = useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const dispatch = useAppDispatch();
 
   const { mutateSharePost } = useSharePost();
   const { mutateSavePost } = useSavePost();
@@ -28,6 +32,7 @@ const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps)
   const commentNumber = post.post_attributes.comment_number;
   const viewNumber = post.post_attributes.view_number;
 
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   // ------------------------ Like ------------------------
 
   const [likeNumber, setLikeNumber] = useState(post.post_attributes.like_number);
@@ -61,7 +66,6 @@ const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps)
     setIsSaved(post.is_saved);
     post.is_saved ? setSaveColor('yellow') : setSaveColor(themeColorSet.colorText1);
   }, [post.is_saved, change]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -125,7 +129,16 @@ const PostFooter = ({ post, setIsOpenPostDetail, isPostShare }: PostFooterProps)
               className='item'
               style={{ backgroundColor: 'transparent' }}
               icon={<FontAwesomeIcon icon={faComment} color={themeColorSet.colorText1} />}
-              onClick={() => setIsOpenPostDetail(true)}
+              onClick={() =>
+                dispatch(
+                  openModal({
+                    title: 'The post of ' + post.post_attributes.user.name,
+                    component: <OtherPostDetail post={post} userInfo={userInfo} />,
+                    footer: null,
+                    type: 'post'
+                  })
+                )
+              }
             />
           </Space>
           <Space className='like' direction='vertical' align='center'>

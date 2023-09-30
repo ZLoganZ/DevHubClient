@@ -7,7 +7,7 @@ import {
   faInstagram,
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
-import ReactQuill, { Value } from 'react-quill';
+import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { RcFile } from 'antd/es/upload';
@@ -645,7 +645,7 @@ const EditProfileForm = () => {
           {about ? (
             // About có nội dung
             <div className='content__text'>
-              <ReactQuill value={about as Value} readOnly={true} theme='bubble' />
+              <ReactQuill value={about} readOnly theme='bubble' />
             </div>
           ) : (
             // About không có nội dung
