@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import Quill from 'quill';
-import ImageCompress from 'quill-image-compress';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/theme';
@@ -8,11 +7,9 @@ import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssQuillEdit';
 
-Quill.register('modules/imageCompress', ImageCompress);
-
 const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'clean'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
   [{ align: [] }],
   ['link']
 ];
@@ -25,57 +22,33 @@ interface QuillEditProps {
 
 const QuillEdit = (Props: QuillEditProps) => {
   const dispatch = useAppDispatch();
-  const searchRef = useRef<any>(null);
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const [value, setValue] = useState<any>(Props.content);
 
-  // Quill Editor
-  let [quill, setQuill] = useState<any>(null);
+  const ReactQuillRef = useRef<any>();
 
   useEffect(() => {
-    // Tạo quill
-    quill = new Quill('#editorDrawer', {
-      placeholder: Props.placeholder,
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow',
-      scrollingContainer: '#scrolling-container'
-    });
-    quill.on('text-change', function () {
-      if (searchRef.current) {
-        clearTimeout(searchRef.current);
-      }
-      searchRef.current = setTimeout(() => {
-        handleQuillChange();
-      }, 300);
-    });
+    const quill = ReactQuillRef.current?.getEditor();
 
-    // Ngăn chặn paste text vào quill
-    // C1
-    quill.root.addEventListener('paste', (event: any) => {
+    quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
-      const text = event.clipboardData.getData('text/plain');
+      const text = event.clipboardData!.getData('text/plain');
 
       const textToHTMLWithTabAndSpace = text
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
         .replace(/ /g, '&nbsp;');
 
-      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
+      // Instead parse and insert HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
+
+      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });
-
-    setQuill(quill);
   }, []);
-
-  useEffect(() => {
-    // Hiển thị nội dung trong quill
-    quill.root.innerHTML = Props.content;
-    setQuill(quill);
-  }, [Props, quill]);
 
   // Kiểm tra nội dung của value để set callback
   const handleQuillChangeValue = () => {
@@ -90,14 +63,18 @@ const QuillEdit = (Props: QuillEditProps) => {
     dispatch(setHandleSubmit(handleQuillChangeValue));
   }, [value]);
 
-  const handleQuillChange = () => {
-    const text = quill.root.innerHTML;
-    setValue(text);
-  };
-
   return (
     <StyleProvider theme={themeColorSet}>
-      <div id='editorDrawer' />
+      <ReactQuill
+        ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+        value={value}
+        onChange={setValue}
+        modules={{
+          toolbar: toolbarOptions
+        }}
+        placeholder='Add a Content'
+        theme='snow'
+      />
     </StyleProvider>
   );
 };

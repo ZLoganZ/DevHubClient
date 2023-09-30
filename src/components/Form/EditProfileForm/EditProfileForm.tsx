@@ -10,7 +10,6 @@ import {
 import ReactQuill, { Value } from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { icon } from '@fortawesome/fontawesome-svg-core';
 import { RcFile } from 'antd/es/upload';
 import { sha1 } from 'crypto-hash';
 import 'react-quill/dist/quill.bubble.css';
@@ -396,7 +395,7 @@ const EditProfileForm = () => {
                       openInNewTab(item.link);
                     }}
                     className='item'
-                    icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
+                    icon={<FontAwesomeIcon icon={faFacebookF} />}
                   />
                 );
               case '1':
@@ -408,7 +407,7 @@ const EditProfileForm = () => {
                       openInNewTab(item.link);
                     }}
                     className='item'
-                    icon={<FontAwesomeIcon icon={icon(faGithub)} />}
+                    icon={<FontAwesomeIcon icon={faGithub} />}
                   />
                 );
               case '2':
@@ -420,7 +419,7 @@ const EditProfileForm = () => {
                       openInNewTab(item.link);
                     }}
                     className='item'
-                    icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
+                    icon={<FontAwesomeIcon icon={faTwitter} />}
                   />
                 );
               case '3':
@@ -432,7 +431,7 @@ const EditProfileForm = () => {
                       openInNewTab(item.link);
                     }}
                     className='item'
-                    icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
+                    icon={<FontAwesomeIcon icon={faInstagram} />}
                   />
                 );
               case '4':
@@ -443,7 +442,7 @@ const EditProfileForm = () => {
                       openInNewTab(item.link);
                     }}
                     className='item'
-                    icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
+                    icon={<FontAwesomeIcon icon={faLinkedin} />}
                   />
                 );
               default:
@@ -646,7 +645,7 @@ const EditProfileForm = () => {
           {about ? (
             // About có nội dung
             <div className='content__text'>
-              <ReactQuill value={about as Value} readOnly={true} theme={'bubble'} modules={{}} />
+              <ReactQuill value={about as Value} readOnly={true} theme='bubble' />
             </div>
           ) : (
             // About không có nội dung

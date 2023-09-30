@@ -1,11 +1,10 @@
 import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
-import Quill from 'quill';
-import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 // import { sha1 } from 'crypto-hash';
-import ImageCompress from 'quill-image-compress';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UploadOutlined } from '@ant-design/icons';
@@ -20,11 +19,9 @@ import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssNewPost';
 
-Quill.register('modules/imageCompress', ImageCompress);
-
 const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'clean'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
   [{ align: [] }],
   ['link']
 ];
@@ -48,41 +45,29 @@ const NewPost = (Props: Props) => {
 
   const [file, setFile]: any = useState(null);
 
-  // Quill Editor
-  let [quill, setQuill]: any = useState(null);
+  const [content, setContent] = useState('');
+
+  const ReactQuillRef = useRef<any>();
 
   useEffect(() => {
-    quill = new Quill('#editor', {
-      placeholder: 'Add a Content',
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow'
-    });
-    quill.on('text-change', function () {
-      handleQuillChange();
-    });
-    // Ngăn chặn paste text vào quill
-    // C1
-    quill.root.addEventListener('paste', (event: any) => {
+    const quill = ReactQuillRef.current?.getEditor();
+
+    quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
-      const text = event.clipboardData.getData('text/plain');
+      const text = event.clipboardData!.getData('text/plain');
 
       const textToHTMLWithTabAndSpace = text
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
         .replace(/ /g, '&nbsp;');
 
-      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
+      // Instead parse and insert HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
+
+      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });
-
-    setQuill(quill);
   }, []);
-
-  const handleQuillChange = () => {
-    const text = quill.root.innerHTML;
-    form.setValue('content', text);
-  };
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -95,20 +80,19 @@ const NewPost = (Props: Props) => {
   const form = useForm({
     defaultValues: {
       title: '',
-      content: '',
       linkImage: null
     }
   });
 
   const onSubmit = async (values: any) => {
-    if (quill.root.innerHTML === '<p><br></p>') {
+    if (content === '<p><br></p>' || content === '<p></p>') {
       error();
     } else {
       const result = await handleUploadImage(file);
       if (result.status === 'done') {
         mutateCreatePost({
           title: values.title,
-          content: values.content,
+          content: content,
           img: result.url
         });
       }
@@ -117,11 +101,10 @@ const NewPost = (Props: Props) => {
 
   useEffect(() => {
     if (isSuccessCreatePost) {
-      quill.root.innerHTML = '<p><br></p>';
+      setContent('');
       setRandom(Math.random());
       setFile(null);
       form.setValue('title', '');
-      form.setValue('content', '');
       form.setValue('linkImage', null);
       messageApi.success('Create post successfully');
     }
@@ -223,7 +206,16 @@ const NewPost = (Props: Props) => {
               />
             </div>
             <div className='AddContent mt-4'>
-              <div id='editor' />
+              <ReactQuill
+                ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+                value={content}
+                onChange={setContent}
+                modules={{
+                  toolbar: toolbarOptions
+                }}
+                placeholder='Add a Content'
+                theme='snow'
+              />
             </div>
           </div>
           <div className='newPostFooter mt-3 flex justify-between items-center'>
@@ -240,8 +232,10 @@ const NewPost = (Props: Props) => {
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
-                      quill.focus();
-                      quill.insertText(quill.getSelection().index, emoji.native);
+                      ReactQuillRef!.current?.getEditor().focus();
+                      ReactQuillRef!.current
+                        ?.getEditor()
+                        .insertText(ReactQuillRef!.current?.getEditor().getSelection().index, emoji.native);
                     }}
                   />
                 }>

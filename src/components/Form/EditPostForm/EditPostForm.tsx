@@ -1,8 +1,7 @@
 import { Button, ConfigProvider, Input, message, Popover, Upload, UploadFile } from 'antd';
-import Quill from 'quill';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState, useMemo } from 'react';
-import ImageCompress from 'quill-image-compress';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { sha1 } from 'crypto-hash';
 import { useForm } from 'react-hook-form';
 import Picker from '@emoji-mart/react';
@@ -17,11 +16,9 @@ import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssEditPostForm';
 
-Quill.register('modules/imageCompress', ImageCompress);
-
 const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'clean'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
   [{ align: [] }],
   ['link']
 ];
@@ -42,6 +39,10 @@ const EditPostForm = (PostProps: PostProps) => {
   const { themeColorSet } = getTheme();
 
   const { mutateUpdatePost } = useUpdatePost();
+
+  const [content, setContent] = useState(PostProps.content);
+
+  const ReactQuillRef = useRef<any>();
 
   const handleUploadImage = async (file: RcFile | string) => {
     if (!file)
@@ -91,13 +92,12 @@ const EditPostForm = (PostProps: PostProps) => {
   const form = useForm({
     defaultValues: {
       title: PostProps.title,
-      content: PostProps.content,
       img: PostProps.img
     }
   });
 
   const onSubmit = async (values: any) => {
-    if (quill.root.innerHTML === '<p><br></p>') {
+    if (content === '<p><br></p>') {
       error();
     } else {
       if (form.getValues('img') !== PostProps.img) {
@@ -124,56 +124,27 @@ const EditPostForm = (PostProps: PostProps) => {
     return isLt2M;
   };
 
-  // Quill Editor
-  let [quill, setQuill] = useState<any>(null);
-
   useEffect(() => {
-    // Tạo quill
-    quill = new Quill('#editorDrawer', {
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow',
-      scrollingContainer: '#scrolling-container'
-    });
-    quill.on('text-change', function () {
-      handleQuillChange();
-    });
-
-    // Ngăn chặn paste text vào quill
-    // C1
-    quill.root.addEventListener('paste', (event: any) => {
+    const quill = ReactQuillRef.current?.getEditor();
+    quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
-      const text = event.clipboardData.getData('text/plain');
+      const text = event.clipboardData!.getData('text/plain');
 
       const textToHTMLWithTabAndSpace = text
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
         .replace(/ /g, '&nbsp;');
 
-      // console.log(textToHTMLWithTabAndSpace);
+      // Instead parse and insert HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
 
-      document.execCommand('insertHTML', false, textToHTMLWithTabAndSpace);
+      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });
-
-    setQuill(quill);
 
     // Dispatch callback submit lên cho DrawerHOC
     dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
   }, []);
-
-  useEffect(() => {
-    // Hiển thị nội dung trong quill
-    quill.root.innerHTML = PostProps.content;
-    setQuill(quill);
-    // Hiển thị lại title khi PostProps.title thay đổi
-    form.setValue('title', PostProps.title);
-  }, [PostProps, quill]);
-
-  const handleQuillChange = () => {
-    const text = quill.root.innerHTML;
-    form.setValue('content', text);
-  };
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -233,7 +204,16 @@ const EditPostForm = (PostProps: PostProps) => {
               />
             </div>
             <div className='AddContent mt-4'>
-              <div id='editorDrawer' />
+              <ReactQuill
+                ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+                value={content}
+                onChange={setContent}
+                modules={{
+                  toolbar: toolbarOptions
+                }}
+                placeholder='Add a Content'
+                theme='snow'
+              />
             </div>
           </div>
           <div className='newPostFooter mt-3 flex justify-between items-center'>
@@ -250,8 +230,10 @@ const EditPostForm = (PostProps: PostProps) => {
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
-                      quill.focus();
-                      quill.insertText(quill.getSelection().index, emoji.native);
+                      ReactQuillRef!.current?.getEditor().focus();
+                      ReactQuillRef!.current
+                        ?.getEditor()
+                        .insertText(ReactQuillRef!.current?.getEditor().getSelection().index, emoji.native);
                     }}
                   />
                 }>

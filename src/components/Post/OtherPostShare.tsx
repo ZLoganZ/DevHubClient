@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useState } from 'react';
-import 'react-quill/dist/quill.bubble.css';
 
 import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -60,7 +59,7 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
-          key={postShared._id}
+          key={postShared._id + 'Modal'}
           isShared={true}
           post={postShared}
           userInfo={userInfo}

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Image } from 'antd';
+import 'react-quill/dist/quill.bubble.css';
 
 import { useIntersectionObserver } from '@/hooks/special';
 import { useViewPost } from '@/hooks/mutation';
@@ -49,7 +50,7 @@ const ContentPost = (Props: ContentPostProps) => {
       <div className='title font-bold'>{Props.title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill value={displayContent} readOnly={true} theme={'bubble'} modules={{}} />
+          <ReactQuill value={displayContent} readOnly={true} theme='bubble' />
           {Props.content!.length > 250 && (
             <a onClick={() => setExpanded(!expanded)}>{expanded ? 'Read less' : 'Read more'}</a>
           )}
