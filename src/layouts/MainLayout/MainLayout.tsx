@@ -41,8 +41,8 @@ const MainLayout = (props: PropsMainTemplate) => {
             <Layout>
               <FloatButton.BackTop />
               <Content
+              className="xs:ml-0 xs:mt-20 ml-20"
                 style={{
-                  marginLeft: '5rem',
                   marginTop: '5rem'
                   // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
                   // backgroundAttachment: 'fixed',

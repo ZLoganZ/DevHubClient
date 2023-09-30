@@ -21,7 +21,7 @@ import { useAppSelector } from '@/hooks/special';
 import { useDeletePost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
-
+import { useMediaQuery } from "react-responsive";
 interface PostShareProps {
   postShared: PostType;
   userInfo: UserInfoType;
@@ -105,7 +105,7 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
 
   // Open OtherPostDetailModal
   const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {contextHolder}

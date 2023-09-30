@@ -3,49 +3,31 @@ import {
   faEllipsis,
   faPenToSquare,
   faTrash,
-  faTriangleExclamation
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown, Modal, notification } from 'antd';
-import type { MenuProps } from 'antd';
-import { useState } from 'react';
-import { sha1 } from 'crypto-hash';
-import 'react-quill/dist/quill.bubble.css';
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Divider, Dropdown, Modal, notification } from "antd";
+import type { MenuProps } from "antd";
+import { useState } from "react";
+import { sha1 } from "crypto-hash";
+import "react-quill/dist/quill.bubble.css";
 
-import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
-import EditPostForm from '@/components/Form/EditPostForm';
-import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
-import UserInfoPost from '@/components/PostProperties/PostUserInfo';
-import ContentPost from '@/components/PostProperties/PostContent';
-import PostFooter from '@/components/PostProperties/PostFooter';
-import { getTheme } from '@/util/theme';
-import { commonColor } from '@/util/cssVariable';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { useDeletePost } from '@/hooks/mutation';
-import formatDateTime from '@/util/formatDateTime';
-import { PostType, UserInfoType } from '@/types';
-import StyleProvider from './cssPost';
-import {
-  DELETE_POST_SAGA,
-  LIKE_POST_SAGA,
-  SHARE_POST_SAGA,
-  SAVE_POST_SAGA,
-  INCREASE_VIEW_SAGA,
-} from "@/redux/ActionSaga/PostActionSaga";
-import { GET_USER_ID } from "@/redux/ActionSaga/AuthActionSaga";
 import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
 import EditPostForm from "@/components/Form/EditPostForm";
 import OpenMyPostDetailModal from "@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal";
-import PopupInfoUser from "@/components/PopupInfoUser";
-import { getTheme } from "@/util/functions/ThemeFunction";
+import UserInfoPost from "@/components/PostProperties/PostUserInfo";
+import ContentPost from "@/components/PostProperties/PostContent";
+import PostFooter from "@/components/PostProperties/PostFooter";
+import { getTheme } from "@/util/theme";
 import { commonColor } from "@/util/cssVariable";
-import { useIntersectionObserver } from "@/hooks";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/special";
+import { useDeletePost } from "@/hooks/mutation";
+import formatDateTime from "@/util/formatDateTime";
 import { PostType, UserInfoType } from "@/types";
+import StyleProvider from "./cssPost";
 
 import { useMediaQuery } from "react-responsive";
 
-import StyleTotal from "./cssPost";
 
 interface PostProps {
   post: PostType;
@@ -87,13 +69,18 @@ const MyPost = ({ post, userInfo }: PostProps) => {
     formData.append("api_key", "235531261932754");
     formData.append("public_id", public_id);
     const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData
-    });
+    formData.append("timestamp", timestamp);
+    const signature = await sha1(
+      `public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`
+    );
+    formData.append("signature", signature);
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     const data = await res.json();
     return {
       url: data,
@@ -102,7 +89,8 @@ const MyPost = ({ post, userInfo }: PostProps) => {
   };
 
   const handleOk = async () => {
-    if (post.post_attributes.img) await handleRemoveImage(post.post_attributes.img);
+    if (post.post_attributes.img)
+      await handleRemoveImage(post.post_attributes.img);
 
     mutateDeletePost(post._id);
 
@@ -119,27 +107,27 @@ const MyPost = ({ post, userInfo }: PostProps) => {
     {
       key: "1",
       label: (
-        <div className='item flex items-center px-4 py-2'>
-          <FontAwesomeIcon className='icon' icon={faUpRightFromSquare} />
-          <span className='ml-2'>Open post in new tab</span>
+        <div className="item flex items-center px-4 py-2">
+          <FontAwesomeIcon className="icon" icon={faUpRightFromSquare} />
+          <span className="ml-2">Open post in new tab</span>
         </div>
       ),
       onClick: () => {
-        window.open(`/post/${post._id}`, '_blank')?.focus();
-      }
+        window.open(`/post/${post._id}`, "_blank")?.focus();
+      },
     },
     {
       key: "2",
       label: (
-        <div className='item flex items-center px-4 py-2'>
-          <FontAwesomeIcon className='icon' icon={faPenToSquare} />
-          <span className='ml-2'>Edit post</span>
+        <div className="item flex items-center px-4 py-2">
+          <FontAwesomeIcon className="icon" icon={faPenToSquare} />
+          <span className="ml-2">Edit post</span>
         </div>
       ),
       onClick: () => {
         dispatch(
           openDrawer({
-            title: 'Edit post',
+            title: "Edit post",
             component: (
               <EditPostForm
                 key={Math.random()}
@@ -156,9 +144,9 @@ const MyPost = ({ post, userInfo }: PostProps) => {
     {
       key: "3",
       label: (
-        <div key='3' className='item flex items-center px-4 py-2'>
-          <FontAwesomeIcon className='icon' icon={faTrash} />
-          <span className='ml-2'>Delete post</span>
+        <div key="3" className="item flex items-center px-4 py-2">
+          <FontAwesomeIcon className="icon" icon={faTrash} />
+          <span className="ml-2">Delete post</span>
         </div>
       ),
       onClick: () => {
@@ -187,13 +175,13 @@ const MyPost = ({ post, userInfo }: PostProps) => {
   } */
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
-    <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+    <StyleProvider theme={themeColorSet} className="rounded-lg mb-4">
       {contextHolder}
       <Modal
         title={
           <>
             <FontAwesomeIcon
-              className='icon mr-2'
+              className="icon mr-2"
               icon={faTriangleExclamation}
               style={{ color: commonColor.colorWarning1 }}
             />
@@ -206,8 +194,8 @@ const MyPost = ({ post, userInfo }: PostProps) => {
         okButtonProps={{
           style: {
             color: themeColorSet.colorText1,
-            backgroundColor: commonColor.colorBlue1
-          }
+            backgroundColor: commonColor.colorBlue1,
+          },
         }}
         cancelButtonProps={{
           style: {
@@ -226,20 +214,23 @@ const MyPost = ({ post, userInfo }: PostProps) => {
           setVisible={setIsOpenPostDetail}
         />
       )}
-      <div className='post px-4 py-3'>
-        <div className='postHeader flex justify-between items-center'>
-          <div className='postHeader__left'>
+      <div className="post px-4 py-3">
+        <div className="postHeader flex justify-between items-center">
+          <div className="postHeader__left">
             <UserInfoPost userInfo={userInfo} postID={post._id} date={date} />
           </div>
-          <div className='postHeader__right'>
-            <div className='icon'>
-              <Dropdown menu={{ items }} placement='bottomRight' trigger={['click']}>
-                <FontAwesomeIcon size='lg' icon={faEllipsis} />
+          <div className="postHeader__right">
+            <div className="icon">
+              <Dropdown
+                menu={{ items }}
+                placement="bottomRight"
+                trigger={["click"]}>
+                <FontAwesomeIcon size="lg" icon={faEllipsis} />
               </Dropdown>
             </div>
           </div>
         </div>
-        <div className='postBody mt-5'>
+        <div className="postBody mt-5">
           <ContentPost
             postID={post._id}
             title={post.post_attributes.title!}
@@ -249,7 +240,7 @@ const MyPost = ({ post, userInfo }: PostProps) => {
           />
           <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
         </div>
-        <div className='postFooter'>
+        <div className="postFooter">
           <PostFooter post={post} setIsOpenPostDetail={setIsOpenPostDetail} />
         </div>
       </div>

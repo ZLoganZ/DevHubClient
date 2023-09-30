@@ -14,6 +14,7 @@ import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import formatDateTime from '@/util/formatDateTime';
 import StyleProvider from './cssPost';
+import { useMediaQuery } from 'react-responsive';
 
 interface PostProps {
   post: PostType;
@@ -57,7 +58,7 @@ const OtherPost = ({ post, userInfo }: PostProps) => {
     while (elements.length > 0) elements[0].remove();
     return doc.body.innerHTML;
   } */
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {isOpenPostDetail && (
