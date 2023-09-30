@@ -16,6 +16,7 @@ import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
+import { useMediaQuery } from 'react-responsive';
 
 const popular_time = [
   {
@@ -139,7 +140,7 @@ const NewsFeed = () => {
     .sort((a, b) => b.post_attributes.view_number - a.post_attributes.view_number)
     .slice(0, 3);
 
-  const handlePopularClick: MenuProps['onClick'] = (e) => {
+  const handlePopularClick: MenuProps["onClick"] = (e) => {
     const a = popular_time.find((item) => item.key === e.key);
     setPopularvalue(a?.label || popularvalue);
     setPopularOpen(false);
