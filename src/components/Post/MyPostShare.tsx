@@ -4,11 +4,10 @@ import {
   faTrash,
   faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dropdown, Modal, notification } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
-import 'react-quill/dist/quill.bubble.css';
 
 import OpenMyPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenMyPostDetailModal';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -138,7 +137,7 @@ const MyPostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
       </Modal>
       {isOpenPostDetail && (
         <OpenMyPostDetailModal
-          key={postShared._id}
+          key={postShared._id + 'Modal'}
           isShared={true}
           post={postShared}
           userInfo={userInfo}

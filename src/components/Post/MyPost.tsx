@@ -3,14 +3,13 @@ import {
   faEllipsis,
   faPenToSquare,
   faTrash,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Divider, Dropdown, Modal, notification } from "antd";
-import type { MenuProps } from "antd";
-import { useState } from "react";
-import { sha1 } from "crypto-hash";
-import "react-quill/dist/quill.bubble.css";
+  faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Divider, Dropdown, Modal, notification } from 'antd';
+import type { MenuProps } from 'antd';
+import { useState } from 'react';
+import { sha1 } from 'crypto-hash';
 
 import { openDrawer } from "@/redux/Slice/DrawerHOCSlice";
 import EditPostForm from "@/components/Form/EditPostForm";
@@ -207,7 +206,7 @@ const MyPost = ({ post, userInfo }: PostProps) => {
       </Modal>
       {isOpenPostDetail && (
         <OpenMyPostDetailModal
-          key={post._id}
+          key={post._id + 'Modal'}
           post={post}
           userInfo={userInfo}
           visible={isOpenPostDetail}

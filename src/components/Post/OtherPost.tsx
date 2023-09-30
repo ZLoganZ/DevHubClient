@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useState } from 'react';
-import 'react-quill/dist/quill.bubble.css';
 
 import OpenOtherPostDetailModal from '@/components/ActionComponent/OpenDetail/OpenOtherPostDetailModal';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -63,7 +62,7 @@ const OtherPost = ({ post, userInfo }: PostProps) => {
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
       {isOpenPostDetail && (
         <OpenOtherPostDetailModal
-          key={post._id}
+          key={post._id + 'Modal'}
           post={post}
           userInfo={userInfo}
           visible={isOpenPostDetail}

@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
-import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from "antd";
-import ReactQuill from "react-quill";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSnowflake,
-  faFileLines,
-  faLocationDot,
-  faBriefcase,
-} from "@fortawesome/free-solid-svg-icons";
-import { icon } from "@fortawesome/fontawesome-svg-core";
+import { useEffect, useState } from 'react';
+import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
+import ReactQuill from 'react-quill';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSnowflake, faFileLines, faLocationDot, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebookF,
   faTwitter,
@@ -249,8 +243,8 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
-                            icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
+                            className='item'
+                            icon={<FontAwesomeIcon icon={faFacebookF} />}
                           />
                         );
                       case "1":
@@ -261,8 +255,8 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
-                            icon={<FontAwesomeIcon icon={icon(faGithub)} />}
+                            className='item'
+                            icon={<FontAwesomeIcon icon={faGithub} />}
                           />
                         );
                       case "2":
@@ -273,8 +267,8 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
-                            icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
+                            className='item'
+                            icon={<FontAwesomeIcon icon={faTwitter} />}
                           />
                         );
                       case "3":
@@ -285,8 +279,8 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
-                            icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
+                            className='item'
+                            icon={<FontAwesomeIcon icon={faInstagram} />}
                           />
                         );
                       case "4":
@@ -297,8 +291,8 @@ const Profile = (Props: Props) => {
                             onClick={() => {
                               openInNewTab(item.link);
                             }}
-                            className="item"
-                            icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
+                            className='item'
+                            icon={<FontAwesomeIcon icon={faLinkedin} />}
                           />
                         );
                       default:
@@ -335,12 +329,7 @@ const Profile = (Props: Props) => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill
-                                value={otherUserInfo.about}
-                                readOnly={true}
-                                theme="bubble"
-                                modules={{}}
-                              />
+                              <ReactQuill value={otherUserInfo.about} readOnly={true} theme='bubble' />
                             </div>
                           )}
                           {otherUserInfo.repositories.length !== 0 && (

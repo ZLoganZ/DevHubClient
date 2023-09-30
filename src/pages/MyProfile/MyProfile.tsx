@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
-import { icon } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faFileLines, faLocationDot, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -208,7 +207,7 @@ const MyProfile = () => {
                               openInNewTab(item.link);
                             }}
                             className='item'
-                            icon={<FontAwesomeIcon icon={icon(faFacebookF)} />}
+                            icon={<FontAwesomeIcon icon={faFacebookF} />}
                           />
                         );
                       case '1':
@@ -220,7 +219,7 @@ const MyProfile = () => {
                               openInNewTab(item.link);
                             }}
                             className='item'
-                            icon={<FontAwesomeIcon icon={icon(faGithub)} />}
+                            icon={<FontAwesomeIcon icon={faGithub} />}
                           />
                         );
                       case '2':
@@ -232,7 +231,7 @@ const MyProfile = () => {
                               openInNewTab(item.link);
                             }}
                             className='item'
-                            icon={<FontAwesomeIcon icon={icon(faTwitter)} />}
+                            icon={<FontAwesomeIcon icon={faTwitter} />}
                           />
                         );
                       case '3':
@@ -244,7 +243,7 @@ const MyProfile = () => {
                               openInNewTab(item.link);
                             }}
                             className='item'
-                            icon={<FontAwesomeIcon icon={icon(faInstagram)} />}
+                            icon={<FontAwesomeIcon icon={faInstagram} />}
                           />
                         );
                       case '4':
@@ -256,7 +255,7 @@ const MyProfile = () => {
                               openInNewTab(item.link);
                             }}
                             className='item'
-                            icon={<FontAwesomeIcon icon={icon(faLinkedin)} />}
+                            icon={<FontAwesomeIcon icon={faLinkedin} />}
                           />
                         );
                       default:
@@ -292,12 +291,7 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill
-                                value={userInfo.about}
-                                readOnly={true}
-                                theme='bubble'
-                                modules={{}}
-                              />
+                              <ReactQuill value={userInfo.about} readOnly={true} theme='bubble' />
                             </div>
                           )}
                           {userInfo.repositories.length !== 0 && (

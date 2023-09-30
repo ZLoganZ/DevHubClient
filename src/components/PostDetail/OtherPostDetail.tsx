@@ -40,12 +40,7 @@ const OtherPostDetail = (Props: PostProps) => {
     <StyleProvider theme={themeColorSet}>
       <div className='postDetail'>
         {Props.isShared ? (
-          <OtherPostShare
-            key={Props.post._id}
-            postShared={Props.post}
-            userInfo={Props.userInfo}
-            ownerInfo={Props.ownerInfo!}
-          />
+          <OtherPostShare postShared={Props.post} userInfo={Props.userInfo} ownerInfo={Props.ownerInfo!} />
         ) : (
           <OtherPost key={Props.post._id} post={Props.post} userInfo={Props.userInfo} />
         )}
