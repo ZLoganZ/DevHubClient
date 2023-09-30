@@ -128,8 +128,6 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate('/');
-              }
-                navigate('/');
                 if (isXsScreen) setShowMenu(false);
               }
             },
@@ -144,7 +142,6 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate(`/user/${userInfo._id}`);
-              }
                 if (isXsScreen) setShowMenu(false);
               }
             },
