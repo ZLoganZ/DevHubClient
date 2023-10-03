@@ -40,10 +40,11 @@ const MenuMain = () => {
     }
   };
   const handleMouseLeave = () => {
-    if (!isXsScreen) setCollapsed(true);
-    else {
+    if (isXsScreen) {
       setShowMenu(false);
+      return;
     }
+    setCollapsed(true);
   };
 
   useEffect(() => {
@@ -78,6 +79,7 @@ const MenuMain = () => {
       setCollapsed(false);
     } else {
       setShowMenu(true);
+      setCollapsed(true);
     }
   }, [isXsScreen]);
 
@@ -126,6 +128,7 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate('/');
+                if (isXsScreen) setShowMenu(false);
               }
             },
             {
@@ -139,6 +142,7 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate(`/user/${userInfo._id}`);
+                if (isXsScreen) setShowMenu(false);
               }
             },
             {
