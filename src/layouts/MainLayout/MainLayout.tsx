@@ -10,7 +10,7 @@ import { useUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMainLayout';
 
 interface PropsMainTemplate {
-  Component: () => JSX.Element;
+  Component: React.ReactNode;
 }
 
 const MainLayout = (props: PropsMainTemplate) => {
@@ -31,7 +31,7 @@ const MainLayout = (props: PropsMainTemplate) => {
   return (
     <ConfigProvider
       theme={{
-        token: themeColor,
+        token: themeColor
       }}>
       <StyleProvider className='abcdef' theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
@@ -41,7 +41,7 @@ const MainLayout = (props: PropsMainTemplate) => {
             <Layout>
               <FloatButton.BackTop />
               <Content
-              className="xs:ml-0 xs:mt-20 ml-20"
+                className='xs:ml-0 xs:mt-20 ml-20'
                 style={{
                   marginTop: '5rem'
                   // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
@@ -50,7 +50,7 @@ const MainLayout = (props: PropsMainTemplate) => {
                   // backgroundSize: 'cover',
                   // backgroundPosition: 'center'
                 }}>
-                <Component />
+                {Component}
               </Content>
             </Layout>
           </Layout>

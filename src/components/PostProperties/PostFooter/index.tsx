@@ -163,7 +163,7 @@ const PostFooter = ({ post, userInfo, isPostShare }: PostFooterProps) => {
               <Avatar
                 className='item'
                 style={{ backgroundColor: 'transparent' }}
-                icon={<FontAwesomeIcon icon={faShareNodes} />}
+                icon={<FontAwesomeIcon icon={faShareNodes} color={themeColorSet.colorText1} />}
               />
             </Space>
           </Space>

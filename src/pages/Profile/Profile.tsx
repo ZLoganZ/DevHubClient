@@ -282,10 +282,7 @@ const Profile = (Props: Props) => {
                         <div className='mt-10 mb-20'>
                           {!otherUserInfo.about && otherUserInfo.repositories.length === 0 && (
                             <div className='w-8/12 mb-10 xs:w-full'>
-                              <Empty
-                                image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No introduction</span>}
-                              />
+                              <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} description='No introduction' />
                             </div>
                           )}
                           {otherUserInfo.about && (
@@ -325,33 +322,26 @@ const Profile = (Props: Props) => {
                       key: '2',
                       label: 'Posts',
                       children: (
-                        <div className='mt-5'>
+                        <div className='mt-5 w-8/12 xs:w-full'>
                           {userPosts.length === 0 && (
-                            <div className='w-8/12 xs:w-full'>
-                              <Empty
-                                className='mt-10 mb-20'
-                                image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No posts available</span>}
-                              />
-                            </div>
+                            <Empty
+                              className='mt-10 mb-20'
+                              image={Empty.PRESENTED_IMAGE_DEFAULT}
+                              description='No posts available'
+                            />
                           )}
-                          {userPosts.map((item) => {
-                            return (
-                              <div key={item._id} className='w-8/12 xs:w-full'>
-                                {item.type === 'Share' && (
-                                  <OtherPostShare
-                                    key={item._id}
-                                    postShared={item}
-                                    userInfo={otherUserInfo}
-                                    ownerInfo={item.post_attributes.owner_post!}
-                                  />
-                                )}
-                                {item.type === 'Post' && (
-                                  <OtherPost key={item._id} post={item} userInfo={otherUserInfo} />
-                                )}
-                              </div>
-                            );
-                          })}
+                          {userPosts.map((item) =>
+                            item.type === 'Share' ? (
+                              <OtherPostShare
+                                key={item._id}
+                                postShared={item}
+                                userInfo={otherUserInfo}
+                                ownerInfo={item.post_attributes.owner_post!}
+                              />
+                            ) : (
+                              <OtherPost key={item._id} post={item} userInfo={otherUserInfo} />
+                            )
+                          )}
                         </div>
                       )
                     },

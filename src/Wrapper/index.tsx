@@ -48,15 +48,12 @@ export const CommunityWrapper = () => {
   const role = useMemo(() => {
     if (userInfo.role) {
       if (userInfo.role.includes('0101')) return 'ADMIN';
-      else if (userInfo.role.includes('0000')) return 'MEMBER';
-      else return 'NO_MEMBER';
+      if (userInfo.role.includes('0000')) return 'MEMBER';
+      return 'NO_MEMBER';
     }
   }, [userInfo]);
   return (
-    <div
-      style={{
-        backgroundColor: themeColorSet.colorBg1
-      }}>
+    <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
       <Suspense fallback={<LoadingProfileComponent />}>
         {role === 'ADMIN' ? (
           <CommunityAdmin />
@@ -85,10 +82,7 @@ export const PostWrapper = () => {
 
   if (isLoadingPost || isLoadingUserInfo || !userInfo || !post) {
     return (
-      <div
-        style={{
-          backgroundColor: themeColorSet.colorBg1
-        }}>
+      <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
         <Row className='py-10'>
           <Col offset={3} span={18}>
             <Skeleton avatar paragraph={{ rows: 1 }} active />
@@ -109,7 +103,7 @@ export const PostWrapper = () => {
   } else {
     if (post.post_attributes.user._id === userInfo._id) {
       return <MyPostDetail key={post._id} post={post} userInfo={userInfo} />;
-    } else return <OtherPostDetail key={post._id} post={post} userInfo={userInfo}/>;
+    } else return <OtherPostDetail key={post._id} post={post} userInfo={userInfo} />;
   }
 };
 
@@ -122,22 +116,23 @@ export const ProfileWrapper = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { userID: userIDFromStore } = useAppSelector((state) => state.auth);
+  const userIDFromStore = useAppSelector((state) => state.auth.userID);
 
   const path = location.pathname;
 
-  if (path === '/me' || path === '/user/me') navigate(`/user/${userIDFromStore}`);
+  useEffect(() => {
+    if (path === '/me' || path === '/user/me') navigate(`/user/${userIDFromStore}`);
+  }, [userIDFromStore]);
 
   return (
     <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
       <Suspense fallback={<LoadingProfileComponent />}>
-        {!userIDFromStore ? (
-          <LoadingProfileComponent />
-        ) : userID === 'me' || userID === userIDFromStore ? (
-          <MyProfile key={userID} />
-        ) : (
-          <Profile key={userID} userID={userID!} />
-        )}
+        {userIDFromStore &&
+          (userID === userIDFromStore ? (
+            <MyProfile key={userID} />
+          ) : (
+            <Profile key={userID} userID={userID!} />
+          ))}
       </Suspense>
     </div>
   );

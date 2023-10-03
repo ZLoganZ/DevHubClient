@@ -8,8 +8,9 @@ import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 
 import ActiveStatus from '@/components/ActionComponent/ActiveStatus';
-import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/components/Wrapper';
 import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
+
+import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
 
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -48,16 +49,16 @@ const App = () => {
           <Route path='/reset' element={<ResetPassword />} />
         </Route>
         <Route element={<Auth />}>
-          <Route index element={<MainLayout Component={NewsFeed} />} />
+          <Route index element={<MainLayout Component={<NewsFeed />} />} />
           <Route path='/message/:conversationID?' element={<Chat />} />
           <Route path='/select-interest' element={<SelectInterest />} />
           <Route path='/select-follow' element={<SelectFollow />} />
           <Route path='/select-community' element={<SelectCommunity />} />
           <Route path='/get-started' element={<GetStarted />} />
-          <Route path='/user/:userID' element={<MainLayout Component={ProfileWrapper} />} />
-          <Route path='/me' element={<MainLayout Component={ProfileWrapper} />} />
-          <Route path='/post/:postID' element={<MainLayout Component={PostWrapper} />} />
-          <Route path='/community/:communityID' element={<MainLayout Component={CommunityWrapper} />} />
+          <Route path='/user/:userID' element={<MainLayout Component={<ProfileWrapper />} />} />
+          <Route path='/me' element={<MainLayout Component={<ProfileWrapper />} />} />
+          <Route path='/post/:postID' element={<MainLayout Component={<PostWrapper />} />} />
+          <Route path='/community/:communityID' element={<MainLayout Component={<CommunityWrapper />} />} />
           <Route path='*' element={<NotFound404 />} />
         </Route>
       </Routes>

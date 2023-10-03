@@ -19,80 +19,51 @@ interface Props {
 }
 
 const AddContacts = (Props: Props) => {
-  const dispatch = useAppDispatch();
-
-  // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColorSet } = getTheme();
+
+  const dispatch = useAppDispatch();
+  const [addLinkArr, setAddLinkArr] = useState([...Props.contacts]);
+  const [addTooltips, setAddTooltips] = useState([...Props.contacts]);
+  const [save, setSave] = useState(false);
 
   const contactArray = [...contactArrays];
-
-  //add contacts
-  const [addLinkArr, setAddLinkArr] = useState([...Props.contacts]);
-
-  let addLinkArrTemp = addLinkArr.map((obj) => ({ ...obj }));
-
-  //add tooltips
-  const [addTooltips, setAddTooltips] = useState([...Props.contacts]);
-
-  let addTooltipsTemp = addTooltips.map((obj) => ({ ...obj }));
-
-  //save
-  const [save, setSave] = useState(false);
+  const { themeColorSet } = getTheme();
 
   const handleSubmit = () => {
     Props.callback(addLinkArr);
   };
+
   const handleDropClick = (e: any, index: number) => {
-    if (addTooltipsTemp[index].tooltip === contactArray[parseInt(addTooltipsTemp[index].key)].label) {
-      switch (e.key) {
-        case '0':
-          addTooltipsTemp[index].tooltip = contactArray[0].label;
-          break;
-        case '1':
-          addTooltipsTemp[index].tooltip = contactArray[1].label;
-          break;
-        case '2':
-          addTooltipsTemp[index].tooltip = contactArray[2].label;
-          break;
-        case '3':
-          addTooltipsTemp[index].tooltip = contactArray[3].label;
-          break;
-        case '4':
-          addTooltipsTemp[index].tooltip = contactArray[4].label;
-          break;
-      }
-    }
+    const selectedLabel = contactArray[parseInt(e.key)].label;
+    const newAddTooltips = [...addTooltips];
+    const newAddLinkArr = [...addLinkArr];
 
-    addTooltipsTemp[index].key = e.key;
-    addLinkArrTemp[index].key = addTooltipsTemp[index].key;
-    addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
+    newAddTooltips[index].tooltip = selectedLabel;
+    newAddTooltips[index].key = e.key;
+    newAddLinkArr[index].key = e.key;
+    newAddLinkArr[index].tooltip = selectedLabel;
 
-    // if (handleAddLink(addLinkArrTemp[index].link, e.key)) {
-    setAddLinkArr(addLinkArrTemp);
-    setAddTooltips(addTooltipsTemp);
-    // } else {
-    // addLinkArrTemp[index].link = '';
-    // setAddLinkArr(addLinkArrTemp);
-    // }
+    setAddTooltips(newAddTooltips);
+    setAddLinkArr(newAddLinkArr);
   };
 
   const handleDelete = (index: number) => {
-    addLinkArrTemp.splice(index, 1);
-    setAddLinkArr(addLinkArrTemp);
+    const newAddLinkArr = [...addLinkArr];
+    const newAddTooltips = [...addTooltips];
 
-    addTooltipsTemp.splice(index, 1);
-    setAddTooltips(addTooltipsTemp);
+    newAddLinkArr.splice(index, 1);
+    newAddTooltips.splice(index, 1);
+
+    setAddLinkArr(newAddLinkArr);
+    setAddTooltips(newAddTooltips);
   };
 
   const handleEnterLink = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    if (isValidLink(e.target.value)) {
-      addLinkArrTemp[index].link = e.target.value;
-      // addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
+    const newAddLinkArr = [...addLinkArr];
 
-      // if (handleAddLink(addLinkArrTemp[index].link, key)) {
-      setAddLinkArr(addLinkArrTemp);
-      // }
+    if (isValidLink(e.target.value)) {
+      newAddLinkArr[index].link = e.target.value;
+      setAddLinkArr(newAddLinkArr);
     }
   };
 
@@ -117,15 +88,37 @@ const AddContacts = (Props: Props) => {
   };
 
   const handleClickSubmit = () => {
-    addLinkArrTemp = addLinkArrTemp.filter(
+    const newAddLinkArr = addLinkArr.filter(
       (item) => isValidLink(item.link) && handleAddLink(item.link, item.key)
     );
+    setAddLinkArr(newAddLinkArr);
   };
 
-  function handleShowTooltip(index: number) {
-    addTooltipsTemp[index].state = !addTooltipsTemp[index].state;
-    setAddTooltips(addTooltipsTemp);
-  }
+  const handleClickAdd = () => {
+    const newAddLinkArr = [...addLinkArr];
+    const newAddTooltips = [...addTooltips];
+
+    newAddLinkArr.push({
+      link: '',
+      key: '0',
+      tooltip: 'Facebook'
+    });
+    newAddTooltips.push({
+      tooltip: 'Facebook',
+      state: false,
+      key: '0',
+      link: ''
+    });
+
+    setAddLinkArr(newAddLinkArr);
+    setAddTooltips(newAddTooltips);
+  };
+
+  const handleShowTooltip = (index: number) => {
+    const newAddTooltips = [...addTooltips];
+    newAddTooltips[index].state = !newAddTooltips[index].state;
+    setAddTooltips(newAddTooltips);
+  };
 
   useEffect(() => {
     setSave(false);
@@ -142,7 +135,7 @@ const AddContacts = (Props: Props) => {
       }}>
       <StyleProvider theme={themeColorSet}>
         <div className='flex flex-col mt-7'>
-          {addLinkArrTemp.map((item, index) => (
+          {addLinkArr.map((item, index) => (
             <div key={index} className='flex flex-row items-center mb-4'>
               <Dropdown
                 menu={{
@@ -188,19 +181,17 @@ const AddContacts = (Props: Props) => {
               />
               <Input
                 key={index + '2'}
-                className={
-                  addTooltips[index].state
-                    ? 'w-full ml-2 pl-2 inputlink'
-                    : 'w-full ml-2 pl-2 inputlink hidden'
-                }
+                className={`w-full ml-2 pl-2 inputlink ${addTooltips[index].state ? '' : 'hidden'}`}
                 inputMode='text'
                 value={addTooltips[index]?.tooltip}
                 onChange={(e) => {
-                  addTooltipsTemp[index].tooltip = e.target.value;
-                  setAddTooltips(addTooltipsTemp);
+                  const newAddTooltips = [...addTooltips];
+                  newAddTooltips[index].tooltip = e.target.value;
+                  setAddTooltips(newAddTooltips);
 
-                  addLinkArrTemp[index].tooltip = addTooltipsTemp[index].tooltip;
-                  setAddLinkArr(addLinkArrTemp);
+                  const newAddLinkArr = [...addLinkArr];
+                  newAddLinkArr[index].tooltip = newAddTooltips[index].tooltip;
+                  setAddLinkArr(newAddLinkArr);
                 }}
                 style={{
                   height: 38,
@@ -236,15 +227,7 @@ const AddContacts = (Props: Props) => {
               </Button>
             </div>
           ))}
-          <Button
-            className='my-3'
-            onClick={() => {
-              setAddLinkArr([...addLinkArr, { key: '0', tooltip: 'Facebook', link: '' }]);
-              addLinkArrTemp = [...addLinkArr, { key: '0', tooltip: 'Facebook', link: '' }];
-
-              setAddTooltips([...addTooltips, { key: '0', tooltip: 'Facebook', state: false, link: '' }]);
-              addTooltipsTemp = [...addTooltips, { key: '0', tooltip: 'Facebook', state: false, link: '' }];
-            }}>
+          <Button className='my-3' onClick={handleClickAdd}>
             <FontAwesomeIcon icon={faPlus} className='mr-2' />
             Add
           </Button>
@@ -252,7 +235,6 @@ const AddContacts = (Props: Props) => {
             <ButtonActiveHover
               onClick={() => {
                 handleClickSubmit();
-                setAddLinkArr(addLinkArrTemp);
                 dispatch(closeModal(setSave(true)));
               }}
               block>

@@ -276,10 +276,7 @@ const MyProfile = () => {
                         <div className='mt-10 mb-20'>
                           {!userInfo.about && userInfo.repositories.length === 0 && (
                             <div className='w-8/12 mb-10 xs:w-full'>
-                              <Empty
-                                image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No introduction</span>}
-                              />
+                              <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} description='No introduction' />
                             </div>
                           )}
                           {userInfo.about && (
@@ -319,36 +316,27 @@ const MyProfile = () => {
                       key: '2',
                       label: 'Posts',
                       children: (
-                        <div className='mt-5'>
-                          <div className='w-8/12 xs:w-full'>
-                            <NewPost userInfo={userInfo} />
-                          </div>
+                        <div className='mt-5 w-8/12 xs:w-full'>
+                          <NewPost userInfo={userInfo} />
                           {userPosts.length === 0 && (
-                            <div className='w-8/12 xs:w-full'>
-                              <Empty
-                                className='mt-10 mb-20'
-                                image={Empty.PRESENTED_IMAGE_DEFAULT}
-                                description={<span>No posts available</span>}
-                              />
-                            </div>
+                            <Empty
+                              className='mt-10 mb-20'
+                              image={Empty.PRESENTED_IMAGE_DEFAULT}
+                              description='No posts available'
+                            />
                           )}
-                          {userPosts.map((item) => {
-                            return (
-                              <div key={item._id} className='w-8/12 xs:w-full'>
-                                {item.type === 'Share' && (
-                                  <MyPostShare
-                                    key={item._id}
-                                    postShared={item}
-                                    userInfo={userInfo}
-                                    ownerInfo={item.post_attributes.owner_post!}
-                                  />
-                                )}
-                                {item.type === 'Post' && (
-                                  <MyPost key={item._id} post={item} userInfo={userInfo} />
-                                )}
-                              </div>
-                            );
-                          })}
+                          {userPosts.map((item) =>
+                            item.type === 'Share' ? (
+                              <MyPostShare
+                                key={item._id}
+                                postShared={item}
+                                userInfo={userInfo}
+                                ownerInfo={item.post_attributes.owner_post!}
+                              />
+                            ) : (
+                              <MyPost key={item._id} post={item} userInfo={userInfo} />
+                            )
+                          )}
                         </div>
                       )
                     },

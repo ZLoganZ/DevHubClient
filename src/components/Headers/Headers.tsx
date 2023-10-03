@@ -95,7 +95,13 @@ const Headers = () => {
   const itemsNoti: MenuProps['items'] = [
     {
       key: '-1',
-      label: <Empty className='cursor-default px-40' image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      label: (
+        <Empty
+          className='cursor-default px-40'
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description='No notifications'
+        />
+      )
     }
   ];
 
