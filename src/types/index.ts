@@ -182,6 +182,7 @@ export type GetChildCommentsType = {
 export type LikeCommentType = {
   type: TypeofComment;
   post: string;
+  owner_comment: string;
 };
 
 export type CommentType = {
@@ -194,9 +195,13 @@ export type CommentType = {
   //if type is child
   parent?: CommentType;
 
+  //if type is parent
+  children?: CommentType[];
+
   is_liked: boolean;
   is_disliked: boolean;
   likes: LikeType[];
+  dislikes: LikeType[];
   like_number: number;
   dislike_number: number;
   createdAt: string;
@@ -205,6 +210,8 @@ export type CommentType = {
 export type SelectedCommentValues = {
   isReply: boolean;
   idComment: string | null;
+  name: string | null;
+  user_image: string | null;
 };
 
 export type ResponseType<T> = {

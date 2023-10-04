@@ -122,7 +122,7 @@ const MyPost = ({ post, userInfo }: PostProps) => {
             title: 'Edit post',
             component: (
               <EditPostForm
-                key={Math.random()}
+                key={post._id}
                 id={post._id}
                 title={post.post_attributes.title!}
                 content={post.post_attributes.content!}

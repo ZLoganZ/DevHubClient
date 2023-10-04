@@ -10,8 +10,9 @@ import { UploadOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
-import { callBackSubmitDrawer } from '@/redux/Slice/DrawerHOCSlice';
+import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
+import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssEditPostForm';
@@ -43,8 +44,8 @@ const EditPostForm = (PostProps: PostProps) => {
   const [content, setContent] = useState(PostProps.content);
 
   useEffect(() => {
-    setContent(PostProps.content);
-  }, [content]);
+    setContent(content);
+  }, []);
 
   const ReactQuillRef = useRef<any>();
 
@@ -104,6 +105,7 @@ const EditPostForm = (PostProps: PostProps) => {
     if (content === '<p><br></p>') {
       error();
     } else {
+      dispatch(setLoading(true));
       if (form.getValues('img') !== PostProps.img) {
         if (form.getValues('img')) {
           const result = await handleUploadImage(form.getValues('img')!);
@@ -112,6 +114,7 @@ const EditPostForm = (PostProps: PostProps) => {
         if (PostProps.img) await handleRemoveImage(PostProps.img);
       }
       values.img = form.getValues('img');
+      values.content = content;
 
       mutateUpdatePost({
         id: PostProps.id,
@@ -134,21 +137,18 @@ const EditPostForm = (PostProps: PostProps) => {
       event.preventDefault();
       const text = event.clipboardData!.getData('text/plain');
 
-      const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, '<br>')
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        .replace(/ /g, '&nbsp;');
-
       // Instead parse and insert HTML
       const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
+      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
 
       document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });
+  }, []);
 
+  useEffect(() => {
     // Dispatch callback submit lên cho DrawerHOC
     dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
-  }, []);
+  }, [content, form]);
 
   // Hàm hiển thị mesage
   const error = () => {

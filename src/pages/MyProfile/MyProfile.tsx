@@ -34,6 +34,8 @@ import StyleProvider from './cssMyProfile';
 const MyProfile = () => {
   const dispatch = useAppDispatch();
 
+  const userID = useAppSelector((state) => state.auth.userID);
+
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -44,7 +46,7 @@ const MyProfile = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData('me');
+  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID!);
 
   useEffect(() => {
     if (isLoadingUserPosts) {

@@ -24,7 +24,9 @@ const OtherPostDetail = (Props: PostProps) => {
   const [selectedCommentID, setSelectedCommentId] = useState<string | null>();
   const [data, setData] = useState<SelectedCommentValues>({
     isReply: false,
-    idComment: null
+    idComment: null,
+    name: null,
+    user_image: null
   });
 
   const { comments, isLoadingComments } = useCommentsData(Props.post._id);
@@ -82,7 +84,12 @@ const OtherPostDetail = (Props: PostProps) => {
                 })
               )}
             </div>
-            <CommentInput key={Math.random()} data={data} postID={Props.post._id} userInfo={Props.userInfo} />
+            <CommentInput
+              key={Props.post._id}
+              data={data}
+              postID={Props.post._id}
+              userInfo={Props.userInfo}
+            />
           </div>
         </Col>
       </Row>

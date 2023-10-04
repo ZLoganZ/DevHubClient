@@ -81,7 +81,12 @@ const MyPostDetail = (Props: PostProps) => {
                 })
               )}
             </div>
-            <CommentInput key={Math.random()} data={data} postID={Props.post._id} userInfo={Props.userInfo} />
+            <CommentInput
+              key={Props.post._id}
+              data={data}
+              postID={Props.post._id}
+              userInfo={Props.userInfo}
+            />
           </div>
         </Col>
       </Row>

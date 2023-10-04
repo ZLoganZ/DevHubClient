@@ -60,10 +60,10 @@ export class PostService extends BaseService {
     return this.put(`/posts/view/${id}`);
   };
   likeComment = (id: string, payload: LikeCommentType) => {
-    return this.post(`/comments/like/${id}`, payload);
+    return this.put(`/comments/like/${id}`, payload);
   };
-  dislikeCommentPost = (id: string, payload: LikeCommentType) => {
-    return this.post(`/comment/dislike/${id}`, payload);
+  dislikeComment = (id: string, payload: LikeCommentType) => {
+    return this.put(`/comments/dislike/${id}`, payload);
   };
 }
 

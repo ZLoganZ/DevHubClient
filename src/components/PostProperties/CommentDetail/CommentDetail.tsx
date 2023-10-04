@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useLikeComment } from '@/hooks/mutation';
+import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
 import { CommentType, SelectedCommentValues, UserInfoType } from '@/types';
 import StyleProvider from './cssCommentDetail';
 
@@ -27,11 +27,12 @@ const CommentDetail = (Props: CommentProps) => {
   useAppSelector((state) => state.theme.change);
 
   const { mutateLikeComment } = useLikeComment();
+  const { mutateDislikeComment } = useDislikeComment();
 
   const { themeColorSet } = getTheme();
 
   const [likes, setLike] = useState(Props.comment.like_number || 0);
-  const [dislikes, setDislike] = useState(Props.comment.like_number || 0);
+  const [dislikes, setDislike] = useState(Props.comment.dislike_number || 0);
   const [action, setAction] = useState('');
 
   useEffect(() => {
@@ -56,7 +57,8 @@ const CommentDetail = (Props: CommentProps) => {
       id: Props.comment._id,
       comment: {
         type: Props.isReply ? 'child' : 'parent',
-        post: Props.postID!
+        post: Props.postID!,
+        owner_comment: Props.comment.user._id
       }
     });
   };
@@ -71,11 +73,12 @@ const CommentDetail = (Props: CommentProps) => {
       setAction('disliked');
     }
 
-    mutateLikeComment({
+    mutateDislikeComment({
       id: Props.comment._id,
       comment: {
         type: Props.isReply ? 'child' : 'parent',
-        post: Props.postID!
+        post: Props.postID!,
+        owner_comment: Props.comment.user._id
       }
     });
   };
@@ -84,7 +87,9 @@ const CommentDetail = (Props: CommentProps) => {
     const selectedCommentID = Props.selectedCommentID === Props.comment._id ? null : Props.comment._id;
     Props.handleData({
       isReply: selectedCommentID ? true : false,
-      idComment: selectedCommentID
+      idComment: selectedCommentID,
+      name: Props.comment.user.name,
+      user_image: Props.comment.user.user_image
     });
     Props.onSelectComment(selectedCommentID);
   };

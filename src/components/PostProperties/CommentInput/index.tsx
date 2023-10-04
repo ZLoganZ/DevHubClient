@@ -25,13 +25,7 @@ const CommentInput = (Props: Props) => {
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
-  const data = useMemo<SelectedCommentValues>(
-    () => ({
-      isReply: false,
-      idComment: null
-    }),
-    [Props.data]
-  );
+  const data = useMemo<SelectedCommentValues>(() => Props.data, [Props.data]);
 
   const inputRef = useRef<any>();
 
@@ -71,8 +65,8 @@ const CommentInput = (Props: Props) => {
           <Input
             ref={inputRef}
             value={commentContent}
-            placeholder='Add a Comment'
-            // allowClear
+            placeholder='Write a comment...'
+            allowClear
             onKeyUp={(e) => {
               const cursorPosition = e.currentTarget.selectionStart;
               setCursor(cursorPosition || 0);
@@ -135,6 +129,15 @@ const CommentInput = (Props: Props) => {
                 onClick={handleSubmitComment}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </span>
+            }
+            prefix={
+              data.isReply && (
+                <div className='flex items-center'>
+                  <span className='mr-2'>Reply to</span>
+                  <Avatar className='mr-2' size={20} src={data.user_image} />
+                  <span className='mr-2'>{data.name}</span>
+                </div>
+              )
             }
           />
         </div>

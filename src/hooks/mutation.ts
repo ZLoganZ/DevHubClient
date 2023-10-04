@@ -92,12 +92,17 @@ export const useViewPost = () => {
 export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
+  const dispatch = useAppDispatch();
+
   const { mutate, isLoading, isError, isSuccess } = useMutation({
     mutationFn: async (post: UpdatePostDataType) => {
       const { data } = await postService.updatePost(post.id, post.postUpdate);
       return data;
     },
     onSuccess(updatedPost) {
+      dispatch(setLoading(false));
+      dispatch(closeDrawer());
+
       const updatePostData = (oldData: PostType[] | undefined) => {
         return oldData?.map((post) => {
           if (post._id === updatedPost.metadata._id) {
@@ -108,7 +113,7 @@ export const useUpdatePost = () => {
       };
 
       queryClient.setQueriesData<PostType[]>(
-        ['posts', updatedPost.metadata.post_attributes.owner_post!._id],
+        ['posts', updatedPost.metadata.post_attributes.user._id],
         updatePostData
       );
 
@@ -311,6 +316,36 @@ export const useLikeComment = () => {
     isLoadingLikeComment: isLoading,
     isErrorLikeComment: isError,
     isSuccessLikeComment: isSuccess
+  };
+};
+
+/**
+ * The `useDislikeComment` function is a custom hook that handles the logic for disliking a comment,
+ * including making the API request and updating the cache.
+ * @returns The `useDislikeComment` function returns an object with the following properties:
+ * - `mutateDislikeComment` is a function that handles the mutation of the comment.
+ * - `isLoadingDislikeComment` is a boolean that indicates whether the comment is still loading.
+ * - `isErrorDislikeComment` is a boolean that indicates whether there is an error.
+ * - `isSuccessDislikeComment` is a boolean that indicates whether the comment was successfully
+ */
+export const useDislikeComment = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading, isError, isSuccess } = useMutation({
+    mutationFn: async (payload: CreateLikeCommentType) => {
+      await postService.dislikeComment(payload.id, payload.comment);
+    },
+    onSuccess(_, payload) {
+      queryClient.invalidateQueries({
+        queryKey: ['comments', payload.comment.post]
+      });
+    }
+  });
+  return {
+    mutateDislikeComment: mutate,
+    isLoadingDislikeComment: isLoading,
+    isErrorDislikeComment: isError,
+    isSuccessDislikeComment: isSuccess
   };
 };
 

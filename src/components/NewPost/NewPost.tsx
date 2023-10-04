@@ -16,6 +16,7 @@ import { useMediaQuery } from 'react-responsive';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
+import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
@@ -60,14 +61,9 @@ const NewPost = (Props: Props) => {
       event.preventDefault();
       const text = event.clipboardData!.getData('text/plain');
 
-      const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, '<br>')
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        .replace(/ /g, '&nbsp;');
-
       // Instead parse and insert HTML
       const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
+      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
 
       document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });

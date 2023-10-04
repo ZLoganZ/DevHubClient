@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/theme';
+import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssQuillEdit';
@@ -37,14 +38,9 @@ const QuillEdit = (Props: QuillEditProps) => {
       event.preventDefault();
       const text = event.clipboardData!.getData('text/plain');
 
-      const textToHTMLWithTabAndSpace = text
-        .replace(/\n/g, '<br>')
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-        .replace(/ /g, '&nbsp;');
-
       // Instead parse and insert HTML
       const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithTabAndSpace, 'text/html');
+      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
 
       document.getSelection()?.getRangeAt(0).insertNode(doc.body);
     });

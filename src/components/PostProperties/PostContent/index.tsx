@@ -33,7 +33,7 @@ const ContentPost = (Props: ContentPostProps) => {
   const [displayContent, setDisplayContent] = useState(Props.content);
 
   useEffect(() => {
-    setDisplayContent(isMoreThan250 && !expanded ? Props.content.slice(0, 250) : Props.content);
+    setDisplayContent(isMoreThan250 && !expanded ? Props.content.slice(0, 250) + '...' : Props.content);
   }, [expanded, Props.content]);
 
   // ------------------------ View ------------------------
