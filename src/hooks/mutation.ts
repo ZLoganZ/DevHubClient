@@ -10,6 +10,7 @@ import {
   PostType,
   SharePostDataType,
   UpdatePostDataType,
+  UserInfoType,
   UserUpdateDataType
 } from '@/types';
 import { useAppDispatch, useAppSelector } from './special';
@@ -36,17 +37,14 @@ export const useCreatePost = () => {
       return data;
     },
     onSuccess(newPost) {
-      if (queryClient.getQueryData(['posts', uid]))
-        queryClient.setQueriesData<PostType[]>(['posts', uid], (oldData) => [
-          ...(oldData || []),
-          newPost.metadata
-        ]);
-
-      if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], (oldData) => [
-          ...(oldData || []),
-          newPost.metadata
-        ]);
+      queryClient.setQueriesData<PostType[]>(['posts', uid], (oldData) => {
+        if (oldData) return [newPost.metadata, ...oldData];
+        return oldData;
+      });
+      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], (oldData) => {
+        if (oldData) return [newPost.metadata, ...oldData];
+        return oldData;
+      });
     }
   });
   return {
@@ -105,9 +103,8 @@ export const useUpdatePost = () => {
 
       const updatePostData = (oldData: PostType[] | undefined) => {
         return oldData?.map((post) => {
-          if (post._id === updatedPost.metadata._id) {
-            return updatedPost.metadata;
-          }
+          if (post._id === updatedPost.metadata._id) return updatedPost.metadata;
+
           return post;
         });
       };
@@ -117,8 +114,7 @@ export const useUpdatePost = () => {
         updatePostData
       );
 
-      if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
+      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
 
       queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
     }
@@ -156,8 +152,7 @@ export const useDeletePost = () => {
 
       queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
 
-      if (queryClient.getQueryData(['allPostsNewsfeed']))
-        queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
+      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
     }
   });
   return {
@@ -365,14 +360,13 @@ export const useUpdateUser = () => {
 
   const { mutate, isLoading, isError, isSuccess } = useMutation({
     mutationFn: async (user: UserUpdateDataType) => {
-      await userService.updateUser(user);
+      const { data } = await userService.updateUser(user);
+      return data;
     },
-    onSuccess() {
+    onSuccess(updatedUser) {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
-      queryClient.invalidateQueries({
-        queryKey: ['currentUserInfo']
-      });
+      queryClient.setQueriesData(['currentUserInfo'], updatedUser.metadata);
     }
   });
   return {
@@ -400,11 +394,24 @@ export const useFollowUser = () => {
       await userService.followUser(userID);
     },
     onSuccess(_, userID) {
-      queryClient.invalidateQueries({
-        queryKey: ['otherUserInfo', userID]
+      queryClient.setQueriesData<UserInfoType>(['currentUserInfo'], (oldData) => {
+        if (oldData)
+          return {
+            ...oldData,
+            following_number: oldData.following_number + 1
+          };
+
+        return oldData;
       });
-      queryClient.invalidateQueries({
-        queryKey: ['currentUserInfo']
+
+      queryClient.setQueriesData<UserInfoType>(['otherUserInfo', userID], (oldData) => {
+        if (oldData)
+          return {
+            ...oldData,
+            follower_number: oldData.follower_number + 1
+          };
+
+        return oldData;
       });
     }
   });

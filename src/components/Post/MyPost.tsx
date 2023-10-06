@@ -42,7 +42,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { mutateDeletePost } = useDeletePost();
+  const { mutateDeletePost, isSuccessDeletePost, isErrorDeletePost } = useDeletePost();
 
   //format date to get full date
   const date = formatDateTime(post.createdAt);
@@ -197,7 +197,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost postAuthor={postAuthor} postID={post._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={post._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

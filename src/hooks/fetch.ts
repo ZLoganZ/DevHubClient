@@ -159,12 +159,10 @@ export const useAllPostsNewsfeedData = () => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const client_id = useAppSelector((state) => state.auth.userID);
-
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
     queryFn: async () => {
-      const { data } = await postService.getAllPostByUserID(userID === 'me' ? client_id! : userID);
+      const { data } = await postService.getAllPostByUserID(userID);
       return ApplyDefaults(data.metadata);
     },
     enabled: !!userID,
