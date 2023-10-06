@@ -54,7 +54,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
     setIsModalOpen(true);
   };
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   const handleRemoveImage = async (imageURL: any) => {
     const nameSplit = imageURL.split('/');
@@ -197,7 +197,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost postAuthor={postAuthor} postID={post._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={post._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

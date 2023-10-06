@@ -1,44 +1,29 @@
-import { useState, useEffect } from 'react';
 import { Col, Row, Skeleton } from 'antd';
 
 import CommentDetail from '@/components/PostProperties/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
-import CommentInput from '@/components/PostProperties/CommentInput';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
-import { PostType, SelectedCommentValues, UserInfoType } from '@/types';
+import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
+import CommentInput from '../PostProperties/CommentInput';
+import { useEffect, useState } from 'react';
 
 interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
   currentUser: UserInfoType;
+  inclCommentInput?: boolean;
 }
 
-const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
+const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [selectedCommentID, setSelectedCommentId] = useState<string | null>();
-  const [data, setData] = useState<SelectedCommentValues>({
-    isReply: false,
-    idComment: null,
-    name: null,
-    user_image: null
-  });
-
   const { comments, isLoadingComments } = useCommentsData(post._id);
-
-  useEffect(() => {
-    setSelectedCommentId(data.idComment);
-  }, [data]);
-
-  const handleSelectComment = (commentID: string | null) => {
-    setSelectedCommentId(commentID);
-  };
 
   const [commentInput, setCommentInput] = useState('');
 
@@ -84,7 +69,6 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                 {commentInput !== '' ? (
                   <CommentDetail
                     key={post._id}
-                    handleData={setData}
                     comment={{
                       _id: '1',
                       post: post,
@@ -99,9 +83,6 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                       dislike_number: 0,
                       createdAt: 'sending...'
                     }}
-                    postAuthor={postAuthor}
-                    selectedCommentID={selectedCommentID}
-                    onSelectComment={handleSelectComment}
                     postID={post._id}
                   />
                 ) : null}
@@ -110,31 +91,11 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
               ) : (
                 comments?.map((item) => {
-                  return (
-                    <div key={item._id}>
-                      {item ? (
-                        <CommentDetail
-                          key={item._id}
-                          handleData={setData}
-                          comment={item}
-                          postAuthor={postAuthor}
-                          selectedCommentID={selectedCommentID}
-                          onSelectComment={handleSelectComment}
-                          postID={post._id}
-                        />
-                      ) : null}
-                    </div>
-                  );
+                  return <CommentDetail key={item._id} comment={item} postID={post._id} />;
                 })
               )}
             </div>
-            <CommentInput
-              key={post._id}
-              data={data}
-              postID={post._id}
-              currentUser={currentUser}
-              handleCommentInput={handleCommentInput}
-            />
+            {inclCommentInput && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} handleCommentInput={handleCommentInput}/>}
           </div>
         </Col>
       </Row>

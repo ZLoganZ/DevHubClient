@@ -35,7 +35,7 @@ const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShar
   //format date to get full date
   const postDate = formatDateTime(post!.createdAt);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   // postShared setting
   const items: MenuProps['items'] = [
@@ -58,7 +58,7 @@ const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShar
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost postAuthor={postAuthor} postID={postShared._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -71,7 +71,7 @@ const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShar
         <div className='space-align-block'>
           <div className='postHeader flex justify-between items-center'>
             <div className='postHeader__left'>
-              <UserInfoPost postAuthor={postSharer} postID={post!._id} date={postDate} />
+              <UserInfoPost userInfo={postSharer} postID={post!._id} date={postDate} />
             </div>
           </div>
           <div className='postBody mt-5'>

@@ -5,13 +5,14 @@ import { faBookmark, faComment, faHeart, faShare, faShareNodes } from '@fortawes
 import { useMediaQuery } from 'react-responsive';
 
 import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
+import CommentInput from '@/components/PostProperties/CommentInput';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useLikePost, useSavePost, useSharePost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
-import StyleProvider from './cssPostFooter';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
+import StyleProvider from './cssPostFooter';
 
 interface PostFooterProps {
   post: PostType;
@@ -33,7 +34,8 @@ const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterPr
   const commentNumber = post.post_attributes.comment_number;
   const viewNumber = post.post_attributes.view_number;
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
+
   // ------------------------ Like ------------------------
 
   const [likeNumber, setLikeNumber] = useState(post.post_attributes.like_number);
@@ -137,7 +139,7 @@ const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterPr
                     component: (
                       <OtherPostDetail post={post} postAuthor={postAuthor} currentUser={currentUser} />
                     ),
-                    footer: null,
+                    footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
                     type: 'post'
                   })
                 )

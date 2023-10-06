@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
-import { SelectedCommentValues, UserInfoType } from '@/types';
+import { UserInfoType } from '@/types';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
@@ -13,11 +13,10 @@ import StyleProvider from './cssCommentInput';
 interface Props {
   currentUser: UserInfoType;
   postID: string;
-  data: SelectedCommentValues;
   handleCommentInput: (value: string) => void;
 }
 
-const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) => {
+const CommentInput = ({ currentUser, postID, handleCommentInput }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -26,7 +25,7 @@ const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) 
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
-  const dataMemo = useMemo<SelectedCommentValues>(() => data, [data]);
+  const data = useAppSelector((state) => state.modalHOC.data);
 
   const inputRef = useRef<any>();
 
@@ -39,7 +38,7 @@ const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) 
   };
 
   const handleSubmitComment = () => {
-    const { isReply, idComment } = dataMemo;
+    const { isReply, idComment } = data;
 
     if (checkEmpty()) return;
 
@@ -57,8 +56,8 @@ const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) 
   };
 
   useEffect(() => {
-    if (dataMemo.isReply) inputRef.current.focus();
-  }, [dataMemo]);
+    if (data.isReply) inputRef.current.focus();
+  }, [data]);
 
   return (
     <StyleProvider>
@@ -134,11 +133,11 @@ const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) 
               </span>
             }
             prefix={
-              dataMemo.isReply && (
+              data.isReply && (
                 <div className='flex items-center'>
                   <span className='mr-2'>Reply to</span>
-                  <Avatar className='mr-2' size={20} src={dataMemo.user_image} />
-                  <span className='mr-2'>{dataMemo.name}</span>
+                  <Avatar className='mr-2' size={20} src={data.user_image} />
+                  <span className='mr-2'>{data.name}</span>
                 </div>
               )
             }

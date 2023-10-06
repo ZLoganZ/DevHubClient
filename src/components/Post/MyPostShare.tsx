@@ -49,7 +49,7 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
   // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -136,7 +136,7 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost postAuthor={postAuthor} postID={postShared._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -149,7 +149,7 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
         <div className='space-align-block'>
           <div className='postHeader flex justify-between items-center'>
             <div className='postHeader__left'>
-              <UserInfoPost postAuthor={postSharer} postID={post!._id} date={postDate} />
+              <UserInfoPost userInfo={postSharer} postID={post!._id} date={postDate} />
             </div>
           </div>
           <div className='postBody mt-5'>

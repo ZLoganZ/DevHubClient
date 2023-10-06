@@ -31,7 +31,7 @@ const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
   //format date to get full date
   const date = formatDateTime(post.createdAt);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   // post setting
   const items: MenuProps['items'] = [
@@ -61,7 +61,7 @@ const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost postAuthor={post.post_attributes.user} postID={post._id} date={date} />
+            <UserInfoPost userInfo={post.post_attributes.user} postID={post._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
