@@ -35,6 +35,11 @@ const ModalHOC = () => {
           width={type === 'post' ? 1080 : 720}
           onCancel={onClose}
           open={visible}
+          bodyStyle={{
+            overflowY: 'auto',
+            maxHeight: 'calc(100vh - 200px)',
+            minHeight: 'calc(100vh - 5rem)'
+          }}
           footer={
             footer === true ? (
               <div className='flex justify-end'>

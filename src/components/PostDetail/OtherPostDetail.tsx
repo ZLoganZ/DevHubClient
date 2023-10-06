@@ -42,10 +42,10 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <Row className='py-4'>
-        <Col offset={3} span={18}>
+      <Row>
+        <Col offset={0} span={24}>
           <div
-            className='postDetail rounded-lg'
+            className='postDetail'
             style={{
               backgroundColor: themeColorSet.colorBg2
             }}>
@@ -79,7 +79,8 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                           postAuthor={postAuthor}
                           selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
-                          postID={post._id}></CommentDetail>
+                          postID={post._id}
+                        />
                       ) : null}
                     </div>
                   );
