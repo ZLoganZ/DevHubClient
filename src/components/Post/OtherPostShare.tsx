@@ -35,7 +35,7 @@ const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShar
   //format date to get full date
   const postDate = formatDateTime(post!.createdAt);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   // postShared setting
   const items: MenuProps['items'] = [

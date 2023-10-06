@@ -102,9 +102,7 @@ export const PostWrapper = () => {
     );
   } else {
     if (post.post_attributes.user._id === currentUserInfo._id) {
-      return (
-        <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} currentUser={currentUserInfo} />
-      );
+      return <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} inclCommentInput />;
     } else
       return (
         <div
@@ -115,6 +113,7 @@ export const PostWrapper = () => {
             post={post}
             postAuthor={post.post_attributes.user}
             currentUser={currentUserInfo}
+            inclCommentInput
           />
         </div>
       );

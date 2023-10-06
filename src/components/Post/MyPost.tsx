@@ -42,7 +42,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { mutateDeletePost, isSuccessDeletePost, isErrorDeletePost } = useDeletePost();
+  const { mutateDeletePost } = useDeletePost();
 
   //format date to get full date
   const date = formatDateTime(post.createdAt);
@@ -54,7 +54,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
     setIsModalOpen(true);
   };
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   const handleRemoveImage = async (imageURL: any) => {
     const nameSplit = imageURL.split('/');

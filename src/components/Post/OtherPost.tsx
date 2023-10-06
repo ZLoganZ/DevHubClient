@@ -31,7 +31,7 @@ const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
   //format date to get full date
   const date = formatDateTime(post.createdAt);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   // post setting
   const items: MenuProps['items'] = [

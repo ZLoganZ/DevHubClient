@@ -49,7 +49,7 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
   // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
 
   const showModal = () => {
     setIsModalOpen(true);

@@ -6,7 +6,13 @@ const initialState = {
   visible: false,
   ComponentContentModal: null,
   footer: null,
-  handleSubmit: () => {}
+  handleSubmit: () => {},
+  data: {
+    isReply: false,
+    idComment: null,
+    name: null,
+    user_image: null
+  }
 };
 
 const modalHOCSlide = createSlice({
@@ -32,7 +38,13 @@ const modalHOCSlide = createSlice({
     closeModal: (state) => {
       return {
         ...state,
-        visible: false
+        visible: false,
+        data: {
+          isReply: false,
+          idComment: null,
+          name: null,
+          user_image: null
+        }
       };
     },
     setHandleSubmit: (state, action) => {
@@ -40,9 +52,15 @@ const modalHOCSlide = createSlice({
         ...state,
         handleSubmit: action.payload
       };
+    },
+    setData: (state, action) => {
+      return {
+        ...state,
+        data: action.payload
+      };
     }
   }
 });
 
-export const { openModal, setFooter, closeModal, setHandleSubmit } = modalHOCSlide.actions;
+export const { openModal, setFooter, closeModal, setHandleSubmit, setData } = modalHOCSlide.actions;
 export default modalHOCSlide.reducer;
