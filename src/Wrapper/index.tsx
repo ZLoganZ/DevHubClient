@@ -107,12 +107,16 @@ export const PostWrapper = () => {
       );
     } else
       return (
-        <OtherPostDetail
-          key={post._id}
-          post={post}
-          postAuthor={post.post_attributes.user}
-          currentUser={currentUserInfo}
-        />
+        <div
+          className='py-4 px-48'
+          style={{ backgroundColor: themeColorSet.colorBg1, minHeight: 'calc(100vh - 5rem)' }}>
+          <OtherPostDetail
+            key={post._id}
+            post={post}
+            postAuthor={post.post_attributes.user}
+            currentUser={currentUserInfo}
+          />
+        </div>
       );
   }
 };
