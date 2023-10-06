@@ -10,19 +10,20 @@ import { useAppSelector } from './special';
 // ---------------------------FETCH HOOKS---------------------------
 
 /**
- * The `useUserInfo` function is a custom hook that fetches user information and returns the loading
- * state, error state, user info data, and fetching state.
- * @returns The `useUserInfo` function returns an object with the following properties:
- * - `isLoadingUserInfo` is a boolean that indicates whether the data is still loading.
- * - `isErrorUserInfo` is a boolean that indicates whether there is an error.
- * - `userInfo` is an object that contains information about the user.
- * - `isFetchingUserInfo` is a boolean that indicates whether the query is currently fetching.
+ * The `useCurrentUserInfo` function is a custom hook that retrieves the current user's information,
+ * including their followers and following counts, from an API and returns the loading, error, and data
+ * states.
+ * @returns The function `useCurrentUserInfo` returns an object with the following properties:
+ * - `isLoadingCurrentUserInfo` is a boolean that indicates whether the user data is still loading.
+ * - `isErrorCurrentUserInfo` is a boolean that indicates whether there is an error.
+ * - `currentUserInfo` is an object that contains information about the current user.
+ * - `isFetchingCurrentUserInfo` is a boolean that indicates whether the query is currently fetching.
  */
-export const useUserInfo = () => {
-  const userID = useAppSelector((state) => state.auth.userID) || localStorage.getItem('x-client-id');
+export const useCurrentUserInfo = () => {
+  const userID = useAppSelector((state) => state.auth.userID);
 
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ['userInfo'],
+    queryKey: ['currentUserInfo'],
     queryFn: async () => {
       const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
         userService.getFollowers(userID!),
@@ -38,10 +39,10 @@ export const useUserInfo = () => {
   });
 
   return {
-    isLoadingUserInfo: isLoading,
-    isErrorUserInfo: isError,
-    userInfo: data!,
-    isFetchingUserInfo: isFetching
+    isLoadingCurrentUserInfo: isLoading,
+    isErrorCurrentUserInfo: isError,
+    currentUserInfo: data!,
+    isFetchingCurrentUserInfo: isFetching
   };
 };
 
@@ -148,7 +149,7 @@ export const useAllPostsNewsfeedData = () => {
 
 /**
  * The `useUserPostsData` function is a custom hook that fetches and returns data related to posts, user
- * information, and ownerInfo information based on a given userID.
+ * information, and postSharer information based on a given userID.
  * @param {string} userID - The userID parameter is a string that represents the user ID for which the
  * posts data is being fetched.
  * @returns The function `useUserPostsData` returns an object with the following properties:

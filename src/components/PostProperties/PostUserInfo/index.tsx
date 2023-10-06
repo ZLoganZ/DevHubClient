@@ -9,7 +9,7 @@ import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 
 interface UserInfoPostProps {
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
   postID: string;
   date: string;
 }
@@ -22,17 +22,17 @@ const UserInfoPost = (Props: UserInfoPostProps) => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='name_avatar flex'>
-        <Avatar size={isXsScreen ? 40 : 50} src={Props.userInfo.user_image} />
+        <Avatar size={isXsScreen ? 40 : 50} src={Props.postAuthor.user_image} />
         <div className='name ml-2'>
           <Popover
             overlayInnerStyle={{
               border: `1px solid ${themeColorSet.colorBg3}`
             }}
             mouseEnterDelay={0.4}
-            content={<PopupInfoUser userInfo={Props.userInfo} userID={userID!} />}>
+            content={<PopupInfoUser userInfo={Props.postAuthor} userID={userID!} />}>
             <div className='name__top font-bold'>
-              <NavLink to={`/user/${Props.userInfo._id}`} style={{ color: themeColorSet.colorText1 }}>
-                {Props.userInfo.name}
+              <NavLink to={`/user/${Props.postAuthor._id}`} style={{ color: themeColorSet.colorText1 }}>
+                {Props.postAuthor.name}
               </NavLink>
             </div>
           </Popover>

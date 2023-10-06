@@ -14,11 +14,12 @@ import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 interface PostShareProps {
   postShared: PostType;
-  userInfo: UserInfoType;
-  ownerInfo: UserInfoType;
+  postAuthor: UserInfoType;
+  postSharer: UserInfoType;
+  currentUser: UserInfoType;
 }
 
-const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
+const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShareProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -57,7 +58,7 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={userInfo} postID={postShared._id} date={date} />
+            <UserInfoPost postAuthor={postAuthor} postID={postShared._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -70,7 +71,7 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
         <div className='space-align-block'>
           <div className='postHeader flex justify-between items-center'>
             <div className='postHeader__left'>
-              <UserInfoPost userInfo={ownerInfo} postID={post!._id} date={postDate} />
+              <UserInfoPost postAuthor={postSharer} postID={post!._id} date={postDate} />
             </div>
           </div>
           <div className='postBody mt-5'>
@@ -84,7 +85,12 @@ const PostShare = ({ postShared, userInfo, ownerInfo }: PostShareProps) => {
           </div>
         </div>
         <div className='postFooter'>
-          <PostFooter post={postShared} userInfo={userInfo} isPostShare={true} />
+          <PostFooter
+            post={postShared}
+            postAuthor={postAuthor}
+            isPostShare={true}
+            currentUser={currentUser}
+          />
         </div>
       </div>
     </StyleProvider>

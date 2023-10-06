@@ -11,12 +11,12 @@ import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
 interface Props {
-  userInfo: UserInfoType;
+  currentUser: UserInfoType;
   postID: string;
   data: SelectedCommentValues;
 }
 
-const CommentInput = (Props: Props) => {
+const CommentInput = ({ currentUser, postID, data }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -25,7 +25,7 @@ const CommentInput = (Props: Props) => {
 
   const [commentContent, setCommentContent] = useState('');
   const [cursor, setCursor] = useState(0);
-  const data = useMemo<SelectedCommentValues>(() => Props.data, [Props.data]);
+  const dataMemo = useMemo<SelectedCommentValues>(() => data, [data]);
 
   const inputRef = useRef<any>();
 
@@ -38,8 +38,7 @@ const CommentInput = (Props: Props) => {
   };
 
   const handleSubmitComment = () => {
-    const { postID } = Props;
-    const { isReply, idComment } = data;
+    const { isReply, idComment } = dataMemo;
 
     if (checkEmpty()) return;
 
@@ -54,13 +53,13 @@ const CommentInput = (Props: Props) => {
   };
 
   useEffect(() => {
-    if (data.isReply) inputRef.current.focus();
-  }, [data]);
+    if (dataMemo.isReply) inputRef.current.focus();
+  }, [dataMemo]);
 
   return (
     <StyleProvider>
       <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4'>
-        <Avatar className='mr-2' size={40} src={Props.userInfo.user_image} />
+        <Avatar className='mr-2' size={40} src={currentUser.user_image} />
         <div className='input w-full'>
           <Input
             ref={inputRef}
@@ -131,11 +130,11 @@ const CommentInput = (Props: Props) => {
               </span>
             }
             prefix={
-              data.isReply && (
+              dataMemo.isReply && (
                 <div className='flex items-center'>
                   <span className='mr-2'>Reply to</span>
-                  <Avatar className='mr-2' size={20} src={data.user_image} />
-                  <span className='mr-2'>{data.name}</span>
+                  <Avatar className='mr-2' size={20} src={dataMemo.user_image} />
+                  <span className='mr-2'>{dataMemo.name}</span>
                 </div>
               )
             }

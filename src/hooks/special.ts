@@ -3,7 +3,7 @@ import { debounce } from 'lodash';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, RootState } from '@/redux/configStore';
-import { useUserInfo } from './fetch';
+import { useCurrentUserInfo } from './fetch';
 
 /**
  * The useAppDispatch function returns the useDispatch function with the AppDispatch type.
@@ -105,15 +105,15 @@ export const useIntersectionObserver = (
  * @returns The function `useOtherUser` returns the information of the other user in a conversation.
  */
 export const useOtherUser = (conversation: any) => {
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   const otherUser = useMemo(() => {
-    const currentUser = userInfo._id;
+    const currentUser = currentUserInfo._id;
 
     const otherUser = conversation?.users?.filter((user: any) => user._id !== currentUser);
 
     return otherUser[0];
-  }, [userInfo, conversation.users]);
+  }, [currentUserInfo, conversation.users]);
 
   return otherUser;
 };

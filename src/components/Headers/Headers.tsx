@@ -1,26 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Avatar, Badge, Button, Col, ConfigProvider, Dropdown, Empty, Row, Space, notification } from 'antd';
+import { useCallback } from 'react';
+import { Avatar, Badge, Button, Col, ConfigProvider, Dropdown, Empty, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import { Header } from 'antd/es/layout/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import Title from 'antd/es/typography/Title';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Search from 'antd/es/transfer/search';
 import { BellOutlined, CommentOutlined, UserOutlined } from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { LOGOUT_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
+// import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import DayNightSwitch from '@/components/Day&NightSwitch';
-import AvatarMessage from '@/components/Avatar/AvatarMessage';
+// import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
-import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 
-import { useAllPostsNewsfeedData, useConversationsData, useUserInfo } from '@/hooks/fetch';
+import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
@@ -30,7 +29,7 @@ const Headers = () => {
   const { themeColorSet } = getTheme();
 
   const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   // Switch theme
   const dispatch = useAppDispatch();
@@ -59,14 +58,14 @@ const Headers = () => {
     {
       key: '1',
       label: (
-        <NavLink to={`/user/${userInfo._id}`}>
+        <NavLink to={`/user/${currentUserInfo._id}`}>
           <div
             className='flex items-center py-1 px-1'
             style={{
               height: '12%'
             }}>
             <div className='avatar relative'>
-              <Avatar key={userInfo._id} src={userInfo.user_image} />
+              <Avatar key={currentUserInfo._id} src={currentUserInfo.user_image} />
             </div>
             <div className='name_career'>
               <div
@@ -75,7 +74,7 @@ const Headers = () => {
                   color: themeColorSet.colorText1,
                   fontWeight: 600
                 }}>
-                {userInfo.name}
+                {currentUserInfo.name}
               </div>
             </div>
           </div>
@@ -105,113 +104,36 @@ const Headers = () => {
     }
   ];
 
-  const [api, contextHolder] = notification.useNotification();
-  const navigate = useNavigate();
-
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
-  const [countUnseen, setCountUnseen] = useState(0);
-  const [countNoti, setCountNoti] = useState(0);
+  // const [api, contextHolder] = notification.useNotification();
+  // const navigate = useNavigate();
 
-  const { conversations, isLoadingConversations } = useConversationsData();
+  // const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
 
-  const [messages, setMessages] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (isLoadingConversations) return;
-
-    setMessages(conversations);
-  }, [conversations, isLoadingConversations]);
-
-  // useEffect(() => {
-  //   if (isLoadingConversations) return;
-
-  //   const unseenConversations = messages.filter((conversation: any) => {
-  //     if (conversation.messages?.length === 0) return false;
-  //     const seenList =
-  //       conversation.messages[conversation.messages.length - 1].seen || [];
-  //     return !seenList.some((user: any) => user._id === userInfo._id);
+  // const popupNotification = (message: any, conversation: any) => {
+  //   api.open({
+  //     message: message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
+  //     description: message.body ? message.body : 'Sent an image',
+  //     duration: 5,
+  //     icon: conversation.isGroup ? (
+  //       <AvatarGroup key={conversation._id} users={conversation.users} />
+  //     ) : (
+  //       <AvatarMessage key={conversation._id} user={message.sender} />
+  //     ),
+  //     placement: 'bottomRight',
+  //     btn: (
+  //       <Button
+  //         type='primary'
+  //         size='small'
+  //         onClick={() => {
+  //           navigate(`/message/${conversation._id}`);
+  //         }}>
+  //         Go to message
+  //       </Button>
+  //     )
   //   });
-
-  //   if (unseenConversations.length > 0) {
-  //     document.title = `(${unseenConversations.length}) DevHub`;
-  //     setCountUnseen(unseenConversations.length);
-  //   } else {
-  //     document.title = `DevHub`;
-  //     setCountUnseen(0);
-  //   }
-  // }, [messages, isLoadingConversations]);
-
-  const pusherKey = useMemo(() => {
-    return userInfo._id;
-  }, [userInfo]);
-
-  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
-
-  const popupNotification = (message: any, conversation: any) => {
-    api.open({
-      message: message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
-      description: message.body ? message.body : 'Sent an image',
-      duration: 5,
-      icon: conversation.isGroup ? (
-        <AvatarGroup key={conversation._id} users={conversation.users} />
-      ) : (
-        <AvatarMessage key={conversation._id} user={message.sender} />
-      ),
-      placement: 'bottomRight',
-      btn: (
-        <Button
-          type='primary'
-          size='small'
-          onClick={() => {
-            navigate(`/message/${conversation._id}`);
-          }}>
-          Go to message
-        </Button>
-      )
-    });
-  };
-
-  useEffect(() => {
-    if (!pusherKey) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
-            playNotiMessage.play();
-            popupNotification(conversation.messages[conversation.messages.length - 1], currentConversation);
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    const updateHandlerSeen = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation.id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
-    pusherClient.bind('conversation-update-noti', updateHandler);
-  }, [pusherKey]);
+  // };
 
   return (
     <ConfigProvider
@@ -221,7 +143,7 @@ const Headers = () => {
         }
       }}>
       <StyleProvider theme={themeColorSet}>
-        {contextHolder}
+        {/* {contextHolder} */}
         <Header
           className='header xs:px-2'
           style={{
@@ -265,7 +187,7 @@ const Headers = () => {
                 <Col span={5} className='pl-3 xs:pl-0'>
                   <Space size={isXsScreen ? 8 : 25}>
                     <NavLink to='/message'>
-                      <Badge count={countUnseen}>
+                      <Badge count={0}>
                         <Avatar
                           className='messageButton cursor-pointer'
                           shape='circle'
@@ -274,7 +196,7 @@ const Headers = () => {
                       </Badge>
                     </NavLink>
                     <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
-                      <Badge count={countNoti}>
+                      <Badge count={0}>
                         <Avatar
                           className='notiButton cursor-pointer'
                           icon={<BellOutlined className='text-xl' />}

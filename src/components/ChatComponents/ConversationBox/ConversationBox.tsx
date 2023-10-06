@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
@@ -15,7 +15,7 @@ interface ConversationBoxProps {
 
 const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -26,11 +26,11 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     return messages[messages.length - 1];
   }, [Props.data.messages]);
 
-  const isOwn = userInfo._id === lastMessage?.sender._id;
+  const isOwn = currentUserInfo._id === lastMessage?.sender._id;
 
   const userID = useMemo(() => {
-    return userInfo._id;
-  }, [userInfo]);
+    return currentUserInfo._id;
+  }, [currentUserInfo]);
 
   const hasSeen = useMemo(() => {
     if (!lastMessage) return false;

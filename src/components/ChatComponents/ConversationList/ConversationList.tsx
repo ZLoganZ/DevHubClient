@@ -14,7 +14,7 @@ import OpenGroupModal from '@/components/GroupChatModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import { UserInfoType } from '@/types';
 
 interface ConversationListProps {
@@ -32,13 +32,13 @@ const ConversationList = (Props: ConversationListProps) => {
   const navigate = useNavigate();
 
   useAppSelector((state) => state.activeList.members);
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   const [items, setItems] = useState(Props.initialItems);
 
   const pusherKey = useMemo(() => {
-    return userInfo._id;
-  }, [userInfo]);
+    return currentUserInfo._id;
+  }, [currentUserInfo]);
 
   useEffect(() => {
     if (!pusherKey) return;
@@ -107,7 +107,7 @@ const ConversationList = (Props: ConversationListProps) => {
     const unseenConversations = messages.filter((conversation: any) => {
       if (conversation.messages?.length === 0) return false;
       const seenList = conversation.messages[conversation.messages.length - 1].seen || [];
-      return !seenList.some((user: any) => user._id === userInfo._id);
+      return !seenList.some((user: any) => user._id === currentUserInfo._id);
     });
 
     if (unseenConversations.length > 0) {
@@ -161,7 +161,7 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const HandleOnClick = async (item: any) => {
     const { data } = await messageService.createConversation({
-      followers: [item, userInfo._id]
+      followers: [item, currentUserInfo._id]
     });
     navigate(`/message/${data.metadata.conversation._id}`);
   };
@@ -215,20 +215,20 @@ const ConversationList = (Props: ConversationListProps) => {
             height: '12%'
           }}>
           <div className='flex'>
-            <NavLink to={`/user/${userInfo._id}`}>
+            <NavLink to={`/user/${currentUserInfo._id}`}>
               <div className='avatar mr-3'>
-                <Avatar key={userInfo._id} user={userInfo} />
+                <Avatar key={currentUserInfo._id} user={currentUserInfo} />
               </div>
             </NavLink>
             <div className='name_career'>
-              <NavLink to={`/user/${userInfo._id}`}>
+              <NavLink to={`/user/${currentUserInfo._id}`}>
                 <div
                   className='name mb-1'
                   style={{
                     color: themeColorSet.colorText1,
                     fontWeight: 600
                   }}>
-                  {userInfo.name}
+                  {currentUserInfo.name}
                 </div>
               </NavLink>
               <div

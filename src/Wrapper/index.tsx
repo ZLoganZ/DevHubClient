@@ -7,7 +7,7 @@ import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
 import MyPostDetail from '@/components/PostDetail/MyPostDetail';
 import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { usePostData, useUserInfo } from '@/hooks/fetch';
+import { usePostData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 
 const CommunityAdmin = lazy(() =>
@@ -44,14 +44,14 @@ export const CommunityWrapper = () => {
     dispatch(GET_COMMUNITY_BY_ID_SAGA(communityID));
   }, []);
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
   const role = useMemo(() => {
-    if (userInfo.role) {
-      if (userInfo.role.includes('0101')) return 'ADMIN';
-      if (userInfo.role.includes('0000')) return 'MEMBER';
+    if (currentUserInfo.role) {
+      if (currentUserInfo.role.includes('0101')) return 'ADMIN';
+      if (currentUserInfo.role.includes('0000')) return 'MEMBER';
       return 'NO_MEMBER';
     }
-  }, [userInfo]);
+  }, [currentUserInfo]);
   return (
     <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
       <Suspense fallback={<LoadingProfileComponent />}>
@@ -76,11 +76,11 @@ export const PostWrapper = () => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { userInfo, isLoadingUserInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   const { post, isLoadingPost } = usePostData(postID!);
 
-  if (isLoadingPost || isLoadingUserInfo || !userInfo || !post) {
+  if (isLoadingPost || !currentUserInfo || !post) {
     return (
       <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
         <Row className='py-10'>
@@ -101,9 +101,19 @@ export const PostWrapper = () => {
       </div>
     );
   } else {
-    if (post.post_attributes.user._id === userInfo._id) {
-      return <MyPostDetail key={post._id} post={post} userInfo={userInfo} />;
-    } else return <OtherPostDetail key={post._id} post={post} userInfo={userInfo} />;
+    if (post.post_attributes.user._id === currentUserInfo._id) {
+      return (
+        <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} currentUser={currentUserInfo} />
+      );
+    } else
+      return (
+        <OtherPostDetail
+          key={post._id}
+          post={post}
+          postAuthor={post.post_attributes.user}
+          currentUser={currentUserInfo}
+        />
+      );
   }
 };
 

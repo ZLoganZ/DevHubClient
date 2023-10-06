@@ -24,7 +24,7 @@ import descArray from '@/util/Descriptions/Tags';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 
-import { useOtherUserInfo, useUserPostsData } from '@/hooks/fetch';
+import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 import StyleProvider from './cssProfile';
@@ -56,6 +56,8 @@ const Profile = (Props: Props) => {
   }, [isLoadingUserPosts]);
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
+
+  const { currentUserInfo } = useCurrentUserInfo();
 
   // isShared
   const [isFollowing, setIsFollowing] = useState(true);
@@ -335,11 +337,17 @@ const Profile = (Props: Props) => {
                               <OtherPostShare
                                 key={item._id}
                                 postShared={item}
-                                userInfo={otherUserInfo}
-                                ownerInfo={item.post_attributes.owner_post!}
+                                postAuthor={otherUserInfo}
+                                postSharer={item.post_attributes.owner_post!}
+                                currentUser={currentUserInfo}
                               />
                             ) : (
-                              <OtherPost key={item._id} post={item} userInfo={otherUserInfo} />
+                              <OtherPost
+                                key={item._id}
+                                post={item}
+                                postAuthor={otherUserInfo}
+                                currentUser={currentUserInfo}
+                              />
                             )
                           )}
                         </div>

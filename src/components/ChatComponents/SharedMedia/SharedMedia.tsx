@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleProvider from './cssSharedMedia';
-import { useCurrentConversationData, useUserInfo } from '@/hooks/fetch';
+import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { pusherClient } from '@/util/pusher';
 import formatDateTime from '@/util/formatDateTime';
@@ -23,11 +23,11 @@ const SharedMedia = (Props: SharedMediaProps) => {
     Props.conversationID
   );
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   const pusherKey = useMemo(() => {
-    return userInfo._id;
-  }, [userInfo]);
+    return currentUserInfo._id;
+  }, [currentUserInfo]);
 
   const [items, setItems] = useState<any>([]);
 

@@ -29,7 +29,7 @@ import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ContactType, ExperienceType } from '@/types';
 import StyleProvider from './cssEditProfileForm';
 
@@ -44,39 +44,37 @@ const EditProfileForm = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
-  const [tags, setTags] = useState(userInfo?.tags);
+  const [tags, setTags] = useState(currentUserInfo?.tags);
 
-  const [contacts, setLinks] = useState(userInfo.contacts || []);
+  const [contacts, setLinks] = useState(currentUserInfo.contacts || []);
 
-  // const [firstname, setFirstName] = useState(userInfo.firstname);
+  const [name, setName] = useState(currentUserInfo.name);
 
-  const [name, setName] = useState(userInfo.name);
+  const [alias, setAlias] = useState(currentUserInfo.alias || '');
 
-  const [alias, setAlias] = useState(userInfo.alias || '');
+  const [location, setLocation] = useState(currentUserInfo.location || '');
 
-  const [location, setLocation] = useState(userInfo.location || '');
-
-  const [avatar, setAvatar] = useState(userInfo.user_image || '/images/TimeLinePage/avatar.jpg');
+  const [avatar, setAvatar] = useState(currentUserInfo.user_image || '/images/TimeLinePage/avatar.jpg');
   const [fileAvatar, setFileAvatar] = useState(null);
 
-  const [cover, setCover] = useState(userInfo.cover_image || '/images/ProfilePage/cover.jpg');
+  const [cover, setCover] = useState(currentUserInfo.cover_image || '/images/ProfilePage/cover.jpg');
   const [fileCover, setFileCover] = useState(null);
 
-  const [about, setAbout] = useState(userInfo.about || '');
+  const [about, setAbout] = useState(currentUserInfo.about || '');
 
-  const [experiences, setExperiences] = useState(userInfo?.experiences || []);
+  const [experiences, setExperiences] = useState(currentUserInfo?.experiences || []);
 
-  const [repositories, setRepositories] = useState(userInfo?.repositories || []);
+  const [repositories, setRepositories] = useState(currentUserInfo?.repositories || []);
 
   const initialAvatar = useMemo(() => {
-    return userInfo.user_image || null;
-  }, [userInfo.user_image]);
+    return currentUserInfo.user_image || null;
+  }, [currentUserInfo.user_image]);
 
   const initialCover = useMemo(() => {
-    return userInfo.cover_image || null;
-  }, [userInfo.cover_image]);
+    return currentUserInfo.cover_image || null;
+  }, [currentUserInfo.cover_image]);
 
   const handleChangeAvatar = useCallback((image: any) => {
     setAvatar(URL.createObjectURL(image));
@@ -484,7 +482,7 @@ const EditProfileForm = () => {
           <div className='line1 flex justify-between items-center mb-5'>
             <div className='LastName form__group field' style={{ width: '48%' }}>
               <input
-                defaultValue={userInfo.name}
+                defaultValue={currentUserInfo.name}
                 pattern='[A-Za-z ]*'
                 type='input'
                 className='form__field'
@@ -499,30 +497,11 @@ const EditProfileForm = () => {
                 Username
               </label>
             </div>
-            {/* <div
-                className="firstName form__group field"
-                style={{ width: '48%' }}>
-                <input
-                  defaultValue={userInfo.firstname}
-                  pattern="[A-Za-z ]*"
-                  type="input"
-                  className="form__field"
-                  placeholder="First Name"
-                  name="firstname"
-                  id="firstname"
-                  required
-                  onChange={handleChangeFirstName}
-                  autoComplete="off"
-                />
-                <label htmlFor="firstname" className="form__label">
-                  First Name
-                </label>
-              </div> */}
           </div>
           <div className='line2 flex justify-between items-center'>
             <div className='alias form__group field' style={{ width: '48%' }}>
               <input
-                defaultValue={userInfo.alias}
+                defaultValue={currentUserInfo.alias}
                 type='input'
                 className='form__field'
                 placeholder='ex: johndoe'
@@ -538,7 +517,7 @@ const EditProfileForm = () => {
             </div>
             <div className='location form__group field' style={{ width: '48%' }}>
               <input
-                defaultValue={userInfo.location}
+                defaultValue={currentUserInfo.location}
                 pattern='[A-Za-z ]*'
                 type='input'
                 className='form__field'

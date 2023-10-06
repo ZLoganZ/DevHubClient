@@ -17,7 +17,7 @@ import { useMediaQuery } from 'react-responsive';
 
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMenu';
 
 const MenuMain = () => {
@@ -28,7 +28,7 @@ const MenuMain = () => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
   const [key, setKey] = useState('');
 
   // Hover menu
@@ -51,7 +51,7 @@ const MenuMain = () => {
     const path = location.pathname;
     if (path === '/') {
       setKey('1');
-    } else if (path === '/me' || path === `/user/${userInfo._id}`) {
+    } else if (path === '/me' || path === `/user/${currentUserInfo._id}`) {
       setKey('2');
     } else if (path === '/explore') {
       setKey('3');
@@ -66,7 +66,7 @@ const MenuMain = () => {
     } else {
       setKey('');
     }
-  }, [location, userInfo]);
+  }, [location, currentUserInfo]);
 
   const [showMenu, setShowMenu] = useState(false);
   const handleShowMenu = () => {
@@ -133,15 +133,15 @@ const MenuMain = () => {
             },
             {
               key: '2',
-              icon: userInfo.user_image ? (
-                <Avatar className='icon' src={userInfo.user_image} shape='circle' size={20} />
+              icon: currentUserInfo.user_image ? (
+                <Avatar className='icon' src={currentUserInfo.user_image} shape='circle' size={20} />
               ) : (
                 <FontAwesomeIcon className='icon' icon={faUser} />
               ),
-              label: userInfo.name,
+              label: currentUserInfo.name,
               title: '',
               onClick: () => {
-                navigate(`/user/${userInfo._id}`);
+                navigate(`/user/${currentUserInfo._id}`);
                 if (isXsScreen) setShowMenu(false);
               }
             },

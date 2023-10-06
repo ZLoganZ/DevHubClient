@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
@@ -21,48 +21,47 @@ interface ContentPostProps {
   };
 }
 
-const ContentPost = (Props: ContentPostProps) => {
+const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) => {
   const { themeColorSet } = getTheme();
 
   const [expanded, setExpanded] = useState(false);
 
   const { mutateViewPost } = useViewPost();
 
-  const isMoreThan250 = Props.content.length > 250;
+  const isMoreThan250 = useMemo(() => content.length > 250, [content]);
 
-  const [displayContent, setDisplayContent] = useState(Props.content);
-
-  useEffect(() => {
-    setDisplayContent(isMoreThan250 && !expanded ? Props.content.slice(0, 250) + '...' : Props.content);
-  }, [expanded, Props.content]);
+  const truncatedContent = useMemo(() => {
+    if (isMoreThan250 && !expanded) return content.slice(0, 250) + '...';
+    return content;
+  }, [content, expanded]);
 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
 
   const onIntersect = () => {
-    if (isMoreThan250 && expanded) mutateViewPost(Props.postID);
-    else if (!isMoreThan250) mutateViewPost(Props.postID);
+    if (isMoreThan250 && expanded) mutateViewPost(postID);
+    else if (!isMoreThan250) mutateViewPost(postID);
   };
 
   useIntersectionObserver(contentRef, onIntersect);
 
   return (
     <StyleProvider ref={contentRef} theme={themeColorSet}>
-      <div className='title font-bold'>{Props.title}</div>
+      <div className='title font-bold'>{title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill value={displayContent} readOnly theme='bubble' />
+          <ReactQuill value={truncatedContent} readOnly theme='bubble' />
           {isMoreThan250 && (
             <a onClick={() => setExpanded(!expanded)}>{expanded ? 'Read less' : 'Read more'}</a>
           )}
         </div>
-        {Props.img ? (
+        {img ? (
           <div className='contentImage mt-3'>
-            <Image src={Props.img} alt='' style={{ width: '100%' }} />
+            <Image src={img} alt='' style={{ width: '100%' }} />
           </div>
-        ) : Props.link ? (
+        ) : link ? (
           <a
-            href={Props.link.address}
+            href={link.address}
             target='_blank'
             style={{
               color: themeColorSet.colorText2
@@ -77,15 +76,13 @@ const ContentPost = (Props: ContentPostProps) => {
                     fontWeight: 600,
                     color: themeColorSet.colorText1
                   }}>
-                  {Props.link.title?.length > 100 ? Props.link.title.slice(0, 100) + '...' : Props.link.title}
+                  {link.title?.length > 100 ? link.title.slice(0, 100) + '...' : link.title}
                 </div>
                 <div>
-                  {Props.link.description?.length > 100
-                    ? Props.link.description.slice(0, 100) + '...'
-                    : Props.link.description}
+                  {link.description?.length > 100 ? link.description.slice(0, 100) + '...' : link.description}
                 </div>
               </div>
-              <img src={Props.link.image} alt='' className='w-1/5' />
+              <img src={link.image} alt='' className='w-1/5' />
             </div>
           </a>
         ) : (

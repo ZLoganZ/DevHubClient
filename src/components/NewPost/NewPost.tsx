@@ -30,12 +30,12 @@ const toolbarOptions = [
 ];
 
 interface Props {
-  userInfo: UserInfoType;
+  currentUser: UserInfoType;
 }
 
 //===================================================
 
-const NewPost = (Props: Props) => {
+const NewPost = ({ currentUser }: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -180,10 +180,10 @@ const NewPost = (Props: Props) => {
             <div className='name_avatar flex items-center'>
               <Avatar
                 size={isXsScreen ? 40 : 50}
-                src={Props.userInfo.user_image || './images/DefaultAvatar/default_avatar.png'}
+                src={currentUser.user_image || './images/DefaultAvatar/default_avatar.png'}
               />
               <div className='name font-bold ml-2'>
-                <NavLink to={`/user/${Props.userInfo._id}`}>{Props.userInfo.name}</NavLink>
+                <NavLink to={`/user/${currentUser._id}`}>{currentUser.name}</NavLink>
               </div>
             </div>
             <div className='AddTitle mt-4 z-10'>

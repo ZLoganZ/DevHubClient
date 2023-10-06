@@ -13,7 +13,7 @@ import LoadingNewFeed from '@/components/Loading/LoadingNewFeed';
 
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
-import { useAllPostsNewsfeedData, useUserInfo } from '@/hooks/fetch';
+import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
@@ -93,7 +93,7 @@ const NewsFeed = () => {
   const { isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed, allPostsNewsfeed } =
     useAllPostsNewsfeedData();
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   useEffect(() => {
     if (isLoadingAllPostsNewsfeed) {
@@ -156,7 +156,7 @@ const NewsFeed = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       {!allPostsNewsfeed ||
-      !userInfo ||
+      !currentUserInfo ||
       !popular ||
       !community ||
       isLoadingAllPostsNewsfeed ||
@@ -167,20 +167,26 @@ const NewsFeed = () => {
           <Col className='xs:ml-0' offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
             <div className='news-feed flex justify-between mt-10'>
               <div className='news-feed-left w-8/12 xs:w-full'>
-                <NewPost userInfo={userInfo} />
+                <NewPost currentUser={currentUserInfo} />
                 <div className='show'>
                   {allPostsNewsfeed.map((item, index) => {
                     return (
                       <div key={index}>
                         {item.type === 'Post' && (
-                          <OtherPost key={item._id} post={item} userInfo={item.post_attributes.user} />
+                          <OtherPost
+                            key={item._id}
+                            post={item}
+                            postAuthor={item.post_attributes.user}
+                            currentUser={currentUserInfo}
+                          />
                         )}
                         {item.type === 'Share' && (
                           <OtherPostShare
                             key={item._id}
                             postShared={item}
-                            userInfo={item.post_attributes.user}
-                            ownerInfo={item.post_attributes.owner_post!}
+                            postAuthor={item.post_attributes.user}
+                            postSharer={item.post_attributes.owner_post!}
+                            currentUser={currentUserInfo}
                           />
                         )}
                       </div>

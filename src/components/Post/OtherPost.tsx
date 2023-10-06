@@ -15,12 +15,13 @@ import StyleProvider from './cssPost';
 
 interface PostProps {
   post: PostType;
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
+  currentUser: UserInfoType;
 }
 
 // -----------------------------------------------------
 
-const OtherPost = ({ post, userInfo }: PostProps) => {
+const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -60,7 +61,7 @@ const OtherPost = ({ post, userInfo }: PostProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={post.post_attributes.user} postID={post._id} date={date} />
+            <UserInfoPost postAuthor={post.post_attributes.user} postID={post._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -81,7 +82,7 @@ const OtherPost = ({ post, userInfo }: PostProps) => {
           <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
         </div>
         <div className='postFooter'>
-          <PostFooter post={post} userInfo={userInfo} />
+          <PostFooter post={post} postAuthor={postAuthor} currentUser={currentUser} />
         </div>
       </div>
     </StyleProvider>

@@ -15,11 +15,12 @@ import { openModal } from '@/redux/Slice/ModalHOCSlice';
 
 interface PostFooterProps {
   post: PostType;
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
   isPostShare?: boolean;
+  currentUser: UserInfoType;
 }
 
-const PostFooter = ({ post, userInfo, isPostShare }: PostFooterProps) => {
+const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterProps) => {
   const change = useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
@@ -133,7 +134,9 @@ const PostFooter = ({ post, userInfo, isPostShare }: PostFooterProps) => {
                 dispatch(
                   openModal({
                     title: 'The post of ' + post.post_attributes.user.name,
-                    component: <OtherPostDetail post={post} userInfo={userInfo} />,
+                    component: (
+                      <OtherPostDetail post={post} postAuthor={postAuthor} currentUser={currentUser} />
+                    ),
                     footer: null,
                     type: 'post'
                   })

@@ -27,14 +27,14 @@ import StyleProvider from './cssPost';
 
 interface PostProps {
   post: PostType;
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
 }
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 // -----------------------------------------------------
 
-const MyPost = ({ post, userInfo }: PostProps) => {
+const MyPost = ({ post, postAuthor }: PostProps) => {
   const link = post.post_attributes.url;
   const dispatch = useAppDispatch();
 
@@ -197,7 +197,7 @@ const MyPost = ({ post, userInfo }: PostProps) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={userInfo} postID={post._id} date={date} />
+            <UserInfoPost postAuthor={postAuthor} postID={post._id} date={date} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -218,7 +218,7 @@ const MyPost = ({ post, userInfo }: PostProps) => {
           <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
         </div>
         <div className='postFooter'>
-          <PostFooter post={post} userInfo={userInfo} />
+          <PostFooter post={post} postAuthor={postAuthor} currentUser={postAuthor} />
         </div>
       </div>
     </StyleProvider>

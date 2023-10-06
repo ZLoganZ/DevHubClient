@@ -13,7 +13,7 @@ import StyleProvider from './cssCommentDetail';
 
 interface CommentProps {
   comment: CommentType;
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
   children?: React.ReactNode;
   handleData: (data: SelectedCommentValues) => void;
   selectedCommentID?: string | null;
@@ -22,7 +22,15 @@ interface CommentProps {
   postID?: string;
 }
 
-const CommentDetail = (Props: CommentProps) => {
+const CommentDetail = ({
+  comment,
+  children,
+  handleData,
+  selectedCommentID,
+  onSelectComment,
+  isReply,
+  postID
+}: CommentProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -31,17 +39,17 @@ const CommentDetail = (Props: CommentProps) => {
 
   const { themeColorSet } = getTheme();
 
-  const [likes, setLike] = useState(Props.comment.like_number || 0);
-  const [dislikes, setDislike] = useState(Props.comment.dislike_number || 0);
+  const [likes, setLike] = useState(comment.like_number || 0);
+  const [dislikes, setDislike] = useState(comment.dislike_number || 0);
   const [action, setAction] = useState('');
 
   useEffect(() => {
-    if (Props.comment.is_liked) {
+    if (comment.is_liked) {
       setAction('liked');
-    } else if (Props.comment.is_disliked) {
+    } else if (comment.is_disliked) {
       setAction('disliked');
     }
-  }, [Props.comment.is_liked, Props.comment.is_disliked]);
+  }, [comment.is_liked, comment.is_disliked]);
 
   const like = () => {
     if (action === 'liked') {
@@ -54,11 +62,11 @@ const CommentDetail = (Props: CommentProps) => {
     }
 
     mutateLikeComment({
-      id: Props.comment._id,
+      id: comment._id,
       comment: {
-        type: Props.isReply ? 'child' : 'parent',
-        post: Props.postID!,
-        owner_comment: Props.comment.user._id
+        type: isReply ? 'child' : 'parent',
+        post: postID!,
+        owner_comment: comment.user._id
       }
     });
   };
@@ -74,24 +82,24 @@ const CommentDetail = (Props: CommentProps) => {
     }
 
     mutateDislikeComment({
-      id: Props.comment._id,
+      id: comment._id,
       comment: {
-        type: Props.isReply ? 'child' : 'parent',
-        post: Props.postID!,
-        owner_comment: Props.comment.user._id
+        type: isReply ? 'child' : 'parent',
+        post: postID!,
+        owner_comment: comment.user._id
       }
     });
   };
 
   const setReply = () => {
-    const selectedCommentID = Props.selectedCommentID === Props.comment._id ? null : Props.comment._id;
-    Props.handleData({
-      isReply: selectedCommentID ? true : false,
-      idComment: selectedCommentID,
-      name: Props.comment.user.name,
-      user_image: Props.comment.user.user_image
+    const _selectedCommentID = selectedCommentID === comment._id ? null : comment._id;
+    handleData({
+      isReply: _selectedCommentID ? true : false,
+      idComment: _selectedCommentID,
+      name: comment.user.name,
+      user_image: comment.user.user_image
     });
-    Props.onSelectComment(selectedCommentID);
+    onSelectComment(_selectedCommentID);
   };
 
   const actions = [
@@ -130,14 +138,14 @@ const CommentDetail = (Props: CommentProps) => {
       <span style={{ paddingLeft: 8, cursor: 'auto' }}>{dislikes}</span>
     </span>,
     {
-      ...(Props.isReply ? (
+      ...(isReply ? (
         <></>
       ) : (
         <span
           id='reply'
           key='comment-basic-reply-to'
           onClick={setReply}
-          {...(Props.selectedCommentID === Props.comment._id
+          {...(selectedCommentID === comment._id
             ? {
                 style: {
                   color: '#1890ff',
@@ -153,7 +161,7 @@ const CommentDetail = (Props: CommentProps) => {
                 }
               })}>
           <span style={{ color: themeColorSet.colorText3 }}>
-            {Props.selectedCommentID === Props.comment._id ? 'Cancel' : 'Reply'}
+            {selectedCommentID === comment._id ? 'Cancel' : 'Reply'}
           </span>
         </span>
       ))
@@ -167,13 +175,13 @@ const CommentDetail = (Props: CommentProps) => {
           actions={actions}
           author={
             <NavLink
-              to={`/user/${Props.comment.user._id}`}
+              to={`/user/${comment.user._id}`}
               style={{
                 fontWeight: 600,
                 color: themeColorSet.colorText1,
                 fontSize: '0.8rem'
               }}>
-              {Props.comment.user.name}
+              {comment.user.name}
             </NavLink>
           }
           datetime={
@@ -181,18 +189,18 @@ const CommentDetail = (Props: CommentProps) => {
               style={{
                 color: themeColorSet.colorText3
               }}>
-              {formatDateTime(Props.comment.createdAt)}
+              {formatDateTime(comment.createdAt)}
             </div>
           }
           avatar={
-            Props.comment.user.user_image ? (
-              <Avatar src={Props.comment.user.user_image} alt={Props.comment.user.name} />
+            comment.user.user_image ? (
+              <Avatar src={comment.user.user_image} alt={comment.user.name} />
             ) : (
-              <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={Props.comment.user.name} />
+              <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
             )
           }
-          content={Props.comment.content}>
-          {Props.children}
+          content={comment.content}>
+          {children}
         </Comment>
       </div>
     </StyleProvider>

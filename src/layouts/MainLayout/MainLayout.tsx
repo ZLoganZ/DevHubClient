@@ -6,7 +6,7 @@ import LoadingLogo from '@/components/Loading/LoadingLogo';
 import Menu from '@/components/Menu';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMainLayout';
 
 interface PropsMainTemplate {
@@ -18,15 +18,15 @@ const MainLayout = (props: PropsMainTemplate) => {
   useAppSelector((state) => state.theme.change);
   const { themeColor, themeColorSet } = getTheme();
 
-  const { isLoadingUserInfo } = useUserInfo();
+  const { isLoadingCurrentUserInfo } = useCurrentUserInfo();
 
-  if (isLoadingUserInfo) return <LoadingLogo />;
+  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   document.title = 'DevHub';
 
   const { Component } = props;
 
-  if (isLoadingUserInfo) return <LoadingLogo />;
+  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   return (
     <ConfigProvider

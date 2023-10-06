@@ -13,10 +13,11 @@ import StyleProvider from './cssPostDetail';
 
 interface PostProps {
   post: PostType;
-  userInfo: UserInfoType;
+  postAuthor: UserInfoType;
+  currentUser: UserInfoType;
 }
 
-const OtherPostDetail = (Props: PostProps) => {
+const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -29,7 +30,7 @@ const OtherPostDetail = (Props: PostProps) => {
     user_image: null
   });
 
-  const { comments, isLoadingComments } = useCommentsData(Props.post._id);
+  const { comments, isLoadingComments } = useCommentsData(post._id);
 
   useEffect(() => {
     setSelectedCommentId(data.idComment);
@@ -48,14 +49,15 @@ const OtherPostDetail = (Props: PostProps) => {
             style={{
               backgroundColor: themeColorSet.colorBg2
             }}>
-            {Props.post.type === 'Share' ? (
+            {post.type === 'Share' ? (
               <OtherPostShare
-                postShared={Props.post}
-                userInfo={Props.userInfo}
-                ownerInfo={Props.post.post_attributes.owner_post!}
+                postShared={post}
+                postAuthor={postAuthor}
+                postSharer={post.post_attributes.owner_post!}
+                currentUser={currentUser}
               />
             ) : (
-              <OtherPost post={Props.post} userInfo={Props.userInfo} />
+              <OtherPost post={post} postAuthor={postAuthor} currentUser={currentUser} />
             )}
             <div
               className='commentTotal px-3 ml-4'
@@ -63,7 +65,7 @@ const OtherPostDetail = (Props: PostProps) => {
                 maxHeight: '30rem'
                 // overflow: 'auto'
               }}>
-              {isLoadingComments && Props.post.post_attributes.comment_number > 0 ? (
+              {isLoadingComments && post.post_attributes.comment_number > 0 ? (
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
               ) : (
                 comments?.map((item) => {
@@ -74,22 +76,17 @@ const OtherPostDetail = (Props: PostProps) => {
                           key={item._id}
                           handleData={setData}
                           comment={item}
-                          userInfo={Props.userInfo}
+                          postAuthor={postAuthor}
                           selectedCommentID={selectedCommentID}
                           onSelectComment={handleSelectComment}
-                          postID={Props.post._id}></CommentDetail>
+                          postID={post._id}></CommentDetail>
                       ) : null}
                     </div>
                   );
                 })
               )}
             </div>
-            <CommentInput
-              key={Props.post._id}
-              data={data}
-              postID={Props.post._id}
-              userInfo={Props.userInfo}
-            />
+            <CommentInput key={post._id} data={data} postID={post._id} currentUser={currentUser} />
           </div>
         </Col>
       </Row>

@@ -351,7 +351,7 @@ export const useDislikeComment = () => {
 
 /**
  * The `useUpdateUser` function is a custom hook that handles updating a user's information and
- * invalidating the 'userInfo' query in the query cache upon success.
+ * invalidating the 'currentUserInfo' query in the query cache upon success.
  * @returns The function `useUpdateUser` returns an object with the following properties:
  * - `mutateUpdateUser` is a function that handles the mutation of the user.
  * - `isLoadingUpdateUser` is a boolean that indicates whether the user is still loading.
@@ -371,7 +371,7 @@ export const useUpdateUser = () => {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
       queryClient.invalidateQueries({
-        queryKey: ['userInfo']
+        queryKey: ['currentUserInfo']
       });
     }
   });
@@ -404,7 +404,7 @@ export const useFollowUser = () => {
         queryKey: ['otherUserInfo', userID]
       });
       queryClient.invalidateQueries({
-        queryKey: ['userInfo']
+        queryKey: ['currentUserInfo']
       });
     }
   });

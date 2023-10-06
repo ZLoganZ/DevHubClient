@@ -6,7 +6,7 @@ import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
-import { useUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 
 interface MessageBoxProps {
   data: any;
@@ -18,9 +18,9 @@ const MessageBox = (Props: MessageBoxProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { userInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
-  const isOwn = userInfo._id === Props.data.sender._id;
+  const isOwn = currentUserInfo._id === Props.data.sender._id;
   const seenList = (Props.data.seen || [])
     .filter((user: any) => user._id !== Props.data?.sender?._id)
     .map((user: any) => user.name)

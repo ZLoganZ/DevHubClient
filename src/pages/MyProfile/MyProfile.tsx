@@ -27,7 +27,7 @@ import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { useUserInfo, useUserPostsData } from '@/hooks/fetch';
+import { useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 
 import StyleProvider from './cssMyProfile';
 
@@ -57,15 +57,15 @@ const MyProfile = () => {
     }
   }, [isLoadingUserPosts]);
 
-  const { userInfo, isLoadingUserInfo } = useUserInfo();
+  const { currentUserInfo } = useCurrentUserInfo();
 
   useEffect(() => {
-    document.title = isLoadingUserInfo ? 'DevHub' : `${userInfo?.name} | DevHub`;
-  }, [isLoadingUserInfo]);
+    document.title = `${currentUserInfo?.name} | DevHub`;
+  }, []);
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!userPosts || !userInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingUserInfo ? (
+      {!userPosts || !currentUserInfo || isLoadingUserPosts || isFetchingUserPosts ? (
         <LoadingProfileComponent />
       ) : (
         <>
@@ -74,14 +74,14 @@ const MyProfile = () => {
               <div
                 className='cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${userInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${currentUserInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
                 <Image
-                  src={userInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
+                  src={currentUserInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
                   alt='avt'
                   style={{
                     width: '100%',
@@ -95,17 +95,17 @@ const MyProfile = () => {
               <Row className='py-5 name_Editprofile'>
                 <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
                   <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
-                    {userInfo.name}
+                    {currentUserInfo.name}
                   </div>
                   <div className='position mt-2'>
                     <FontAwesomeIcon className='icon' icon={faSnowflake} />
                     <span style={{ color: themeColorSet.colorText3 }} className='ml-2'>
-                      {userInfo.experiences && userInfo.experiences.length > 0
-                        ? userInfo.experiences.length > 1
-                          ? userInfo.experiences[0].position_name +
+                      {currentUserInfo.experiences && currentUserInfo.experiences.length > 0
+                        ? currentUserInfo.experiences.length > 1
+                          ? currentUserInfo.experiences[0].position_name +
                             ' & ' +
-                            userInfo.experiences[1].position_name
-                          : userInfo.experiences[0].position_name
+                            currentUserInfo.experiences[1].position_name
+                          : currentUserInfo.experiences[0].position_name
                         : 'No job position'}
                     </span>
                   </div>
@@ -136,20 +136,20 @@ const MyProfile = () => {
                 </Col>
               </Row>
               <div className='id_address_join xs:pl-3'>
-                <span className='id item mr-2'>@{userInfo.alias || 'user'}</span>
+                <span className='id item mr-2'>@{currentUserInfo.alias || 'user'}</span>
                 <span className='address item mr-2'>
                   <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                  {userInfo.location || 'Global'}
+                  {currentUserInfo.location || 'Global'}
                 </span>
                 <span className='join'>
                   <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
-                  Joined {format(new Date(userInfo.createdAt), 'MMM yyyy')}
+                  Joined {format(new Date(currentUserInfo.createdAt), 'MMM yyyy')}
                 </span>
               </div>
               <Col span={18} className='mt-5'>
                 <div className='tags flex flex-wrap xs:pl-1'>
                   {descArray.map((item, index) => {
-                    if (userInfo.tags?.indexOf(item.title) !== -1) {
+                    if (currentUserInfo.tags?.indexOf(item.title) !== -1) {
                       return (
                         <Tag
                           className='item mx-2 my-2 px-4 py-1'
@@ -169,20 +169,20 @@ const MyProfile = () => {
               </Col>
               <div className='follow mt-5 xs:pl-3'>
                 <span className='follower item mr-2'>
-                  <span className='mr-1'>{userInfo?.follower_number || 0}</span>{' '}
-                  {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
+                  <span className='mr-1'>{currentUserInfo?.follower_number || 0}</span>{' '}
+                  {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
                 </span>
                 <span className='following item mr-2'>
-                  <span className='mr-1'>{userInfo?.following_number || 0}</span>{' '}
-                  {userInfo?.following_number > 1 ? 'Followings' : 'Following'}
+                  <span className='mr-1'>{currentUserInfo?.following_number || 0}</span>{' '}
+                  {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
                 </span>
                 <span className='post mr-2'>
-                  <span className='mr-1'>{userInfo?.post_number || 0}</span>{' '}
-                  {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
+                  <span className='mr-1'>{currentUserInfo?.post_number || 0}</span>{' '}
+                  {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
                 </span>
               </div>
               <div className='experience mt-5 xs:pl-1'>
-                {userInfo.experiences.map((item, index) => (
+                {currentUserInfo.experiences.map((item, index) => (
                   <div className='item mt-2' key={index}>
                     <FontAwesomeIcon
                       className='icon mr-2'
@@ -199,7 +199,7 @@ const MyProfile = () => {
               </div>
               <div className='contact mt-5 xs:pl-1'>
                 <Space>
-                  {userInfo.contacts.map((item, index) => {
+                  {currentUserInfo.contacts.map((item, index) => {
                     switch (item.key) {
                       case '0':
                         return (
@@ -276,12 +276,12 @@ const MyProfile = () => {
                       label: 'Introduction',
                       children: (
                         <div className='mt-10 mb-20'>
-                          {!userInfo.about && userInfo.repositories.length === 0 && (
+                          {!currentUserInfo.about && currentUserInfo.repositories.length === 0 && (
                             <div className='w-8/12 mb-10 xs:w-full'>
                               <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} description='No introduction' />
                             </div>
                           )}
-                          {userInfo.about && (
+                          {currentUserInfo.about && (
                             <div className='w-8/12 mb-10 xs:w-full'>
                               <div
                                 style={{
@@ -291,10 +291,10 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill value={userInfo.about} readOnly theme='bubble' />
+                              <ReactQuill value={currentUserInfo.about} readOnly theme='bubble' />
                             </div>
                           )}
-                          {userInfo.repositories.length !== 0 && (
+                          {currentUserInfo.repositories.length !== 0 && (
                             <div className='w-8/12 mt-5 xs:w-full'>
                               <div
                                 style={{
@@ -305,7 +305,7 @@ const MyProfile = () => {
                                 Repositories
                               </div>
                               <div className='flex flex-wrap justify-between mt-5'>
-                                {userInfo.repositories.map((item, index) => {
+                                {currentUserInfo.repositories.map((item, index) => {
                                   return RenderRepositoryIem(item, index);
                                 })}
                               </div>
@@ -319,7 +319,7 @@ const MyProfile = () => {
                       label: 'Posts',
                       children: (
                         <div className='mt-5 w-8/12 xs:w-full'>
-                          <NewPost userInfo={userInfo} />
+                          <NewPost currentUser={currentUserInfo} />
                           {userPosts.length === 0 && (
                             <Empty
                               className='mt-10 mb-20'
@@ -332,11 +332,11 @@ const MyProfile = () => {
                               <MyPostShare
                                 key={item._id}
                                 postShared={item}
-                                userInfo={userInfo}
-                                ownerInfo={item.post_attributes.owner_post!}
+                                postAuthor={currentUserInfo}
+                                postSharer={item.post_attributes.owner_post!}
                               />
                             ) : (
-                              <MyPost key={item._id} post={item} userInfo={userInfo} />
+                              <MyPost key={item._id} post={item} postAuthor={currentUserInfo} />
                             )
                           )}
                         </div>
