@@ -4,12 +4,13 @@ import CommentDetail from '@/components/PostProperties/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import { getTheme } from '@/util/theme';
-import { useAppSelector } from '@/hooks/special';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
 import CommentInput from '../PostProperties/CommentInput';
 import { useEffect, useState } from 'react';
+import { setHandleInput } from '@/redux/Slice/CommentSlice';
 
 interface PostProps {
   post: PostType;
@@ -23,6 +24,8 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
+  const dispatch = useAppDispatch();
+
   const { comments, isLoadingComments } = useCommentsData(post._id);
 
   const [commentInput, setCommentInput] = useState('');
@@ -30,6 +33,10 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
   const handleCommentInput = (value: string) => {
     setCommentInput(value);
   };
+
+  useEffect(() => {
+    dispatch(setHandleInput(handleCommentInput));
+  }, []);
 
   useEffect(() => {
     if (commentInput !== '') {
@@ -65,8 +72,9 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
                 maxHeight: '30rem'
                 // overflow: 'auto'
               }}>
-              <div>
-                {commentInput !== '' ? (
+              <div className='container'>
+                <div className="overlay"></div>
+                {commentInput !== '' && (
                   <CommentDetail
                     key={post._id}
                     comment={{
@@ -85,7 +93,7 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
                     }}
                     postID={post._id}
                   />
-                ) : null}
+                )}
               </div>
               {isLoadingComments && post.post_attributes.comment_number > 0 ? (
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
@@ -95,7 +103,7 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
                 })
               )}
             </div>
-            {inclCommentInput && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} handleCommentInput={handleCommentInput}/>}
+            {inclCommentInput && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} />}
           </div>
         </Col>
       </Row>

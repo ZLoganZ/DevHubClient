@@ -9,6 +9,23 @@ const StyleProvider = styled.div`
   .postDetail {
     ${custom_scrollBar_modal}
   }
+
+  .container {
+    position: relative;
+    width: 100%;
+    padding: 0;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5; /* Adjust the opacity as needed */
+    background-color: #e91616; /* Adjust the background color as needed */
+  }
 `;
 
 export default StyleProvider;

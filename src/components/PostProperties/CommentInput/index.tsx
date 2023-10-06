@@ -13,13 +13,14 @@ import StyleProvider from './cssCommentInput';
 interface Props {
   currentUser: UserInfoType;
   postID: string;
-  handleCommentInput: (value: string) => void;
 }
 
-const CommentInput = ({ currentUser, postID, handleCommentInput }: Props) => {
+const CommentInput = ({ currentUser, postID,  }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const {handleCommentInput} = useAppSelector((state) => state.comment);
 
   const { mutateCommentPost } = useCommentPost();
 
