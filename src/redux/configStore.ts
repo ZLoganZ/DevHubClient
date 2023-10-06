@@ -11,6 +11,7 @@ import activeList from './Slice/ActiveListSlice';
 import conversation from './Slice/ConversationSlice';
 import getStarted from './Slice/GetStartedSlice';
 import community from './Slice/CommunitySlide';
+import comment from './Slice/CommentSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
@@ -25,7 +26,8 @@ export const store = configureStore({
     activeList,
     conversation,
     getStarted,
-    community
+    community,
+    comment
   },
   middleware
 });

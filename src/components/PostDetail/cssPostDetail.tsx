@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { custom_scrollBar } from '@/util/cssVariable';
+import { custom_scrollBar_modal } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg2};
@@ -7,9 +7,24 @@ const StyleProvider = styled.div`
   /* min-height: calc(100vh - 5rem); */
 
   .postDetail {
-    .commentTotal {
-      ${custom_scrollBar}
-    }
+    ${custom_scrollBar_modal}
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+    padding: 0;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5; /* Adjust the opacity as needed */
+    background-color: #e91616; /* Adjust the background color as needed */
   }
 `;
 

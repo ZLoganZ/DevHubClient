@@ -121,9 +121,6 @@ export const custom_scrollBar = css`
   &::-webkit-scrollbar {
     width: 1rem;
     border-radius: 0.5rem;
-  }
-
-  &::-webkit-scrollbar {
     width: 10px;
   }
 
@@ -135,5 +132,11 @@ export const custom_scrollBar = css`
   &::-webkit-scrollbar-thumb {
     border-radius: 8px;
     background-color: ${(props) => props.theme.colorBg4};
+  }
+`;
+
+export const custom_scrollBar_modal = css`
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
