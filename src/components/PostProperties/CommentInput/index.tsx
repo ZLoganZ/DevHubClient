@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Avatar, Input, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,9 +14,10 @@ interface Props {
   currentUser: UserInfoType;
   postID: string;
   data: SelectedCommentValues;
+  handleCommentInput: (value: string) => void;
 }
 
-const CommentInput = ({ currentUser, postID, data }: Props) => {
+const CommentInput = ({ currentUser, postID, data, handleCommentInput }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -49,6 +50,9 @@ const CommentInput = ({ currentUser, postID, data }: Props) => {
       parent: isReply ? idComment! : undefined
     });
 
+    // sent commentInput to parent
+    handleCommentInput(commentContent);
+    
     setCommentContent('');
   };
 

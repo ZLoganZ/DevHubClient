@@ -45,8 +45,11 @@ const MyPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
         <Col offset={3} span={18}>
           <div
             className='postDetail rounded-lg'
-            style={{
-              backgroundColor: themeColorSet.colorBg2
+             style={{
+              overflow: 'auto',
+              backgroundColor: themeColorSet.colorBg2,
+              maxHeight: 'calc(100vh - 200px)',
+              minHeight: 'calc(100vh - 5rem)'
             }}>
             {post.type === 'Share' ? (
               <MyPostShare

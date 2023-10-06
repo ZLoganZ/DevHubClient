@@ -189,7 +189,7 @@ const CommentDetail = ({
               style={{
                 color: themeColorSet.colorText3
               }}>
-              {formatDateTime(comment.createdAt)}
+              {comment.createdAt === 'sending...' ? comment.createdAt : formatDateTime(comment.createdAt)}
             </div>
           }
           avatar={

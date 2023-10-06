@@ -40,6 +40,18 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
     setSelectedCommentId(commentID);
   };
 
+  const [commentInput, setCommentInput] = useState('');
+
+  const handleCommentInput = (value: string) => {
+    setCommentInput(value);
+  };
+
+  useEffect(() => {
+    if (commentInput !== '') {
+      setCommentInput('');
+    }
+  }, [comments]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       <Row>
@@ -47,7 +59,10 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
           <div
             className='postDetail'
             style={{
-              backgroundColor: themeColorSet.colorBg2
+              overflow: 'auto',
+              backgroundColor: themeColorSet.colorBg2,
+              maxHeight: 'calc(100vh - 200px)',
+              minHeight: 'calc(100vh - 5rem)'
             }}>
             {post.type === 'Share' ? (
               <OtherPostShare
@@ -65,6 +80,32 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                 maxHeight: '30rem'
                 // overflow: 'auto'
               }}>
+              <div>
+                {commentInput !== '' ? (
+                  <CommentDetail
+                    key={post._id}
+                    handleData={setData}
+                    comment={{
+                      _id: '1',
+                      post: post,
+                      user: currentUser,
+                      content: commentInput,
+                      type: 'parent',
+                      is_liked: false,
+                      is_disliked: false,
+                      likes: [],
+                      dislikes: [],
+                      like_number: 0,
+                      dislike_number: 0,
+                      createdAt: 'sending...'
+                    }}
+                    postAuthor={postAuthor}
+                    selectedCommentID={selectedCommentID}
+                    onSelectComment={handleSelectComment}
+                    postID={post._id}
+                  />
+                ) : null}
+              </div>
               {isLoadingComments && post.post_attributes.comment_number > 0 ? (
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
               ) : (
@@ -87,7 +128,13 @@ const OtherPostDetail = ({ post, postAuthor, currentUser }: PostProps) => {
                 })
               )}
             </div>
-            <CommentInput key={post._id} data={data} postID={post._id} currentUser={currentUser} />
+            <CommentInput
+              key={post._id}
+              data={data}
+              postID={post._id}
+              currentUser={currentUser}
+              handleCommentInput={handleCommentInput}
+            />
           </div>
         </Col>
       </Row>
