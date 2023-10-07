@@ -37,7 +37,7 @@ const ConversationList = (Props: ConversationListProps) => {
   const [items, setItems] = useState(Props.initialItems);
 
   const pusherKey = useMemo(() => {
-    return currentUserInfo._id;
+    return currentUserInfo?._id;
   }, [currentUserInfo]);
 
   useEffect(() => {
@@ -215,20 +215,20 @@ const ConversationList = (Props: ConversationListProps) => {
             height: '12%'
           }}>
           <div className='flex'>
-            <NavLink to={`/user/${currentUserInfo._id}`}>
+            <NavLink to={`/user/${currentUserInfo?._id}`}>
               <div className='avatar mr-3'>
-                <Avatar key={currentUserInfo._id} user={currentUserInfo} />
+                <Avatar key={currentUserInfo?._id} user={currentUserInfo} />
               </div>
             </NavLink>
             <div className='name_career'>
-              <NavLink to={`/user/${currentUserInfo._id}`}>
+              <NavLink to={`/user/${currentUserInfo?._id}`}>
                 <div
                   className='name mb-1'
                   style={{
                     color: themeColorSet.colorText1,
                     fontWeight: 600
                   }}>
-                  {currentUserInfo.name}
+                  {currentUserInfo?.name}
                 </div>
               </NavLink>
               <div
@@ -319,7 +319,7 @@ const ConversationList = (Props: ConversationListProps) => {
             height: '57%',
             overflow: 'auto'
           }}>
-          {items.map(
+          {items?.map(
             (item: any) =>
               (item.messages.length > 0 || item.isGroup) && (
                 <NavLink to={`/message/${item._id}`}>

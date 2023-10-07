@@ -272,6 +272,13 @@ const MyProfile = () => {
               </div>
               <div className='mainContain mt-5'>
                 <Tabs
+                  tabBarStyle={
+                    isXsScreen
+                      ? {
+                          paddingLeft: '4px'
+                        }
+                      : {}
+                  }
                   defaultActiveKey='2'
                   items={[
                     {

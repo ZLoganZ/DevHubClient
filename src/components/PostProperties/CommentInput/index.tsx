@@ -10,6 +10,8 @@ import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
+import { is } from 'date-fns/locale';
+import { useMediaQuery } from 'react-responsive';
 
 interface Props {
   currentUser: UserInfoType;
@@ -60,12 +62,13 @@ const CommentInput = ({ currentUser, postID }: Props) => {
   useEffect(() => {
     if (data.isReply) inputRef.current.focus();
   }, [data]);
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider>
-      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4'>
-        <Avatar className='mr-2' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
-        <div className='input w-full'>
+      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
+        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
+        <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
             value={commentContent}
@@ -91,7 +94,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
             maxLength={150}
             addonAfter={
               <Popover
-                placement='right'
+                placement={!isXsScreen ? 'right' : 'top'}
                 trigger='click'
                 title={'Emoji'}
                 content={
