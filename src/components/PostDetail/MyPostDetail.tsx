@@ -11,13 +11,15 @@ import StyleProvider from './cssPostDetail';
 import CommentInput from '../PostProperties/CommentInput';
 import { useEffect, useState } from 'react';
 import { setHandleInput } from '@/redux/Slice/CommentSlice';
+import { is } from 'date-fns/locale';
 interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
   inclCommentInput?: boolean;
+  isOpenByModal?: boolean;
 }
 
-const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
+const MyPostDetail = ({ post, postAuthor, inclCommentInput, isOpenByModal }: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -42,16 +44,19 @@ const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
   }, [comments]);
   return (
     <StyleProvider theme={themeColorSet}>
-      <Row className='py-4'>
-        <Col offset={3} span={18}>
+      <Row>
+        <Col offset={0} span={24}>
           <div
             className='postDetail rounded-lg'
-            style={{
-              overflow: 'auto',
-              backgroundColor: themeColorSet.colorBg2,
-              maxHeight: 'calc(100vh - 200px)',
-              minHeight: 'calc(100vh - 5rem)'
-            }}>
+            style={
+              isOpenByModal
+                ? {
+                    overflow: 'auto',
+                    backgroundColor: themeColorSet.colorBg2,
+                    maxHeight: 'calc(100vh - 200px)'
+                  }
+                : { backgroundColor: themeColorSet.colorBg2 }
+            }>
             {post.type === 'Share' ? (
               <MyPostShare
                 postShared={post}

@@ -137,7 +137,12 @@ const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterPr
                   openModal({
                     title: 'The post of ' + post.post_attributes.user.name,
                     component: (
-                      <OtherPostDetail post={post} postAuthor={postAuthor} currentUser={currentUser} />
+                      <OtherPostDetail
+                        post={post}
+                        postAuthor={postAuthor}
+                        currentUser={currentUser}
+                        isOpenByModal={true}
+                      />
                     ),
                     footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
                     type: 'post'

@@ -17,9 +17,10 @@ interface PostProps {
   postAuthor: UserInfoType;
   currentUser: UserInfoType;
   inclCommentInput?: boolean;
+  isOpenByModal?: boolean;
 }
 
-const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: PostProps) => {
+const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput, isOpenByModal }: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -50,12 +51,17 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
         <Col offset={0} span={24}>
           <div
             className='postDetail'
-            style={{
-              overflow: 'auto',
-              backgroundColor: themeColorSet.colorBg2,
-              maxHeight: 'calc(100vh - 200px)',
-              minHeight: 'calc(100vh - 5rem)'
-            }}>
+            style={
+              isOpenByModal
+                ? {
+                    overflow: 'auto',
+                    backgroundColor: themeColorSet.colorBg2,
+                    maxHeight: 'calc(100vh - 200px)'
+                  }
+                : {
+                    backgroundColor: themeColorSet.colorBg2
+                  }
+            }>
             {post.type === 'Share' ? (
               <OtherPostShare
                 postShared={post}
@@ -73,7 +79,7 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput }: Po
                 // overflow: 'auto'
               }}>
               <div className='container'>
-                <div className="overlay"></div>
+                <div className='overlay'></div>
                 {commentInput !== '' && (
                   <CommentDetail
                     key={post._id}

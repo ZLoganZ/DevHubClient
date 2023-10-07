@@ -1,4 +1,4 @@
-import { Space } from 'antd';
+import { Col, Row, Space } from 'antd';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import { useConversationsData, useCurrentConversationData, useFollowersData } fr
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
+import Avatar from '@/components/Avatar/AvatarMessage';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -28,9 +29,9 @@ const Chat = () => {
 
   const { userID } = useAppSelector((state) => state.auth);
 
-  const { conversations, isLoadingConversations } = useConversationsData();
+  // const { conversations, isLoadingConversations } = useConversationsData();
 
-  const { followers, isLoadingFollowers } = useFollowersData(userID!);
+  // const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
   const { isLoadingCurrentConversation } = useCurrentConversationData(
     conversationID ? conversationID : undefined
@@ -40,7 +41,7 @@ const Chat = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isLoadingConversations || isLoadingFollowers ? (
+      {/* {isLoadingConversations || isLoadingFollowers ? (
         <LoadingChat />
       ) : (
         <div className='chat flex'>
@@ -124,7 +125,47 @@ const Chat = () => {
           </div>
           {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
         </div>
-      )}
+      )} */}
+      <div>
+        <Row>
+          <Col span={1} className='h-screen flex flex-col items-center'>
+            <div className='logo py-2'>
+              <NavLink to='/' className='icon_logo'>
+                <FontAwesomeIcon className='icon' icon={faSnowflake} />
+              </NavLink>
+            </div>
+            <div className='option pt-2'>
+              <Space size={30} direction='vertical'>
+                <div className='message optionItem'>
+                  <CommentOutlined className='text-2xl' />
+                </div>
+                <div className='Search optionItem'>
+                  <SearchOutlined className='text-2xl' />
+                </div>
+                <div className='Setting optionItem'>
+                  <SettingOutlined className='text-2xl' />
+                </div>
+              </Space>
+
+              
+            </div>
+            <div>hi</div>
+            <div>hi</div>
+          </Col>
+          <Col span={5}>
+            <div>hi</div>
+            <div>hi</div>
+          </Col>
+          <Col span={12}>
+            <div>hi</div>
+            <div>hi</div>
+          </Col>
+          <Col span={6}>
+            <div>hi</div>
+            <div>hi</div>
+          </Col>
+        </Row>
+      </div>
     </StyleProvider>
   );
 };

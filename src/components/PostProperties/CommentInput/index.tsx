@@ -15,12 +15,12 @@ interface Props {
   postID: string;
 }
 
-const CommentInput = ({ currentUser, postID,  }: Props) => {
+const CommentInput = ({ currentUser, postID }: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const {handleCommentInput} = useAppSelector((state) => state.comment);
+  const { handleCommentInput } = useAppSelector((state) => state.comment);
 
   const { mutateCommentPost } = useCommentPost();
 
@@ -52,7 +52,7 @@ const CommentInput = ({ currentUser, postID,  }: Props) => {
 
     // sent commentInput to parent
     handleCommentInput(commentContent);
-    
+
     setCommentContent('');
   };
 
