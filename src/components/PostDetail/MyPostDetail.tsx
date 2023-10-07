@@ -15,9 +15,10 @@ interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
   inclCommentInput?: boolean;
+  isOpenByModal?: boolean;
 }
 
-const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
+const MyPostDetail = ({ post, postAuthor, inclCommentInput, isOpenByModal }: PostProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -46,12 +47,16 @@ const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
       <Row>
         <Col offset={0} span={24}>
           <div
-            className='postDetail'
-            style={{
-              overflow: 'auto',
-              maxHeight: 'calc(100vh - 200px)',
-              minHeight: 'calc(100vh - 5rem)'
-            }}>
+            className='postDetail rounded-lg'
+            style={
+              isOpenByModal
+                ? {
+                    overflow: 'auto',
+                    backgroundColor: themeColorSet.colorBg2,
+                    maxHeight: 'calc(100vh - 200px)'
+                  }
+                : { backgroundColor: themeColorSet.colorBg2 }
+            }>
             {post.type === 'Share' ? (
               <MyPostShare
                 postShared={post}

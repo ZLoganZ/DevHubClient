@@ -58,7 +58,7 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
           )}
         </div>
         {img ? (
-          <div className='contentImage overflow-hidden h-full w-full object-cover m-3 flex items-center justify-center'>
+          <div className='contentImage overflow-hidden h-full w-full object-cover my-3 flex items-center justify-center'>
             <PicGenie src={img} option='post' />
           </div>
         ) : (

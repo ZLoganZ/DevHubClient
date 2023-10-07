@@ -102,18 +102,37 @@ export const PostWrapper = () => {
     );
   } else {
     if (post.post_attributes.user._id === currentUserInfo._id) {
-      return <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} inclCommentInput />;
+      return (
+        <div
+          className='py-4 px-80'
+          style={{
+            backgroundColor: themeColorSet.colorBg1,
+            minHeight: 'calc(100vh - 5rem)'
+          }}>
+          <MyPostDetail
+            key={post._id}
+            post={post}
+            postAuthor={currentUserInfo}
+            inclCommentInput
+            isOpenByModal={false}
+          />
+        </div>
+      );
     } else
       return (
         <div
-          className='py-4 px-48'
-          style={{ backgroundColor: themeColorSet.colorBg1, minHeight: 'calc(100vh - 5rem)' }}>
+          className='py-4 px-80'
+          style={{
+            backgroundColor: themeColorSet.colorBg1,
+            minHeight: 'calc(100vh - 5rem)'
+          }}>
           <OtherPostDetail
             key={post._id}
             post={post}
             postAuthor={post.post_attributes.user}
             currentUser={currentUserInfo}
             inclCommentInput
+            isOpenByModal={false}
           />
         </div>
       );
