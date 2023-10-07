@@ -18,7 +18,6 @@ import { useConversationsData, useCurrentConversationData, useFollowersData } fr
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
-import Avatar from '@/components/Avatar/AvatarMessage';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -29,9 +28,9 @@ const Chat = () => {
 
   const { userID } = useAppSelector((state) => state.auth);
 
-  // const { conversations, isLoadingConversations } = useConversationsData();
+  const { conversations, isLoadingConversations } = useConversationsData();
 
-  // const { followers, isLoadingFollowers } = useFollowersData(userID!);
+  const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
   const { isLoadingCurrentConversation } = useCurrentConversationData(
     conversationID ? conversationID : undefined
@@ -41,7 +40,7 @@ const Chat = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {/* {isLoadingConversations || isLoadingFollowers ? (
+      {isLoadingConversations || isLoadingFollowers ? (
         <LoadingChat />
       ) : (
         <div className='chat flex'>
@@ -125,8 +124,8 @@ const Chat = () => {
           </div>
           {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
         </div>
-      )} */}
-      <div>
+      )}
+      {/* <div>
         <Row>
           <Col span={1} className='h-screen flex flex-col items-center'>
             <div className='logo py-2'>
@@ -147,7 +146,7 @@ const Chat = () => {
                 </div>
               </Space>
 
-              
+
             </div>
             <div>hi</div>
             <div>hi</div>
@@ -165,7 +164,7 @@ const Chat = () => {
             <div>hi</div>
           </Col>
         </Row>
-      </div>
+      </div> */}
     </StyleProvider>
   );
 };

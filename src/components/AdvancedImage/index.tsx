@@ -29,7 +29,7 @@ const PicGenie = ({ src, option, style }: PicGenieProps) => {
   return (
     <div style={style}>
       <AdvancedImage
-        plugins={[lazyload(), placeholder({ mode: 'blur' })]}
+        plugins={[lazyload({ rootMargin: '0px', threshold: 0.25 }), placeholder({ mode: 'blur' })]}
         cldImg={myImage}
       />
     </div>
