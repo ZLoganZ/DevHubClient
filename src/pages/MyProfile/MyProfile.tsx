@@ -269,6 +269,13 @@ const MyProfile = () => {
               </div>
               <div className='mainContain mt-5'>
                 <Tabs
+                  tabBarStyle={
+                    isXsScreen
+                      ? {
+                          paddingLeft: '4px'
+                        }
+                      : {}
+                  }
                   defaultActiveKey='2'
                   items={[
                     {
@@ -291,7 +298,12 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill preserveWhitespace value={currentUserInfo.about} readOnly theme='bubble' />
+                              <ReactQuill
+                                preserveWhitespace
+                                value={currentUserInfo.about}
+                                readOnly
+                                theme='bubble'
+                              />
                             </div>
                           )}
                           {currentUserInfo.repositories.length !== 0 && (

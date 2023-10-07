@@ -313,13 +313,13 @@ const ConversationList = (Props: ConversationListProps) => {
             })}
           </div>
         </div>
-        {/* <div
+        <div
           className='userChat'
           style={{
             height: '57%',
             overflow: 'auto'
           }}>
-          {items.map(
+          {items?.map(
             (item: any) =>
               (item.messages.length > 0 || item.isGroup) && (
                 <NavLink to={`/message/${item._id}`}>
@@ -327,7 +327,7 @@ const ConversationList = (Props: ConversationListProps) => {
                 </NavLink>
               )
           )}
-        </div> */}
+        </div>
         <div className='listUser'></div>
       </div>
     </StyleProvider>

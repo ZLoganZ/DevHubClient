@@ -11,6 +11,7 @@ import { useCommentsData } from '@/hooks/fetch';
 import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
+import { useMediaQuery } from 'react-responsive';
 
 interface PostProps {
   post: PostType;
@@ -44,7 +45,7 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput, isOp
       setCommentInput('');
     }
   }, [comments]);
-
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
   return (
     <StyleProvider theme={themeColorSet}>
       <Row>
@@ -62,18 +63,19 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput, isOp
                     backgroundColor: themeColorSet.colorBg2
                   }
             }>
-            {post.type === 'Share' ? (
-              <OtherPostShare
-                postShared={post}
-                postAuthor={postAuthor}
-                postSharer={post.post_attributes.owner_post!}
-                currentUser={currentUser}
-              />
-            ) : (
-              <OtherPost post={post} postAuthor={postAuthor} currentUser={currentUser} />
-            )}
+            {!isXsScreen &&
+              (post.type === 'Share' ? (
+                <OtherPostShare
+                  postShared={post}
+                  postAuthor={postAuthor}
+                  postSharer={post.post_attributes.owner_post!}
+                  currentUser={currentUser}
+                />
+              ) : (
+                <OtherPost post={post} postAuthor={postAuthor} currentUser={currentUser} />
+              ))}
             <div
-              className='commentTotal px-3 ml-4'
+              className='commentTotal px-3 ml-4 xs:px-0 xs:ml-0'
               style={{
                 maxHeight: '30rem'
                 // overflow: 'auto'
