@@ -1,16 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Col, Row, Skeleton } from 'antd';
 
 import CommentDetail from '@/components/PostProperties/CommentDetail';
 import OtherPost from '@/components/Post/OtherPost';
+import CommentInput from '@/components/PostProperties/CommentInput';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
+import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
-import CommentInput from '../PostProperties/CommentInput';
-import { useEffect, useState } from 'react';
-import { setHandleInput } from '@/redux/Slice/CommentSlice';
 
 interface PostProps {
   post: PostType;

@@ -297,7 +297,12 @@ const Profile = (Props: Props) => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill value={otherUserInfo.about} readOnly theme='bubble' />
+                              <ReactQuill
+                                preserveWhitespace
+                                value={otherUserInfo.about}
+                                readOnly
+                                theme='bubble'
+                              />
                             </div>
                           )}
                           {otherUserInfo.repositories.length !== 0 && (

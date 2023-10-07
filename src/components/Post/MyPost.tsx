@@ -215,7 +215,7 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
             img={post.post_attributes.img}
             link={link}
           />
-          <Divider style={{ backgroundColor: themeColorSet.colorText1 }} />
+          <Divider style={{ backgroundColor: themeColorSet.colorText1, marginTop: 0 }} />
         </div>
         <div className='postFooter'>
           <PostFooter post={post} postAuthor={postAuthor} currentUser={postAuthor} />
