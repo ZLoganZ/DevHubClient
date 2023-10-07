@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive';
 import PopupInfoUser from '@/components/PopupInfoUser';
 import StyleProvider from './cssPostUserInfo';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 
@@ -23,7 +24,7 @@ const UserInfoPost = ({ userInfo, postID, date }: UserInfoPostProps) => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='name_avatar flex'>
-        <Avatar size={isXsScreen ? 40 : 50} src={userInfo.user_image} />
+        <Avatar size={isXsScreen ? 40 : 50} src={getImageURL(userInfo.user_image, 'mini')} />
         <div className='name ml-2'>
           <Popover
             overlayInnerStyle={{

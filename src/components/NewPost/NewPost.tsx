@@ -16,6 +16,7 @@ import { useMediaQuery } from 'react-responsive';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
@@ -180,7 +181,9 @@ const NewPost = ({ currentUser }: Props) => {
             <div className='name_avatar flex items-center'>
               <Avatar
                 size={isXsScreen ? 40 : 50}
-                src={currentUser.user_image || './images/DefaultAvatar/default_avatar.png'}
+                src={
+                  getImageURL(currentUser.user_image, 'mini') || './images/DefaultAvatar/default_avatar.png'
+                }
               />
               <div className='name font-bold ml-2'>
                 <NavLink to={`/user/${currentUser._id}`}>{currentUser.name}</NavLink>

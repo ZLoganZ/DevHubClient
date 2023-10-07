@@ -18,6 +18,7 @@ import DayNightSwitch from '@/components/Day&NightSwitch';
 // import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 
 import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -65,7 +66,7 @@ const Headers = () => {
               height: '12%'
             }}>
             <div className='avatar relative'>
-              <Avatar key={currentUserInfo._id} src={currentUserInfo.user_image} />
+              <Avatar key={currentUserInfo._id} src={getImageURL(currentUserInfo.user_image, 'mini')} />
             </div>
             <div className='name_career'>
               <div
