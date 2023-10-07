@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMenu';
@@ -134,7 +135,12 @@ const MenuMain = () => {
             {
               key: '2',
               icon: currentUserInfo.user_image ? (
-                <Avatar className='icon' src={currentUserInfo.user_image} shape='circle' size={20} />
+                <Avatar
+                  className='icon'
+                  src={getImageURL(currentUserInfo.user_image, 'mini')}
+                  shape='circle'
+                  size={20}
+                />
               ) : (
                 <FontAwesomeIcon className='icon' icon={faUser} />
               ),

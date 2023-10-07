@@ -6,6 +6,7 @@ import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
@@ -63,7 +64,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
   return (
     <StyleProvider>
       <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4'>
-        <Avatar className='mr-2' size={40} src={currentUser.user_image} />
+        <Avatar className='mr-2' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
         <div className='input w-full'>
           <Input
             ref={inputRef}
@@ -137,7 +138,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
               data.isReply && (
                 <div className='flex items-center'>
                   <span className='mr-2'>Reply to</span>
-                  <Avatar className='mr-2' size={20} src={data.user_image} />
+                  <Avatar className='mr-2' size={20} src={getImageURL(data.user_image!, 'mini')} />
                   <span className='mr-2'>{data.name}</span>
                 </div>
               )

@@ -23,6 +23,7 @@ import RenderRepositoryIem from '@/components/ActionComponent/RenderRepositoryIe
 import descArray from '@/util/Descriptions/Tags';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
+import getImageURL from '@/util/getImageURL';
 
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
@@ -84,14 +85,16 @@ const Profile = (Props: Props) => {
               <div
                 className='cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${otherUserInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${
+                    getImageURL(otherUserInfo.cover_image) || `/images/ProfilePage/cover.jpg`
+                  }")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
                 <Image
-                  src={otherUserInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
+                  src={getImageURL(otherUserInfo.user_image)}
                   preview={otherUserInfo.user_image ? true : false}
                   alt='avt'
                   style={{

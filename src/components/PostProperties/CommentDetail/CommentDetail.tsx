@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
+import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
 import { setData } from '@/redux/Slice/ModalHOCSlice';
@@ -183,7 +184,7 @@ const CommentDetail = ({ comment, children, postID }: CommentProps) => {
           }
           avatar={
             comment.user.user_image ? (
-              <Avatar src={comment.user.user_image} alt={comment.user.name} />
+              <Avatar src={getImageURL(comment.user.user_image, 'mini')} alt={comment.user.name} />
             ) : (
               <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
             )

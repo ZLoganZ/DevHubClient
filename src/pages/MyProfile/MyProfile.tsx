@@ -26,6 +26,7 @@ import MyPost from '@/components/Post/MyPost';
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
+import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 
@@ -74,14 +75,16 @@ const MyProfile = () => {
               <div
                 className='cover w-full h-80 xs:h-40 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${currentUserInfo.cover_image || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${
+                    getImageURL(currentUserInfo.cover_image) || `/images/ProfilePage/cover.jpg`
+                  }")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
                 <Image
-                  src={currentUserInfo.user_image || '/images/DefaultAvatar/default_avatar.png'}
+                  src={getImageURL(currentUserInfo.user_image)}
                   alt='avt'
                   style={{
                     width: '100%',
@@ -291,7 +294,12 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill preserveWhitespace value={currentUserInfo.about} readOnly theme='bubble' />
+                              <ReactQuill
+                                preserveWhitespace
+                                value={currentUserInfo.about}
+                                readOnly
+                                theme='bubble'
+                              />
                             </div>
                           )}
                           {currentUserInfo.repositories.length !== 0 && (
