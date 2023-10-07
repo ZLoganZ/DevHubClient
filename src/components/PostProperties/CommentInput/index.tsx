@@ -67,8 +67,8 @@ const CommentInput = ({ currentUser, postID }: Props) => {
   return (
     <StyleProvider>
       <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
-        <Avatar className='mr-2' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
-        <div className='input w-full'>
+        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
+        <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
             value={commentContent}
