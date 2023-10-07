@@ -1,16 +1,16 @@
 import { Col, Row, Skeleton } from 'antd';
+import { useEffect, useState } from 'react';
 
 import MyPostShare from '@/components/Post/MyPostShare';
 import CommentDetail from '@/components/PostProperties/CommentDetail';
+import CommentInput from '@/components/PostProperties/CommentInput';
 import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
+import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
-import CommentInput from '../PostProperties/CommentInput';
-import { useEffect, useState } from 'react';
-import { setHandleInput } from '@/redux/Slice/CommentSlice';
 interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
@@ -40,15 +40,15 @@ const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
       setCommentInput('');
     }
   }, [comments]);
+
   return (
     <StyleProvider theme={themeColorSet}>
-      <Row className='py-4'>
-        <Col offset={3} span={18}>
+      <Row>
+        <Col offset={0} span={24}>
           <div
-            className='postDetail rounded-lg'
+            className='postDetail'
             style={{
               overflow: 'auto',
-              backgroundColor: themeColorSet.colorBg2,
               maxHeight: 'calc(100vh - 200px)',
               minHeight: 'calc(100vh - 5rem)'
             }}>
@@ -67,7 +67,8 @@ const MyPostDetail = ({ post, postAuthor, inclCommentInput }: PostProps) => {
                 maxHeight: '30rem'
                 // overflow: 'auto'
               }}>
-              <div>
+              <div className='container'>
+                <div className='overlay'></div>
                 {commentInput !== '' && (
                   <CommentDetail
                     key={post._id}

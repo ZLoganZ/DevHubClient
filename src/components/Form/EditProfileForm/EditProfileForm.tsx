@@ -624,7 +624,7 @@ const EditProfileForm = () => {
           {about ? (
             // About có nội dung
             <div className='content__text'>
-              <ReactQuill value={about} readOnly theme='bubble' />
+              <ReactQuill preserveWhitespace value={about} readOnly theme='bubble' />
             </div>
           ) : (
             // About không có nội dung

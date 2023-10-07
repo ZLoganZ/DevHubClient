@@ -1,8 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
-import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
 
+import PicGenie from '@/components/AdvancedImage';
 import { useIntersectionObserver } from '@/hooks/special';
 import { useViewPost } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
@@ -28,10 +28,10 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
 
   const { mutateViewPost } = useViewPost();
 
-  const isMoreThan250 = useMemo(() => content.length > 250, [content]);
+  const isMoreThan500 = useMemo(() => content.length > 500 && content.length > 515, [content]);
 
   const truncatedContent = useMemo(() => {
-    if (isMoreThan250 && !expanded) return content.slice(0, 250) + '...';
+    if (isMoreThan500 && !expanded) return content.slice(0, 500) + '...';
     return content;
   }, [content, expanded]);
 
@@ -39,8 +39,8 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
   const contentRef = useRef<HTMLDivElement>(null);
 
   const onIntersect = () => {
-    if (isMoreThan250 && expanded) mutateViewPost(postID);
-    else if (!isMoreThan250) mutateViewPost(postID);
+    if (isMoreThan500 && expanded) mutateViewPost(postID);
+    else if (!isMoreThan500) mutateViewPost(postID);
   };
 
   useIntersectionObserver(contentRef, onIntersect);
@@ -50,43 +50,47 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
       <div className='title font-bold'>{title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill value={truncatedContent} readOnly theme='bubble' />
-          {isMoreThan250 && (
-            <a onClick={() => setExpanded(!expanded)}>{expanded ? 'Read less' : 'Read more'}</a>
+          <ReactQuill preserveWhitespace value={truncatedContent} readOnly theme='bubble' />
+          {isMoreThan500 && (
+            <a className='clickMore' onClick={() => setExpanded(!expanded)}>
+              {expanded ? 'Read less' : 'Read more'}
+            </a>
           )}
         </div>
         {img ? (
-          <div className='contentImage mt-3'>
-            <Image src={img} alt='' style={{ width: '100%' }} />
+          <div className='contentImage overflow-hidden h-full w-full object-cover m-3 flex items-center justify-center'>
+            <PicGenie src={img} option='post' />
           </div>
-        ) : link ? (
-          <a
-            href={link.address}
-            target='_blank'
-            style={{
-              color: themeColorSet.colorText2
-            }}>
-            <div
-              className='contentLink flex mt-5 px-3 py-3 cursor-pointer'
-              style={{ backgroundColor: themeColorSet.colorBg4 }}>
-              <div className='left w-4/5 p-2'>
-                <div
-                  className='mb-2'
-                  style={{
-                    fontWeight: 600,
-                    color: themeColorSet.colorText1
-                  }}>
-                  {link.title?.length > 100 ? link.title.slice(0, 100) + '...' : link.title}
-                </div>
-                <div>
-                  {link.description?.length > 100 ? link.description.slice(0, 100) + '...' : link.description}
-                </div>
-              </div>
-              <img src={link.image} alt='' className='w-1/5' />
-            </div>
-          </a>
         ) : (
-          <></>
+          link && (
+            <a
+              href={link.address}
+              target='_blank'
+              style={{
+                color: themeColorSet.colorText2
+              }}>
+              <div
+                className='contentLink flex mt-5 px-3 py-3 cursor-pointer'
+                style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                <div className='left w-4/5 p-2'>
+                  <div
+                    className='mb-2'
+                    style={{
+                      fontWeight: 600,
+                      color: themeColorSet.colorText1
+                    }}>
+                    {link.title?.length > 100 ? link.title.slice(0, 100) + '...' : link.title}
+                  </div>
+                  <div>
+                    {link.description?.length > 100
+                      ? link.description.slice(0, 100) + '...'
+                      : link.description}
+                  </div>
+                </div>
+                <img src={link.image} alt='pic link' className='w-1/5' />
+              </div>
+            </a>
+          )
         )}
       </div>
     </StyleProvider>

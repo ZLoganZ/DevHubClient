@@ -8,16 +8,7 @@ const StyleProvider = styled.div`
     border: 1px solid ${(props) => props.theme.colorBg4};
     border-radius: 20px;
   }
-  .ql-editor {
-    line-height: 2rem;
-    border: none;
-    font-size: 0.88rem;
-  }
-  .title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: ${(props) => props.theme.colorText1};
-  }
+  
   .disableElement {
     pointer-events: none;
     opacity: 0.7;

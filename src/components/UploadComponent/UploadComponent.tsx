@@ -31,8 +31,8 @@ const UploadComponent = (Props: UploadComponentProps) => {
 
   const createWidget = () => {
     const options = {
-      cloudName: 'dp58kf8pw',
-      uploadPreset: 'mysoslzj',
+      cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+      uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
       sources: ['local'],
       showAdvancedOptions: false,
       cropping: true,
@@ -52,16 +52,16 @@ const UploadComponent = (Props: UploadComponentProps) => {
           complete: '#33ff00',
           error: '#EA2727',
           textDark: '#000000',
-          textLight: '#FFFFFF',
+          textLight: '#FFFFFF'
         },
         fonts: {
           default: null,
           "'Space Mono', monospace": {
             url: 'https://fonts.googleapis.com/css?family=Space+Mono',
-            active: true,
-          },
-        },
-      },
+            active: true
+          }
+        }
+      }
     };
 
     return cloudinary?.createUploadWidget(options, (error: any, result: any) => {

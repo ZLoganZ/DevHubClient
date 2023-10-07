@@ -291,7 +291,7 @@ const MyProfile = () => {
                                 }}>
                                 About
                               </div>
-                              <ReactQuill value={currentUserInfo.about} readOnly theme='bubble' />
+                              <ReactQuill preserveWhitespace value={currentUserInfo.about} readOnly theme='bubble' />
                             </div>
                           )}
                           {currentUserInfo.repositories.length !== 0 && (

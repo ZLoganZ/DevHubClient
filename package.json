@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@ant-design/compatible": "^5.1.2",
+    "@cloudinary/react": "^1.11.2",
+    "@cloudinary/url-gen": "^1.11.2",
     "@emoji-mart/react": "^1.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.4.2",
     "@fortawesome/free-regular-svg-icons": "^6.4.2",

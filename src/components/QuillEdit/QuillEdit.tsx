@@ -64,6 +64,7 @@ const QuillEdit = (Props: QuillEditProps) => {
       <ReactQuill
         ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
         value={value}
+        preserveWhitespace
         onChange={setValue}
         modules={{
           toolbar: toolbarOptions

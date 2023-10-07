@@ -204,6 +204,7 @@ const NewPost = ({ currentUser }: Props) => {
               <ReactQuill
                 ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
                 value={content}
+                preserveWhitespace
                 onChange={setContent}
                 modules={{
                   toolbar: toolbarOptions
