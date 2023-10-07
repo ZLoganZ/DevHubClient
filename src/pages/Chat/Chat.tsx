@@ -1,4 +1,4 @@
-import { Col, Row, Space } from 'antd';
+import { Col, ConfigProvider, Row, Space } from 'antd';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
@@ -22,7 +22,7 @@ import StyleProvider from './cssChat';
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColorSet } = getTheme();
+  const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
 
@@ -39,133 +39,137 @@ const Chat = () => {
   const [isDisplayShare, setIsDisplayShare] = useState(false);
 
   return (
-    <StyleProvider theme={themeColorSet}>
-      {isLoadingConversations || isLoadingFollowers ? (
-        <LoadingChat />
-      ) : (
-        <div className='chat flex'>
-          <div
-            className='slider flex flex-col justify-between items-center h-screen py-3'
-            style={{
-              width: '5%',
-              borderRight: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              position: 'fixed',
-              backgroundColor: themeColorSet.colorBg1
-            }}>
-            <div className='logo'>
-              <NavLink to='/' className='icon_logo'>
-                <FontAwesomeIcon className='icon' icon={faSnowflake} />
-              </NavLink>
+    <ConfigProvider
+      theme={{
+        token: themeColor
+      }}>
+      <StyleProvider theme={themeColorSet}>
+        {isLoadingFollowers ? (
+          <LoadingChat />
+        ) : (
+          <div className='chat flex'>
+            <div
+              className='slider flex flex-col justify-between items-center h-screen py-3'
+              style={{
+                width: '5%',
+                borderRight: '1px solid',
+                borderColor: themeColorSet.colorBg4,
+                position: 'fixed',
+                backgroundColor: themeColorSet.colorBg1
+              }}>
+              <div className='logo'>
+                <NavLink to='/' className='icon_logo'>
+                  <FontAwesomeIcon className='icon' icon={faSnowflake} />
+                </NavLink>
+              </div>
+              <div className='option'>
+                <Space size={30} direction='vertical'>
+                  <div className='message optionItem'>
+                    <CommentOutlined className='text-2xl' />
+                  </div>
+                  <div className='Search optionItem'>
+                    <SearchOutlined className='text-2xl' />
+                  </div>
+                  <div className='Setting optionItem'>
+                    <SettingOutlined className='text-2xl' />
+                  </div>
+                </Space>
+              </div>
+              <div className='mode'>
+                <FontAwesomeIcon className='icon' icon={faSun} />
+              </div>
             </div>
-            <div className='option'>
-              <Space size={30} direction='vertical'>
-                <div className='message optionItem'>
-                  <CommentOutlined className='text-2xl' />
-                </div>
-                <div className='Search optionItem'>
-                  <SearchOutlined className='text-2xl' />
-                </div>
-                <div className='Setting optionItem'>
-                  <SettingOutlined className='text-2xl' />
-                </div>
-              </Space>
+            <div
+              className='insteadComponent'
+              style={{
+                marginLeft: '5%',
+                width: '23%',
+                height: '100vh',
+                position: 'fixed',
+                borderRight: '1px solid',
+                borderColor: themeColorSet.colorBg4
+              }}>
+              <ConversationList
+                followers={followers!}
+                initialItems={conversations}
+                selected={conversationID}
+              />
             </div>
-            <div className='mode'>
-              <FontAwesomeIcon className='icon' icon={faSun} />
+            <div
+              className='chatBox'
+              style={{
+                width: isDisplayShare ? '49%' : '72%',
+                marginLeft: '28%',
+                height: '100vh',
+                position: 'fixed',
+                backgroundColor: themeColorSet.colorBg1,
+                borderRight: isDisplayShare ? '1px solid' : 'none',
+                borderColor: themeColorSet.colorBg4
+              }}>
+              {!conversationID ? (
+                <EmptyChat key={Math.random()} />
+              ) : isLoadingCurrentConversation ? (
+                <LoadingConversation />
+              ) : (
+                <>
+                  <div style={{ height: '92%' }}>
+                    <MessageChat
+                      // key={conversations[0]?.lastMessageAt}
+                      key={conversationID}
+                      conversationID={conversationID}
+                      setIsDisplayShare={setIsDisplayShare}
+                      isDisplayShare={isDisplayShare}
+                    />
+                  </div>
+                  <InputChat conversationID={conversationID} />
+                </>
+              )}
             </div>
+            {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
           </div>
-          <div
-            className='insteadComponent'
-            style={{
-              marginLeft: '5%',
-              width: '23%',
-              height: '100vh',
-              position: 'fixed',
-              borderRight: '1px solid',
-              borderColor: themeColorSet.colorBg4
-            }}>
-            <ConversationList
-              key={conversations[0]?.lastMessageAt}
-              followers={followers!}
-              initialItems={conversations}
-              selected={conversationID}
-            />
+        )}
+        {/* <div>
+      <Row>
+        <Col span={1} className='h-screen flex flex-col items-center'>
+          <div className='logo py-2'>
+            <NavLink to='/' className='icon_logo'>
+              <FontAwesomeIcon className='icon' icon={faSnowflake} />
+            </NavLink>
           </div>
-          <div
-            className='chatBox'
-            style={{
-              width: isDisplayShare ? '49%' : '72%',
-              marginLeft: '28%',
-              height: '100vh',
-              position: 'fixed',
-              backgroundColor: themeColorSet.colorBg1,
-              borderRight: isDisplayShare ? '1px solid' : 'none',
-              borderColor: themeColorSet.colorBg4
-            }}>
-            {!conversationID ? (
-              <EmptyChat key={Math.random()} />
-            ) : isLoadingCurrentConversation ? (
-              <LoadingConversation />
-            ) : (
-              <>
-                <div style={{ height: '92%' }}>
-                  <MessageChat
-                    // key={conversations[0]?.lastMessageAt}
-                    key={conversationID}
-                    conversationID={conversationID}
-                    setIsDisplayShare={setIsDisplayShare}
-                    isDisplayShare={isDisplayShare}
-                  />
-                </div>
-                <InputChat conversationID={conversationID} />
-              </>
-            )}
-          </div>
-          {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
-        </div>
-      )}
-      {/* <div>
-        <Row>
-          <Col span={1} className='h-screen flex flex-col items-center'>
-            <div className='logo py-2'>
-              <NavLink to='/' className='icon_logo'>
-                <FontAwesomeIcon className='icon' icon={faSnowflake} />
-              </NavLink>
-            </div>
-            <div className='option pt-2'>
-              <Space size={30} direction='vertical'>
-                <div className='message optionItem'>
-                  <CommentOutlined className='text-2xl' />
-                </div>
-                <div className='Search optionItem'>
-                  <SearchOutlined className='text-2xl' />
-                </div>
-                <div className='Setting optionItem'>
-                  <SettingOutlined className='text-2xl' />
-                </div>
-              </Space>
+          <div className='option pt-2'>
+            <Space size={30} direction='vertical'>
+              <div className='message optionItem'>
+                <CommentOutlined className='text-2xl' />
+              </div>
+              <div className='Search optionItem'>
+                <SearchOutlined className='text-2xl' />
+              </div>
+              <div className='Setting optionItem'>
+                <SettingOutlined className='text-2xl' />
+              </div>
+            </Space>
 
 
-            </div>
-            <div>hi</div>
-            <div>hi</div>
-          </Col>
-          <Col span={5}>
-            <div>hi</div>
-            <div>hi</div>
-          </Col>
-          <Col span={12}>
-            <div>hi</div>
-            <div>hi</div>
-          </Col>
-          <Col span={6}>
-            <div>hi</div>
-            <div>hi</div>
-          </Col>
-        </Row>
-      </div> */}
-    </StyleProvider>
+          </div>
+          <div>hi</div>
+          <div>hi</div>
+        </Col>
+        <Col span={5}>
+          <div>hi</div>
+          <div>hi</div>
+        </Col>
+        <Col span={12}>
+          <div>hi</div>
+          <div>hi</div>
+        </Col>
+        <Col span={6}>
+          <div>hi</div>
+          <div>hi</div>
+        </Col>
+      </Row>
+    </div> */}
+      </StyleProvider>
+    </ConfigProvider>
   );
 };
 

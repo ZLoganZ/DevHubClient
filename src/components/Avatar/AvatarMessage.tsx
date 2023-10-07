@@ -9,14 +9,14 @@ interface AvatarProps {
 
 const AvatarMessage = (Props: AvatarProps) => {
   const { members } = useAppSelector((state) => state.activeList);
-  const isActive = members.indexOf(Props.user._id!) !== -1 || false;
+  const isActive = members.indexOf(Props.user?._id!) !== -1 || false;
 
   return (
     <div className='relative'>
       <div className='relative rounded-full overflow-hidden h-9 w-9 md:h-11 md:w-11 flex'>
         <Image
           preview={false}
-          src={Props.user.user_image || '/images/DefaultAvatar/default_avatar.png'}
+          src={Props.user?.user_image || '/images/DefaultAvatar/default_avatar.png'}
           alt='Avatar'
           style={{
             width: '100%',
