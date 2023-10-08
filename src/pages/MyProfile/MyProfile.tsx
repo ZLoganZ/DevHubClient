@@ -84,12 +84,15 @@ const MyProfile = () => {
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
                 <Image
-                  src={getImageURL(currentUserInfo.user_image)}
+                  src={getImageURL(currentUserInfo.user_image, 'avatar')}
                   alt='avt'
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover'
+                  }}
+                  preview={{
+                    src: getImageURL(currentUserInfo.user_image)
                   }}
                 />
               </div>

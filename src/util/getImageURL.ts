@@ -1,11 +1,12 @@
 import { Cloudinary } from '@cloudinary/url-gen';
 import { fill } from '@cloudinary/url-gen/actions/resize';
+import { byRadius, max } from '@cloudinary/url-gen/actions/roundCorners';
 import { focusOn } from '@cloudinary/url-gen/qualifiers/gravity';
 import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
 
-type option = 'post' | 'avatar' | 'mini';
+type option = 'post' | 'avatar' | 'mini' | 'default';
 
-const getImageURL = (src: string, option: option = 'post') => {
+const getImageURL = (src: string, option: option = 'default') => {
   const cld = new Cloudinary({
     cloud: {
       cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
@@ -13,13 +14,25 @@ const getImageURL = (src: string, option: option = 'post') => {
   });
 
   const resizeOptions = {
-    post: fill(),
-    avatar: fill().width(200).height(200).gravity(focusOn(FocusOn.face())),
-    mini: fill().height(50).height(50).gravity(focusOn(FocusOn.face())),
-    default: fill().height(400).gravity(focusOn(FocusOn.face()))
+    post: fill().width(800),
+    avatar: fill().width(400).height(400).gravity(focusOn(FocusOn.face())),
+    mini: fill().height(200).width(200).gravity(focusOn(FocusOn.face())),
+    default: fill()
   };
 
-  const myImage = cld.image(src).resize(resizeOptions[option || 'default']);
+  const roundCorners = {
+    post: byRadius(0),
+    avatar: max(),
+    mini: max(),
+    default: byRadius(0)
+  };
+
+  const myImage = cld
+    .image(src)
+    .resize(resizeOptions[option || 'default'])
+    .roundCorners(roundCorners[option || 'default']);
+
+  myImage.format('auto');
 
   return myImage.toURL();
 };

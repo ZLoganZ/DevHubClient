@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Input, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useMediaQuery } from 'react-responsive';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
@@ -10,8 +11,6 @@ import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
-import { is } from 'date-fns/locale';
-import { useMediaQuery } from 'react-responsive';
 
 interface Props {
   currentUser: UserInfoType;
