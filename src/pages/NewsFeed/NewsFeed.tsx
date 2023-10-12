@@ -17,6 +17,7 @@ import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
+import getImageURL from '@/util/getImageURL';
 
 const popular_time = [
   {
@@ -280,7 +281,7 @@ const NewsFeed = () => {
                                 objectFit: 'cover'
                               }}
                               className='popular-post-item-image'
-                              src={`${item.post_attributes.user.user_image}`}
+                              src={getImageURL(item.post_attributes.user.user_image, 'mini')}
                               alt=''
                             />
                             <div className='content ml-4  '>

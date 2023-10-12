@@ -65,26 +65,25 @@ const Chat = () => {
                 position: 'fixed',
                 backgroundColor: themeColorSet.colorBg1
               }}>
-              <div className='logo'>
+              <div className='logo flex flex-col items-center'>
                 <NavLink to='/' className='icon_logo'>
                   <FontAwesomeIcon className='icon' icon={faSnowflake} />
                 </NavLink>
+                <div className='option py-6'>
+                  <Space size={30} direction='vertical'>
+                    <div className='message optionItem'>
+                      <CommentOutlined className='text-2xl' />
+                    </div>
+                    <div className='Search optionItem'>
+                      <SearchOutlined className='text-2xl' />
+                    </div>
+                  </Space>
+                </div>
               </div>
-              <div className='option'>
-                <Space size={30} direction='vertical'>
-                  <div className='message optionItem'>
-                    <CommentOutlined className='text-2xl' />
-                  </div>
-                  <div className='Search optionItem'>
-                    <SearchOutlined className='text-2xl' />
-                  </div>
-                  <div className='Setting optionItem'>
-                    <SettingOutlined className='text-2xl' />
-                  </div>
-                </Space>
-              </div>
-              <div className='mode'>
-                <FontAwesomeIcon className='icon' icon={faSun} />
+              <div className='mode '>
+                <div className='Setting optionItem'>
+                  <SettingOutlined className='text-2xl' />
+                </div>
               </div>
             </div>
             <div

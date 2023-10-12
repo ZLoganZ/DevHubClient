@@ -13,6 +13,7 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import getImageURL from '@/util/getImageURL';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssEditPostForm';
@@ -31,7 +32,7 @@ interface PostProps {
   img?: string;
 }
 
-const EditPostForm = (PostProps: PostProps) => {
+const EditPostForm = ({ id, title, content, img }: PostProps) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -41,10 +42,10 @@ const EditPostForm = (PostProps: PostProps) => {
 
   const { mutateUpdatePost } = useUpdatePost();
 
-  const [content, setContent] = useState(PostProps.content);
+  const [contentQuill, setContentQuill] = useState(content);
 
   useEffect(() => {
-    setContent(content);
+    setContentQuill(contentQuill);
   }, []);
 
   const ReactQuillRef = useRef<any>();
@@ -96,28 +97,28 @@ const EditPostForm = (PostProps: PostProps) => {
 
   const form = useForm({
     defaultValues: {
-      title: PostProps.title,
-      img: PostProps.img
+      title: title,
+      img: img
     }
   });
 
   const onSubmit = async (values: any) => {
-    if (content === '<p><br></p>') {
+    if (contentQuill === '<p><br></p>') {
       error();
     } else {
       dispatch(setLoading(true));
-      if (form.getValues('img') !== PostProps.img) {
+      if (form.getValues('img') !== img) {
         if (form.getValues('img')) {
           const result = await handleUploadImage(form.getValues('img')!);
           form.setValue('img', result.url);
         }
-        if (PostProps.img) await handleRemoveImage(PostProps.img);
+        if (img) await handleRemoveImage(img);
       }
       values.img = form.getValues('img');
-      values.content = content;
+      values.content = contentQuill;
 
       mutateUpdatePost({
-        id: PostProps.id,
+        id: id,
         postUpdate: values
       });
     }
@@ -148,7 +149,7 @@ const EditPostForm = (PostProps: PostProps) => {
   useEffect(() => {
     // Dispatch callback submit lên cho DrawerHOC
     dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
-  }, [content, form]);
+  }, [contentQuill, form]);
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -159,14 +160,8 @@ const EditPostForm = (PostProps: PostProps) => {
   };
 
   const nameImage = useMemo(() => {
-    if (PostProps.img) {
-      const nameSplit = PostProps.img.split('/');
-      const duplicateName = nameSplit.pop();
-      const name = duplicateName?.replace(/_[^_]*\./, '.');
-      return name;
-    }
-    return undefined;
-  }, [PostProps.img]);
+    return img?.replace(/\_[^_]*$/, '');
+  }, [img]);
 
   const handleUpload = (info: any) => {
     form.setValue('img', info?.fileList[0]?.originFileObj);
@@ -177,7 +172,7 @@ const EditPostForm = (PostProps: PostProps) => {
       uid: '-1',
       name: nameImage!,
       status: 'done',
-      url: PostProps.img
+      url: getImageURL(img!, 'mini')
     }
   ];
 
@@ -198,7 +193,7 @@ const EditPostForm = (PostProps: PostProps) => {
               <Input
                 name='title'
                 placeholder='Add a Title'
-                defaultValue={PostProps.title}
+                defaultValue={title}
                 allowClear
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
@@ -210,9 +205,9 @@ const EditPostForm = (PostProps: PostProps) => {
             <div className='AddContent mt-4'>
               <ReactQuill
                 ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
-                value={content}
+                value={contentQuill}
                 preserveWhitespace
-                onChange={setContent}
+                onChange={setContentQuill}
                 modules={{
                   toolbar: toolbarOptions
                 }}
@@ -253,7 +248,7 @@ const EditPostForm = (PostProps: PostProps) => {
                   listType='picture'
                   onChange={handleUpload}
                   accept='image/png, image/jpeg, image/jpg'
-                  defaultFileList={PostProps.img ? [...fileList] : []}
+                  defaultFileList={img ? [...fileList] : []}
                   maxCount={1}
                   customRequest={async ({ onSuccess }) => {
                     if (onSuccess) {

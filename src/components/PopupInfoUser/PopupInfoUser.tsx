@@ -6,6 +6,7 @@ import { faBriefcase, faEllipsis, faSnowflake } from '@fortawesome/free-solid-sv
 
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
+import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 import { UserInfoType } from '@/types';
@@ -33,7 +34,7 @@ const PopupInfoUser = ({ userInfo, userID }: Props) => {
       <div className='popupInfoUser flex' style={{ width: '95%' }}>
         <NavLink to={`/user/${userInfo._id}`}>
           <div className='popupInfoUser__avatar mr-5 mt-3'>
-            <Avatar size={70} src={userInfo.user_image} />
+            <Avatar size={70} src={getImageURL(userInfo.user_image, 'mini')} />
           </div>
         </NavLink>
         <div className='popupInfoUser__content'>

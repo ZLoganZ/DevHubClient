@@ -1,11 +1,13 @@
-import { useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
+import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
 
-import PicGenie from '@/components/AdvancedImage';
 import { useIntersectionObserver } from '@/hooks/special';
 import { useViewPost } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
+import { imageErrorFallback } from '@/util/constants/SettingSystem';
 import StyleProvider from './cssPostContent';
 
 interface ContentPostProps {
@@ -30,10 +32,12 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
 
   const isMoreThan500 = useMemo(() => content.length > 500 && content.length > 515, [content]);
 
-  const truncatedContent = useMemo(() => {
-    if (isMoreThan500 && !expanded) return content.slice(0, 500) + '...';
-    return content;
-  }, [content, expanded]);
+  const [contentQuill, setContent] = useState(content);
+
+  useLayoutEffect(() => {
+    if (isMoreThan500 && !expanded) setContent(content.slice(0, 500) + '...');
+    else setContent(content);
+  }, [expanded, content]);
 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
@@ -50,7 +54,7 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
       <div className='title font-bold'>{title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill preserveWhitespace value={truncatedContent} readOnly theme='bubble' />
+          <ReactQuill preserveWhitespace value={contentQuill} readOnly theme='bubble' />
           {isMoreThan500 && (
             <a className='clickMore' onClick={() => setExpanded(!expanded)}>
               {expanded ? 'Read less' : 'Read more'}
@@ -59,7 +63,7 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
         </div>
         {img ? (
           <div className='contentImage overflow-hidden h-full w-full object-cover my-3 flex items-center justify-center'>
-            <PicGenie src={img} option='post' />
+            <Image src={getImageURL(img, 'post')} alt='pic content' fallback={imageErrorFallback} />
           </div>
         ) : (
           link && (

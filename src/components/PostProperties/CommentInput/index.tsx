@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Input, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useMediaQuery } from 'react-responsive';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
@@ -59,12 +61,13 @@ const CommentInput = ({ currentUser, postID }: Props) => {
   useEffect(() => {
     if (data.isReply) inputRef.current.focus();
   }, [data]);
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider>
-      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4'>
-        <Avatar className='mr-2' size={40} src={currentUser.user_image} />
-        <div className='input w-full'>
+      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
+        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
+        <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
             value={commentContent}
@@ -90,7 +93,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
             maxLength={150}
             addonAfter={
               <Popover
-                placement='right'
+                placement={!isXsScreen ? 'right' : 'top'}
                 trigger='click'
                 title={'Emoji'}
                 content={
@@ -137,7 +140,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
               data.isReply && (
                 <div className='flex items-center'>
                   <span className='mr-2'>Reply to</span>
-                  <Avatar className='mr-2' size={20} src={data.user_image} />
+                  <Avatar className='mr-2' size={20} src={getImageURL(data.user_image!, 'mini')} />
                   <span className='mr-2'>{data.name}</span>
                 </div>
               )

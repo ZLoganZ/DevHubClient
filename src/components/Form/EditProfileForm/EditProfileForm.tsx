@@ -27,6 +27,7 @@ import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
+import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
 import { useCurrentUserInfo } from '@/hooks/fetch';
@@ -56,10 +57,14 @@ const EditProfileForm = () => {
 
   const [location, setLocation] = useState(currentUserInfo.location || '');
 
-  const [avatar, setAvatar] = useState(currentUserInfo.user_image || '/images/TimeLinePage/avatar.jpg');
+  const [avatar, setAvatar] = useState(
+    getImageURL(currentUserInfo.user_image, 'avatar') || '/images/TimeLinePage/avatar.jpg'
+  );
   const [fileAvatar, setFileAvatar] = useState(null);
 
-  const [cover, setCover] = useState(currentUserInfo.cover_image || '/images/ProfilePage/cover.jpg');
+  const [cover, setCover] = useState(
+    getImageURL(currentUserInfo.cover_image) || '/images/ProfilePage/cover.jpg'
+  );
   const [fileCover, setFileCover] = useState(null);
 
   const [about, setAbout] = useState(currentUserInfo.about || '');
@@ -357,6 +362,9 @@ const EditProfileForm = () => {
                 width: '7rem',
                 height: '7rem',
                 objectFit: 'cover'
+              }}
+              preview={{
+                src: getImageURL(currentUserInfo.user_image)
               }}
             />
           </div>
