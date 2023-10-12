@@ -291,7 +291,7 @@ export const useConversationsData = () => {
   return {
     isLoadingConversations: isLoading,
     isErrorConversations: isError,
-    conversations: data?.content?.conversations,
+    conversations: data?.metadata,
     isFetchingConversations: isFetching
   };
 };
@@ -321,7 +321,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
   return {
     isLoadingCurrentConversation: isLoading,
     isErrorCurrentConversation: isError,
-    currentConversation: data?.content?.conversation,
+    currentConversation: data?.metadata,
     isFetchingCurrentConversation: isFetching
   };
 };
@@ -380,7 +380,7 @@ export const useMessagesData = (conversationID: any) => {
   return {
     isLoadingMessages: isLoading,
     isErrorMessages: isError,
-    messages: data?.content?.messages,
+    messages: data?.metadata,
     isFetchingMessages: isFetching,
     refetchMessages: refetch
   };

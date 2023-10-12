@@ -31,17 +31,26 @@ const activeListSlice = createSlice({
     removeMember: (state, action) => {
       return {
         ...state,
-        members: state.members.filter((memberId: any) => memberId !== action.payload)
+        members: state.members.filter(
+          (memberId: any) => memberId !== action.payload
+        )
       };
     },
     setFollowers: (state, action) => {
+      const followers = action.payload.map((follower: any) => {
+        return {
+          userID: follower._id
+        };
+      });
+
       return {
         ...state,
-        followers: action.payload.followers
+        followers: followers
       };
     }
   }
 });
 
-export const { setMembers, addMember, removeMember, setFollowers } = activeListSlice.actions;
+export const { setMembers, addMember, removeMember, setFollowers } =
+  activeListSlice.actions;
 export default activeListSlice.reducer;
