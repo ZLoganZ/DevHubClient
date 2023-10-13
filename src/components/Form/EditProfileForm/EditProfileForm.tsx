@@ -58,7 +58,7 @@ const EditProfileForm = () => {
   const [location, setLocation] = useState(currentUserInfo.location || '');
 
   const [avatar, setAvatar] = useState(
-    getImageURL(currentUserInfo.user_image) || '/images/TimeLinePage/avatar.jpg'
+    getImageURL(currentUserInfo.user_image, 'avatar') || '/images/TimeLinePage/avatar.jpg'
   );
   const [fileAvatar, setFileAvatar] = useState(null);
 
@@ -362,6 +362,9 @@ const EditProfileForm = () => {
                 width: '7rem',
                 height: '7rem',
                 objectFit: 'cover'
+              }}
+              preview={{
+                src: getImageURL(currentUserInfo.user_image)
               }}
             />
           </div>

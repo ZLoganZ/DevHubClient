@@ -63,7 +63,7 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
         </div>
         {img ? (
           <div className='contentImage overflow-hidden h-full w-full object-cover my-3 flex items-center justify-center'>
-            <Image src={getImageURL(img)} alt='pic content' fallback={imageErrorFallback} />
+            <Image src={getImageURL(img, 'post')} alt='pic content' fallback={imageErrorFallback} />
           </div>
         ) : (
           link && (

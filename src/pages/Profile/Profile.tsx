@@ -95,12 +95,14 @@ const Profile = (Props: Props) => {
               <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
                 <Image
                   src={getImageURL(otherUserInfo.user_image)}
-                  preview={otherUserInfo.user_image ? true : false}
                   alt='avt'
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover'
+                  }}
+                  preview={{
+                    src: getImageURL(otherUserInfo.user_image)
                   }}
                 />
               </div>
