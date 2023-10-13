@@ -7,7 +7,6 @@ import { Image, Space, Empty, Skeleton } from 'antd';
 import StyleProvider from './cssSharedMedia';
 import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
-import { pusherClient } from '@/util/pusher';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 
@@ -40,7 +39,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
   useEffect(() => {
     if (isLoadingCurrentConversation) return;
 
-    pusherClient.subscribe(pusherKey);
+    // pusherClient.subscribe(pusherKey);
 
     const updateHandler = (conversation: any) => {
       setItems((current: any) => {
@@ -48,7 +47,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
       });
     };
 
-    pusherClient.bind('conversation-update-media', updateHandler);
+    // pusherClient.bind('conversation-update-media', updateHandler);
   }, [Props.conversationID, isLoadingCurrentConversation]);
 
   const downloadImage = async (url: any) => {

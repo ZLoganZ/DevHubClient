@@ -2,210 +2,54 @@ import { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider, Input, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
-import { find } from 'lodash';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssConversationList';
-import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/GroupChatModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import ConversationBox from '@/components/ChatComponents/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { UserInfoType } from '@/types';
+import ConversationBox from '../ConversationBox/ConversationBox';
+import { off } from 'process';
 
 interface ConversationListProps {
-  initialItems: any;
+  initialItems: any; // conversations
+  selected?: string; // conversationID
   followers: UserInfoType[];
   title?: string;
-  selected?: string;
 }
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector(state => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  useAppSelector((state) => state.activeList.members);
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const [items, setItems] = useState(Props.initialItems);
+  // console.log('currentUserInfo:: ', currentUserInfo);
 
-  const pusherKey = useMemo(() => {
-    return currentUserInfo?._id;
-  }, [currentUserInfo]);
-
-  useEffect(() => {
-    if (!pusherKey) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setItems((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-      // sort lại conversation theo thời gian
-      setItems((current: any) => {
-        return current.sort((a: any, b: any) => {
-          const aTime = a.messages.length > 0 ? a.messages[a.messages.length - 1].createdAt : a.createdAt;
-          const bTime = b.messages.length > 0 ? b.messages[b.messages.length - 1].createdAt : b.createdAt;
-
-          return new Date(bTime).getTime() - new Date(aTime).getTime();
-        });
-      });
-    };
-
-    const newHandler = (conversation: any) => {
-      setItems((current: any) => {
-        if (find(current, { _id: conversation._id })) {
-          return current;
-        }
-
-        return [conversation, ...current];
-      });
-      // sort lại conversation theo thời gian
-      setItems((current: any) => {
-        return current.sort((a: any, b: any) => {
-          const aTime = a.messages.length > 0 ? a.messages[a.messages.length - 1].createdAt : a.createdAt;
-          const bTime = b.messages.length > 0 ? b.messages[b.messages.length - 1].createdAt : b.createdAt;
-
-          return new Date(bTime).getTime() - new Date(aTime).getTime();
-        });
-      });
-    };
-
-    const removeHandler = (conversation: any) => {
-      setItems((current: any) => {
-        return [...current.filter((convo: any) => convo._id !== conversation)];
-      });
-    };
-
-    pusherClient.bind('conversation-update', updateHandler);
-    pusherClient.bind('new-conversation', newHandler);
-    pusherClient.bind('conversation-remove', removeHandler);
-  }, [pusherKey]);
-
-  const [messages, setMessages] = useState<any[]>(Props.initialItems);
-
-  useEffect(() => {
-    if (!messages) return;
-
-    const unseenConversations = messages.filter((conversation: any) => {
-      if (conversation.messages?.length === 0) return false;
-      const seenList = conversation.messages[conversation.messages.length - 1].seen || [];
-      return !seenList.some((user: any) => user._id === currentUserInfo._id);
-    });
-
-    if (unseenConversations.length > 0) {
-      document.title = `(${unseenConversations.length}) DevHub Message`;
-    } else {
-      document.title = `DevHub Message`;
-    }
-  }, [messages]);
-
-  const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
-
-  useEffect(() => {
-    if (!pusherKey) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            playNotiMessage.play();
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    const updateHandlerSeen = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
-    pusherClient.bind('conversation-update-noti', updateHandler);
-  }, [pusherKey]);
-
-  const HandleOnClick = async (item: any) => {
+  const HandleOnClick = async (userFollow: any) => {
     const { data } = await messageService.createConversation({
-      followers: [item, currentUserInfo._id]
+      type: 'private',
+      members: [userFollow]
     });
-    navigate(`/message/${data.metadata.conversation._id}`);
+    navigate(`/message/${data.metadata._id}`);
   };
 
-  // Open OtherPostDetailModal
-  const [isOpenPostDetail, setIsOpenPostDetail] = useState(false);
-
-  const { visible } = useAppSelector((state) => state.modalHOC);
-
-  useEffect(() => {
-    if (!visible && isOpenPostDetail) {
-      setIsOpenPostDetail(!isOpenPostDetail);
-    }
-  }, [visible, isOpenPostDetail]);
-
-  const formatUsername = (name: any) => {
-    const MAX_LENGTH = 14; // maximum length of name on one line
-    const words = name.split(' ');
-    const lines = [];
-    let currentLine = '';
-
-    // add each word to a line, breaking onto new line if line is too long
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      if (currentLine.length + word.length > MAX_LENGTH) {
-        lines.push(currentLine);
-        currentLine = word + ' ';
-      } else {
-        currentLine += word + ' ';
-      }
-    }
-
-    // add any remaining words to the last line
-    if (currentLine.length > 0) {
-      lines.push(currentLine.trim());
-    }
-
-    // return the formatted name
-    return lines.join('\n');
+  const handleItemName = (name: string) => {
+    // chỉ lấy 2 từ cuối cùng của tên
+    const arr = name.split(' ');
+    return arr[arr.length - 2] + ' ' + arr[arr.length - 1];
   };
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isOpenPostDetail && <OpenGroupModal users={Props.followers} />}
       <div className='searchChat h-screen'>
         <Space
           className='myInfo flex justify-between items-center py-4 px-3'
@@ -240,8 +84,12 @@ const ConversationList = (Props: ConversationListProps) => {
               </div>
             </div>
           </div>
-          <div className='iconPlus cursor-pointer' onClick={() => setIsOpenPostDetail(!isOpenPostDetail)}>
-            <FontAwesomeIcon className='text-xl' icon={faUsersLine} color={themeColorSet.colorText1} />
+          <div className='iconPlus cursor-pointer' onClick={() => {}}>
+            <FontAwesomeIcon
+              className='text-xl'
+              icon={faUsersLine}
+              color={themeColorSet.colorText1}
+            />
           </div>
         </Space>
         <div
@@ -306,7 +154,8 @@ const ConversationList = (Props: ConversationListProps) => {
                       fontSize: '0.9rem',
                       color: themeColorSet.colorText1
                     }}>
-                    {formatUsername(item.name)}
+                    {/* {item.name} */}
+                    {handleItemName(item.name)}
                   </div>
                 </div>
               );
@@ -319,14 +168,16 @@ const ConversationList = (Props: ConversationListProps) => {
             height: '57%',
             overflow: 'auto'
           }}>
-          {items?.map(
-            (item: any) =>
-              (item.messages.length > 0 || item.isGroup) && (
-                <NavLink to={`/message/${item._id}`}>
-                  <ConversationBox key={item._id} data={item} selected={item._id === Props.selected} />
-                </NavLink>
-              )
-          )}
+          {Props.initialItems?.length > 0 &&
+            Props.initialItems.map((item: any) => (
+              // (item.messages?.length > 0 || item?.isGroup) && (
+              <NavLink to={`/message/${item?._id}`} key={item?._id}>
+                <ConversationBox
+                  data={item}
+                  selected={item?._id === Props?.selected}
+                />
+              </NavLink>
+            ))}
         </div>
         <div className='listUser'></div>
       </div>
