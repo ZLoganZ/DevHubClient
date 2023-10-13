@@ -1,4 +1,5 @@
-import { Col, ConfigProvider, Row, Space } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
+import type { MenuProps } from 'antd';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
@@ -16,8 +17,10 @@ import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
 import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
-import { useAppSelector } from '@/hooks/special';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
+import { setTheme } from '@/redux/Slice/ThemeSlice';
+import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -37,6 +40,42 @@ const Chat = () => {
   );
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const onChange = (checked: boolean) => {
+    if (checked) {
+      dispatch(setTheme({ theme: DARK_THEME }));
+    } else {
+      dispatch(setTheme({ theme: LIGHT_THEME }));
+    }
+  };
+
+  const settingItem: MenuProps['items'] = [
+    {
+      key: '1',
+      label: (
+        <div className='item flex items-center px-4 py-2'>
+          <FontAwesomeIcon className='icon' icon={faSun} />
+          <span className='ml-2'>Light theme</span>
+        </div>
+      ),
+      onClick: () => {
+        onChange(false);
+      }
+    },
+    {
+      key: '2',
+      label: (
+        <div className='item flex items-center px-4 py-2'>
+          <FontAwesomeIcon className='icon' icon={faSnowflake} />
+          <span className='ml-2'>Dark theme</span>
+        </div>
+      ),
+      onClick: () => {
+        onChange(true);
+      }
+    }
+  ];
 
   return (
     <ConfigProvider
@@ -73,9 +112,11 @@ const Chat = () => {
                 </div>
               </div>
               <div className='mode '>
-                <div className='Setting optionItem'>
-                  <SettingOutlined className='text-2xl' />
-                </div>
+                <Dropdown menu={{ items: settingItem }} trigger={['click']}>
+                  <div className='Setting optionItem'>
+                    <SettingOutlined className='text-2xl' />
+                  </div>
+                </Dropdown>
               </div>
             </div>
             <div

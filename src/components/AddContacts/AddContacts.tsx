@@ -161,9 +161,10 @@ const AddContacts = (Props: Props) => {
                   </Button>
                 </a>
               </Dropdown>
+              <span className='ml-2 mr-2'>:</span>
               <Input
                 key={index + '1'}
-                className='w-full ml-2 pl-2 inputlink'
+                className='w-full pl-2 inputlink'
                 placeholder={contactArray[parseInt(item.key)].linkDefault}
                 defaultValue={addLinkArr[index]?.link}
                 inputMode='url'
@@ -203,7 +204,7 @@ const AddContacts = (Props: Props) => {
                 }}
               />
 
-              <Button
+              {/* <Button
                 className='icon-edit-tooltip ml-3'
                 shape='circle'
                 style={{
@@ -215,7 +216,7 @@ const AddContacts = (Props: Props) => {
                 }}
                 size='small'>
                 <FontAwesomeIcon icon={faInfo} style={{ color: commonColor.colorBlue2, fontSize: '1rem' }} />
-              </Button>
+              </Button> */}
 
               <Button
                 className='icon-trash'

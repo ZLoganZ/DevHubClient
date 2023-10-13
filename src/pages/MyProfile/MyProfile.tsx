@@ -120,7 +120,7 @@ const MyProfile = () => {
                   </div>
                 </Col>
                 <Col span={isXsScreen ? 5 : 6}>
-                  <div className='chat_Follow flex justify-around items-center w-full h-full'>
+                  <div className='chat_Follow flex justify-around items-center xs:items-start w-full h-full'>
                     <div className='editProfile'>
                       <button
                         className='btnEditProfile px-6 py-3 rounded-full xs:w-32'
