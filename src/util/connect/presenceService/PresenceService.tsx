@@ -68,7 +68,7 @@ const PresenceService = () => {
 
         dispatch(setMembers(intersection));
 
-        console.log('data::', data);
+        // console.log('data::', data);
       });
     }
   }, [currentUserInfo]);
