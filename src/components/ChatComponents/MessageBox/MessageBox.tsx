@@ -71,7 +71,7 @@ const MessageBox = (Props: MessageBoxProps) => {
                   }}
                 />
               ) : (
-                <div>{Props.data.body}</div>
+                <>{Props.data.body}</>
               )}
             </div>
             <div

@@ -6,11 +6,11 @@ export class MessageService extends BaseService {
   }
 
   getConversations = () => {
-    return this.get(`/conversations`);
+    return this.get(`/chat/conversations`);
   };
 
   createConversation = (payload: any) => {
-    return this.post(`/conversations`, payload);
+    return this.post(`/conversations/create`, payload);
   };
 
   getConversation = (payload: any) => {
@@ -22,7 +22,7 @@ export class MessageService extends BaseService {
   };
 
   seenMessage = (payload: any) => {
-    return this.post(`/conversations/${payload}/seen`, null);
+    return this.post(`/conversations/${payload}/seen`);
   };
 
   sendMessage = (payload: any) => {

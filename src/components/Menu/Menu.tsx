@@ -137,7 +137,7 @@ const MenuMain = () => {
               icon: currentUserInfo.user_image ? (
                 <Avatar
                   className='icon'
-                  src={getImageURL(currentUserInfo.user_image, 'mini')}
+                  src={getImageURL(currentUserInfo.user_image, 'avatar_mini')}
                   shape='circle'
                   size={20}
                 />

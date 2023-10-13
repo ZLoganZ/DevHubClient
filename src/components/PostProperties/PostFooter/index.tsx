@@ -21,7 +21,7 @@ interface PostFooterProps {
   currentUser: UserInfoType;
 }
 
-const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterProps) => {
+const PostFooter: React.FC<PostFooterProps> = ({ post, postAuthor, isPostShare, currentUser }) => {
   const change = useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
@@ -138,10 +138,11 @@ const PostFooter = ({ post, postAuthor, isPostShare, currentUser }: PostFooterPr
                     title: 'The post of ' + post.post_attributes.user.name,
                     component: (
                       <OtherPostDetail
+                        key={post._id}
                         post={post}
                         postAuthor={postAuthor}
                         currentUser={currentUser}
-                        isOpenByModal={true}
+                        isOpenByModal
                       />
                     ),
                     footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,

@@ -20,7 +20,7 @@ interface CommentProps {
   isReply?: boolean;
 }
 
-const CommentDetail = ({ comment, children, postID }: CommentProps) => {
+const CommentDetail: React.FC<CommentProps> = ({ comment, children, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -184,7 +184,7 @@ const CommentDetail = ({ comment, children, postID }: CommentProps) => {
           }
           avatar={
             comment.user.user_image ? (
-              <Avatar src={getImageURL(comment.user.user_image, 'mini')} alt={comment.user.name} />
+              <Avatar src={getImageURL(comment.user.user_image, 'avatar_mini')} alt={comment.user.name} />
             ) : (
               <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
             )

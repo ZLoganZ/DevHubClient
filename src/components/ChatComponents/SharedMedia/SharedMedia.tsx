@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BellOutlined, ExclamationCircleOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, Space, Empty, Skeleton } from 'antd';
 
 import StyleProvider from './cssSharedMedia';
-import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useCurrentConversationData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
-import { pusherClient } from '@/util/pusher';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 
@@ -23,12 +22,6 @@ const SharedMedia = (Props: SharedMediaProps) => {
     Props.conversationID
   );
 
-  const { currentUserInfo } = useCurrentUserInfo();
-
-  const pusherKey = useMemo(() => {
-    return currentUserInfo._id;
-  }, [currentUserInfo]);
-
   const [items, setItems] = useState<any>([]);
 
   useEffect(() => {
@@ -36,20 +29,6 @@ const SharedMedia = (Props: SharedMediaProps) => {
 
     setItems(currentConversation.image);
   }, [isLoadingCurrentConversation, currentConversation]);
-
-  useEffect(() => {
-    if (isLoadingCurrentConversation) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setItems((current: any) => {
-        return [...current, conversation.image];
-      });
-    };
-
-    pusherClient.bind('conversation-update-media', updateHandler);
-  }, [Props.conversationID, isLoadingCurrentConversation]);
 
   const downloadImage = async (url: any) => {
     const originalImage = url;

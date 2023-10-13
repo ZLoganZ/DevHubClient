@@ -172,7 +172,7 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
       uid: '-1',
       name: nameImage!,
       status: 'done',
-      url: getImageURL(img!, 'mini')
+      url: getImageURL(img!, 'post_mini')
     }
   ];
 

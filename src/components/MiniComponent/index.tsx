@@ -49,7 +49,7 @@ export const ButtonActiveHover = ({
 // ===========================================
 
 export const ButtonActiveNonHover = () => {
-  return <div></div>;
+  return <></>;
 };
 
 // ===========================================
@@ -80,7 +80,7 @@ export const ButtonCancelHover = ({ className, children, onClick, disabled }: Bu
 // ===========================================
 
 export const ButtonCancelNonHover = () => {
-  return <div></div>;
+  return <></>;
 };
 
 // ===========================================

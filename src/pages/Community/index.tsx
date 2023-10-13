@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import StyleProvider from './cssCommunity';
 import { format } from 'date-fns';
 import { getTheme } from '@/util/theme';
@@ -98,7 +98,7 @@ export const CommunityAdmin = () => {
                       )}
                       {community.posts.map((item: any, index: any) => {
                         return (
-                          <div key={index}>
+                          <Fragment key={index}>
                             {item.PostShared && (
                               <MyPostShare
                                 key={item._id}
@@ -110,7 +110,7 @@ export const CommunityAdmin = () => {
                             {!item.PostShared && (
                               <MyPost key={item._id} post={item} userInfo={currentUserInfo} />
                             )}
-                          </div>
+                          </Fragment>
                         );
                       })}
                     </TabPane>
@@ -381,7 +381,7 @@ export const CommunityMember = () => {
                       )}
                       {community.posts.map((item: any, index: any) => {
                         return (
-                          <div key={index}>
+                          <Fragment key={index}>
                             {item.PostShared && (
                               <MyPostShare
                                 key={item._id}
@@ -391,7 +391,7 @@ export const CommunityMember = () => {
                               />
                             )}
                             {!item.PostShared && <MyPost key={item._id} post={item} userInfo={userInfo} />}
-                          </div>
+                          </Fragment>
                         );
                       })}
                     </TabPane>
@@ -662,7 +662,7 @@ export const CommunityNoMember = () => {
                       )}
                       {community.posts.map((item: any, index: any) => {
                         return (
-                          <div key={index}>
+                          <Fragment key={index}>
                             {item.PostShared && (
                               <MyPostShare
                                 key={item._id}
@@ -672,7 +672,7 @@ export const CommunityNoMember = () => {
                               />
                             )}
                             {!item.PostShared && <MyPost key={item._id} post={item} userInfo={userInfo} />}
-                          </div>
+                          </Fragment>
                         );
                       })}
                     </TabPane>

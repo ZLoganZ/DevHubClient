@@ -128,11 +128,11 @@ const AddRepositoryForm = (Props: ReposProps) => {
             </span>
             <span className='star mr-3'>
               <FontAwesomeIcon size='xs' icon={faStar} />
-              <span className='ml-1'>{item.watchersCount}</span>
+              <span className='ml-1'>{item.watchers_count}</span>
             </span>
             <span className='fork'>
               <FontAwesomeIcon size='xs' icon={faCodeFork} />
-              <span className='ml-1'>{item.forksCount}</span>
+              <span className='ml-1'>{item.forks_count}</span>
             </span>
           </div>
         </Space>
@@ -176,7 +176,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
           </div>
         ) : (
           // Nếu có access_token_github
-          <div>
+          <>
             <div className='title mt-5' style={{ fontSize: '1.1rem', color: themeColorSet.colorText1 }}>
               Select the repositories you want to feature
             </div>
@@ -190,7 +190,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
                 return renderItemRepos(item, index);
               })}
             </div>
-          </div>
+          </>
         )}
       </div>
     </StyleProvider>

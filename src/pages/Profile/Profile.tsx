@@ -76,7 +76,7 @@ const Profile = (Props: Props) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!userPosts || !otherUserInfo || isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
+      {isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
         <LoadingProfileComponent />
       ) : (
         <>
@@ -366,19 +366,19 @@ const Profile = (Props: Props) => {
                     {
                       key: '3',
                       label: 'Show',
-                      children: <div>Show</div>,
+                      children: <>Show</>,
                       disabled: true
                     },
                     {
                       key: '4',
                       label: 'Seri',
-                      children: <div>Seri</div>,
+                      children: <>Seri</>,
                       disabled: true
                     },
                     {
                       key: '5',
                       label: 'Guestbook',
-                      children: <div>Guestbook</div>,
+                      children: <>Guestbook</>,
                       disabled: true
                     }
                   ]}

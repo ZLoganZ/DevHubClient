@@ -19,7 +19,7 @@ interface PostShareProps {
   currentUser: UserInfoType;
 }
 
-const PostShare = ({ postShared, postAuthor, postSharer, currentUser }: PostShareProps) => {
+const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSharer, currentUser }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

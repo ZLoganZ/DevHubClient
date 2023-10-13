@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Col, Dropdown, MenuProps, Row, Space } from 'antd';
+import { Col, Dropdown, MenuProps, Row, Skeleton, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileLines /* faUserFriends */ } from '@fortawesome/free-solid-svg-icons';
+import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
 import { DownOutlined } from '@ant-design/icons';
 
@@ -13,7 +13,7 @@ import LoadingNewFeed from '@/components/Loading/LoadingNewFeed';
 
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
-import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useAllPopularPostsData, useAllNewsfeedPostsData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
@@ -91,57 +91,35 @@ const NewsFeed = () => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed, allPostsNewsfeed } =
-    useAllPostsNewsfeedData();
+  const [popularOpen, setPopularOpen] = useState(false);
+  const [popularvalue, setPopularvalue] = useState('All time');
+
+  const { isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts, allNewsfeedPosts } =
+    useAllNewsfeedPostsData();
+
+  const { allPopularPosts, isLoadingAllPopularPosts, isFetchingAllPopularPosts } =
+    useAllPopularPostsData(popularvalue);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
   useEffect(() => {
-    if (isLoadingAllPostsNewsfeed) {
+    if (isLoadingAllNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-    if (!isLoadingAllPostsNewsfeed && isFetchingAllPostsNewsfeed) {
+    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-  }, [isLoadingAllPostsNewsfeed, isFetchingAllPostsNewsfeed]);
-
-  const [popularOpen, setPopularOpen] = useState(false);
-  const [popularvalue, setPopularvalue] = useState('All time');
+  }, [isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts]);
 
   const popular = useMemo(() => {
-    return [...(allPostsNewsfeed || [])]
-      .filter((item) => item.type !== 'Share')
-      .filter((item) => {
-        const date = new Date(item.createdAt);
-        const dateNow = new Date();
-        const diffTime = Math.abs(dateNow.getTime() - date.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (popularvalue === 'Today') {
-          return diffDays <= 1;
-        }
-        if (popularvalue === 'This week') {
-          return diffDays <= 7;
-        }
-        if (popularvalue === 'This month') {
-          return diffDays <= 30;
-        }
-        if (popularvalue === 'This year') {
-          return diffDays <= 365;
-        }
-        if (popularvalue === 'All time') {
-          return true;
-        }
-        return true;
-      })
-      .sort((a, b) => b.post_attributes.view_number - a.post_attributes.view_number)
-      .slice(0, 3);
-  }, [popularvalue, allPostsNewsfeed]);
+    return [...(allPopularPosts || [])];
+  }, [allPopularPosts]);
 
   const handlePopularClick: MenuProps['onClick'] = (e) => {
     const a = popular_time.find((item) => item.key === e.key);
@@ -152,16 +130,14 @@ const NewsFeed = () => {
   const handleOpenPopularChange = (flag: boolean) => {
     setPopularOpen(flag);
   };
+
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
+
+  const isNoPopularPosts = !isFetchingAllPopularPosts && !isLoadingAllPopularPosts && popular.length === 0;
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!allPostsNewsfeed ||
-      !currentUserInfo ||
-      !popular ||
-      !community ||
-      isLoadingAllPostsNewsfeed ||
-      isFetchingAllPostsNewsfeed ? (
+      {!community || isLoadingAllNewsfeedPosts || isFetchingAllNewsfeedPosts ? (
         <LoadingNewFeed />
       ) : (
         <Row>
@@ -170,18 +146,17 @@ const NewsFeed = () => {
               <div className='news-feed-left w-8/12 xs:w-full'>
                 <NewPost currentUser={currentUserInfo} />
                 <div className='show'>
-                  {allPostsNewsfeed.map((item, index) => {
+                  {allNewsfeedPosts.map((item, index) => {
                     return (
-                      <div key={index}>
-                        {item.type === 'Post' && (
+                      <Fragment key={index}>
+                        {item.type === 'Post' ? (
                           <OtherPost
                             key={item._id}
                             post={item}
                             postAuthor={item.post_attributes.user}
                             currentUser={currentUserInfo}
                           />
-                        )}
-                        {item.type === 'Share' && (
+                        ) : (
                           <OtherPostShare
                             key={item._id}
                             postShared={item}
@@ -190,7 +165,7 @@ const NewsFeed = () => {
                             currentUser={currentUserInfo}
                           />
                         )}
-                      </div>
+                      </Fragment>
                     );
                   })}
                 </div>
@@ -250,7 +225,7 @@ const NewsFeed = () => {
                     borderEndStartRadius: 10,
                     padding: 10
                   }}>
-                  {popular.length === 0 && (
+                  {isNoPopularPosts ? (
                     <div className='flex justify-center items-center no-post'>
                       <span
                         style={{
@@ -261,10 +236,15 @@ const NewsFeed = () => {
                         No popular post {popularvalue === 'All time' && 'for'} {popularvalue.toLowerCase()}
                       </span>
                     </div>
-                  )}
-                  {popular.map((item, index) => {
-                    return (
-                      <div key={index}>
+                  ) : isFetchingAllPopularPosts || isLoadingAllPopularPosts ? (
+                    <Fragment>
+                      <Skeleton active avatar paragraph={{ rows: 2 }} />
+                      <Skeleton active avatar paragraph={{ rows: 2 }} />
+                      <Skeleton active avatar paragraph={{ rows: 2 }} />
+                    </Fragment>
+                  ) : (
+                    popular.map((item, index) => (
+                      <Fragment key={index}>
                         <NavLink to={`/post/${item._id}`}>
                           <div
                             className='popular-post-item flex items-center pt-3 pb-3'
@@ -281,10 +261,10 @@ const NewsFeed = () => {
                                 objectFit: 'cover'
                               }}
                               className='popular-post-item-image'
-                              src={getImageURL(item.post_attributes.user.user_image, 'mini')}
+                              src={getImageURL(item.post_attributes.user.user_image, 'avatar_mini')}
                               alt=''
                             />
-                            <div className='content ml-4  '>
+                            <div className='content ml-4'>
                               <div
                                 className='name'
                                 style={{
@@ -300,8 +280,9 @@ const NewsFeed = () => {
                                   fontSize: '0.9rem'
                                 }}>
                                 <span>
-                                  {item.post_attributes.title!.length > 28
-                                    ? item.post_attributes.title?.slice(0, 28) + '...'
+                                  {item.post_attributes.title?.length! > 50 &&
+                                  item.post_attributes.title?.length! > 65
+                                    ? item.post_attributes.title!.slice(0, 50) + '...'
                                     : item.post_attributes.title}
                                 </span>
                               </div>
@@ -318,16 +299,16 @@ const NewsFeed = () => {
                                     marginLeft: 5,
                                     color: themeColorSet.colorText3
                                   }}>
-                                  {ConvertNumber(item.post_attributes.view_number)} view
+                                  {ConvertNumber(item.post_attributes.view_number!)} view
                                   {item.post_attributes.view_number! > 0 ? 's' : ''}
                                 </span>
                               </div>
                             </div>
                           </div>
                         </NavLink>
-                      </div>
-                    );
-                  })}
+                      </Fragment>
+                    ))
+                  )}
                 </div>
                 {/* <div
                     className="top-community mt-3"

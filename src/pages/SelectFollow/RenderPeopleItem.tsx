@@ -19,7 +19,7 @@ const RenderPeopleItem = ({ item }: any) => {
   const [follow, setFollow] = useState(false);
 
   return (
-    <div>
+    <>
       <div className='peopleItem flex justify-between items-center mt-5 p-2'>
         <div
           className='peopleImage p-3'
@@ -108,7 +108,7 @@ const RenderPeopleItem = ({ item }: any) => {
           backgroundColor: themeColorSet.colorBg2
         }}
       />
-    </div>
+    </>
   );
 };
 

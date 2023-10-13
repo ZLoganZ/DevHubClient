@@ -7,7 +7,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssConversationList';
-import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import OpenGroupModal from '@/components/GroupChatModal';
@@ -31,73 +30,10 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const navigate = useNavigate();
 
-  useAppSelector((state) => state.activeList.members);
+  useAppSelector((state) => state.socketIO.members);
   const { currentUserInfo } = useCurrentUserInfo();
 
   const [items, setItems] = useState(Props.initialItems);
-
-  const pusherKey = useMemo(() => {
-    return currentUserInfo?._id;
-  }, [currentUserInfo]);
-
-  useEffect(() => {
-    if (!pusherKey) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setItems((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-      // sort lại conversation theo thời gian
-      setItems((current: any) => {
-        return current.sort((a: any, b: any) => {
-          const aTime = a.messages.length > 0 ? a.messages[a.messages.length - 1].createdAt : a.createdAt;
-          const bTime = b.messages.length > 0 ? b.messages[b.messages.length - 1].createdAt : b.createdAt;
-
-          return new Date(bTime).getTime() - new Date(aTime).getTime();
-        });
-      });
-    };
-
-    const newHandler = (conversation: any) => {
-      setItems((current: any) => {
-        if (find(current, { _id: conversation._id })) {
-          return current;
-        }
-
-        return [conversation, ...current];
-      });
-      // sort lại conversation theo thời gian
-      setItems((current: any) => {
-        return current.sort((a: any, b: any) => {
-          const aTime = a.messages.length > 0 ? a.messages[a.messages.length - 1].createdAt : a.createdAt;
-          const bTime = b.messages.length > 0 ? b.messages[b.messages.length - 1].createdAt : b.createdAt;
-
-          return new Date(bTime).getTime() - new Date(aTime).getTime();
-        });
-      });
-    };
-
-    const removeHandler = (conversation: any) => {
-      setItems((current: any) => {
-        return [...current.filter((convo: any) => convo._id !== conversation)];
-      });
-    };
-
-    pusherClient.bind('conversation-update', updateHandler);
-    pusherClient.bind('new-conversation', newHandler);
-    pusherClient.bind('conversation-remove', removeHandler);
-  }, [pusherKey]);
 
   const [messages, setMessages] = useState<any[]>(Props.initialItems);
 
@@ -118,46 +54,6 @@ const ConversationList = (Props: ConversationListProps) => {
   }, [messages]);
 
   const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
-
-  useEffect(() => {
-    if (!pusherKey) return;
-
-    pusherClient.subscribe(pusherKey);
-
-    const updateHandler = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            playNotiMessage.play();
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    const updateHandlerSeen = (conversation: any) => {
-      setMessages((current: any) =>
-        current.map((currentConversation: any) => {
-          if (currentConversation._id === conversation._id) {
-            return {
-              ...currentConversation,
-              messages: conversation.messages
-            };
-          }
-
-          return currentConversation;
-        })
-      );
-    };
-
-    pusherClient.bind('conversation-update-seen', updateHandlerSeen);
-    pusherClient.bind('conversation-update-noti', updateHandler);
-  }, [pusherKey]);
 
   const HandleOnClick = async (item: any) => {
     const { data } = await messageService.createConversation({

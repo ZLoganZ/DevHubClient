@@ -4,7 +4,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { find } from 'lodash';
 import { NavLink } from 'react-router-dom';
 
-import { pusherClient } from '@/util/pusher';
 import { getTheme } from '@/util/theme';
 import { useIntersectionObserver } from '@/hooks/special';
 import { useOtherUser } from '@/hooks/special';
@@ -27,7 +26,7 @@ const MessageChat = (Props: IParams) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { members } = useAppSelector((state) => state.activeList);
+  const { members } = useAppSelector((state) => state.socketIO);
 
   const { currentConversation, isLoadingCurrentConversation } = useCurrentConversationData(
     Props.conversationID
@@ -60,43 +59,6 @@ const MessageChat = (Props: IParams) => {
     if (isLoadingMessages) return;
     setMessagesState(messages);
   }, [isLoadingMessages, messages]);
-
-  useEffect(() => {
-    pusherClient.subscribe(Props.conversationID);
-
-    const messageHandler = async (message: any) => {
-      seenMessage();
-
-      setMessagesState((current: any) => {
-        if (find(current, { _id: message._id })) {
-          return current;
-        }
-
-        return [...current, message];
-      });
-    };
-
-    const updateMessageHandler = (newMessage: any) => {
-      setMessagesState((current: any) =>
-        current.map((currentMessage: any) => {
-          if (currentMessage._id === newMessage._id) {
-            return newMessage;
-          }
-
-          return currentMessage;
-        })
-      );
-    };
-
-    pusherClient.bind('new-message', messageHandler);
-    pusherClient.bind('message-update', updateMessageHandler);
-
-    return () => {
-      pusherClient.unsubscribe(Props.conversationID);
-      pusherClient.unbind('new-message', messageHandler);
-      pusherClient.unbind('message-update', updateMessageHandler);
-    };
-  }, [Props.conversationID]);
 
   useIntersectionObserver(bottomRef, seenMessage, { delay: 0 });
 

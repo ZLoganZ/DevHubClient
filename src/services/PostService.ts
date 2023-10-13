@@ -26,6 +26,9 @@ export class PostService extends BaseService {
   getAllPostNewsFeed = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
     return this.get(`/posts/newsfeed`);
   };
+  getAllPopularPost = (sort: string): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+    return this.get(`/posts/popular/?sortBy=${sort}`);
+  };
   createPost = (post: CreatePostDataType): Promise<AxiosResponse<ResponseType<PostType>>> => {
     return this.post(`/posts`, post);
   };

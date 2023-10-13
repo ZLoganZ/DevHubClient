@@ -1,45 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Channel, Members } from 'pusher-js';
+import { useEffect } from 'react';
 
-import { pusherClient } from './pusher';
-import { setMembers, addMember, removeMember } from '@/redux/Slice/ActiveListSlice';
+import { setMembers } from '@/redux/Slice/SocketSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
+
+const SET_PRESENCE = 'SET_PRESENCE';
+const SET_ACTIVE_MEM = 'SET_ACTIVE_MEM';
 
 const ActiveChannel = () => {
   const dispatch = useAppDispatch();
-  useAppSelector((state) => state.activeList.members);
-
-  const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
+  const { members, presenceSocket } = useAppSelector((state) => state.socketIO);
 
   const user = useAppSelector((state) => state.auth.userID);
 
   useEffect(() => {
     if (!user) return;
-    let channel = activeChannel;
 
-    if (!channel) {
-      channel = pusherClient.subscribe('presence-user');
-      setActiveChannel(channel);
-    }
-
-    channel.bind('pusher:subscription_succeeded', (members: Members) => {
-      const initialMembers: String[] = [];
-
-      members.each((member: Record<string, any>) => initialMembers.push(member.id));
-      dispatch(setMembers(initialMembers));
+    presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
+      dispatch(setMembers(data));
     });
 
-    channel.bind('pusher:member_added', (member: Record<string, any>) => dispatch(addMember(member.id)));
-
-    channel.bind('pusher:member_removed', (member: Record<string, any>) => dispatch(removeMember(member.id)));
+    presenceSocket.emit(SET_PRESENCE, user);
 
     return () => {
-      if (activeChannel) {
-        pusherClient.unsubscribe('presence-user');
-        setActiveChannel(null);
-      }
+      presenceSocket.off(SET_ACTIVE_MEM);
+      presenceSocket.off(SET_PRESENCE);
     };
-  }, [activeChannel, addMember, setMembers, removeMember, user]);
+  }, [presenceSocket, setMembers, user, members]);
 };
 
 export default ActiveChannel;

@@ -21,7 +21,7 @@ interface PostProps {
 
 // -----------------------------------------------------
 
-const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
+const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -48,13 +48,6 @@ const OtherPost = ({ post, postAuthor, currentUser }: PostProps) => {
       }
     }
   ];
-
-  /*   function removeCode(htmlString: any): any {
-    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-    const elements = doc.getElementsByClassName('ql-syntax');
-    while (elements.length > 0) elements[0].remove();
-    return doc.body.innerHTML;
-  } */
 
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>

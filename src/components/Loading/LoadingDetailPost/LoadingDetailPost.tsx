@@ -4,7 +4,7 @@ import { getTheme } from '@/util/theme';
 import StyleProvider from './cssLoadingDetailPost';
 import { useAppSelector } from '@/hooks/special';
 
-const LoadingDetailPost = () => {
+const LoadingDetailPost: React.FC = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

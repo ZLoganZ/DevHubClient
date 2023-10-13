@@ -1,23 +1,17 @@
-import {
-  faUpRightFromSquare,
-  faEllipsis,
-  faTrash,
-  faTriangleExclamation
-} from '@fortawesome/free-solid-svg-icons';
+import { faUpRightFromSquare, faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dropdown, Modal, notification } from 'antd';
+import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
+import DeleteModal from '@/components/PostProperties/DeletePostModal';
 import { getTheme } from '@/util/theme';
-import { commonColor } from '@/util/cssVariable';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useDeletePost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 interface PostShareProps {
@@ -26,14 +20,10 @@ interface PostShareProps {
   postSharer: UserInfoType;
 }
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
-
-const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => {
+const MyPostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSharer }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
-
-  const { mutateDeletePost } = useDeletePost();
 
   // ----------------------- Post --------------------------
   const post = postShared.post_attributes.post;
@@ -53,17 +43,6 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
 
   const showModal = () => {
     setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    mutateDeletePost(postShared._id);
-
-    setIsModalOpen(false);
-    openNotificationWithIcon('success');
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
 
   // post setting
@@ -94,45 +73,9 @@ const MyPostShare = ({ postShared, postAuthor, postSharer }: PostShareProps) => 
     }
   ];
 
-  // Notification delete post
-  const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type: NotificationType) => {
-    api[type]({
-      message: 'Delete Successfully',
-      placement: 'bottomRight'
-    });
-  };
-
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
-      {contextHolder}
-      <Modal
-        title={
-          <>
-            <FontAwesomeIcon
-              className='icon mr-2'
-              icon={faTriangleExclamation}
-              style={{ color: commonColor.colorWarning1 }}
-            />
-            <span>Are you sure delete this post?</span>
-          </>
-        }
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{
-          style: {
-            backgroundColor: commonColor.colorBlue1
-          }
-        }}
-        cancelButtonProps={{
-          style: {
-            color: themeColorSet.colorText1,
-            backgroundColor: themeColorSet.colorBg3
-          }
-        }}>
-        <p>You will not be able to recover files after deletion!</p>
-      </Modal>
+      <DeleteModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} postID={postShared._id} />
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>

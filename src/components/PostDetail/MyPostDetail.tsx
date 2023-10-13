@@ -15,11 +15,10 @@ import { useMediaQuery } from 'react-responsive';
 interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
-  inclCommentInput?: boolean;
   isOpenByModal?: boolean;
 }
 
-const MyPostDetail = ({ post, postAuthor, inclCommentInput, isOpenByModal }: PostProps) => {
+const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isOpenByModal }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -106,7 +105,7 @@ const MyPostDetail = ({ post, postAuthor, inclCommentInput, isOpenByModal }: Pos
                 })
               )}
             </div>
-            {inclCommentInput && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
+            {!isOpenByModal && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
           </div>
         </Col>
       </Row>
