@@ -9,27 +9,30 @@ import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 
 interface ConversationBoxProps {
-  data: any;
-  selected?: boolean;
+  data: any; // conversationItem
+  selected?: boolean; // conversationID
 }
 
 const ConversationBox = (Props: ConversationBoxProps) => {
   const otherUser = useOtherUser(Props.data);
+  // if(otherUser) console.log('otherUser:: ', otherUser);
+
   const { currentUserInfo } = useCurrentUserInfo();
 
-  useAppSelector((state) => state.theme.change);
+  useAppSelector(state => state.theme.change);
   const { themeColorSet } = getTheme();
 
+  // Props.data?.lastMessage;
   const lastMessage = useMemo(() => {
-    const messages = Props.data.messages || [];
+    return Props.data?.lastMessage;
+  }, [Props.data?.lastMessage]);
 
-    return messages[messages.length - 1];
-  }, [Props.data.messages]);
+  // if(lastMessage) console.log('lastMessage:: ', lastMessage);
 
-  const isOwn = currentUserInfo._id === lastMessage?.sender._id;
+  const isOwn = currentUserInfo?._id === lastMessage?.sender;
 
   const userID = useMemo(() => {
-    return currentUserInfo._id;
+    return currentUserInfo?._id;
   }, [currentUserInfo]);
 
   const hasSeen = useMemo(() => {
@@ -43,9 +46,10 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   }, [lastMessage, userID]);
 
   const lastMessageText = useMemo(() => {
+
     if (lastMessage?.image) return 'Sent an image';
 
-    if (lastMessage?.body) return lastMessage.body;
+    if (lastMessage?.content) return lastMessage.content;
 
     return 'Start a conversation';
   }, [lastMessage, userID]);
@@ -54,10 +58,12 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     <div
       className={`w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer`}
       style={{
-        backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
+        backgroundColor: Props.selected
+          ? themeColorSet.colorBg2
+          : themeColorSet.colorBg1
       }}>
-      {Props.data.isGroup ? (
-        <AvatarGroup key={Props.data._id} users={Props.data.users} />
+      {Props.data.type === 'group' ? (
+        <AvatarGroup key={Props.data._id} users={Props.data.members} />
       ) : (
         <Avatar key={Props.data._id} user={otherUser} />
       )}
@@ -71,7 +77,9 @@ const ConversationBox = (Props: ConversationBoxProps) => {
               style={{
                 color: themeColorSet.colorText1
               }}>
-              <span style={{ color: themeColorSet.colorText1 }}>{Props.data.name || otherUser.name}</span>
+              <span style={{ color: themeColorSet.colorText1 }}>
+                {Props.data.name || otherUser.name}
+              </span>
             </p>
             {lastMessage?.createdAt && (
               <p
@@ -87,7 +95,9 @@ const ConversationBox = (Props: ConversationBoxProps) => {
           </div>
           <p
             className={`truncate text-sm ${
-              hasSeen ? themeColorSet.colorText1 : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
+              hasSeen
+                ? themeColorSet.colorText1
+                : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
             }`}>
             <span style={{ color: themeColorSet.colorText2 }}>
               {isOwn ? `You: ${lastMessageText}` : lastMessageText}

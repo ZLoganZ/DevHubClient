@@ -30,6 +30,20 @@ const SharedMedia = (Props: SharedMediaProps) => {
     setItems(currentConversation.image);
   }, [isLoadingCurrentConversation, currentConversation]);
 
+  useEffect(() => {
+    if (isLoadingCurrentConversation) return;
+
+    // pusherClient.subscribe(pusherKey);
+
+    const updateHandler = (conversation: any) => {
+      setItems((current: any) => {
+        return [...current, conversation.image];
+      });
+    };
+
+    // pusherClient.bind('conversation-update-media', updateHandler);
+  }, [Props.conversationID, isLoadingCurrentConversation]);
+
   const downloadImage = async (url: any) => {
     const originalImage = url;
     const image = await fetch(originalImage);

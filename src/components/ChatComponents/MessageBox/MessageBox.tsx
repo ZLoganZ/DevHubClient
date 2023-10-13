@@ -20,13 +20,14 @@ const MessageBox = (Props: MessageBoxProps) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const isOwn = currentUserInfo._id === Props.data.sender._id;
+
+  const isOwn = currentUserInfo?._id === Props.data?.sender?._id;
   const seenList = (Props.data.seen || [])
     .filter((user: any) => user._id !== Props.data?.sender?._id)
     .map((user: any) => user.name)
     .join(', ');
 
-  const container = `flex gap-3 p-4 ${isOwn && 'justify-end'}`;
+  const container = `flex gap-3 p-2 ${isOwn && 'justify-end'}`;
   const avatar = `mt-3 ${isOwn && 'order-2'}`;
   const body = `flex flex-col ${isOwn && 'items-end'}`;
   const message = `text-sm w-fit overflow-hidden break-all
@@ -71,7 +72,7 @@ const MessageBox = (Props: MessageBoxProps) => {
                   }}
                 />
               ) : (
-                <>{Props.data.body}</>
+                <div>{Props.data.content}</div>
               )}
             </div>
             <div
