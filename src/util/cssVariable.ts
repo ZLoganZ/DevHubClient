@@ -51,7 +51,7 @@ export const lightTheme = {
 export const lightThemeSet = {
   colorText1: '#101011',
   colorText2: '#1f1f23',
-  colorText3: '#27272c',
+  colorText3: '#414149',
   colorBg1: '#F0F2F5',
   colorBg2: '#FFFFFF',
   colorBg3: '#E4E5EB',

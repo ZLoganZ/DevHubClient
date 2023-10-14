@@ -136,13 +136,7 @@ const MessageChat = (Props: IParams) => {
         <></>
       ) : ( */}
       <>
-        <div
-          className='header flex justify-between items-center py-6 px-6'
-          style={{
-            height: '13%',
-            borderBottom: '1px solid',
-            borderColor: themeColorSet.colorBg4
-          }}>
+        <div className='header flex justify-between items-center py-6 px-6'>
           <div className='flex gap-3 items-center'>
             {currentConversation.type === 'group' ? (
               <AvatarGroup key={currentConversation._id} users={currentConversation.users} />
@@ -191,12 +185,12 @@ const MessageChat = (Props: IParams) => {
             <div className='pt-1' ref={bottomRef} />
           </div>
         </div>
+        <InputChat
+          conversationID={Props.conversationID}
+          messagesState={messagesState}
+          setMessagesState={setMessagesState}
+        />
       </>
-      <InputChat
-        conversationID={Props.conversationID}
-        messagesState={messagesState}
-        setMessagesState={setMessagesState}
-      />
       {/* )} */}
     </StyleProvider>
   );

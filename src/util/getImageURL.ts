@@ -7,7 +7,7 @@ import { FocusOn } from '@cloudinary/url-gen/qualifiers/focusOn';
 type option = 'post' | 'avatar' | 'avatar_mini' | 'default' | 'post_mini';
 
 const getImageURL = (src: string, option: option = 'default') => {
-  if (src.includes('http')) return src;
+  if (src?.includes('http')) return src;
 
   const cld = new Cloudinary({
     cloud: {

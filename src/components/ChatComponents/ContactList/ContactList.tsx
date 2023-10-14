@@ -1,35 +1,27 @@
 import { Col, ConfigProvider, Input, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
-import StyleProvider from './cssConversationList';
+import StyleProvider from './cssContactList';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
-import { useCurrentUserInfo } from '@/hooks/fetch';
 import { UserInfoType } from '@/types';
 
-interface ConversationListProps {
-  initialItems: any; // conversations
-  selected?: string; // conversationID
+interface ContactsListProps {
   followers: UserInfoType[];
-  title?: string;
 }
 
-const ConversationList = (Props: ConversationListProps) => {
+const ConversationList = (Props: ContactsListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-  const { themeColorSet } = getTheme();
+
+  const { themeColorSet, themeColor } = getTheme();
 
   const navigate = useNavigate();
-
-  const { currentUserInfo } = useCurrentUserInfo();
-
-  // console.log('currentUserInfo:: ', currentUserInfo);
 
   const HandleOnClick = async (userFollow: any) => {
     const { data } = await messageService.createConversation({
@@ -47,7 +39,7 @@ const ConversationList = (Props: ConversationListProps) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <Row className='searchChat'>
+      <Row className='contacts'>
         <Col span={24}>
           <Row>
             <Space
@@ -55,34 +47,19 @@ const ConversationList = (Props: ConversationListProps) => {
               style={{
                 borderColor: themeColorSet.colorBg4
               }}>
-              <div className='flex'>
-                <NavLink to={`/user/${currentUserInfo?._id}`}>
-                  <div className='avatar mr-3'>
-                    <Avatar key={currentUserInfo?._id} user={currentUserInfo} />
-                  </div>
-                </NavLink>
-                <div className='name_career'>
-                  <NavLink to={`/user/${currentUserInfo?._id}`}>
-                    <div
-                      className='name mb-1'
-                      style={{
-                        color: themeColorSet.colorText1,
-                        fontWeight: 600
-                      }}>
-                      {currentUserInfo?.name}
-                    </div>
-                  </NavLink>
-                  <div
-                    className='career'
-                    style={{
-                      color: themeColorSet.colorText3
-                    }}>
-                    UX/UI Designer
-                  </div>
-                </div>
+              <div
+                className='text-2xl'
+                style={{
+                  color: themeColorSet.colorText1
+                }}>
+                Contacts
               </div>
               <div className='iconPlus cursor-pointer' onClick={() => {}}>
-                <FontAwesomeIcon className='text-xl' icon={faUsersLine} color={themeColorSet.colorText1} />
+                <FontAwesomeIcon
+                  className='text-sm rounded-lg'
+                  icon={faUserPlus}
+                  color={themeColorSet.colorText1}
+                />
               </div>
             </Space>
           </Row>
@@ -113,18 +90,34 @@ const ConversationList = (Props: ConversationListProps) => {
             </div>
           </Row>
           <Row>
-            <div
-              className='userChat w-full'
-              style={{
-                overflow: 'auto',
-                maxHeight: 'calc(100vh - 160px)'
-              }}>
-              {Props.initialItems?.length > 0 &&
-                Props.initialItems.map((item: any) => (
-                  <NavLink to={`/message/${item?._id}`} key={item?._id}>
-                    <ConversationBox data={item} selected={item?._id === Props?.selected} />
-                  </NavLink>
-                ))}
+            <div className='userActive px-3 w-full'>
+              <div
+                className='listUser flex mt-5'
+                style={{
+                  overflow: 'auto'
+                }}>
+                {Props.followers.map((item: any) => {
+                  return (
+                    <div
+                      className='user flex items-center cursor-pointer'
+                      key={item?._id}
+                      onClick={() => HandleOnClick(item?._id)}>
+                      <div className='avatar relative'>
+                        <Avatar key={item?._id} user={item} />
+                      </div>
+                      <div
+                        className='name text-center ml-2'
+                        style={{
+                          fontSize: '0.9rem',
+                          color: themeColorSet.colorText1
+                        }}>
+                        {/* {handleItemName(item?.name)} */}
+                        {item?.name}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </Row>
         </Col>

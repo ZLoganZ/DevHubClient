@@ -1,4 +1,4 @@
-import { Image } from 'antd';
+import { Image, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 import StyleProvider from './cssMessageBox';
@@ -7,6 +7,7 @@ import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import { useMemo, useState } from 'react';
 
 interface MessageBoxProps {
   data: any;
@@ -19,7 +20,6 @@ const MessageBox = (Props: MessageBoxProps) => {
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
-
 
   const isOwn = currentUserInfo?._id === Props.data?.sender?._id;
   const seenList = (Props.data.seen || [])
@@ -40,6 +40,23 @@ const MessageBox = (Props: MessageBoxProps) => {
         : 'bg-gray-700 text-white mr-7'
     }`;
 
+  const options = ['Show', 'Hide', 'Center'];
+  const [arrow, setArrow] = useState('Show');
+
+  const mergedArrow = useMemo(() => {
+    if (arrow === 'Hide') {
+      return false;
+    }
+
+    if (arrow === 'Show') {
+      return true;
+    }
+
+    return {
+      pointAtCenter: true
+    };
+  }, [arrow]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       <div className={container}>
@@ -50,38 +67,47 @@ const MessageBox = (Props: MessageBoxProps) => {
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
             <div className='flex items-center gap-1 mb-1'>
               <div
-                className={`text-sm `}
+                className={`text-sm`}
                 style={{
                   color: themeColorSet.colorText1
                 }}>
                 {Props.data.sender.name}
               </div>
             </div>
-            <div className={message}>
-              {Props.data.image ? (
-                <Image
-                  alt='Image'
-                  src={Props.data.image}
-                  draggable={false}
-                  className='object-cover cursor-pointer'
-                  style={{
-                    borderRadius: '2rem',
-                    border: '0.2px solid',
-                    maxHeight: '288px',
-                    maxWidth: '512px'
-                  }}
-                />
-              ) : (
-                <div>{Props.data.content}</div>
-              )}
-            </div>
-            <div
+            <Tooltip
+              placement='left'
+              title={formatDateTime(Props.data.createdAt)}
+              arrow={mergedArrow}
+              mouseEnterDelay={0.5}
+              destroyTooltipOnHide={true}
+              autoAdjustOverflow={true}>
+              <div className={message}>
+                {Props.data.image ? (
+                  <Image
+                    alt='Image'
+                    src={Props.data.image}
+                    draggable={false}
+                    className='object-cover cursor-pointer'
+                    style={{
+                      borderRadius: '2rem',
+                      border: '0.2px solid',
+                      maxHeight: '288px',
+                      maxWidth: '512px'
+                    }}
+                  />
+                ) : (
+                  <div>{Props.data.content}</div>
+                )}
+              </div>
+            </Tooltip>
+
+            {/* <div
               className={`time-message text-xs mt-1`}
               style={{
                 color: themeColorSet.colorText2
               }}>
               {formatDateTime(Props.data.createdAt)}
-            </div>
+            </div> */}
           </div>
           {Props.isLast && isOwn && seenList.length > 0 && (
             <div
