@@ -1,18 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Input, Popover, Space } from 'antd';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Picker from '@emoji-mart/react';
-import {
-  faFaceSmile,
-  faMicrophone,
-  faPaperclip
-} from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faMicrophone, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
-import { clientChat } from '@/util/connect/chatService/chat.connect';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 
 interface Props {
@@ -25,8 +20,10 @@ const PRIVATE_MSG = 'PRIVATE_MSG';
 
 const InputChat = (Props: Props) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const [message, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
@@ -35,9 +32,9 @@ const InputChat = (Props: Props) => {
 
   useEffect(() => {
     if (Props.conversationID && currentUserInfo) {
-      clientChat.on(PRIVATE_MSG + Props.conversationID, (data: any) => {
+      chatSocket.on(PRIVATE_MSG + Props.conversationID, (data: any) => {
         data.seen = false;
-        
+
         // newMessage is data
         Props.setMessagesState([...Props.messagesState, data]);
       });
@@ -50,7 +47,7 @@ const InputChat = (Props: Props) => {
 
     setMessage('');
 
-    clientChat.emit(PRIVATE_MSG, {
+    chatSocket.emit(PRIVATE_MSG, {
       conversationID: Props.conversationID,
       message: {
         sender: {
@@ -95,28 +92,18 @@ const InputChat = (Props: Props) => {
           content={
             <Picker
               data={async () => {
-                const response = await fetch(
-                  'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-                );
+                const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
                 return response.json();
               }}
               onEmojiSelect={(emoji: any) => {
-                setMessage(
-                  message.slice(0, cursor) +
-                    emoji.native +
-                    message.slice(cursor)
-                );
+                setMessage(message.slice(0, cursor) + emoji.native + message.slice(cursor));
               }}
               theme={themeColorSet.colorPicker}
             />
           }>
           <span className='emoji'>
-            <FontAwesomeIcon
-              className='item mr-3 ml-3'
-              size='lg'
-              icon={faFaceSmile}
-            />
+            <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
           </span>
         </Popover>
       </div>
@@ -136,23 +123,23 @@ const InputChat = (Props: Props) => {
             allowClear
             placeholder='Write a message'
             value={message}
-            onKeyUp={e => {
+            onKeyUp={(e) => {
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
               setCursor(cursorPosition || 0);
             }}
-            onClick={e => {
+            onClick={(e) => {
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
               setCursor(cursorPosition || 0);
             }}
-            onChange={e => {
+            onChange={(e) => {
               setMessage(e.currentTarget.value);
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
               setCursor(cursorPosition || 0);
             }}
-            onPressEnter={e => {
+            onPressEnter={(e) => {
               handleSubmit(e.currentTarget.value);
             }}
           />
@@ -165,19 +152,11 @@ const InputChat = (Props: Props) => {
         }}>
         <UploadComponent onUpload={handleUpload}>
           <div className='upload'>
-            <FontAwesomeIcon
-              className='item mr-3'
-              size='lg'
-              icon={faPaperclip}
-            />
+            <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} />
           </div>
         </UploadComponent>
         <div className='micro'>
-          <FontAwesomeIcon
-            className='item ml-3'
-            size='lg'
-            icon={faMicrophone}
-          />
+          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} />
         </div>
       </Space>
     </div>

@@ -25,13 +25,14 @@ interface IParams {
 
 const MessageChat = (Props: IParams) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { members } = useAppSelector(state => state.activeList);
+  useAppSelector((state) => state.socketIO.members);
 
-  const { currentConversation, isLoadingCurrentConversation } =
-    useCurrentConversationData(Props.conversationID);
+  const { currentConversation, isLoadingCurrentConversation } = useCurrentConversationData(
+    Props.conversationID
+  );
 
   // console.log('currentConversation:: ', currentConversation);
 
@@ -63,7 +64,7 @@ const MessageChat = (Props: IParams) => {
   // };
 
   useEffect(() => {
-    if ((isLoadingMessages || !messages)) return;
+    if (isLoadingMessages || !messages) return;
     setMessagesState(messages);
   }, [isLoadingMessages, messages]);
 
@@ -107,8 +108,7 @@ const MessageChat = (Props: IParams) => {
   // useIntersectionObserver(bottomRef, seenMessage, { delay: 0 });
 
   const scrollToBottom = (type: ScrollBehavior) => {
-    if (bottomRef?.current)
-      bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
+    if (bottomRef?.current) bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
   };
 
   useEffect(() => {
@@ -130,7 +130,6 @@ const MessageChat = (Props: IParams) => {
   //   seenMessage();
   // }, []);
 
-
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
       {/* {isLoadingCurrentConversation ? (
@@ -146,10 +145,7 @@ const MessageChat = (Props: IParams) => {
           }}>
           <div className='flex gap-3 items-center'>
             {currentConversation.type === 'group' ? (
-              <AvatarGroup
-                key={currentConversation._id}
-                users={currentConversation.users}
-              />
+              <AvatarGroup key={currentConversation._id} users={currentConversation.users} />
             ) : (
               <NavLink to={`/user/${otherUser._id}`}>
                 <Avatar key={otherUser._id} user={otherUser} />
@@ -158,9 +154,7 @@ const MessageChat = (Props: IParams) => {
             <div className='flex flex-col'>
               <div style={{ color: themeColorSet.colorText1 }}>
                 {currentConversation.name || (
-                  <NavLink to={`/user/${otherUser._id}`}>
-                    {otherUser.name}
-                  </NavLink>
+                  <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
                 )}
               </div>
               <div
@@ -192,11 +186,7 @@ const MessageChat = (Props: IParams) => {
           <div className='flex-1 overflow-y-auto'>
             {messagesState?.length !== 0 &&
               messagesState?.map((message: any, i: any) => (
-                <MessageBox
-                  isLast={i === messagesState.length - 1}
-                  key={message._id}
-                  data={message}
-                />
+                <MessageBox isLast={i === messagesState.length - 1} key={message._id} data={message} />
               ))}
             <div className='pt-1' ref={bottomRef} />
           </div>

@@ -19,7 +19,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   // Props.data?.lastMessage;
@@ -46,7 +46,6 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   }, [lastMessage, userID]);
 
   const lastMessageText = useMemo(() => {
-
     if (lastMessage?.image) return 'Sent an image';
 
     if (lastMessage?.content) return lastMessage.content;
@@ -56,11 +55,9 @@ const ConversationBox = (Props: ConversationBoxProps) => {
 
   return (
     <div
-      className={`w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer`}
+      className='w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer'
       style={{
-        backgroundColor: Props.selected
-          ? themeColorSet.colorBg2
-          : themeColorSet.colorBg1
+        backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
       }}>
       {Props.data.type === 'group' ? (
         <AvatarGroup key={Props.data._id} users={Props.data.members} />
@@ -77,9 +74,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
               style={{
                 color: themeColorSet.colorText1
               }}>
-              <span style={{ color: themeColorSet.colorText1 }}>
-                {Props.data.name || otherUser.name}
-              </span>
+              <span style={{ color: themeColorSet.colorText1 }}>{Props.data.name || otherUser.name}</span>
             </p>
             {lastMessage?.createdAt && (
               <p
@@ -95,9 +90,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
           </div>
           <p
             className={`truncate text-sm ${
-              hasSeen
-                ? themeColorSet.colorText1
-                : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
+              hasSeen ? themeColorSet.colorText1 : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
             }`}>
             <span style={{ color: themeColorSet.colorText2 }}>
               {isOwn ? `You: ${lastMessageText}` : lastMessageText}

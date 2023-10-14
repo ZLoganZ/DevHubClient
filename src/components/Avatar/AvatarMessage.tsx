@@ -2,14 +2,15 @@ import { Image } from 'antd';
 
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import getImageURL from '@/util/getImageURL';
 
 interface AvatarProps {
   user: UserInfoType;
 }
 
-const AvatarMessage = (Props: AvatarProps) => {
+const AvatarMessage: React.FC<AvatarProps> = ({ user }) => {
   const { members } = useAppSelector((state) => state.socketIO);
-  const isActive = members.indexOf(Props.user?._id!) !== -1 || false;
+  const isActive = members.indexOf(user._id!) !== -1;
 
   // const isActive = true;
 
@@ -18,9 +19,7 @@ const AvatarMessage = (Props: AvatarProps) => {
       <div className='relative rounded-full overflow-hidden h-9 w-9 md:h-11 md:w-11 flex'>
         <Image
           preview={false}
-          src={
-            Props.user?.user_image || '/images/DefaultAvatar/default_avatar.png'
-          }
+          src={getImageURL(user.user_image)}
           alt='Avatar'
           style={{
             width: '100%',
@@ -29,9 +28,9 @@ const AvatarMessage = (Props: AvatarProps) => {
           }}
         />
       </div>
-      {isActive ? (
+      {isActive && (
         <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 right-0 h-2 w-2 md:h-3 md:w-3' />
-      ) : null}
+      )}
     </div>
   );
 };
