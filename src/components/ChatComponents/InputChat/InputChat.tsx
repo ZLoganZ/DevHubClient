@@ -15,8 +15,8 @@ import { MessageType, UserInfoType } from '@/types';
 interface Props {
   conversationID: string;
   messagesState: MessageType[];
-  setMessagesState: (messages: MessageType[]) => void;
-  setSeenState: (seen: UserInfoType[]) => void;
+  setMessagesState: React.Dispatch<React.SetStateAction<MessageType[]>>;
+  setSeenState: React.Dispatch<React.SetStateAction<UserInfoType[]>>;
 }
 
 const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessagesState, setSeenState }) => {
@@ -31,15 +31,29 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
 
   const { currentUserInfo } = useCurrentUserInfo();
 
+  const [id, setId] = useState(Math.random().toString(36).substring(7));
+
   useEffect(() => {
     if (conversationID && currentUserInfo) {
       chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
-        // newMessage is data
-        setMessagesState([...messagesState, data]);
-        setSeenState([]);
+        setMessagesState((messages) => {
+          const updatedMessages = messages.map((message) => {
+            if (message._id === data._id) {
+              return {
+                ...message,
+                isSending: false
+              };
+            }
+            return message;
+          });
+          if (updatedMessages[updatedMessages.length - 1]._id === data._id) {
+            return updatedMessages;
+          }
+          return [...updatedMessages, data];
+        });
       });
     }
-  }, [conversationID, currentUserInfo, messagesState]);
+  }, [conversationID, currentUserInfo]);
 
   const handleSubmit = async (content: string) => {
     if (!conversationID) return;
@@ -47,19 +61,26 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
 
     setMessage('');
 
+    const message = {
+      _id: id,
+      sender: {
+        _id: currentUserInfo._id,
+        user_image: currentUserInfo.user_image,
+        name: currentUserInfo.name
+      },
+      isSending: true,
+      content: content,
+      createdAt: new Date()
+    };
+
     chatSocket.emit(PRIVATE_MSG, {
-      conversationID: conversationID,
-      message: {
-        _id: Math.random().toString(36).substring(7),
-        sender: {
-          _id: currentUserInfo._id,
-          user_image: currentUserInfo.user_image,
-          name: currentUserInfo.name
-        },
-        content: content,
-        createdAt: new Date()
-      }
+      conversationID,
+      message
     });
+    
+    setId(Math.random().toString(36).substring(7));
+    setSeenState([]);
+    setMessagesState([...messagesState, message as unknown as MessageType]);
   };
 
   const handleUpload = async (error: any, result: any, widget: any) => {

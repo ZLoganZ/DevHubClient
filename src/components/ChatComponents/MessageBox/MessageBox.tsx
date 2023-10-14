@@ -24,12 +24,10 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const isOwn = currentUserInfo?._id === (message.sender as UserInfoType)._id;
+  const isOwn = currentUserInfo?._id === message.sender._id;
   const seenList = useMemo(() => {
-    return seen
-      .filter((user) => user._id !== (message.sender as UserInfoType)._id)
-      .map((user) => user.user_image);
-  }, [seen, message.sender]);
+    return seen.filter((user) => user._id !== message.sender._id).map((user) => user.user_image);
+  }, [seen, message]);
 
   const messageStyle = `text-sm w-fit overflow-hidden break-all
     ${message.image ? 'rounded-md p-0' : 'rounded-full py-2 px-3'}
@@ -44,8 +42,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div className={`flex gap-3 px-2 py-4 items-center ${isOwn && 'justify-end'}`}>
-        <NavLink className={`${isOwn && 'hidden'}`} to={`/user/${(message.sender as UserInfoType)._id}`}>
-          <Avatar key={(message.sender as UserInfoType)._id} user={message.sender as UserInfoType} />
+        <NavLink className={`${isOwn && 'hidden'}`} to={`/user/${message.sender._id}`}>
+          <Avatar key={message.sender._id} user={message.sender} />
         </NavLink>
         <div className={`flex flex-col ${isOwn && 'items-end'}`}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
@@ -89,12 +87,25 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                     <img
                       className='h-4 w-4'
                       src={getImageURL(user, 'avatar_mini')}
-                      style={{
-                        objectFit: 'cover'
-                      }}
+                      style={{ objectFit: 'cover' }}
                     />
                   </div>
                 ))}
+              {isLast && isOwn && seenList.length === 0 && !message.isSending && (
+                <div>
+                  <svg
+                    className='w-4 h-4 text-gray-400 mr-2'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                    xmlns='http://www.w3.org/2000/svg'>
+                    <path
+                      fillRule='evenodd'
+                      d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </div>
+              )}
             </div>
           </div>
         </div>

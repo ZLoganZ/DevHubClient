@@ -236,8 +236,9 @@ export type ConversationType = {
 export type MessageType = {
   _id: string;
   conversation_id: ConversationType;
-  sender: UserInfoType | string;
+  sender: UserInfoType;
   content: string;
+  isSending?: boolean;
   image?: string;
   createdAt: string;
 };

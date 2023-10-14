@@ -58,16 +58,19 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
         setSeenState(data.seen);
       });
     }
-  }, [conversationID, currentUserInfo, messagesState, seenState]);
+  }, [conversationID, currentUserInfo]);
 
   const seenMessage = useCallback(() => {
-    if (seenState.some((user) => user._id === currentUserInfo._id)) return;
-
-    chatSocket.emit(SEEN_MSG, {
-      conversationID,
-      userID: currentUserInfo._id
-    });
-  }, [seenState, currentUserInfo, conversationID]);
+    if (
+      messagesState.length > 0 &&
+      messagesState[messagesState.length - 1].sender._id !== currentUserInfo._id
+    ) {
+      chatSocket.emit(SEEN_MSG, {
+        conversationID,
+        userID: currentUserInfo._id
+      });
+    }
+  }, [seenState, currentUserInfo, conversationID, messagesState]);
 
   useEffect(() => {
     if (isLoadingMessages || !messages) return;
@@ -85,7 +88,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
     if (count > 0) scrollToBottom('smooth');
     if (count === 0) scrollToBottom('auto');
     setCount(count + 1);
-  }, [messagesState.length]);
+  }, [messagesState]);
 
   const styleStatus = useMemo(() => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;

@@ -11,13 +11,12 @@ import { ConversationType, MessageType, UserInfoType } from '@/types';
 import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
 
 interface ConversationBoxProps {
-  data: ConversationType; // conversationItem
-  selected?: boolean; // conversationID
+  data: ConversationType;
+  selected?: boolean;
 }
 
 const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => {
   const otherUser = useOtherUser(data);
-  // if(otherUser) console.log('otherUser:: ', otherUser);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
@@ -29,7 +28,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => 
   const [lastMessage, setLastMessage] = useState(data.lastMessage);
 
   const isOwn = useMemo(() => {
-    return currentUserInfo._id === (lastMessage.sender as UserInfoType)._id;
+    return currentUserInfo._id === lastMessage.sender._id;
   }, [lastMessage]);
 
   const userID = useMemo(() => {

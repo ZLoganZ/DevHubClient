@@ -144,7 +144,6 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                       fontSize: '0.9rem',
                       color: themeColorSet.colorText1
                     }}>
-                    {/* {item.name} */}
                     {handleItemName(item.name)}
                   </div>
                 </div>
