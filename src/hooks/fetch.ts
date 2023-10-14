@@ -316,14 +316,14 @@ export const useConversationsData = () => {
     queryKey: ['conversations'],
     queryFn: async () => {
       const { data } = await messageService.getConversations();
-      return data;
-    }
+      return data.metadata;
+    },
   });
 
   return {
     isLoadingConversations: isLoading,
     isErrorConversations: isError,
-    conversations: data?.metadata,
+    conversations: data!,
     isFetchingConversations: isFetching
   };
 };
@@ -344,8 +344,8 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {
-      const { data } = await messageService.getConversation(conversationID);
-      return data;
+      const { data } = await messageService.getConversation(conversationID!);
+      return data.metadata;
     },
     enabled: !!conversationID
   });
@@ -353,7 +353,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
   return {
     isLoadingCurrentConversation: isLoading,
     isErrorCurrentConversation: isError,
-    currentConversation: data?.metadata,
+    currentConversation: data!,
     isFetchingCurrentConversation: isFetching
   };
 };
@@ -374,7 +374,7 @@ export const useFollowersData = (userID: string) => {
     queryKey: ['followers', userID],
     queryFn: async () => {
       const { data } = await userService.getFollowers(userID);
-      return data;
+      return data.metadata;
     },
     enabled: !!userID
   });
@@ -382,7 +382,7 @@ export const useFollowersData = (userID: string) => {
   return {
     isLoadingFollowers: isLoading,
     isErrorFollowers: isError,
-    followers: data?.metadata,
+    followers: data!,
     isFetchingFollowers: isFetching
   };
 };
@@ -404,7 +404,7 @@ export const useMessagesData = (conversationID: any) => {
     queryKey: ['messages', conversationID],
     queryFn: async () => {
       const { data } = await messageService.getMessages(conversationID);
-      return data;
+      return data.metadata;
     },
     enabled: !!conversationID
   });
@@ -412,7 +412,7 @@ export const useMessagesData = (conversationID: any) => {
   return {
     isLoadingMessages: isLoading,
     isErrorMessages: isError,
-    messages: data?.metadata,
+    messages: data!,
     isFetchingMessages: isFetching,
     refetchMessages: refetch
   };

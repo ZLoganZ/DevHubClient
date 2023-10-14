@@ -7,21 +7,19 @@ import { SearchOutlined } from '@ant-design/icons';
 import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
-import OpenGroupModal from '@/components/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { UserInfoType } from '@/types';
+import { ConversationType, UserInfoType } from '@/types';
 
 interface ConversationListProps {
-  initialItems: any; // conversations
-  selected?: string; // conversationID
+  conversations: ConversationType[];
+  selected?: string;
   followers: UserInfoType[];
-  title?: string;
 }
 
-const ConversationList = (Props: ConversationListProps) => {
+const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, followers }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -30,9 +28,7 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  // console.log('currentUserInfo:: ', currentUserInfo);
-
-  const HandleOnClick = async (userFollow: any) => {
+  const HandleOnClick = async (userFollow: string) => {
     const { data } = await messageService.createConversation({
       type: 'private',
       members: [userFollow]
@@ -133,7 +129,7 @@ const ConversationList = (Props: ConversationListProps) => {
             style={{
               overflow: 'auto'
             }}>
-            {Props.followers.map((item: any) => {
+            {followers.map((item) => {
               return (
                 <div
                   className='user flex flex-col items-center cursor-pointer w-1/2 mt-5'
@@ -162,11 +158,10 @@ const ConversationList = (Props: ConversationListProps) => {
             height: '57%',
             overflow: 'auto'
           }}>
-          {Props.initialItems?.length > 0 &&
-            Props.initialItems.map((item: any) => (
-              // (item.messages?.length > 0 || item?.isGroup) && (
-              <NavLink to={`/message/${item?._id}`} key={item?._id}>
-                <ConversationBox data={item} selected={item?._id === Props?.selected} />
+          {conversations.length > 0 &&
+            conversations.map((item) => (
+              <NavLink to={`/message/${item._id}`} key={item._id}>
+                <ConversationBox data={item} selected={item._id === selected} />
               </NavLink>
             ))}
         </div>

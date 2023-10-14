@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -7,14 +7,16 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
+import { ConversationType, MessageType, UserInfoType } from '@/types';
+import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
 
 interface ConversationBoxProps {
-  data: any; // conversationItem
+  data: ConversationType; // conversationItem
   selected?: boolean; // conversationID
 }
 
-const ConversationBox = (Props: ConversationBoxProps) => {
-  const otherUser = useOtherUser(Props.data);
+const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => {
+  const otherUser = useOtherUser(data);
   // if(otherUser) console.log('otherUser:: ', otherUser);
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -22,33 +24,40 @@ const ConversationBox = (Props: ConversationBoxProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  // Props.data?.lastMessage;
-  const lastMessage = useMemo(() => {
-    return Props.data?.lastMessage;
-  }, [Props.data?.lastMessage]);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
-  // if(lastMessage) console.log('lastMessage:: ', lastMessage);
+  const [lastMessage, setLastMessage] = useState(data.lastMessage);
 
-  const isOwn = currentUserInfo?._id === lastMessage?.sender;
+  const isOwn = useMemo(() => {
+    return currentUserInfo._id === (lastMessage.sender as UserInfoType)._id;
+  }, [lastMessage]);
 
   const userID = useMemo(() => {
-    return currentUserInfo?._id;
+    return currentUserInfo._id;
   }, [currentUserInfo]);
+
+  const [seenArr, setSeenArr] = useState<UserInfoType[]>(data.seen);
+
+  useEffect(() => {
+    chatSocket.on(PRIVATE_MSG + data._id, (message: MessageType) => {
+      setSeenArr([]);
+      setLastMessage(message);
+    });
+    chatSocket.on(SEEN_MSG + data._id, (conversation: ConversationType) => {
+      setSeenArr(conversation.seen);
+    });
+  }, []);
 
   const hasSeen = useMemo(() => {
     if (!lastMessage) return false;
 
-    const seenArr = lastMessage.seen || [];
-
-    if (!userID) return false;
-
-    return seenArr.some((user: any) => user._id === userID);
-  }, [lastMessage, userID]);
+    return seenArr.some((user) => user._id === userID);
+  }, [lastMessage, seenArr]);
 
   const lastMessageText = useMemo(() => {
-    if (lastMessage?.image) return 'Sent an image';
+    if (lastMessage.image) return 'Sent an image';
 
-    if (lastMessage?.content) return lastMessage.content;
+    if (lastMessage.content) return lastMessage.content;
 
     return 'Start a conversation';
   }, [lastMessage, userID]);
@@ -57,12 +66,12 @@ const ConversationBox = (Props: ConversationBoxProps) => {
     <div
       className='w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer'
       style={{
-        backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
+        backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
       }}>
-      {Props.data.type === 'group' ? (
-        <AvatarGroup key={Props.data._id} users={Props.data.members} />
+      {data.type === 'group' ? (
+        <AvatarGroup key={data._id} users={data.members} />
       ) : (
-        <Avatar key={Props.data._id} user={otherUser} />
+        <Avatar key={data._id} user={otherUser} />
       )}
 
       <div className='min-w-0 flex-1'>
@@ -74,23 +83,19 @@ const ConversationBox = (Props: ConversationBoxProps) => {
               style={{
                 color: themeColorSet.colorText1
               }}>
-              <span style={{ color: themeColorSet.colorText1 }}>{Props.data.name || otherUser.name}</span>
+              <span style={{ color: themeColorSet.colorText1 }}>{data.name || otherUser.name}</span>
             </p>
-            {lastMessage?.createdAt && (
-              <p
-                className='
-                  text-xs 
-                  text-gray-400 
-                  font-light
-                '
-                style={{ color: themeColorSet.colorText3 }}>
+            {lastMessage && (
+              <p className=' text-xs text-gray-400 font-light' style={{ color: themeColorSet.colorText3 }}>
                 {formatDateTime(lastMessage.createdAt)}
               </p>
             )}
           </div>
           <p
             className={`truncate text-sm ${
-              hasSeen ? themeColorSet.colorText1 : themeColorSet.colorText1 + ' shadow-xl font-extrabold'
+              !hasSeen && !isOwn
+                ? themeColorSet.colorText1 + ' shadow-xl font-extrabold'
+                : themeColorSet.colorText1
             }`}>
             <span style={{ color: themeColorSet.colorText2 }}>
               {isOwn ? `You: ${lastMessageText}` : lastMessageText}

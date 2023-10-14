@@ -219,3 +219,31 @@ export type ResponseType<T> = {
   status: number;
   metadata: T;
 };
+
+type TypeofConversation = 'private' | 'group';
+
+export type ConversationType = {
+  _id: string;
+  type: TypeofConversation;
+  members: UserInfoType[];
+  name: string;
+  lastMessage: MessageType;
+  seen: UserInfoType[];
+  image?: string;
+  createdAt: string;
+};
+
+export type MessageType = {
+  _id: string;
+  conversation_id: ConversationType;
+  sender: UserInfoType | string;
+  content: string;
+  image?: string;
+  createdAt: string;
+};
+
+export type CreateMessageDataType = {
+  conversation_id: string;
+  content?: string;
+  image?: string;
+};

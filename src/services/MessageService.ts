@@ -1,11 +1,13 @@
+import { AxiosResponse } from 'axios';
 import { BaseService } from './BaseService';
+import { ConversationType, CreateMessageDataType, MessageType, ResponseType } from '@/types';
 
 export class MessageService extends BaseService {
   constructor() {
     super();
   }
 
-  getConversations = () => {
+  getConversations = (): Promise<AxiosResponse<ResponseType<ConversationType[]>>> => {
     return this.get(`/chat/conversations`);
   };
 
@@ -13,19 +15,19 @@ export class MessageService extends BaseService {
     return this.post(`/chat/conversations/create`, payload);
   };
 
-  getConversation = (payload: any) => {
+  getConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
     return this.get(`/chat/conversations/find/${payload}`);
   };
 
-  getMessages = (payload: any) => {
+  getMessages = (payload: string): Promise<AxiosResponse<ResponseType<MessageType[]>>> => {
     return this.get(`/chat/conversations/${payload}/messages`);
   };
 
-  seenMessage = (payload: any) => {
+  seenMessage = (payload: string) => {
     return this.post(`/chat/conversations/${payload}/seen`, {});
   };
 
-  sendMessage = (payload: any) => {
+  sendMessage = (payload: CreateMessageDataType) => {
     return this.post(`/chat/messages`, payload);
   };
 }

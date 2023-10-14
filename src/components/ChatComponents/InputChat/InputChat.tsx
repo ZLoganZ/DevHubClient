@@ -5,20 +5,21 @@ import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
+import { PRIVATE_MSG } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import { MessageType, UserInfoType } from '@/types';
 
 interface Props {
   conversationID: string;
-  messagesState: any;
-  setMessagesState: (messages: any) => void;
+  messagesState: MessageType[];
+  setMessagesState: (messages: MessageType[]) => void;
+  setSeenState: (seen: UserInfoType[]) => void;
 }
 
-const PRIVATE_MSG = 'PRIVATE_MSG';
-
-const InputChat = (Props: Props) => {
+const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessagesState, setSeenState }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -31,28 +32,29 @@ const InputChat = (Props: Props) => {
   const { currentUserInfo } = useCurrentUserInfo();
 
   useEffect(() => {
-    if (Props.conversationID && currentUserInfo) {
-      chatSocket.on(PRIVATE_MSG + Props.conversationID, (data: any) => {
-        data.seen = false;
-
+    if (conversationID && currentUserInfo) {
+      chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
         // newMessage is data
-        Props.setMessagesState([...Props.messagesState, data]);
+        setMessagesState([...messagesState, data]);
+        setSeenState([]);
       });
     }
-  }, [Props.conversationID, currentUserInfo, Props.messagesState]);
+  }, [conversationID, currentUserInfo, messagesState]);
 
-  const handleSubmit = async (content: any) => {
-    if (!Props.conversationID) return;
+  const handleSubmit = async (content: string) => {
+    if (!conversationID) return;
     if (!content) return;
 
     setMessage('');
 
     chatSocket.emit(PRIVATE_MSG, {
-      conversationID: Props.conversationID,
+      conversationID: conversationID,
       message: {
+        _id: Math.random().toString(36).substring(7),
         sender: {
-          _id: currentUserInfo?._id,
-          user_image: currentUserInfo?.user_image
+          _id: currentUserInfo._id,
+          user_image: currentUserInfo.user_image,
+          name: currentUserInfo.name
         },
         content: content,
         createdAt: new Date()
@@ -69,7 +71,7 @@ const InputChat = (Props: Props) => {
     }
 
     await messageService.sendMessage({
-      conversationID: Props.conversationID,
+      conversation_id: conversationID,
       image: result?.info?.secure_url
     });
   };
@@ -88,7 +90,7 @@ const InputChat = (Props: Props) => {
         <Popover
           placement='top'
           trigger='click'
-          title={'Emoji'}
+          title='Emoji'
           content={
             <Picker
               data={async () => {

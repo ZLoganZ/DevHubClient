@@ -1,13 +1,8 @@
-import { Col, ConfigProvider, Row, Space } from 'antd';
+import { ConfigProvider, Space } from 'antd';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
-import { faSun } from '@fortawesome/free-regular-svg-icons';
-import {
-  CommentOutlined,
-  SearchOutlined,
-  SettingOutlined
-} from '@ant-design/icons';
+import { CommentOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -15,34 +10,27 @@ import LoadingConversation from '@/components/Loading/LoadingConversation';
 import LoadingChat from '@/components/Loading/LoadingChat';
 import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import MessageChat from '@/components/ChatComponents/MessageChat';
-import InputChat from '@/components/ChatComponents/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
-import {
-  useConversationsData,
-  useCurrentConversationData,
-  useFollowersData
-} from '@/hooks/fetch';
+import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
 
-  const { userID } = useAppSelector(state => state.auth);
+  const { userID } = useAppSelector((state) => state.auth);
 
   const { conversations, isLoadingConversations } = useConversationsData();
 
   const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
-  const { isLoadingCurrentConversation } = useCurrentConversationData(
-    conversationID ? conversationID : undefined
-  );
+  const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
 
@@ -52,7 +40,7 @@ const Chat = () => {
         token: themeColor
       }}>
       <StyleProvider theme={themeColorSet}>
-        {isLoadingFollowers ? (
+        {isLoadingFollowers || isLoadingConversations ? (
           <LoadingChat />
         ) : (
           <div className='chat flex'>
@@ -97,8 +85,8 @@ const Chat = () => {
                 borderColor: themeColorSet.colorBg4
               }}>
               <ConversationList
-                followers={followers!}
-                initialItems={conversations || []}
+                followers={followers}
+                conversations={conversations || []}
                 selected={conversationID}
               />
             </div>
@@ -118,26 +106,17 @@ const Chat = () => {
               ) : isLoadingCurrentConversation ? (
                 <LoadingConversation />
               ) : (
-                <>
-                  <div style={{ height: '92%' }}>
-                    <MessageChat
-                      key={conversationID}
-                      conversationID={conversationID}
-                      setIsDisplayShare={setIsDisplayShare}
-                      isDisplayShare={isDisplayShare}
-                    />
-                  </div>
-                </>
+                <div style={{ height: '92%' }}>
+                  <MessageChat
+                    key={conversationID}
+                    conversationID={conversationID}
+                    setIsDisplayShare={setIsDisplayShare}
+                    isDisplayShare={isDisplayShare}
+                  />
+                </div>
               )}
             </div>
-            {isDisplayShare ? (
-              <SharedMedia
-                key={conversationID}
-                conversationID={conversationID!}
-              />
-            ) : (
-              <></>
-            )}
+            {isDisplayShare && <SharedMedia key={conversationID} conversationID={conversationID!} />}
           </div>
         )}
       </StyleProvider>
