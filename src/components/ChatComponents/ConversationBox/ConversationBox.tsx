@@ -68,12 +68,12 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => 
       <div
         className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-lg transition'
         style={{
-          backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
+          backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
         }}>
-        {Props.data.type === 'group' ? (
-          <AvatarGroup key={Props.data._id} users={Props.data.members} />
+        {data.type === 'group' ? (
+          <AvatarGroup key={data._id} users={data.members} />
         ) : (
-          <Avatar key={Props.data._id} user={otherUser} />
+          <Avatar key={data._id} user={otherUser} />
         )}
 
         <div className='min-w-0 flex-1'>
@@ -85,7 +85,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => 
                 style={{
                   color: themeColorSet.colorText1
                 }}>
-                <span style={{ color: themeColorSet.colorText1 }}>{Props.data.name || otherUser.name}</span>
+                <span style={{ color: themeColorSet.colorText1 }}>{data.name || otherUser.name}</span>
               </p>
               {lastMessage?.createdAt && (
                 <p

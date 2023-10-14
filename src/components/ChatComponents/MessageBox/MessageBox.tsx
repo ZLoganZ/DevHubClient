@@ -10,9 +10,7 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 
 import { useMemo, useState } from 'react';
 import { MessageType, UserInfoType } from '@/types';
-import { useMemo } from 'react';
 import getImageURL from '@/util/getImageURL';
-
 
 interface MessageBoxProps {
   message: MessageType;
@@ -26,7 +24,6 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
-
 
   const isOwn = currentUserInfo?._id === message.sender._id;
   const seenList = useMemo(() => {
@@ -74,21 +71,21 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                 style={{
                   color: themeColorSet.colorText1
                 }}>
-                {Props.data.sender.name}
+                {message.sender.name}
               </div>
             </div>
             <Tooltip
               placement='left'
-              title={formatDateTime(Props.data.createdAt)}
+              title={formatDateTime(message.createdAt)}
               arrow={mergedArrow}
               mouseEnterDelay={0.5}
               destroyTooltipOnHide={true}
               autoAdjustOverflow={true}>
-              <div className={message}>
-                {Props.data.image ? (
+              <div className={messageStyle}>
+                {message.image ? (
                   <Image
                     alt='Image'
-                    src={Props.data.image}
+                    src={message.image}
                     draggable={false}
                     className='object-cover cursor-pointer'
                     style={{
@@ -99,35 +96,10 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                     }}
                   />
                 ) : (
-                  <div>{Props.data.content}</div>
+                  <div>{message.content}</div>
                 )}
               </div>
             </Tooltip>
-            <div className={messageStyle}>
-              {message.image ? (
-                <Image
-                  alt='Image'
-                  src={message.image}
-                  draggable={false}
-                  className='object-cover cursor-pointer'
-                  style={{
-                    borderRadius: '2rem',
-                    border: '0.2px solid',
-                    maxHeight: '288px',
-                    maxWidth: '512px'
-                  }}
-                />
-              ) : (
-                <div>{message.content}</div>
-              )}
-            </div>
-            <div
-              className={`time-message text-xs font-light w-max`}
-              style={{
-                color: themeColorSet.colorText2
-              }}>
-              {formatDateTime(message.createdAt)}
-            </div>
           </div>
           <div
             className={`seen-message text-xs font-light`}

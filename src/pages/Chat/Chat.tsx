@@ -1,10 +1,10 @@
-
-import { Col, ConfigProvider, Dropdown, Row, Space, Switch } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
+import { useMediaQuery } from 'react-responsive';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -21,7 +21,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
-import { useMediaQuery } from 'react-responsive';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -63,28 +62,24 @@ const Chat = () => {
 
   const [option, setOption] = useState(1);
 
-  const changeOptions = (checked: number) => {
-    switch (checked) {
-      case 1:
-        return (
-          <ConversationList
-            followers={followers!}
-            initialItems={conversations || []}
-            selected={conversationID}
-          />
-        );
-      case 2:
-        return <ContactList followers={followers!} />;
-      case 3:
-        console.log('3');
-        break;
-      case 4:
-        console.log('4');
-        break;
-      default:
-        break;
-    }
-  };
+  const changeOptions = useMemo(() => {
+    return (checked: number) => {
+      switch (checked) {
+        case 1:
+          return <ConversationList conversations={conversations} selected={conversationID} />;
+        case 2:
+          return <ContactList followers={followers || []} />;
+        case 3:
+          console.log('3');
+          break;
+        case 4:
+          console.log('4');
+          break;
+        default:
+          break;
+      }
+    };
+  }, [conversations, followers]);
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
