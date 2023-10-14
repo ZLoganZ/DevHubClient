@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
@@ -8,6 +8,7 @@ import { useViewPost } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { imageErrorFallback } from '@/util/constants/SettingSystem';
+import { TypeOfLink } from '@/types';
 import StyleProvider from './cssPostContent';
 
 interface ContentPostProps {
@@ -15,15 +16,10 @@ interface ContentPostProps {
   title: string;
   content: string;
   img?: string;
-  link?: {
-    address: string;
-    title: string;
-    description: string;
-    image: string;
-  };
+  link?: TypeOfLink;
 }
 
-const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) => {
+const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, img, link }) => {
   const { themeColorSet } = getTheme();
 
   const [expanded, setExpanded] = useState(false);
@@ -37,15 +33,15 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
   useLayoutEffect(() => {
     if (isMoreThan500 && !expanded) setContent(content.slice(0, 500) + '...');
     else setContent(content);
-  }, [expanded, content]);
+  }, [expanded, content, isMoreThan500]);
 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const onIntersect = () => {
+  const onIntersect = useCallback(() => {
     if (isMoreThan500 && expanded) mutateViewPost(postID);
     else if (!isMoreThan500) mutateViewPost(postID);
-  };
+  }, [postID, isMoreThan500, expanded]);
 
   useIntersectionObserver(contentRef, onIntersect);
 
@@ -85,11 +81,11 @@ const ContentPost = ({ postID, title, content, img, link }: ContentPostProps) =>
                     }}>
                     {link.title?.length > 100 ? link.title.slice(0, 100) + '...' : link.title}
                   </div>
-                  <div>
+                  <>
                     {link.description?.length > 100
                       ? link.description.slice(0, 100) + '...'
                       : link.description}
-                  </div>
+                  </>
                 </div>
                 <img src={link.image} alt='pic link' className='w-1/5' />
               </div>

@@ -41,7 +41,7 @@ export const useCreatePost = () => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
-      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], (oldData) => {
+      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], (oldData) => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
@@ -114,7 +114,7 @@ export const useUpdatePost = () => {
         updatePostData
       );
 
-      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
+      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
 
       queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
     }
@@ -152,7 +152,7 @@ export const useDeletePost = () => {
 
       queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
 
-      queryClient.setQueriesData<PostType[]>(['allPostsNewsfeed'], updatePostData);
+      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
     }
   });
   return {
@@ -179,9 +179,9 @@ export const useLikePost = () => {
     mutationFn: async (post: SharePostDataType) => {
       await postService.likePost(post);
     },
-    onSuccess(_, post) {
+    onSuccess(_, postLike) {
       queryClient.invalidateQueries({
-        queryKey: ['post', post.post]
+        queryKey: ['post', postLike.post]
       });
     }
   });
@@ -209,9 +209,9 @@ export const useSharePost = () => {
     mutationFn: async (post: SharePostDataType) => {
       await postService.sharePost(post);
     },
-    onSuccess(_, post) {
+    onSuccess(_, postShare) {
       queryClient.invalidateQueries({
-        queryKey: ['post', post.post]
+        queryKey: ['post', postShare.post]
       });
     }
   });
@@ -265,6 +265,8 @@ export const useSavePost = () => {
 export const useCommentPost = () => {
   const queryClient = useQueryClient();
 
+  const uid = useAppSelector((state) => state.auth.userID);
+
   const { mutate, isLoading, isError, isSuccess } = useMutation({
     mutationFn: async (commentData: CreateCommentDataType) => {
       const { data } = await postService.createComment(commentData);
@@ -274,6 +276,29 @@ export const useCommentPost = () => {
       queryClient.invalidateQueries({
         queryKey: ['comments', newComment.post]
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ['post', newComment.post]
+      });
+
+      const updatePostData = (oldData: PostType[] | undefined) => {
+        return oldData?.map((post) => {
+          if (post._id === newComment.post) {
+            return {
+              ...post,
+              post_attributes: {
+                ...post.post_attributes,
+                comment_number: post.post_attributes.comment_number + 1
+              }
+            };
+          }
+          return post;
+        });
+      };
+
+      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+
+      queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
     }
   });
   return {

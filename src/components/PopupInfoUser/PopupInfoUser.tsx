@@ -12,12 +12,12 @@ import { useFollowUser } from '@/hooks/mutation';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssPopupInfoUser';
 
-interface Props {
+interface PopUpProps {
   userInfo: UserInfoType;
   userID: string;
 }
 
-const PopupInfoUser = ({ userInfo, userID }: Props) => {
+const PopupInfoUser: React.FC<PopUpProps> = ({ userInfo, userID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -34,7 +34,7 @@ const PopupInfoUser = ({ userInfo, userID }: Props) => {
       <div className='popupInfoUser flex' style={{ width: '95%' }}>
         <NavLink to={`/user/${userInfo._id}`}>
           <div className='popupInfoUser__avatar mr-5 mt-3'>
-            <Avatar size={70} src={getImageURL(userInfo.user_image, 'mini')} />
+            <Avatar size={70} src={getImageURL(userInfo.user_image, 'avatar_mini')} />
           </div>
         </NavLink>
         <div className='popupInfoUser__content'>

@@ -21,13 +21,13 @@ interface QuillEditProps {
   callbackFunction: (value: string) => void;
 }
 
-const QuillEdit = (Props: QuillEditProps) => {
+const QuillEdit: React.FC<QuillEditProps> = ({ placeholder, callbackFunction, content }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [value, setValue] = useState<any>(Props.content);
+  const [value, setValue] = useState<any>(content);
 
   const ReactQuillRef = useRef<any>();
 
@@ -49,8 +49,8 @@ const QuillEdit = (Props: QuillEditProps) => {
   // Kiểm tra nội dung của value để set callback
   const handleQuillChangeValue = () => {
     const HTML = new DOMParser().parseFromString(value, 'text/html').body.innerText;
-    if (HTML === '') Props.callbackFunction('');
-    else Props.callbackFunction(value);
+    if (HTML === '') callbackFunction('');
+    else callbackFunction(value);
     dispatch(closeModal());
   };
 
@@ -69,7 +69,7 @@ const QuillEdit = (Props: QuillEditProps) => {
         modules={{
           toolbar: toolbarOptions
         }}
-        placeholder='Add a Content'
+        placeholder={placeholder || 'Add a Content'}
         theme='snow'
       />
     </StyleProvider>

@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { faSun } from '@fortawesome/free-regular-svg-icons';
-import { CommentOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  CommentOutlined,
+  SearchOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -15,7 +19,11 @@ import MessageChat from '@/components/ChatComponents/MessageChat';
 import InputChat from '@/components/ChatComponents/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
-import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
+import {
+  useConversationsData,
+  useCurrentConversationData,
+  useFollowersData
+} from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
@@ -24,12 +32,12 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector(state => state.theme.change);
   const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
 
-  const { userID } = useAppSelector((state) => state.auth);
+  const { userID } = useAppSelector(state => state.auth);
 
   const { conversations, isLoadingConversations } = useConversationsData();
 
@@ -131,7 +139,7 @@ const Chat = () => {
               }}>
               <ConversationList
                 followers={followers!}
-                initialItems={conversations}
+                initialItems={conversations || []}
                 selected={conversationID}
               />
             </div>
@@ -154,18 +162,23 @@ const Chat = () => {
                 <>
                   <div style={{ height: '92%' }}>
                     <MessageChat
-                      // key={conversations[0]?.lastMessageAt}
                       key={conversationID}
                       conversationID={conversationID}
                       setIsDisplayShare={setIsDisplayShare}
                       isDisplayShare={isDisplayShare}
                     />
                   </div>
-                  <InputChat conversationID={conversationID} />
                 </>
               )}
             </div>
-            {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
+            {isDisplayShare ? (
+              <SharedMedia
+                key={conversationID}
+                conversationID={conversationID!}
+              />
+            ) : (
+              <></>
+            )}
           </div>
         )}
       </StyleProvider>

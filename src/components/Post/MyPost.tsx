@@ -1,27 +1,19 @@
-import {
-  faUpRightFromSquare,
-  faEllipsis,
-  faPenToSquare,
-  faTrash,
-  faTriangleExclamation
-} from '@fortawesome/free-solid-svg-icons';
+import { faUpRightFromSquare, faEllipsis, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown, Modal, notification } from 'antd';
+import { Divider, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { sha1 } from 'crypto-hash';
 
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import EditPostForm from '@/components/Form/EditPostForm';
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
+import DeleteModal from '@/components/PostProperties/DeletePostModal';
 import { getTheme } from '@/util/theme';
-import { commonColor } from '@/util/cssVariable';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { useDeletePost } from '@/hooks/mutation';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 
@@ -30,19 +22,15 @@ interface PostProps {
   postAuthor: UserInfoType;
 }
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
-
 // -----------------------------------------------------
 
-const MyPost = ({ post, postAuthor }: PostProps) => {
+const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
   const link = post.post_attributes.url;
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
-
-  const { mutateDeletePost } = useDeletePost();
 
   //format date to get full date
   const date = formatDateTime(post.createdAt);
@@ -55,44 +43,6 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
   };
 
   useMediaQuery({ maxWidth: 639 });
-
-  const handleRemoveImage = async (imageURL: any) => {
-    const nameSplit = imageURL.split('/');
-    const duplicateName = nameSplit.pop();
-
-    // Remove .
-    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
-
-    const formData = new FormData();
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id);
-    const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    return {
-      url: data,
-      status: 'done'
-    };
-  };
-
-  const handleOk = async () => {
-    if (post.post_attributes.img) await handleRemoveImage(post.post_attributes.img);
-
-    mutateDeletePost(post._id);
-
-    setIsModalOpen(false);
-    openNotificationWithIcon('success');
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   // post setting
   const items: MenuProps['items'] = [
@@ -147,53 +97,14 @@ const MyPost = ({ post, postAuthor }: PostProps) => {
     }
   ];
 
-  // Notification delete post
-  const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type: NotificationType) => {
-    api[type]({
-      message: 'Delete Successfully',
-      placement: 'bottomRight'
-    });
-  };
-
-  /*   function removeCode(htmlString: any): any {
-    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-    const elements = doc.getElementsByClassName('ql-syntax');
-    while (elements.length > 0) elements[0].remove();
-    return doc.body.innerHTML;
-  } */
-
   return (
     <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
-      {contextHolder}
-      <Modal
-        title={
-          <>
-            <FontAwesomeIcon
-              className='icon mr-2'
-              icon={faTriangleExclamation}
-              style={{ color: commonColor.colorWarning1 }}
-            />
-            <span>Are you sure delete this post?</span>
-          </>
-        }
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{
-          style: {
-            color: themeColorSet.colorText1,
-            backgroundColor: commonColor.colorBlue1
-          }
-        }}
-        cancelButtonProps={{
-          style: {
-            color: themeColorSet.colorText1,
-            backgroundColor: themeColorSet.colorBg3
-          }
-        }}>
-        <p>You will not be able to recover the post after deleted!</p>
-      </Modal>
+      <DeleteModal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        postID={post._id}
+        image={post.post_attributes.img}
+      />
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>

@@ -12,12 +12,12 @@ import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
-interface Props {
+interface CommentInputProps {
   currentUser: UserInfoType;
   postID: string;
 }
 
-const CommentInput = ({ currentUser, postID }: Props) => {
+const CommentInput: React.FC<CommentInputProps> = ({ currentUser, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -66,7 +66,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
   return (
     <StyleProvider>
       <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
-        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'mini')} />
+        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
         <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
@@ -140,7 +140,7 @@ const CommentInput = ({ currentUser, postID }: Props) => {
               data.isReply && (
                 <div className='flex items-center'>
                   <span className='mr-2'>Reply to</span>
-                  <Avatar className='mr-2' size={20} src={getImageURL(data.user_image!, 'mini')} />
+                  <Avatar className='mr-2' size={20} src={getImageURL(data.user_image!, 'avatar_mini')} />
                   <span className='mr-2'>{data.name}</span>
                 </div>
               )

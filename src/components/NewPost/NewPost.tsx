@@ -30,13 +30,13 @@ const toolbarOptions = [
   ['link']
 ];
 
-interface Props {
+interface NewPostProps {
   currentUser: UserInfoType;
 }
 
 //===================================================
 
-const NewPost = ({ currentUser }: Props) => {
+const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -182,7 +182,8 @@ const NewPost = ({ currentUser }: Props) => {
               <Avatar
                 size={isXsScreen ? 40 : 50}
                 src={
-                  getImageURL(currentUser.user_image, 'mini') || './images/DefaultAvatar/default_avatar.png'
+                  getImageURL(currentUser.user_image, 'avatar_mini') ||
+                  './images/DefaultAvatar/default_avatar.png'
                 }
               />
               <div className='name font-bold ml-2'>

@@ -109,13 +109,7 @@ export const PostWrapper = () => {
             backgroundColor: themeColorSet.colorBg1,
             minHeight: 'calc(100vh - 5rem)'
           }}>
-          <MyPostDetail
-            key={post._id}
-            post={post}
-            postAuthor={currentUserInfo}
-            inclCommentInput
-            isOpenByModal={false}
-          />
+          <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} isOpenByModal={false} />
         </div>
       );
     } else
@@ -131,7 +125,6 @@ export const PostWrapper = () => {
             post={post}
             postAuthor={post.post_attributes.user}
             currentUser={currentUserInfo}
-            inclCommentInput
             isOpenByModal={false}
           />
         </div>

@@ -9,7 +9,7 @@ interface AvatarProps {
 }
 
 const AvatarGroup = (Props: AvatarProps) => {
-  const { members } = useAppSelector((state) => state.activeList);
+  const { members } = useAppSelector((state) => state.socketIO);
   const { currentUserInfo } = useCurrentUserInfo();
 
   const slicedUsers = Props.users.slice(0, 3);

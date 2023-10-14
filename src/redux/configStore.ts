@@ -7,7 +7,7 @@ import hook from './Slice/HookSlice';
 import theme from './Slice/ThemeSlice';
 import drawerHOC from './Slice/DrawerHOCSlice';
 import modalHOC from './Slice/ModalHOCSlice';
-import activeList from './Slice/ActiveListSlice';
+import socketIO from './Slice/SocketSlice';
 import conversation from './Slice/ConversationSlice';
 import getStarted from './Slice/GetStartedSlice';
 import community from './Slice/CommunitySlide';
@@ -23,7 +23,7 @@ export const store = configureStore({
     theme,
     drawerHOC,
     modalHOC,
-    activeList,
+    socketIO,
     conversation,
     getStarted,
     community,

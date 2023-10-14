@@ -115,18 +115,18 @@ export const useAllPostsData = () => {
 };
 
 /**
- * The function `useAllPostsNewsfeedData` is a custom hook that fetches all posts for a newsfeed and
+ * The function `useAllNewsfeedPostsData` is a custom hook that fetches all posts for a newsfeed and
  * provides loading, error, data, and refetching functionality.
- * @returns The function `useAllPostsNewsfeedData` returns an object with the following properties:
- * - `isLoadingAllPostsNewsfeed` is a boolean that indicates whether the data is still loading.
- * - `isErrorAllPostsNewsfeed` is a boolean that indicates whether there is an error.
- * - `allPostsNewsfeed` is an array of all posts for a newsfeed.
- * - `isFetchingAllPostsNewsfeed` is a boolean that indicates whether the query is currently fetching.
- * - `refetchAllPostsNewsfeed` is a function that refetches the posts data.
+ * @returns The function `useAllNewsfeedPostsData` returns an object with the following properties:
+ * - `isLoadingAllNewsfeedPosts` is a boolean that indicates whether the data is still loading.
+ * - `isErrorAllNewsfeedPosts` is a boolean that indicates whether there is an error.
+ * - `allNewsfeedPosts` is an array of all posts for a newsfeed.
+ * - `isFetchingAllNewsfeedPosts` is a boolean that indicates whether the query is currently fetching.
+ * - `refetchAllNewsfeedPosts` is a function that refetches the posts data.
  */
-export const useAllPostsNewsfeedData = () => {
+export const useAllNewsfeedPostsData = () => {
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
-    queryKey: ['allPostsNewsfeed'],
+    queryKey: ['allNewsfeedPosts'],
     queryFn: async () => {
       const { data } = await postService.getAllPostNewsFeed();
       return ApplyDefaults(data.metadata);
@@ -139,11 +139,43 @@ export const useAllPostsNewsfeedData = () => {
   });
 
   return {
-    isLoadingAllPostsNewsfeed: isLoading,
-    isErrorAllPostsNewsfeed: isError,
-    allPostsNewsfeed: data!,
-    isFetchingAllPostsNewsfeed: isFetching,
-    refetchAllPostsNewsfeed: refetch
+    isLoadingAllNewsfeedPosts: isLoading,
+    isErrorAllNewsfeedPosts: isError,
+    allNewsfeedPosts: data!,
+    isFetchingAllNewsfeedPosts: isFetching,
+    refetchAllNewsfeedPosts: refetch
+  };
+};
+
+/**
+ * The function `useAllPopularPostsData` is a custom hook that fetches data for all popular posts and
+ * returns the loading state, error state, fetched data, and a function to refetch the data.
+ * @returns The function `useAllPopularPostsData` returns an object with the following properties:
+ * - `isLoadingAllPopularPosts` is a boolean that indicates whether the data is still loading.
+ * - `isErrorAllPopularPosts` is a boolean that indicates whether there is an error.
+ * - `allPopularPosts` is an array of all popular posts.
+ * - `isFetchingAllPopularPosts` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useAllPopularPostsData = (sort: string) => {
+  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+    queryKey: ['allPopularPosts', sort],
+    queryFn: async () => {
+      const { data } = await postService.getAllPopularPost(sort);
+      return data;
+    },
+    staleTime: Infinity,
+    onError(err) {
+      console.log(err);
+    },
+    enabled: window.location.pathname === '/' && !!sort
+  });
+
+  return {
+    isLoadingAllPopularPosts: isLoading,
+    isErrorAllPopularPosts: isError,
+    allPopularPosts: data?.metadata,
+    isFetchingAllPopularPosts: isFetching,
+    refetchAllPopularPosts: refetch
   };
 };
 
@@ -291,7 +323,7 @@ export const useConversationsData = () => {
   return {
     isLoadingConversations: isLoading,
     isErrorConversations: isError,
-    conversations: data?.content?.conversations,
+    conversations: data?.metadata,
     isFetchingConversations: isFetching
   };
 };
@@ -321,7 +353,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
   return {
     isLoadingCurrentConversation: isLoading,
     isErrorCurrentConversation: isError,
-    currentConversation: data?.content?.conversation,
+    currentConversation: data?.metadata,
     isFetchingCurrentConversation: isFetching
   };
 };
@@ -380,7 +412,7 @@ export const useMessagesData = (conversationID: any) => {
   return {
     isLoadingMessages: isLoading,
     isErrorMessages: isError,
-    messages: data?.content?.messages,
+    messages: data?.metadata,
     isFetchingMessages: isFetching,
     refetchMessages: refetch
   };

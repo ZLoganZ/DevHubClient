@@ -9,7 +9,7 @@ import { commonColor } from '@/util/cssVariable';
 const RenderRepositoryIem = (item: RepositoryType, index: number) => {
   const { themeColorSet } = getTheme();
 
-  const colorLanguage = GithubColors.get(item.languages)?.color;
+  const colorLanguage = GithubColors.get(item.languages).color;
 
   return (
     <a
@@ -19,7 +19,7 @@ const RenderRepositoryIem = (item: RepositoryType, index: number) => {
         borderBottom: `1px solid ${themeColorSet.colorBg4}`,
         width: '48%'
       }}
-      href={item.url}
+      href={item.html_url}
       target='_blank'>
       <div className='top'>
         <span>
@@ -54,11 +54,11 @@ const RenderRepositoryIem = (item: RepositoryType, index: number) => {
         </div>
         <span className='star mr-3' style={{ color: themeColorSet.colorText3 }}>
           <FontAwesomeIcon size='xs' icon={faStar} />
-          <span className='ml-1'>{item.stargazersCount}</span>
+          <span className='ml-1'>{item.stargazers_count}</span>
         </span>
         <span className='fork' style={{ color: themeColorSet.colorText3 }}>
           <FontAwesomeIcon size='xs' icon={faCodeFork} />
-          <span className='ml-1'>{item.forksCount}</span>
+          <span className='ml-1'>{item.forks_count}</span>
         </span>
       </div>
     </a>

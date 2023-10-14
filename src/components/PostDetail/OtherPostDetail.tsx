@@ -17,11 +17,10 @@ interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
   currentUser: UserInfoType;
-  inclCommentInput?: boolean;
   isOpenByModal?: boolean;
 }
 
-const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput, isOpenByModal }: PostProps) => {
+const OtherPostDetail: React.FC<PostProps> = ({ post, postAuthor, currentUser, isOpenByModal }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -111,7 +110,7 @@ const OtherPostDetail = ({ post, postAuthor, currentUser, inclCommentInput, isOp
                 })
               )}
             </div>
-            {inclCommentInput && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} />}
+            {!isOpenByModal && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} />}
           </div>
         </Col>
       </Row>

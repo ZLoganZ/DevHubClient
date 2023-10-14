@@ -1,19 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { UserLoginDataType } from '@/types';
+import { Socket, io } from 'socket.io-client';
 
 interface State {
   members: string[];
   followers: UserLoginDataType[];
+  presenceSocket: Socket;
+  chatSocket: Socket;
 }
 
 const initialState: State = {
   members: [],
-  followers: []
+  followers: [],
+  presenceSocket: io('http://localhost:4056/presence-service'),
+  chatSocket: io('http://localhost:4056/chat-service')
 };
 
-const activeListSlice = createSlice({
-  name: 'activeList',
+const socketIO = createSlice({
+  name: 'socketIO',
   initialState,
   reducers: {
     setMembers: (state, action) => {
@@ -43,5 +48,5 @@ const activeListSlice = createSlice({
   }
 });
 
-export const { setMembers, addMember, removeMember, setFollowers } = activeListSlice.actions;
-export default activeListSlice.reducer;
+export const { setMembers, addMember, removeMember, setFollowers } = socketIO.actions;
+export default socketIO.reducer;

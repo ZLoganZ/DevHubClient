@@ -52,10 +52,10 @@ export type RepositoryType = {
   id: string;
   name: string;
   private: boolean;
-  url: string;
-  watchersCount: number;
-  forksCount: number;
-  stargazersCount: number;
+  html_url: string;
+  watchers_count: number;
+  forks_count: number;
+  stargazers_count: number;
   languages: string;
 };
 
@@ -103,7 +103,7 @@ export type UserInfoType = {
 
 type TypeofPost = 'Post' | 'Share';
 
-type TypeOfLink = {
+export type TypeOfLink = {
   address: string;
   title: string;
   description: string;

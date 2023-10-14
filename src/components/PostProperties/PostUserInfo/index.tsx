@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 
 import PopupInfoUser from '@/components/PopupInfoUser';
-import StyleProvider from './cssPostUserInfo';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import StyleProvider from './cssPostUserInfo';
 
 interface UserInfoPostProps {
   userInfo: UserInfoType;
@@ -15,7 +15,7 @@ interface UserInfoPostProps {
   date: string;
 }
 
-const UserInfoPost = ({ userInfo, postID, date }: UserInfoPostProps) => {
+const UserInfoPost: React.FC<UserInfoPostProps> = ({ userInfo, postID, date }) => {
   const { themeColorSet } = getTheme();
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
@@ -24,7 +24,7 @@ const UserInfoPost = ({ userInfo, postID, date }: UserInfoPostProps) => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='name_avatar flex'>
-        <Avatar size={isXsScreen ? 40 : 50} src={getImageURL(userInfo.user_image, 'mini')} />
+        <Avatar size={isXsScreen ? 40 : 50} src={getImageURL(userInfo.user_image, 'avatar_mini')} />
         <div className='name ml-2'>
           <Popover
             overlayInnerStyle={{

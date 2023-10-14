@@ -108,9 +108,9 @@ export const useOtherUser = (conversation: any) => {
   const { currentUserInfo } = useCurrentUserInfo();
 
   const otherUser = useMemo(() => {
-    const currentUser = currentUserInfo._id;
+    const currentUserId = currentUserInfo?._id;
 
-    const otherUser = conversation?.users?.filter((user: any) => user._id !== currentUser);
+    const otherUser = conversation?.members?.filter((member: any) => member._id !== currentUserId);
 
     return otherUser[0];
   }, [currentUserInfo, conversation.users]);

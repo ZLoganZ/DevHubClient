@@ -20,7 +20,7 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 
-import { useAllPostsNewsfeedData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useAllNewsfeedPostsData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
@@ -42,14 +42,14 @@ const Headers = () => {
     }
   };
 
-  const { refetchAllPostsNewsfeed } = useAllPostsNewsfeedData();
+  const { refetchAllNewsfeedPosts } = useAllNewsfeedPostsData();
 
   const handleClick = useCallback(() => {
     const { pathname } = window.location;
     if (pathname === '/') {
-      refetchAllPostsNewsfeed();
+      refetchAllNewsfeedPosts();
     }
-  }, [refetchAllPostsNewsfeed, window.location.pathname]);
+  }, [refetchAllNewsfeedPosts, window.location.pathname]);
 
   const handleLogout = () => {
     dispatch(LOGOUT_SAGA());
@@ -66,7 +66,10 @@ const Headers = () => {
               height: '12%'
             }}>
             <div className='avatar relative'>
-              <Avatar key={currentUserInfo._id} src={getImageURL(currentUserInfo.user_image, 'mini')} />
+              <Avatar
+                key={currentUserInfo._id}
+                src={getImageURL(currentUserInfo.user_image, 'avatar_mini')}
+              />
             </div>
             <div className='name_career'>
               <div
