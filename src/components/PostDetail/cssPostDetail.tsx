@@ -17,6 +17,7 @@ const StyleProvider = styled.div`
   }
 
   .overlay {
+    border-radius: 1rem;
     position: absolute;
     top: 0;
     left: 0;
@@ -24,7 +25,7 @@ const StyleProvider = styled.div`
     width: 100%;
     height: 100%;
     opacity: 0.5; /* Adjust the opacity as needed */
-    background-color: #e91616; /* Adjust the background color as needed */
+    background-color: ${(props) => props.theme.colorBg4}; /* Adjust the background color as needed */
   }
 `;
 

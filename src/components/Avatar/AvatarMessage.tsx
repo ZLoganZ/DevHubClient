@@ -10,7 +10,7 @@ interface AvatarProps {
 
 const AvatarMessage: React.FC<AvatarProps> = ({ user }) => {
   const { members } = useAppSelector((state) => state.socketIO);
-  const isActive = members.indexOf(user._id!) !== -1;
+  const isActive = members.indexOf(user?._id!) !== -1;
 
   // const isActive = true;
 
@@ -19,7 +19,7 @@ const AvatarMessage: React.FC<AvatarProps> = ({ user }) => {
       <div className='relative rounded-full overflow-hidden h-9 w-9 md:h-11 md:w-11 flex'>
         <Image
           preview={false}
-          src={getImageURL(user.user_image)}
+          src={getImageURL(user?.user_image)}
           alt='Avatar'
           style={{
             width: '100%',

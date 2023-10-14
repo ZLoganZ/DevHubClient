@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
-  .time-message {
+  /* .time-message {
     opacity: 0;
     transition: opacity 0.4s;
     position: absolute;
@@ -21,7 +21,7 @@ const StyleProvider = styled.div`
         background-clip: text;
       }
     }
-  }
+  } */
 
   .seen-message {
     position: relative;

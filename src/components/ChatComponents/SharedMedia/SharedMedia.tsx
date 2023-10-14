@@ -221,7 +221,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
                   </div>
                 </div>
                 <div className='content'>
-                  {items.length === 0 ? (
+                  {items ? (
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                   ) : (
                     <>

@@ -1,4 +1,4 @@
-import { Image } from 'antd';
+import { Image, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
 
 import StyleProvider from './cssMessageBox';
@@ -7,9 +7,12 @@ import formatDateTime from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+
+import { useMemo, useState } from 'react';
 import { MessageType, UserInfoType } from '@/types';
 import { useMemo } from 'react';
 import getImageURL from '@/util/getImageURL';
+
 
 interface MessageBoxProps {
   message: MessageType;
@@ -23,6 +26,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
+
 
   const isOwn = currentUserInfo?._id === message.sender._id;
   const seenList = useMemo(() => {
@@ -39,6 +43,23 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
         : 'bg-gray-700 text-white mr-7'
     }`;
 
+  const options = ['Show', 'Hide', 'Center'];
+  const [arrow, setArrow] = useState('Show');
+
+  const mergedArrow = useMemo(() => {
+    if (arrow === 'Hide') {
+      return false;
+    }
+
+    if (arrow === 'Show') {
+      return true;
+    }
+
+    return {
+      pointAtCenter: true
+    };
+  }, [arrow]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       <div className={`flex gap-3 px-2 py-4 items-center ${isOwn && 'justify-end'}`}>
@@ -47,6 +68,41 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
         </NavLink>
         <div className={`flex flex-col ${isOwn && 'items-end'}`}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
+            <div className='flex items-center gap-1 mb-1'>
+              <div
+                className={`text-sm`}
+                style={{
+                  color: themeColorSet.colorText1
+                }}>
+                {Props.data.sender.name}
+              </div>
+            </div>
+            <Tooltip
+              placement='left'
+              title={formatDateTime(Props.data.createdAt)}
+              arrow={mergedArrow}
+              mouseEnterDelay={0.5}
+              destroyTooltipOnHide={true}
+              autoAdjustOverflow={true}>
+              <div className={message}>
+                {Props.data.image ? (
+                  <Image
+                    alt='Image'
+                    src={Props.data.image}
+                    draggable={false}
+                    className='object-cover cursor-pointer'
+                    style={{
+                      borderRadius: '2rem',
+                      border: '0.2px solid',
+                      maxHeight: '288px',
+                      maxWidth: '512px'
+                    }}
+                  />
+                ) : (
+                  <div>{Props.data.content}</div>
+                )}
+              </div>
+            </Tooltip>
             <div className={messageStyle}>
               {message.image ? (
                 <Image
