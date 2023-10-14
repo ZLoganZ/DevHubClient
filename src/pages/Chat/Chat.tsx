@@ -4,11 +4,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { faSun } from '@fortawesome/free-regular-svg-icons';
-import {
-  CommentOutlined,
-  SearchOutlined,
-  SettingOutlined
-} from '@ant-design/icons';
+import { CommentOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -19,25 +15,22 @@ import MessageChat from '@/components/ChatComponents/MessageChat';
 import InputChat from '@/components/ChatComponents/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
-import {
-  useConversationsData,
-  useCurrentConversationData,
-  useFollowersData
-} from '@/hooks/fetch';
+import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssChat';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
+import { useMediaQuery } from 'react-responsive';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
 
-  const { userID } = useAppSelector(state => state.auth);
+  const { userID } = useAppSelector((state) => state.auth);
 
   const { conversations, isLoadingConversations } = useConversationsData();
 
@@ -82,8 +75,18 @@ const Chat = () => {
       onClick: () => {
         onChange(true);
       }
+    },
+    {
+      key: '3',
+      label: (
+        <div className='item flex items-center px-4 py-2'>
+          <span className='ml-2'>Setting</span>
+        </div>
+      )
     }
   ];
+
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <ConfigProvider
@@ -96,9 +99,9 @@ const Chat = () => {
         ) : (
           <div className='chat flex'>
             <div
-              className='slider flex flex-col justify-between items-center h-screen py-3'
+              className='slider flex flex-col justify-between items-center h-screen py-3 xs:hidden'
               style={{
-                width: '5%',
+                width: isXsScreen ? '0' : '5%',
                 borderRight: '1px solid',
                 borderColor: themeColorSet.colorBg4,
                 position: 'fixed',
@@ -171,14 +174,7 @@ const Chat = () => {
                 </>
               )}
             </div>
-            {isDisplayShare ? (
-              <SharedMedia
-                key={conversationID}
-                conversationID={conversationID!}
-              />
-            ) : (
-              <></>
-            )}
+            {isDisplayShare ? <SharedMedia key={conversationID} conversationID={conversationID!} /> : <></>}
           </div>
         )}
       </StyleProvider>

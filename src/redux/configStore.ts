@@ -27,7 +27,8 @@ export const store = configureStore({
     conversation,
     getStarted,
     community,
-    comment
+    comment,
+    activeList
   },
   middleware
 });

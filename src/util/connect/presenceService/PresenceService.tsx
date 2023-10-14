@@ -57,13 +57,9 @@ const PresenceService = () => {
       clientPresence.emit(SET_PRESENCE, currentUserInfo._id);
 
       clientPresence.on(SET_ACTIVE_MEM, (data: any) => {
-        const followers = currentUserInfo.followers.map(
-          followes => followes._id
-        );
+        const followers = currentUserInfo.followers.map((followes) => followes._id);
 
-        const intersection = followers.filter(follower =>
-          data.includes(follower)
-        );
+        const intersection = followers.filter((follower) => data.includes(follower));
         intersection.push(currentUserInfo._id);
 
         dispatch(setMembers(intersection));
