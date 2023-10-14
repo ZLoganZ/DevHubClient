@@ -1,11 +1,6 @@
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  setDispatch,
-  setLocation,
-  setNavigate,
-  setUseSelector
-} from '@/redux/Slice/HookSlice';
+import { setDispatch, setLocation, setNavigate, setUseSelector } from '@/redux/Slice/HookSlice';
 
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
@@ -13,16 +8,14 @@ import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 
 import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
+import ChatService from '@/components/ActionComponent/ChatService';
+import PresenceService from '@/components/ActionComponent/PresenceService';
 
 import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
 
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
-import {
-  ForgotPassword,
-  ResetPassword,
-  VerifyCode
-} from '@/pages/ForgotPassword';
+import { ForgotPassword, ResetPassword, VerifyCode } from '@/pages/ForgotPassword';
 import NewsFeed from '@/pages/NewsFeed/NewsFeed';
 import Chat from '@/pages/Chat';
 import SelectInterest from '@/pages/SelectInterest';
@@ -31,12 +24,6 @@ import SelectCommunity from '@/pages/SelectCommunity';
 import GetStarted from '@/pages/GetStarted';
 import NotFound404 from '@/pages/NotFound404';
 import MainLayout from '@/layouts/MainLayout';
-
-import ChatService from '@/util/connect/chatService/ChatService';
-import PresenceService from '@/util/connect/presenceService/PresenceService';
-
-import { useCurrentUserInfo } from './hooks/fetch';
-import { useEffect } from 'react';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -47,17 +34,6 @@ const App = () => {
   dispatch(setNavigate(useNavigate()));
 
   dispatch(setLocation(useLocation()));
-
-  // const { currentUserInfo } = useCurrentUserInfo();
-
-  // const chatService = new ChatService();
-  // const presenceService = new PresenceService();
-
-  // useEffect(() => {
-  //   if (currentUserInfo) {
-  //     presenceService.setPresence(currentUserInfo._id);
-  //   }
-  // }, [currentUserInfo]);
 
   return (
     <>
@@ -82,22 +58,10 @@ const App = () => {
           <Route path='/select-follow' element={<SelectFollow />} />
           <Route path='/select-community' element={<SelectCommunity />} />
           <Route path='/get-started' element={<GetStarted />} />
-          <Route
-            path='/user/:userID'
-            element={<MainLayout Component={<ProfileWrapper />} />}
-          />
-          <Route
-            path='/me'
-            element={<MainLayout Component={<ProfileWrapper />} />}
-          />
-          <Route
-            path='/post/:postID'
-            element={<MainLayout Component={<PostWrapper />} />}
-          />
-          <Route
-            path='/community/:communityID'
-            element={<MainLayout Component={<CommunityWrapper />} />}
-          />
+          <Route path='/user/:userID' element={<MainLayout Component={<ProfileWrapper />} />} />
+          <Route path='/me' element={<MainLayout Component={<ProfileWrapper />} />} />
+          <Route path='/post/:postID' element={<MainLayout Component={<PostWrapper />} />} />
+          <Route path='/community/:communityID' element={<MainLayout Component={<CommunityWrapper />} />} />
           <Route path='*' element={<NotFound404 />} />
         </Route>
       </Routes>

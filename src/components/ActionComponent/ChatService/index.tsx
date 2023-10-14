@@ -18,13 +18,14 @@
 
 // export default ChatService;
 
-import React, { useEffect } from 'react';
-import { clientChat } from './chat.connect';
+import { useAppSelector } from '@/hooks/special';
+import { useEffect } from 'react';
 
 const ChatService = () => {
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
   useEffect(() => {
     try {
-      clientChat.on('connect', () => {
+      chatSocket.on('connect', () => {
         console.log('connected chatService');
       });
     } catch (error) {

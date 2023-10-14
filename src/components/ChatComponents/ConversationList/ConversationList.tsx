@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import { ConfigProvider, Input, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
@@ -8,13 +7,12 @@ import { SearchOutlined } from '@ant-design/icons';
 import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
-import OpenGroupModal from '@/components/GroupChatModal';
+import OpenGroupModal from '@/components/OpenGroupModal';
 import Avatar from '@/components/Avatar/AvatarMessage';
+import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { UserInfoType } from '@/types';
-import ConversationBox from '../ConversationBox/ConversationBox';
-import { off } from 'process';
 
 interface ConversationListProps {
   initialItems: any; // conversations
@@ -25,7 +23,7 @@ interface ConversationListProps {
 
 const ConversationList = (Props: ConversationListProps) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
@@ -85,11 +83,7 @@ const ConversationList = (Props: ConversationListProps) => {
             </div>
           </div>
           <div className='iconPlus cursor-pointer' onClick={() => {}}>
-            <FontAwesomeIcon
-              className='text-xl'
-              icon={faUsersLine}
-              color={themeColorSet.colorText1}
-            />
+            <FontAwesomeIcon className='text-xl' icon={faUsersLine} color={themeColorSet.colorText1} />
           </div>
         </Space>
         <div
@@ -172,10 +166,7 @@ const ConversationList = (Props: ConversationListProps) => {
             Props.initialItems.map((item: any) => (
               // (item.messages?.length > 0 || item?.isGroup) && (
               <NavLink to={`/message/${item?._id}`} key={item?._id}>
-                <ConversationBox
-                  data={item}
-                  selected={item?._id === Props?.selected}
-                />
+                <ConversationBox data={item} selected={item?._id === Props?.selected} />
               </NavLink>
             ))}
         </div>

@@ -55,7 +55,7 @@ const ConversationBox = (Props: ConversationBoxProps) => {
 
   return (
     <div
-      className={`w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer`}
+      className='w-full relative flex items-center space-x-3 my-3 p-3 hover:bg-neutral-100rounded-lg transition cursor-pointer'
       style={{
         backgroundColor: Props.selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
       }}>

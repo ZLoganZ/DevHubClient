@@ -3,17 +3,18 @@ import { Image } from 'antd';
 import { UserInfoType } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import getImageURL from '@/util/getImageURL';
 
-interface AvatarProps {
+interface AvatarGroupProps {
   users: UserInfoType[];
 }
 
-const AvatarGroup = (Props: AvatarProps) => {
+const AvatarGroup: React.FC<AvatarGroupProps> = ({ users }) => {
   const { members } = useAppSelector((state) => state.socketIO);
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const slicedUsers = Props.users.slice(0, 3);
-  const isActive = Props.users.map((user) => {
+  const slicedUsers = users.slice(0, 3);
+  const isActive = users.map((user) => {
     if (user._id === currentUserInfo._id) return;
     return members.indexOf(user._id) !== -1;
   });
@@ -34,7 +35,7 @@ const AvatarGroup = (Props: AvatarProps) => {
           }`}>
           <Image
             preview={false}
-            src={user?.user_image || '/images/DefaultAvatar/default_avatar.png'}
+            src={getImageURL(user.user_image)}
             alt='Avatar'
             style={{
               width: '100%',
@@ -44,9 +45,9 @@ const AvatarGroup = (Props: AvatarProps) => {
           />
         </div>
       ))}
-      {isActive.indexOf(true) !== -1 ? (
+      {isActive.indexOf(true) !== -1 && (
         <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 left-9 h-2 w-2 md:h-3 md:w-3' />
-      ) : null}
+      )}
     </div>
   );
 };
