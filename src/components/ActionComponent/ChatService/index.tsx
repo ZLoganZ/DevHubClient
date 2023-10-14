@@ -32,6 +32,9 @@ const ChatService = () => {
       console.log(error);
       throw error;
     }
+    return  () => {
+      chatSocket.off('connect');
+    }
   }, []);
 
   return <></>;

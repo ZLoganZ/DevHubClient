@@ -4,6 +4,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, RootState } from '@/redux/configStore';
 import { useCurrentUserInfo } from './fetch';
+import { ConversationType } from '@/types';
 
 /**
  * The useAppDispatch function returns the useDispatch function with the AppDispatch type.
@@ -96,24 +97,26 @@ export const useIntersectionObserver = (
   }, [targetRef, onIntersect, threshold, delay, pauseOnTabChange]);
 };
 
+
 /**
- * The `useOtherUser` function returns the information of the other user in a conversation, including
- * their name.
- * @param {any} conversation - The `conversation` parameter is an object that represents a
- * conversation. It likely contains information about the users involved in the conversation, such as
- * their IDs and usernames.
- * @returns The function `useOtherUser` returns the information of the other user in a conversation.
+ * The `useOtherUser` function returns the other user in a conversation based on the current user's
+ * information and the conversation's members.
+ * @param {ConversationType} conversation - The `conversation` parameter is of type `ConversationType`.
+ * It represents a conversation object that contains information about the conversation, such as the
+ * members involved in the conversation.
+ * @returns The function `useOtherUser` returns the other user in a conversation, based on the current
+ * user's information and the conversation's members.
  */
-export const useOtherUser = (conversation: any) => {
+export const useOtherUser = (conversation: ConversationType) => {
   const { currentUserInfo } = useCurrentUserInfo();
 
   const otherUser = useMemo(() => {
     const currentUserId = currentUserInfo?._id;
 
-    const otherUser = conversation?.members?.filter((member: any) => member._id !== currentUserId);
+    const otherUser = conversation.members.filter((member) => member._id !== currentUserId);
 
     return otherUser[0];
-  }, [currentUserInfo, conversation.users]);
+  }, [currentUserInfo, conversation.members]);
 
   return otherUser;
 };

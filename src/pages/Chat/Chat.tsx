@@ -1,3 +1,4 @@
+
 import { Col, ConfigProvider, Dropdown, Row, Space, Switch } from 'antd';
 import type { MenuProps } from 'antd';
 import { useState } from 'react';
@@ -36,9 +37,7 @@ const Chat = () => {
 
   const { followers, isLoadingFollowers } = useFollowersData(userID!);
 
-  const { isLoadingCurrentConversation } = useCurrentConversationData(
-    conversationID ? conversationID : undefined
-  );
+  const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
 

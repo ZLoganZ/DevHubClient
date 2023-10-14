@@ -38,8 +38,6 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users }) => {
             src={getImageURL(user.user_image)}
             alt='Avatar'
             style={{
-              width: '100%',
-              height: '100%',
               objectFit: 'cover'
             }}
           />

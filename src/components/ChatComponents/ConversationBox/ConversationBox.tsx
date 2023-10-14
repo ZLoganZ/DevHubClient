@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -7,50 +7,58 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
+import { ConversationType, MessageType, UserInfoType } from '@/types';
+import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
 
 interface ConversationBoxProps {
-  data: any; // conversationItem
-  selected?: boolean; // conversationID
+  data: ConversationType;
+  selected?: boolean;
 }
 
-const ConversationBox = (Props: ConversationBoxProps) => {
-  const otherUser = useOtherUser(Props.data);
-  // if(otherUser) console.log('otherUser:: ', otherUser);
+const ConversationBox: React.FC<ConversationBoxProps> = ({ data, selected }) => {
+  const otherUser = useOtherUser(data);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  // Props.data?.lastMessage;
-  const lastMessage = useMemo(() => {
-    return Props.data?.lastMessage;
-  }, [Props.data?.lastMessage]);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
-  // if(lastMessage) console.log('lastMessage:: ', lastMessage);
+  const [lastMessage, setLastMessage] = useState(data.lastMessage);
 
-  const isOwn = currentUserInfo?._id === lastMessage?.sender;
+  const isOwn = useMemo(() => {
+    return currentUserInfo._id === lastMessage.sender._id;
+  }, [lastMessage]);
 
   const userID = useMemo(() => {
-    return currentUserInfo?._id;
+    return currentUserInfo._id;
   }, [currentUserInfo]);
+
+  const [seenArr, setSeenArr] = useState<UserInfoType[]>(data.seen);
+
+  useEffect(() => {
+    chatSocket.on(PRIVATE_MSG + data._id, (message: MessageType) => {
+      setSeenArr([]);
+      setLastMessage(message);
+    });
+    chatSocket.on(SEEN_MSG + data._id, (conversation: ConversationType) => {
+      setSeenArr(conversation.seen);
+    });
+  }, []);
 
   const hasSeen = useMemo(() => {
     if (!lastMessage) return false;
 
-    const seenArr = lastMessage.seen || [];
-
-    if (!userID) return false;
-
-    return seenArr.some((user: any) => user._id === userID);
-  }, [lastMessage, userID]);
+    return seenArr.some((user) => user._id === userID);
+  }, [lastMessage, seenArr]);
 
   const lastMessageText = useMemo(() => {
-    if (lastMessage?.image) return 'Sent an image';
+    if (lastMessage.image) return 'Sent an image';
 
-    if (lastMessage?.content) return lastMessage.content;
+    if (lastMessage.content) return lastMessage.content;
 
     return 'Start a conversation';
   }, [lastMessage, userID]);

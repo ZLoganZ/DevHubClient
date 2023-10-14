@@ -4,6 +4,8 @@ const StyleProvider = styled.div`
   /* .time-message {
     opacity: 0;
     transition: opacity 0.4s;
+    position: absolute;
+    top: 2.3rem;
   }
 
   .body-message {
@@ -23,7 +25,7 @@ const StyleProvider = styled.div`
 
   .seen-message {
     position: relative;
-    top: -0.8rem;
+    top: 0.5rem;
   }
 `;
 

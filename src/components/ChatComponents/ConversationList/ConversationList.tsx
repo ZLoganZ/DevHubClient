@@ -11,16 +11,15 @@ import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { UserInfoType } from '@/types';
+import { ConversationType, UserInfoType } from '@/types';
 
 interface ConversationListProps {
-  initialItems: any; // conversations
-  selected?: string; // conversationID
+  conversations: ConversationType[];
+  selected?: string;
   followers: UserInfoType[];
-  title?: string;
 }
 
-const ConversationList = (Props: ConversationListProps) => {
+const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, followers }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -29,9 +28,7 @@ const ConversationList = (Props: ConversationListProps) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  // console.log('currentUserInfo:: ', currentUserInfo);
-
-  const HandleOnClick = async (userFollow: any) => {
+  const HandleOnClick = async (userFollow: string) => {
     const { data } = await messageService.createConversation({
       type: 'private',
       members: [userFollow]
@@ -126,9 +123,81 @@ const ConversationList = (Props: ConversationListProps) => {
                   </NavLink>
                 ))}
             </div>
+
           </Row>
         </Col>
       </Row>
+
+            <ConfigProvider
+              theme={{
+                token: {
+                  lineWidth: 0,
+                  controlHeight: 40,
+                  borderRadius: 0
+                }
+              }}>
+              <Input placeholder='Search' className='mr-4' />
+            </ConfigProvider>
+          </div>
+        </div>
+        <div
+          className='userActive px-3 py-4 w-full'
+          style={{
+            borderBottom: '1px solid',
+            borderColor: themeColorSet.colorBg4,
+            height: '27%'
+          }}>
+          <div
+            className='title'
+            style={{
+              fontWeight: 600,
+              color: themeColorSet.colorText1
+            }}>
+            People
+          </div>
+          <div
+            className='listUser flex mt-5'
+            style={{
+              overflow: 'auto'
+            }}>
+            {followers.map((item) => {
+              return (
+                <div
+                  className='user flex flex-col items-center cursor-pointer w-1/2 mt-5'
+                  key={item._id}
+                  onClick={() => HandleOnClick(item._id)}>
+                  <div className='avatar relative'>
+                    <Avatar key={item._id} user={item} />
+                  </div>
+                  <div
+                    className='name text-center mt-2'
+                    style={{
+                      fontSize: '0.9rem',
+                      color: themeColorSet.colorText1
+                    }}>
+                    {handleItemName(item.name)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div
+          className='userChat'
+          style={{
+            height: '57%',
+            overflow: 'auto'
+          }}>
+          {conversations.length > 0 &&
+            conversations.map((item) => (
+              <NavLink to={`/message/${item._id}`} key={item._id}>
+                <ConversationBox data={item} selected={item._id === selected} />
+              </NavLink>
+            ))}
+        </div>
+        <div className='listUser'></div>
+      </div>
+
     </StyleProvider>
   );
 };

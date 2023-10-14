@@ -24,3 +24,6 @@ export const STATUS_CODE = {
 
 export const DARK_THEME = 'dark';
 export const LIGHT_THEME = 'light';
+
+export const PRIVATE_MSG = 'PRIVATE_MSG';
+export const SEEN_MSG = 'SEEN_MSG';
