@@ -8,7 +8,6 @@ import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 
 import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
-import ChatService from '@/components/ActionComponent/ChatService';
 import PresenceService from '@/components/ActionComponent/PresenceService';
 
 import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
@@ -39,8 +38,6 @@ const App = () => {
     <>
       <ModalHOC />
       <DrawerHOC />
-
-      <ChatService />
       <PresenceService />
 
       <Routes>

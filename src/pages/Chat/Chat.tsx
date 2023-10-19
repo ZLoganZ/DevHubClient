@@ -1,6 +1,6 @@
 import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
@@ -11,16 +11,23 @@ import ConversationList from '@/components/ChatComponents/ConversationList';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import LoadingChat from '@/components/Loading/LoadingChat';
 import EmptyChat from '@/components/ChatComponents/EmptyChat';
+import LoadingLogo from '@/components/Loading/LoadingLogo';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
-import { useConversationsData, useCurrentConversationData, useFollowersData } from '@/hooks/fetch';
-import { getTheme } from '@/util/theme';
+import {
+  useConversationsData,
+  useCurrentConversationData,
+  useCurrentUserInfo,
+  useFollowersData
+} from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleProvider from './cssChat';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
+import { getTheme } from '@/util/theme';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
+import { ConversationType } from '@/types';
+import StyleProvider from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -32,6 +39,8 @@ const Chat = () => {
 
   const { userID } = useAppSelector((state) => state.auth);
 
+  const { isLoadingCurrentUserInfo } = useCurrentUserInfo();
+
   const { conversations, isLoadingConversations } = useConversationsData();
 
   const { followers, isLoadingFollowers } = useFollowersData(userID!);
@@ -39,6 +48,13 @@ const Chat = () => {
   const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
+  const [conversationsState, setConversationsState] = useState<ConversationType[]>([]);
+
+  useEffect(() => {
+    if (conversations && !isLoadingConversations) {
+      setConversationsState(conversations);
+    }
+  }, [conversations, isLoadingConversations]);
 
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
@@ -60,36 +76,47 @@ const Chat = () => {
     }
   ];
 
-  const [option, setOption] = useState(1);
+  const [optionIndex, setOptionIndex] = useState(0);
 
-  const changeOptions = useMemo(() => {
-    return (checked: number) => {
-      switch (checked) {
+  const options = [
+    { name: 'message', icon: faComment, count: 96 },
+    { name: 'contact', icon: faUser, count: 69 },
+    { name: 'notification', icon: faBell, count: 99 },
+    { name: 'voice-call', icon: faPhone, count: 66 }
+  ];
+
+  const changeOptions = useCallback(
+    (check: number) => {
+      switch (check) {
+        case 0:
+          return (
+            <ConversationList
+              conversations={conversationsState}
+              selected={conversationID}
+              setConversations={setConversationsState}
+            />
+          );
         case 1:
-          return <ConversationList conversations={conversations} selected={conversationID} />;
+          return <ContactList followers={followers ?? []} />;
         case 2:
-          return <ContactList followers={followers || []} />;
+          return <></>;
         case 3:
-          console.log('3');
-          break;
-        case 4:
-          console.log('4');
-          break;
+          return <></>;
         default:
-          break;
+          return <></>;
       }
-    };
-  }, [conversations, followers]);
+    },
+    [conversations, conversationsState, followers, conversationID]
+  );
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  useMediaQuery({ maxWidth: 639 });
+
+  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
+    <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
-        {isLoadingConversations && isLoadingFollowers ? (
+        {isLoadingConversations || isLoadingFollowers ? (
           <LoadingChat />
         ) : (
           <div className='chat'>
@@ -103,74 +130,23 @@ const Chat = () => {
                   </div>
                   <div className='option py-8 flex flex-col items-center'>
                     <Space size={35} direction='vertical' align='center'>
-                      <div
-                        className='message optionItem relative'
-                        style={option == 1 ? { color: themeColorSet.colorText1 } : {}}>
-                        <FontAwesomeIcon
-                          className='icon text-2xl'
-                          icon={faComment}
-                          onClick={() => {
-                            setOption(1);
-                          }}
-                        />
-                        <span
-                          className='absolute rounded-full bg-red-600 ring-1
-                         ring-orange-50 top-4 -right-1 h-4 w-4 flex items-center 
-                         justify-center text-xs text-gray-50'>
-                          96
-                        </span>
-                      </div>
-                      <div
-                        className='contact optionItem relative'
-                        style={option == 2 ? { color: themeColorSet.colorText1 } : {}}>
-                        <FontAwesomeIcon
-                          className='icon text-2xl'
-                          icon={faUser}
-                          onClick={() => {
-                            setOption(2);
-                          }}
-                        />
-                        <span
-                          className='absolute rounded-full bg-red-600 ring-1
-                         ring-orange-50 top-4 -right-1 h-4 w-4 flex items-center 
-                         justify-center text-xs text-gray-50'>
-                          69
-                        </span>
-                      </div>
-                      <div
-                        className='notification optionItem relative'
-                        style={option == 3 ? { color: themeColorSet.colorText1 } : {}}>
-                        <FontAwesomeIcon
-                          className='icon text-2xl'
-                          icon={faBell}
-                          onClick={() => {
-                            setOption(3);
-                          }}
-                        />
-                        <span
-                          className='absolute rounded-full bg-red-600 ring-1
-                         ring-orange-50 top-4 -right-1 h-4 w-4 flex items-center 
-                         justify-center text-xs text-gray-50'>
-                          99
-                        </span>
-                      </div>
-                      <div
-                        className='voice-call optionItem relative'
-                        style={option == 4 ? { color: themeColorSet.colorText1 } : {}}>
-                        <FontAwesomeIcon
-                          className='icon text-2xl'
-                          icon={faPhone}
-                          onClick={() => {
-                            setOption(4);
-                          }}
-                        />
-                        <span
-                          className='absolute rounded-full bg-red-600 ring-1
-                         ring-orange-50 top-4 -right-1 h-4 w-4 flex items-center 
-                         justify-center text-xs text-gray-50'>
-                          66
-                        </span>
-                      </div>
+                      {options.map((option, index) => (
+                        <div
+                          key={index}
+                          className={`optionItem relative ${option.name}`}
+                          onClick={() => setOptionIndex(index)}
+                          style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
+                          <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
+                          <span
+                            className='absolute rounded-full 
+                            bg-red-600 ring-1 
+                            ring-orange-50 top-4 -right-1 
+                            h-4 w-4 flex items-center justify-center 
+                            text-xs text-gray-50'>
+                            {option.count}
+                          </span>
+                        </div>
+                      ))}
                     </Space>
                   </div>
                 </div>
@@ -178,23 +154,22 @@ const Chat = () => {
                   <div className='mode optionItem py-6'>
                     <FontAwesomeIcon
                       className='icon text-2xl'
-                      icon={themeColorSet.colorPicker == 'light' ? faMoon : faSun}
+                      icon={themeColorSet.colorPicker === 'light' ? faMoon : faSun}
                       onClick={() => {
-                        change(themeColorSet.colorPicker == 'light' ? true : false);
+                        change(themeColorSet.colorPicker === 'light');
                       }}
                     />
                   </div>
                   <div className='mode'>
                     <Dropdown menu={{ items: settingItem }} trigger={['click']}>
                       <div className='Setting optionItem'>
-                        {/* <SettingOutlined className='text-3xl' /> */}
                         <FontAwesomeIcon className='icon text-3xl' icon={faGear} />
                       </div>
                     </Dropdown>
                   </div>
                 </div>
               </Col>
-              <Col span={5}> {changeOptions(option)}</Col>
+              <Col span={5}> {changeOptions(optionIndex)}</Col>
               <Col span={isDisplayShare ? 12 : 18}>
                 <div
                   className='chatBox'
@@ -214,6 +189,7 @@ const Chat = () => {
                         conversationID={conversationID}
                         setIsDisplayShare={setIsDisplayShare}
                         isDisplayShare={isDisplayShare}
+                        setConversations={setConversationsState}
                       />
                     </div>
                   )}

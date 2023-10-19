@@ -15,15 +15,15 @@ interface ContactsListProps {
   followers: UserInfoType[];
 }
 
-const ConversationList = (Props: ContactsListProps) => {
+const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
-  const { themeColorSet, themeColor } = getTheme();
+  const { themeColorSet } = getTheme();
 
   const navigate = useNavigate();
 
-  const HandleOnClick = async (userFollow: any) => {
+  const HandleOnClick = async (userFollow: string) => {
     const { data } = await messageService.createConversation({
       type: 'private',
       members: [userFollow]
@@ -96,12 +96,12 @@ const ConversationList = (Props: ContactsListProps) => {
                 style={{
                   overflow: 'auto'
                 }}>
-                {Props.followers.map((item: any) => {
+                {followers.map((item) => {
                   return (
                     <div
                       className='user flex items-center cursor-pointer'
                       key={item?._id}
-                      onClick={() => HandleOnClick(item?._id)}>
+                      onClick={() => HandleOnClick(item._id)}>
                       <div className='avatar relative'>
                         <Avatar key={item?._id} user={item} />
                       </div>

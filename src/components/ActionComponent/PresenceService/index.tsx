@@ -43,29 +43,16 @@ const PresenceService = () => {
   const { presenceSocket } = useAppSelector((state) => state.socketIO);
 
   useEffect(() => {
-    try {
-      presenceSocket.on('connect', () => {
-        console.log('connected presenceService');
-      });
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }, []);
-
-  useEffect(() => {
     if (currentUserInfo) {
       presenceSocket.emit(SET_PRESENCE, currentUserInfo._id);
 
       presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
-        const followers = currentUserInfo.followers.map((followers) => followers._id);
+        const followers = currentUserInfo.followers.map((follower) => follower._id);
 
         const intersection = followers.filter((follower) => data.includes(follower));
         intersection.push(currentUserInfo._id);
 
         dispatch(setMembers(intersection));
-
-        // console.log('data::', data);
       });
     }
   }, [currentUserInfo]);

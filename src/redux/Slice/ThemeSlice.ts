@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 const initialState = {
-  change: true
+  change: true,
+  theme: localStorage.getItem('theme') || DARK_THEME
 };
 
 const themeSlice = createSlice({
@@ -14,16 +15,19 @@ const themeSlice = createSlice({
         case DARK_THEME: {
           localStorage.setItem('theme', DARK_THEME);
           state.change = !state.change;
+          state.theme = DARK_THEME;
           break;
         }
         case LIGHT_THEME: {
           localStorage.setItem('theme', LIGHT_THEME);
           state.change = !state.change;
+          state.theme = LIGHT_THEME;
           break;
         }
         default: {
           localStorage.setItem('theme', DARK_THEME);
           state.change = !state.change;
+          state.theme = DARK_THEME;
           break;
         }
       }

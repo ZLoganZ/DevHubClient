@@ -6,7 +6,7 @@ interface Props {
   onChange: (checked: boolean) => void;
 }
 
-const DayNightSwitch = (Props: Props) => {
+const DayNightSwitch: React.FC<Props> = ({ checked, onChange }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -18,11 +18,9 @@ const DayNightSwitch = (Props: Props) => {
             id='toggle'
             className='toggle-switch'
             type='checkbox'
-            defaultChecked={!Props.checked}
+            defaultChecked={!checked}
             onClick={() => {
-              if (Props && Props.onChange) {
-                Props.onChange(!Props.checked);
-              }
+              onChange(!checked);
             }}
           />
           <div className='sun-moon'>

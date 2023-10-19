@@ -318,6 +318,7 @@ export const useConversationsData = () => {
       const { data } = await messageService.getConversations();
       return data.metadata;
     },
+    staleTime: Infinity
   });
 
   return {
@@ -347,6 +348,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
       const { data } = await messageService.getConversation(conversationID!);
       return data.metadata;
     },
+    staleTime: Infinity,
     enabled: !!conversationID
   });
 
@@ -376,6 +378,7 @@ export const useFollowersData = (userID: string) => {
       const { data } = await userService.getFollowers(userID);
       return data.metadata;
     },
+    staleTime: Infinity,
     enabled: !!userID
   });
 
@@ -388,10 +391,10 @@ export const useFollowersData = (userID: string) => {
 };
 
 /**
- * The `useMessagesData` function is a custom hook that fetches messages data for a given conversation
- * ID and provides loading, error, data, and refetching functionality.
- * @param {any} conversationID - The conversationID parameter is the unique identifier for a
- * conversation. It is used to fetch the messages associated with that conversation.
+ * The `useMessagesData` function is a custom hook that fetches and returns messages data for a given
+ * conversation ID.
+ * @param {string} conversationID - The conversationID parameter is a string that represents the unique
+ * identifier of a conversation. It is used to fetch messages related to that conversation.
  * @returns The function `useMessagesData` returns an object with the following properties:
  * - `isLoadingMessages` is a boolean that indicates whether the messages data is still loading.
  * - `isErrorMessages` is a boolean that indicates whether there is an error.
@@ -399,13 +402,14 @@ export const useFollowersData = (userID: string) => {
  * - `isFetchingMessages` is a boolean that indicates whether the query is currently fetching.
  * - `refetchMessages` is a function that refetches the messages data.
  */
-export const useMessagesData = (conversationID: any) => {
+export const useMessagesData = (conversationID: string) => {
   const { data, isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['messages', conversationID],
     queryFn: async () => {
       const { data } = await messageService.getMessages(conversationID);
       return data.metadata;
     },
+    staleTime: Infinity,
     enabled: !!conversationID
   });
 

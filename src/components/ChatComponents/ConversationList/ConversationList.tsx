@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Col, ConfigProvider, Input, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
@@ -11,18 +13,46 @@ import ConversationBox from '@/components/ChatComponents/ConversationBox/Convers
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ConversationType } from '@/types';
+import { PRIVATE_CONVERSATION } from '@/util/constants/SettingSystem';
 
 interface ConversationListProps {
   conversations: ConversationType[];
+  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
   selected?: string;
 }
 
-const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected }) => {
+const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, setConversations }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
+  const queryClient = useQueryClient();
+
   const { currentUserInfo } = useCurrentUserInfo();
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
+  const { userID } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    chatSocket.on(PRIVATE_CONVERSATION + userID, (conversation: ConversationType) => {
+      queryClient.setQueryData<ConversationType[]>(['conversations'], (old) => {
+        if (!old) return [conversation];
+
+        const index = old.findIndex((item) => item._id === conversation._id);
+        if (index !== -1) {
+          old[index].updatedAt = conversation.updatedAt;
+          old.sort((a, b) => {
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          });
+        } else {
+          old.unshift(conversation);
+        }
+        setConversations([...old]);
+
+        return [...old];
+      });
+    });
+  }, [userID]);
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -35,20 +65,20 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 borderColor: themeColorSet.colorBg4
               }}>
               <div className='flex'>
-                <NavLink to={`/user/${currentUserInfo?._id}`}>
+                <NavLink to={`/user/${currentUserInfo._id}`}>
                   <div className='avatar mr-3'>
-                    <Avatar key={currentUserInfo?._id} user={currentUserInfo} />
+                    <Avatar key={currentUserInfo._id} user={currentUserInfo} />
                   </div>
                 </NavLink>
                 <div className='name_career'>
-                  <NavLink to={`/user/${currentUserInfo?._id}`}>
+                  <NavLink to={`/user/${currentUserInfo._id}`}>
                     <div
                       className='name mb-1'
                       style={{
                         color: themeColorSet.colorText1,
                         fontWeight: 600
                       }}>
-                      {currentUserInfo?.name}
+                      {currentUserInfo.name}
                     </div>
                   </NavLink>
                   <div
@@ -98,12 +128,11 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 overflow: 'auto',
                 maxHeight: 'calc(100vh - 160px)'
               }}>
-              {conversations?.length > 0 &&
-                conversations.map((item: any) => (
-                  <NavLink to={`/message/${item?._id}`} key={item?._id}>
-                    <ConversationBox data={item} selected={item?._id === selected} />
-                  </NavLink>
-                ))}
+              {conversations.map((item) => (
+                <NavLink to={`/message/${item._id}`} key={item._id}>
+                  <ConversationBox conversation={item} selected={item._id === selected} />
+                </NavLink>
+              ))}
             </div>
           </Row>
         </Col>

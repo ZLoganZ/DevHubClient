@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Input, Popover, Space } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Picker from '@emoji-mart/react';
-import { faFaceSmile, faMicrophone, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { getTheme } from '@/util/theme';
 import { PRIVATE_MSG } from '@/util/constants/SettingSystem';
@@ -10,19 +11,20 @@ import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { MessageType, UserInfoType } from '@/types';
+import { ConversationType, MessageType, UserInfoType } from '@/types';
 
 interface Props {
   conversationID: string;
-  messagesState: MessageType[];
-  setMessagesState: React.Dispatch<React.SetStateAction<MessageType[]>>;
   setSeenState: React.Dispatch<React.SetStateAction<UserInfoType[]>>;
+  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessagesState, setSeenState }) => {
+const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversations }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const queryClient = useQueryClient();
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -32,28 +34,6 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
   const { currentUserInfo } = useCurrentUserInfo();
 
   const [id, setId] = useState(Math.random().toString(36).substring(7));
-
-  useEffect(() => {
-    if (conversationID && currentUserInfo) {
-      chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
-        setMessagesState((messages) => {
-          const updatedMessages = messages.map((message) => {
-            if (message._id === data._id) {
-              return {
-                ...message,
-                isSending: false
-              };
-            }
-            return message;
-          });
-          if (updatedMessages[updatedMessages.length - 1]._id === data._id) {
-            return updatedMessages;
-          }
-          return [...updatedMessages, data];
-        });
-      });
-    }
-  }, [conversationID, currentUserInfo]);
 
   const handleSubmit = async (content: string) => {
     if (!conversationID) return;
@@ -77,10 +57,29 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
       conversationID,
       message
     });
-    
+
     setId(Math.random().toString(36).substring(7));
     setSeenState([]);
-    setMessagesState([...messagesState, message as unknown as MessageType]);
+
+    queryClient.setQueryData<MessageType[]>(['messages', conversationID], (oldData) => [
+      ...(oldData ?? []),
+      message as unknown as MessageType
+    ]);
+
+    queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      if (!oldData) return [];
+
+      const index = oldData.findIndex((item) => item._id === conversationID);
+      if (index !== -1) {
+        oldData[index].lastMessage = message as unknown as MessageType;
+        oldData.sort((a, b) => {
+          return new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime();
+        });
+      }
+      setConversations([...oldData]);
+
+      return [...oldData];
+    });
   };
 
   const handleUpload = async (error: any, result: any, widget: any) => {
@@ -95,6 +94,14 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
       conversation_id: conversationID,
       image: result?.info?.secure_url
     });
+  };
+
+  const checkEmpty = () => {
+    if (message === '') {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -165,6 +172,15 @@ const InputChat: React.FC<Props> = ({ conversationID, messagesState, setMessages
             onPressEnter={(e) => {
               handleSubmit(e.currentTarget.value);
             }}
+            suffix={
+              <span
+                className={`cursor-pointer hover:text-blue-700 ${
+                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
+                }`}
+                onClick={() => handleSubmit(message)}>
+                <FontAwesomeIcon icon={faPaperPlane} />
+              </span>
+            }
           />
         </ConfigProvider>
       </div>

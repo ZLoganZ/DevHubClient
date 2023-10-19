@@ -1,5 +1,4 @@
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 
 const formatDateTime = (date: string) => {
   const today = new Date();
@@ -25,10 +24,10 @@ const formatDateTime = (date: string) => {
   }
 
   if (diffDays <= 365) {
-    return format(commentDate, 'MMM dd • HH:mm', { locale: vi });
+    return format(commentDate, 'MMM dd • HH:mm');
   }
 
-  return format(commentDate, 'MMM dd, yyyy', { locale: vi });
+  return format(commentDate, 'MMM dd, yyyy');
 };
 
 export default formatDateTime;

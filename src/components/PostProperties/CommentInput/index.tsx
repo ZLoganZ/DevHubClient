@@ -123,15 +123,9 @@ const CommentInput: React.FC<CommentInputProps> = ({ currentUser, postID }) => {
             }
             suffix={
               <span
-                className='cursor-pointer hover:text-blue-700'
-                {...(checkEmpty()
-                  ? {
-                      style: {
-                        color: 'gray',
-                        cursor: 'not-allowed'
-                      }
-                    }
-                  : { transition: 'all 0.3s' })}
+                className={`cursor-pointer hover:text-blue-700 ${
+                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
+                }`}
                 onClick={handleSubmitComment}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </span>

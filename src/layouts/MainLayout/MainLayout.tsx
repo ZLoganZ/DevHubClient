@@ -29,10 +29,7 @@ const MainLayout = (props: PropsMainTemplate) => {
   if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
+    <ConfigProvider theme={{token: themeColor}}>
       <StyleProvider className='abcdef' theme={themeColorSet}>
         <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
           <Headers />

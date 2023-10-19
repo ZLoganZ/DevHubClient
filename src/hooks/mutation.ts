@@ -37,11 +37,11 @@ export const useCreatePost = () => {
       return data;
     },
     onSuccess(newPost) {
-      queryClient.setQueriesData<PostType[]>(['posts', uid], (oldData) => {
+      queryClient.setQueryData<PostType[]>(['posts', uid], (oldData) => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
-      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], (oldData) => {
+      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], (oldData) => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
@@ -109,12 +109,12 @@ export const useUpdatePost = () => {
         });
       };
 
-      queryClient.setQueriesData<PostType[]>(
+      queryClient.setQueryData<PostType[]>(
         ['posts', updatedPost.metadata.post_attributes.user._id],
         updatePostData
       );
 
-      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
 
       queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
     }
@@ -150,9 +150,9 @@ export const useDeletePost = () => {
         return oldData?.filter((post) => post._id !== postID);
       };
 
-      queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
+      queryClient.setQueryData<PostType[]>(['posts', uid], updatePostData);
 
-      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
     }
   });
   return {
@@ -296,9 +296,9 @@ export const useCommentPost = () => {
         });
       };
 
-      queryClient.setQueriesData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
 
-      queryClient.setQueriesData<PostType[]>(['posts', uid], updatePostData);
+      queryClient.setQueryData<PostType[]>(['posts', uid], updatePostData);
     }
   });
   return {
@@ -391,7 +391,7 @@ export const useUpdateUser = () => {
     onSuccess(updatedUser) {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
-      queryClient.setQueriesData(['currentUserInfo'], updatedUser.metadata);
+      queryClient.setQueryData(['currentUserInfo'], updatedUser.metadata);
     }
   });
   return {
@@ -419,7 +419,7 @@ export const useFollowUser = () => {
       await userService.followUser(userID);
     },
     onSuccess(_, userID) {
-      queryClient.setQueriesData<UserInfoType>(['currentUserInfo'], (oldData) => {
+      queryClient.setQueryData<UserInfoType>(['currentUserInfo'], (oldData) => {
         if (oldData)
           return {
             ...oldData,
@@ -429,7 +429,7 @@ export const useFollowUser = () => {
         return oldData;
       });
 
-      queryClient.setQueriesData<UserInfoType>(['otherUserInfo', userID], (oldData) => {
+      queryClient.setQueryData<UserInfoType>(['otherUserInfo', userID], (oldData) => {
         if (oldData)
           return {
             ...oldData,

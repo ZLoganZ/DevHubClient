@@ -1,4 +1,5 @@
 import { Image, Tooltip } from 'antd';
+import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import StyleProvider from './cssMessageBox';
@@ -8,7 +9,6 @@ import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 
-import { useMemo, useState } from 'react';
 import { MessageType, UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 
@@ -40,23 +40,6 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
         : 'bg-gray-700 text-white mr-7'
     }`;
 
-  const options = ['Show', 'Hide', 'Center'];
-  const [arrow, setArrow] = useState('Show');
-
-  const mergedArrow = useMemo(() => {
-    if (arrow === 'Hide') {
-      return false;
-    }
-
-    if (arrow === 'Show') {
-      return true;
-    }
-
-    return {
-      pointAtCenter: true
-    };
-  }, [arrow]);
-
   return (
     <StyleProvider theme={themeColorSet}>
       <div className={`flex gap-3 px-2 py-4 items-center ${isOwn && 'justify-end'}`}>
@@ -65,22 +48,19 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
         </NavLink>
         <div className={`flex flex-col ${isOwn && 'items-end'}`}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
-            <div className='flex items-center gap-1 mb-1'>
-              <div
-                className={`text-sm`}
-                style={{
-                  color: themeColorSet.colorText1
-                }}>
-                {message.sender.name}
-              </div>
-            </div>
             <Tooltip
-              placement='left'
+              placement={isOwn ? 'left' : 'right'}
+              arrow={false}
               title={formatDateTime(message.createdAt)}
-              arrow={mergedArrow}
-              mouseEnterDelay={0.5}
-              destroyTooltipOnHide={true}
-              autoAdjustOverflow={true}>
+              overlayInnerStyle={{
+                borderRadius: '0.55rem',
+                backgroundColor: themeColorSet.colorBgReverse3,
+                color: themeColorSet.colorTextReverse2,
+                fontWeight: 500
+              }}
+              mouseEnterDelay={0.2}
+              destroyTooltipOnHide
+              autoAdjustOverflow>
               <div className={messageStyle}>
                 {message.image ? (
                   <Image
@@ -119,10 +99,25 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                     />
                   </div>
                 ))}
-              {isLast && isOwn && seenList.length === 0 && !message.isSending && (
-                <div>
+              {isLast && isOwn && seenList.length === 0 && !message.isSending ? (
+                <svg
+                  className='w-4 h-4 text-gray-400 mr-2'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                  xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    fillRule='evenodd'
+                    d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              ) : (
+                isLast &&
+                isOwn &&
+                seenList.length === 0 &&
+                message.isSending && (
                   <svg
-                    className='w-4 h-4 text-gray-400 mr-2'
+                    className='w-4 h-4 text-gray-400 mr-2 animate-spin'
                     fill='currentColor'
                     viewBox='0 0 20 20'
                     xmlns='http://www.w3.org/2000/svg'>
@@ -132,7 +127,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                       clipRule='evenodd'
                     />
                   </svg>
-                </div>
+                )
               )}
             </div>
           </div>
