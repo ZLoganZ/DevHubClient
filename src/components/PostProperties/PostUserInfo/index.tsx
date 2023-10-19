@@ -31,7 +31,7 @@ const UserInfoPost: React.FC<UserInfoPostProps> = ({ userInfo, postID, date }) =
               border: `1px solid ${themeColorSet.colorBg3}`
             }}
             mouseEnterDelay={0.4}
-            content={<PopupInfoUser userInfo={userInfo} userID={userID!} />}>
+            content={<PopupInfoUser userInfo={userInfo} userID={userID} />}>
             <div className='name__top font-bold'>
               <NavLink to={`/user/${userInfo._id}`} style={{ color: themeColorSet.colorText1 }}>
                 {userInfo.name}

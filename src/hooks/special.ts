@@ -97,26 +97,19 @@ export const useIntersectionObserver = (
   }, [targetRef, onIntersect, threshold, delay, pauseOnTabChange]);
 };
 
-
 /**
  * The `useOtherUser` function returns the other user in a conversation based on the current user's
  * information and the conversation's members.
  * @param {ConversationType} conversation - The `conversation` parameter is of type `ConversationType`.
- * It represents a conversation object that contains information about the conversation, such as the
- * members involved in the conversation.
- * @returns The function `useOtherUser` returns the other user in a conversation, based on the current
- * user's information and the conversation's members.
+ * It represents a conversation object that contains information about the conversation, such as its
+ * members.
+ * @returns The function `useOtherUser` returns the other user in a conversation, excluding the current
+ * user.
  */
 export const useOtherUser = (conversation: ConversationType) => {
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const otherUser = useMemo(() => {
-    const currentUserId = currentUserInfo?._id;
-
-    const otherUser = conversation.members.filter((member) => member._id !== currentUserId);
-
-    return otherUser[0];
+  return useMemo(() => {
+    return conversation.members.filter((member) => member._id !== currentUserInfo._id)[0];
   }, [currentUserInfo, conversation.members]);
-
-  return otherUser;
 };

@@ -65,7 +65,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                 {message.image ? (
                   <Image
                     alt='Image'
-                    src={message.image}
+                    src={getImageURL(message.image, 'post')}
                     draggable={false}
                     className='object-cover cursor-pointer'
                     style={{
@@ -99,35 +99,21 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                     />
                   </div>
                 ))}
-              {isLast && isOwn && seenList.length === 0 && !message.isSending ? (
+              {isLast && isOwn && seenList.length === 0 && (
                 <svg
                   className='w-4 h-4 text-gray-400 mr-2'
                   fill='currentColor'
                   viewBox='0 0 20 20'
                   xmlns='http://www.w3.org/2000/svg'>
-                  <path
-                    fillRule='evenodd'
-                    d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              ) : (
-                isLast &&
-                isOwn &&
-                seenList.length === 0 &&
-                message.isSending && (
-                  <svg
-                    className='w-4 h-4 text-gray-400 mr-2 animate-spin'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                    xmlns='http://www.w3.org/2000/svg'>
+                  {message.isSending ? (
+                    <circle cx='10' cy='10' r='8' stroke='currentColor' fill='none' />
+                  ) : (
                     <path
                       fillRule='evenodd'
                       d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
-                      clipRule='evenodd'
                     />
-                  </svg>
-                )
+                  )}
+                </svg>
               )}
             </div>
           </div>

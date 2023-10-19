@@ -8,7 +8,7 @@ const getUserID = async () => {
 
     return data.metadata._id;
   } catch (error) {
-    return null;
+    return 'Méo có UserID!';
   }
 };
 

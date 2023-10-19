@@ -152,11 +152,11 @@ export const ProfileWrapper = () => {
   return (
     <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
       <Suspense fallback={<LoadingProfileComponent />}>
-        {userIDFromStore &&
+        {userID &&
           (userID === userIDFromStore ? (
             <MyProfile key={userID} />
           ) : (
-            <Profile key={userID} userID={userID!} />
+            <Profile key={userID} userID={userID} />
           ))}
       </Suspense>
     </div>

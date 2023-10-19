@@ -19,16 +19,14 @@ interface ConversationBoxProps {
 }
 
 const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selected }) => {
-  const otherUser = useOtherUser(conversation);
-
-  const { currentUserInfo } = useCurrentUserInfo();
-
   useAppSelector((state) => state.theme.change);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
 
   const queryClient = useQueryClient();
 
-  const { chatSocket } = useAppSelector((state) => state.socketIO);
+  const otherUser = useOtherUser(conversation);
+  const { currentUserInfo } = useCurrentUserInfo();
 
   const isOwn = useMemo(() => {
     return currentUserInfo._id === conversation.lastMessage.sender._id;

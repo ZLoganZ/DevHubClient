@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Dropdown, Button, Input, Avatar, ConfigProvider } from 'antd';
-import { faTrashCan, faPlus, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/theme';
-import { commonColor } from '@/util/cssVariable';
 import contactArrays from '@/util/Descriptions/Contacts';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -114,11 +113,11 @@ const AddContacts = (Props: Props) => {
     setAddTooltips(newAddTooltips);
   };
 
-  const handleShowTooltip = (index: number) => {
-    const newAddTooltips = [...addTooltips];
-    newAddTooltips[index].state = !newAddTooltips[index].state;
-    setAddTooltips(newAddTooltips);
-  };
+  // const handleShowTooltip = (index: number) => {
+  //   const newAddTooltips = [...addTooltips];
+  //   newAddTooltips[index].state = !newAddTooltips[index].state;
+  //   setAddTooltips(newAddTooltips);
+  // };
 
   useEffect(() => {
     setSave(false);

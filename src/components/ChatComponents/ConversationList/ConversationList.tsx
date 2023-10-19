@@ -17,8 +17,8 @@ import { PRIVATE_CONVERSATION } from '@/util/constants/SettingSystem';
 
 interface ConversationListProps {
   conversations: ConversationType[];
-  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
   selected?: string;
+  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, setConversations }) => {

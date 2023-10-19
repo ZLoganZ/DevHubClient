@@ -46,13 +46,17 @@ const PresenceService = () => {
     if (currentUserInfo) {
       presenceSocket.emit(SET_PRESENCE, currentUserInfo._id);
 
+      const followers = currentUserInfo.followers.map((follower) => follower._id);
+      const following = currentUserInfo.following.map((following) => following._id);
+
+      // Combine followers, following and remove duplicate
+      const members = [...followers, ...following].filter((item, index, arr) => arr.indexOf(item) === index);
+
       presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
-        const followers = currentUserInfo.followers.map((follower) => follower._id);
+        const activeMembers = members.filter((member) => data.includes(member));
+        activeMembers.push(currentUserInfo._id);
 
-        const intersection = followers.filter((follower) => data.includes(follower));
-        intersection.push(currentUserInfo._id);
-
-        dispatch(setMembers(intersection));
+        dispatch(setMembers(activeMembers));
       });
     }
   }, [currentUserInfo]);

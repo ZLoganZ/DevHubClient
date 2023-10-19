@@ -18,8 +18,8 @@ import StyleProvider from './cssMessageChat';
 
 interface IParams {
   conversationID: string;
-  setIsDisplayShare: React.Dispatch<React.SetStateAction<boolean>>;
   isDisplayShare: boolean;
+  setIsDisplayShare: React.Dispatch<React.SetStateAction<boolean>>;
   setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
@@ -32,17 +32,13 @@ const MessageChat: React.FC<IParams> = ({
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+  const { members, chatSocket } = useAppSelector((state) => state.socketIO);
 
   const queryClient = useQueryClient();
 
-  const { members, chatSocket } = useAppSelector((state) => state.socketIO);
-
   const { currentUserInfo } = useCurrentUserInfo();
-
   const { currentConversation } = useCurrentConversationData(conversationID);
-
   const { messages, isLoadingMessages } = useMessagesData(conversationID);
-
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
@@ -85,9 +81,11 @@ const MessageChat: React.FC<IParams> = ({
             }
             return message;
           });
-          if (updatedMessages[updatedMessages.length - 1]._id === data._id) {
+
+          if (updatedMessages.some((message) => message._id === data._id)) {
             return updatedMessages;
           }
+
           return [...updatedMessages, data];
         });
       });
@@ -110,7 +108,7 @@ const MessageChat: React.FC<IParams> = ({
   useIntersectionObserver(bottomRef, seenMessage, { delay: 0, threshold: 0 });
 
   const scrollToBottom = (type: ScrollBehavior) => {
-    if (bottomRef?.current) bottomRef?.current?.scrollIntoView({ behavior: type, block: 'end' });
+    if (bottomRef?.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
   };
 
   useEffect(() => {

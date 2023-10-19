@@ -32,19 +32,14 @@ import StyleProvider from './cssChat';
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
-
   const { themeColorSet, themeColor } = getTheme();
+  const { userID } = useAppSelector((state) => state.auth);
 
   const { conversationID } = useParams();
 
-  const { userID } = useAppSelector((state) => state.auth);
-
   const { isLoadingCurrentUserInfo } = useCurrentUserInfo();
-
   const { conversations, isLoadingConversations } = useConversationsData();
-
-  const { followers, isLoadingFollowers } = useFollowersData(userID!);
-
+  const { followers, isLoadingFollowers } = useFollowersData(userID);
   const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
@@ -54,7 +49,7 @@ const Chat = () => {
     if (conversations && !isLoadingConversations) {
       setConversationsState(conversations);
     }
-  }, [conversations, isLoadingConversations]);
+  }, [isLoadingConversations]);
 
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {

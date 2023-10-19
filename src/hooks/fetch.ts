@@ -26,9 +26,9 @@ export const useCurrentUserInfo = () => {
     queryKey: ['currentUserInfo'],
     queryFn: async () => {
       const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
-        userService.getFollowers(userID!),
-        userService.getFollowing(userID!),
-        userService.getUserInfoByID(userID!)
+        userService.getFollowers(userID),
+        userService.getFollowing(userID),
+        userService.getUserInfoByID(userID)
       ]);
 
       userInfo.metadata.followers = Followers.metadata;
