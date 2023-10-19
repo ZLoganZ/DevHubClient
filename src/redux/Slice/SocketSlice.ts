@@ -9,8 +9,8 @@ interface State {
 
 const initialState: State = {
   members: [],
-  presenceSocket: io('http://localhost:4056/presence-service'),
-  chatSocket: io('http://localhost:4056/chat-service')
+  presenceSocket: io(`${import.meta.env.VITE_CHAT_SERVICE}/presence-service`),
+  chatSocket: io(`${import.meta.env.VITE_CHAT_SERVICE}/chat-service`)
 };
 
 const socketIO = createSlice({
