@@ -49,6 +49,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
         const index = oldData.findIndex((item) => item._id === conversation._id);
         if (index !== -1) {
           oldData[index].lastMessage = message;
+          oldData[index].seen = [];
         } else {
           oldData.unshift({ ...conversation, lastMessage: message });
         }
@@ -58,6 +59,16 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
     });
 
     chatSocket.on(SEEN_MSG + conversation._id, (conversation: ConversationType) => {
+      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+        if (!oldData) return [conversation];
+
+        const index = oldData.findIndex((item) => item._id === conversation._id);
+        if (index !== -1) {
+          oldData[index].seen = conversation.seen;
+        }
+
+        return [...oldData];
+      });
       setSeenArr(conversation.seen);
     });
   }, []);

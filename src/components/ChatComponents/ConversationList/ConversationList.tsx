@@ -128,9 +128,9 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 overflow: 'auto',
                 maxHeight: 'calc(100vh - 160px)'
               }}>
-              {conversations.map((item) => (
-                <NavLink to={`/message/${item._id}`} key={item._id}>
-                  <ConversationBox conversation={item} selected={item._id === selected} />
+              {conversations.map((conversation) => (
+                <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                  <ConversationBox conversation={conversation} selected={conversation._id === selected} />
                 </NavLink>
               ))}
             </div>

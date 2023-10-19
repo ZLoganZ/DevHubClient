@@ -23,7 +23,12 @@ interface IParams {
   setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsDisplayShare, setConversations }) => {
+const MessageChat: React.FC<IParams> = ({
+  conversationID,
+  isDisplayShare,
+  setIsDisplayShare,
+  setConversations
+}) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -56,12 +61,21 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
   useEffect(() => {
     if (conversationID && currentUserInfo) {
       chatSocket.on(SEEN_MSG + conversationID, (data: ConversationType) => {
+        queryClient.setQueryData<ConversationType>(['conversation', conversationID], (oldData) => {
+          if (!oldData) return;
+
+          return {
+            ...oldData,
+            seen: data.seen
+          };
+        });
         setSeenState(data.seen);
       });
 
       chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
         queryClient.setQueryData<MessageType[]>(['messages', conversationID], (messages) => {
           if (!messages) return [data];
+
           const updatedMessages = messages.map((message) => {
             if (message._id === data._id) {
               return {
@@ -175,7 +189,11 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
               <div className='pt-1' ref={bottomRef} />
             </div>
           </div>
-          <InputChat conversationID={conversationID} setSeenState={setSeenState} setConversations={setConversations} />
+          <InputChat
+            conversationID={conversationID}
+            setSeenState={setSeenState}
+            setConversations={setConversations}
+          />
         </>
       )}
     </StyleProvider>
