@@ -31,7 +31,7 @@ export const useCreatePost = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (newPost: CreatePostDataType) => {
       const { data } = await postService.createPost(newPost);
       return data;
@@ -49,7 +49,7 @@ export const useCreatePost = () => {
   });
   return {
     mutateCreatePost: mutate,
-    isLoadingCreatePost: isLoading,
+    isLoadingCreatePost: isPending,
     isErrorCreatePost: isError,
     isSuccessCreatePost: isSuccess
   };
@@ -65,14 +65,14 @@ export const useCreatePost = () => {
  * - `isSuccessViewPost` is a boolean that indicates whether the post was successfully viewed.
  */
 export const useViewPost = () => {
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.viewPost(postID);
     }
   });
   return {
     mutateViewPost: mutate,
-    isLoadingViewPost: isLoading,
+    isLoadingViewPost: isPending,
     isErrorViewPost: isError,
     isSuccessViewPost: isSuccess
   };
@@ -92,7 +92,7 @@ export const useUpdatePost = () => {
 
   const dispatch = useAppDispatch();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: UpdatePostDataType) => {
       const { data } = await postService.updatePost(post.id, post.postUpdate);
       return data;
@@ -116,12 +116,12 @@ export const useUpdatePost = () => {
 
       queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
 
-      queryClient.invalidateQueries(['post', updatedPost.metadata._id]);
+      queryClient.invalidateQueries({ queryKey: ['post', updatedPost.metadata._id] });
     }
   });
   return {
     mutateUpdatePost: mutate,
-    isLoadingUpdatePost: isLoading,
+    isLoadingUpdatePost: isPending,
     isErrorUpdatePost: isError,
     isSuccessUpdatePost: isSuccess
   };
@@ -141,7 +141,7 @@ export const useDeletePost = () => {
 
   const uid = useAppSelector((state) => state.auth.userID);
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.deletePost(postID);
     },
@@ -157,7 +157,7 @@ export const useDeletePost = () => {
   });
   return {
     mutateDeletePost: mutate,
-    isLoadingDeletePost: isLoading,
+    isLoadingDeletePost: isPending,
     isErrorDeletePost: isError,
     isSuccessDeletePost: isSuccess
   };
@@ -175,7 +175,7 @@ export const useDeletePost = () => {
 export const useLikePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: SharePostDataType) => {
       await postService.likePost(post);
     },
@@ -187,7 +187,7 @@ export const useLikePost = () => {
   });
   return {
     mutateLikePost: mutate,
-    isLoadingLikePost: isLoading,
+    isLoadingLikePost: isPending,
     isErrorLikePost: isError,
     isSuccessLikePost: isSuccess
   };
@@ -205,7 +205,7 @@ export const useLikePost = () => {
 export const useSharePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: SharePostDataType) => {
       await postService.sharePost(post);
     },
@@ -217,7 +217,7 @@ export const useSharePost = () => {
   });
   return {
     mutateSharePost: mutate,
-    isLoadingSharePost: isLoading,
+    isLoadingSharePost: isPending,
     isErrorSharePost: isError,
     isSuccessSharePost: isSuccess
   };
@@ -235,7 +235,7 @@ export const useSharePost = () => {
 export const useSavePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.savePost(postID);
     },
@@ -247,7 +247,7 @@ export const useSavePost = () => {
   });
   return {
     mutateSavePost: mutate,
-    isLoadingSavePost: isLoading,
+    isLoadingSavePost: isPending,
     isErrorSavePost: isError,
     isSuccessSavePost: isSuccess
   };
@@ -267,7 +267,7 @@ export const useCommentPost = () => {
 
   const uid = useAppSelector((state) => state.auth.userID);
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (commentData: CreateCommentDataType) => {
       const { data } = await postService.createComment(commentData);
       return data;
@@ -303,7 +303,7 @@ export const useCommentPost = () => {
   });
   return {
     mutateCommentPost: mutate,
-    isLoadingCommentPost: isLoading,
+    isLoadingCommentPost: isPending,
     isErrorCommentPost: isError,
     isSuccessCommentPost: isSuccess
   };
@@ -321,7 +321,7 @@ export const useCommentPost = () => {
 export const useLikeComment = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: CreateLikeCommentType) => {
       await postService.likeComment(payload.id, payload.comment);
     },
@@ -333,7 +333,7 @@ export const useLikeComment = () => {
   });
   return {
     mutateLikeComment: mutate,
-    isLoadingLikeComment: isLoading,
+    isLoadingLikeComment: isPending,
     isErrorLikeComment: isError,
     isSuccessLikeComment: isSuccess
   };
@@ -351,7 +351,7 @@ export const useLikeComment = () => {
 export const useDislikeComment = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: CreateLikeCommentType) => {
       await postService.dislikeComment(payload.id, payload.comment);
     },
@@ -363,7 +363,7 @@ export const useDislikeComment = () => {
   });
   return {
     mutateDislikeComment: mutate,
-    isLoadingDislikeComment: isLoading,
+    isLoadingDislikeComment: isPending,
     isErrorDislikeComment: isError,
     isSuccessDislikeComment: isSuccess
   };
@@ -383,7 +383,7 @@ export const useUpdateUser = () => {
 
   const dispatch = useAppDispatch();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (user: UserUpdateDataType) => {
       const { data } = await userService.updateUser(user);
       return data;
@@ -391,12 +391,19 @@ export const useUpdateUser = () => {
     onSuccess(updatedUser) {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
-      queryClient.setQueryData(['currentUserInfo'], updatedUser.metadata);
+      queryClient.setQueryData<UserInfoType>(['currentUserInfo'], (oldData) => {
+        if (!oldData) return { ...updatedUser.metadata };
+
+        return {
+          ...oldData,
+          ...updatedUser.metadata
+        };
+      });
     }
   });
   return {
     mutateUpdateUser: mutate,
-    isLoadingUpdateUser: isLoading,
+    isLoadingUpdateUser: isPending,
     isErrorUpdateUser: isError,
     isSuccessUpdateUser: isSuccess
   };
@@ -414,7 +421,7 @@ export const useUpdateUser = () => {
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (userID: string) => {
       await userService.followUser(userID);
     },
@@ -442,7 +449,7 @@ export const useFollowUser = () => {
   });
   return {
     mutateFollowUser: mutate,
-    isLoadingFollowUser: isLoading,
+    isLoadingFollowUser: isPending,
     isErrorFollowUser: isError,
     isSuccessFollowUser: isSuccess
   };

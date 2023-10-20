@@ -3,7 +3,7 @@ import { ConfigProvider, Input, Popover, Space } from 'antd';
 import { useState } from 'react';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import { useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 
 import { getTheme } from '@/util/theme';
 import { PRIVATE_MSG } from '@/util/constants/SettingSystem';
@@ -61,10 +61,13 @@ const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversat
     setId(Math.random().toString(36).substring(7));
     setSeenState([]);
 
-    queryClient.setQueryData<MessageType[]>(['messages', conversationID], (oldData) => [
-      ...(oldData ?? []),
-      message as unknown as MessageType
-    ]);
+    queryClient.setQueryData<InfiniteData<MessageType[], number>>(['messages', conversationID], (oldData) => {
+      if (!oldData) return { pages: [], pageParams: [1] };
+
+      oldData.pages[oldData.pages.length - 1].push(message as unknown as MessageType);
+
+      return { ...oldData };
+    });
 
     queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
       if (!oldData) return [];
@@ -73,7 +76,7 @@ const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversat
       if (index !== -1) {
         oldData[index].lastMessage = message as unknown as MessageType;
         oldData.sort((a, b) => {
-          return new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime();
+          return new Date(b.lastMessage?.createdAt).getTime() - new Date(a.lastMessage?.createdAt).getTime();
         });
       }
       setConversations([...oldData]);

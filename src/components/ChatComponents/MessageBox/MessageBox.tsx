@@ -12,13 +12,15 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { MessageType, UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 
-interface MessageBoxProps {
+interface IMessageBox {
   message: MessageType;
   seen: UserInfoType[];
-  isLast?: boolean;
+  isPrevMesGroup: boolean;
+  isNextMesGroup: boolean;
+  isLastMes: boolean;
 }
 
-const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
+const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMesGroup, isPrevMesGroup }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -30,20 +32,32 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
     return seen.filter((user) => user._id !== message.sender._id).map((user) => user.user_image);
   }, [seen, message]);
 
+  const containerStyle = `flex gap-3 px-2 items-center
+  ${isNextMesGroup && isPrevMesGroup ? 'py-0.5' : ''}
+  ${isNextMesGroup && !isPrevMesGroup ? 'pt-2 pb-0.5' : ''}
+  ${!isNextMesGroup && isPrevMesGroup ? 'pt-0.5 pb-2' : ''}
+  ${!(isNextMesGroup || isPrevMesGroup) ? 'py-2' : ''}
+  ${isOwn ? 'justify-end' : ''}`;
+
+  const avatarStyle = `${isOwn ? 'hidden' : ''}
+  ${isNextMesGroup || (!isPrevMesGroup && isNextMesGroup) ? 'invisible' : ''}`;
+
   const messageStyle = `text-sm w-fit overflow-hidden break-all
-    ${message.image ? 'rounded-md p-0' : 'rounded-full py-2 px-3'}
-    ${
-      isOwn && !message.image
-        ? 'bg-sky-500 text-white ml-7'
-        : message.image
-        ? ''
-        : 'bg-gray-700 text-white mr-7'
-    }`;
+  ${message.image ? 'p-0' : 'py-2 px-3'}
+  ${isOwn ? (message.image ? '' : 'bg-sky-500 text-white ml-7') : 'bg-gray-700 text-white mr-7'}
+  ${isOwn && isNextMesGroup ? 'rounded-s-2xl' : ''}
+  ${isOwn && isNextMesGroup && !isPrevMesGroup ? 'rounded-t-2xl rounded-bl-2xl' : ''}
+  ${isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tl-2xl' : ''}
+  ${isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}
+  ${!isOwn && isNextMesGroup ? 'rounded-e-2xl' : ''}
+  ${!isOwn && isNextMesGroup && !isPrevMesGroup ? 'rounded-t-2xl rounded-br-2xl' : ''}
+  ${!isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tr-2xl' : ''}
+  ${!isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}`;
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className={`flex gap-3 px-2 py-4 items-center ${isOwn && 'justify-end'}`}>
-        <NavLink className={`${isOwn && 'hidden'}`} to={`/user/${message.sender._id}`}>
+      <div className={containerStyle}>
+        <NavLink className={avatarStyle} to={`/user/${message.sender._id}`}>
           <Avatar key={message.sender._id} user={message.sender} />
         </NavLink>
         <div className={`flex flex-col ${isOwn && 'items-end'}`}>
@@ -87,7 +101,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
               color: themeColorSet.colorText3
             }}>
             <div className='relative flex flex-row'>
-              {isLast &&
+              {isLastMes &&
                 isOwn &&
                 seenList.length > 0 &&
                 seenList.map((user, index) => (
@@ -99,7 +113,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ message, isLast, seen }) => {
                     />
                   </div>
                 ))}
-              {isLast && isOwn && seenList.length === 0 && (
+              {isLastMes && isOwn && seenList.length === 0 && (
                 <svg
                   className='w-4 h-4 text-gray-400 mr-2'
                   fill='currentColor'

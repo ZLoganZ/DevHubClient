@@ -19,8 +19,8 @@ export class MessageService extends BaseService {
     return this.get(`/chat/conversations/find/${payload}`);
   };
 
-  getMessages = (payload: string): Promise<AxiosResponse<ResponseType<MessageType[]>>> => {
-    return this.get(`/chat/conversations/${payload}/messages`);
+  getMessages = (payload: string, page: number): Promise<AxiosResponse<ResponseType<MessageType[]>>> => {
+    return this.get(`/chat/conversations/${payload}/messages?page=${page}`);
   };
 
   seenMessage = (payload: string) => {

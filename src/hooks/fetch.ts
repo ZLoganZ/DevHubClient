@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { userService } from '@/services/UserService';
 import ApplyDefaults from '@/util/applyDefaults';
@@ -22,7 +22,7 @@ import { useAppSelector } from './special';
 export const useCurrentUserInfo = () => {
   const userID = useAppSelector((state) => state.auth.userID);
 
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['currentUserInfo'],
     queryFn: async () => {
       const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
@@ -39,7 +39,7 @@ export const useCurrentUserInfo = () => {
   });
 
   return {
-    isLoadingCurrentUserInfo: isLoading,
+    isLoadingCurrentUserInfo: isPending,
     isErrorCurrentUserInfo: isError,
     currentUserInfo: data!,
     isFetchingCurrentUserInfo: isFetching
@@ -58,7 +58,7 @@ export const useCurrentUserInfo = () => {
  * - `isFetchingOtherUserInfo` is a boolean that indicates whether the query is currently fetching.
  */
 export const useOtherUserInfo = (userID: string) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
       const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
@@ -75,7 +75,7 @@ export const useOtherUserInfo = (userID: string) => {
   });
 
   return {
-    isLoadingOtherUserInfo: isLoading,
+    isLoadingOtherUserInfo: isPending,
     isErrorOtherUserInfo: isError,
     otherUserInfo: data!,
     isFetchingOtherUserInfo: isFetching
@@ -93,20 +93,17 @@ export const useOtherUserInfo = (userID: string) => {
  * - `refetchAllPosts` is a function that refetches the posts data.
  */
 export const useAllPostsData = () => {
-  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+  const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPosts'],
     queryFn: async () => {
       const { data } = await postService.getAllPost();
       return data;
     },
-    staleTime: Infinity,
-    onError(err) {
-      console.log(err);
-    }
+    staleTime: Infinity
   });
 
   return {
-    isLoadingAllPosts: isLoading,
+    isLoadingAllPosts: isPending,
     isErrorAllPosts: isError,
     allPosts: data?.metadata,
     isFetchingAllPosts: isFetching,
@@ -125,21 +122,18 @@ export const useAllPostsData = () => {
  * - `refetchAllNewsfeedPosts` is a function that refetches the posts data.
  */
 export const useAllNewsfeedPostsData = () => {
-  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+  const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['allNewsfeedPosts'],
     queryFn: async () => {
       const { data } = await postService.getAllPostNewsFeed();
       return ApplyDefaults(data.metadata);
     },
     staleTime: Infinity,
-    onError(err) {
-      console.log(err);
-    },
     enabled: window.location.pathname === '/'
   });
 
   return {
-    isLoadingAllNewsfeedPosts: isLoading,
+    isLoadingAllNewsfeedPosts: isPending,
     isErrorAllNewsfeedPosts: isError,
     allNewsfeedPosts: data!,
     isFetchingAllNewsfeedPosts: isFetching,
@@ -157,21 +151,18 @@ export const useAllNewsfeedPostsData = () => {
  * - `isFetchingAllPopularPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useAllPopularPostsData = (sort: string) => {
-  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+  const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['allPopularPosts', sort],
     queryFn: async () => {
       const { data } = await postService.getAllPopularPost(sort);
       return data;
     },
     staleTime: Infinity,
-    onError(err) {
-      console.log(err);
-    },
     enabled: window.location.pathname === '/' && !!sort
   });
 
   return {
-    isLoadingAllPopularPosts: isLoading,
+    isLoadingAllPopularPosts: isPending,
     isErrorAllPopularPosts: isError,
     allPopularPosts: data?.metadata,
     isFetchingAllPopularPosts: isFetching,
@@ -191,21 +182,18 @@ export const useAllPopularPostsData = (sort: string) => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['posts', userID],
     queryFn: async () => {
       const { data } = await postService.getAllPostByUserID(userID);
       return ApplyDefaults(data.metadata);
     },
     enabled: !!userID,
-    staleTime: Infinity,
-    onError(err) {
-      console.log(err);
-    }
+    staleTime: Infinity
   });
 
   return {
-    isLoadingUserPosts: isLoading,
+    isLoadingUserPosts: isPending,
     isErrorUserPosts: isError,
     userPosts: data!,
     isFetchingUserPosts: isFetching
@@ -224,7 +212,7 @@ export const useUserPostsData = (userID: string) => {
  * - `isFetchingPost` is a boolean that indicates whether the query is currently fetching.
  */
 export const usePostData = (postID: string) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['post', postID],
     queryFn: async () => {
       const { data } = await postService.getPostByID(postID);
@@ -234,7 +222,7 @@ export const usePostData = (postID: string) => {
   });
 
   return {
-    isLoadingPost: isLoading,
+    isLoadingPost: isPending,
     isErrorPost: isError,
     post: data?.metadata,
     isFetchingPost: isFetching
@@ -253,7 +241,7 @@ export const usePostData = (postID: string) => {
  * - `isFetchingComments` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCommentsData = (postID: string) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['comments', postID],
     queryFn: async () => {
       const { data } = await postService.getParentComments(postID);
@@ -264,7 +252,7 @@ export const useCommentsData = (postID: string) => {
   });
 
   return {
-    isLoadingComments: isLoading,
+    isLoadingComments: isPending,
     isErrorComments: isError,
     comments: data?.metadata,
     isFetchingComments: isFetching
@@ -283,7 +271,7 @@ export const useCommentsData = (postID: string) => {
 export const useGetRepository = () => {
   const aGToken = localStorage.getItem(GITHUB_TOKEN);
 
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['repository'],
     queryFn: async () => {
       const { data } = await userService.getRepositoryGithub();
@@ -294,7 +282,7 @@ export const useGetRepository = () => {
   });
 
   return {
-    isLoadingRepository: isLoading,
+    isLoadingRepository: isPending,
     isErrorRepository: isError,
     repository: data?.metadata,
     isFetchingRepository: isFetching
@@ -312,7 +300,7 @@ export const useGetRepository = () => {
  * - `isFetchingConversations` is a boolean that indicates whether the query is currently fetching.
  */
 export const useConversationsData = () => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['conversations'],
     queryFn: async () => {
       const { data } = await messageService.getConversations();
@@ -322,7 +310,7 @@ export const useConversationsData = () => {
   });
 
   return {
-    isLoadingConversations: isLoading,
+    isLoadingConversations: isPending,
     isErrorConversations: isError,
     conversations: data!,
     isFetchingConversations: isFetching
@@ -342,7 +330,7 @@ export const useConversationsData = () => {
  * - `isFetchingCurrentConversation` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCurrentConversationData = (conversationID: string | undefined) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {
       const { data } = await messageService.getConversation(conversationID!);
@@ -353,7 +341,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
   });
 
   return {
-    isLoadingCurrentConversation: isLoading,
+    isLoadingCurrentConversation: isPending,
     isErrorCurrentConversation: isError,
     currentConversation: data!,
     isFetchingCurrentConversation: isFetching
@@ -372,7 +360,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
  * - `isFetchingFollowers` is a boolean that indicates whether the query is currently fetching.
  */
 export const useFollowersData = (userID: string) => {
-  const { data, isLoading, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['followers', userID],
     queryFn: async () => {
       const { data } = await userService.getFollowers(userID);
@@ -383,7 +371,7 @@ export const useFollowersData = (userID: string) => {
   });
 
   return {
-    isLoadingFollowers: isLoading,
+    isLoadingFollowers: isPending,
     isErrorFollowers: isError,
     followers: data!,
     isFetchingFollowers: isFetching
@@ -403,21 +391,50 @@ export const useFollowersData = (userID: string) => {
  * - `refetchMessages` is a function that refetches the messages data.
  */
 export const useMessagesData = (conversationID: string) => {
-  const { data, isLoading, isError, isFetching, refetch } = useQuery({
+  const {
+    data,
+    isPending,
+    isError,
+    isFetching,
+    refetch,
+    hasPreviousPage,
+    fetchPreviousPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['messages', conversationID],
-    queryFn: async () => {
-      const { data } = await messageService.getMessages(conversationID);
+    queryFn: async ({ pageParam }) => {
+      const { data } = await messageService.getMessages(conversationID, pageParam);
       return data.metadata;
     },
+    initialPageParam: 1,
+    getPreviousPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    getNextPageParam: (_, __, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined;
+      }
+      return firstPageParam - 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    notifyOnChangeProps: 'all',
     staleTime: Infinity,
     enabled: !!conversationID
   });
 
   return {
-    isLoadingMessages: isLoading,
+    isLoadingMessages: isPending,
     isErrorMessages: isError,
     messages: data!,
     isFetchingMessages: isFetching,
-    refetchMessages: refetch
+    refetchMessages: refetch,
+    hasPreviousMessages: hasPreviousPage,
+    fetchPreviousMessages: fetchPreviousPage,
+    isFetchingNextPageMessages: isFetchingNextPage
   };
 };

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
@@ -38,7 +38,8 @@ const MessageChat: React.FC<IParams> = ({
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
-  const { messages, isLoadingMessages } = useMessagesData(conversationID);
+  const { messages, isLoadingMessages, fetchPreviousMessages } = useMessagesData(conversationID);
+  console.log(messages);
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
@@ -51,7 +52,6 @@ const MessageChat: React.FC<IParams> = ({
     return isActive ? 'Online' : 'Offline';
   }, [currentConversation, isActive]);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
   const [seenState, setSeenState] = useState<UserInfoType[]>(currentConversation.seen);
 
   useEffect(() => {
@@ -69,25 +69,38 @@ const MessageChat: React.FC<IParams> = ({
       });
 
       chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
-        queryClient.setQueryData<MessageType[]>(['messages', conversationID], (messages) => {
-          if (!messages) return [data];
+        queryClient.setQueryData<InfiniteData<MessageType[], number>>(
+          ['messages', conversationID],
+          (messages) => {
+            if (!messages) return { pages: [[data]], pageParams: [0] };
 
-          const updatedMessages = messages.map((message) => {
-            if (message._id === data._id) {
+            const index = messages.pages.findIndex((page) =>
+              page.some((message) => message._id === data._id)
+            );
+
+            if (index !== -1) {
+              const updatedMessages = messages.pages[index].map((message) => {
+                if (message._id === data._id) {
+                  return {
+                    ...message,
+                    isSending: false
+                  };
+                }
+                return message;
+              });
+
+              const newPages = [...messages.pages];
+              newPages[index] = updatedMessages;
+
+              return { pages: newPages, pageParams: messages.pageParams };
+            } else {
               return {
-                ...message,
-                isSending: false
+                pages: [[...messages.pages[messages.pages.length - 1], data]],
+                pageParams: [...messages.pageParams]
               };
             }
-            return message;
-          });
-
-          if (updatedMessages.some((message) => message._id === data._id)) {
-            return updatedMessages;
           }
-
-          return [...updatedMessages, data];
-        });
+        );
       });
     }
   }, [conversationID, currentUserInfo]);
@@ -105,7 +118,11 @@ const MessageChat: React.FC<IParams> = ({
     }
   }, [seenState, currentUserInfo, conversationID, messages]);
 
+  const bottomRef = useRef<HTMLDivElement>(null);
   useIntersectionObserver(bottomRef, seenMessage, { delay: 0, threshold: 0 });
+
+  const topRef = useRef<HTMLDivElement>(null);
+  useIntersectionObserver(topRef, fetchPreviousMessages, { delay: 0, threshold: 0 });
 
   const scrollToBottom = (type: ScrollBehavior) => {
     if (bottomRef?.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
@@ -121,6 +138,36 @@ const MessageChat: React.FC<IParams> = ({
   const styleStatus = useMemo(() => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
   }, [isActive, themeColorSet]);
+
+  const isPrevMesGroup = useCallback(
+    (message: MessageType, index: number) => {
+      if (index === 0) return false;
+      if (!messages) return false;
+
+      const isSameSender = message.sender._id === messages[index - 1].sender._id;
+      if (!isSameSender) return false;
+
+      return (
+        new Date(message.createdAt).getTime() - new Date(messages[index - 1].createdAt).getTime() < 60000
+      );
+    },
+    [messages]
+  );
+
+  const isNextMesGroup = useCallback(
+    (message: MessageType, index: number) => {
+      if (index === messages.length - 1) return false;
+      if (!messages) return false;
+
+      const isSameSender = message.sender._id === messages[index + 1].sender._id;
+      if (!isSameSender) return false;
+
+      return (
+        new Date(messages[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000
+      );
+    },
+    [messages]
+  );
 
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
@@ -176,15 +223,18 @@ const MessageChat: React.FC<IParams> = ({
               overflow: 'auto'
             }}>
             <div className='flex-1 overflow-y-hidden'>
+              <div className='pt-1' ref={topRef} />
               {messages.map((message, i) => (
                 <MessageBox
                   key={message._id}
-                  isLast={i === messages.length - 1}
+                  isLastMes={i === messages.length - 1}
                   message={message}
                   seen={seenState}
+                  isPrevMesGroup={isPrevMesGroup(message, i)}
+                  isNextMesGroup={isNextMesGroup(message, i)}
                 />
               ))}
-              <div className='pt-1' ref={bottomRef} />
+              <div className='pb-1' ref={bottomRef} />
             </div>
           </div>
           <InputChat

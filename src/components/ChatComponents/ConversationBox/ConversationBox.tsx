@@ -29,7 +29,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const { currentUserInfo } = useCurrentUserInfo();
 
   const isOwn = useMemo(() => {
-    return currentUserInfo._id === conversation.lastMessage.sender._id;
+    return currentUserInfo._id === conversation.lastMessage?.sender?._id ?? false;
   }, [conversation.lastMessage]);
 
   const userID = useMemo(() => {
@@ -78,9 +78,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   }, [conversation.lastMessage, seenArr]);
 
   const lastMessageText = useMemo(() => {
-    if (conversation.lastMessage.image) return 'Sent an image';
+    if (conversation.lastMessage?.image) return 'Sent an image';
 
-    if (conversation.lastMessage.content) return conversation.lastMessage.content;
+    if (conversation.lastMessage?.content) return conversation.lastMessage.content;
 
     return 'Start a conversation';
   }, [conversation.lastMessage, userID]);
@@ -109,9 +109,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
                 }}>
                 <span style={{ color: themeColorSet.colorText1 }}>{conversation.name ?? otherUser.name}</span>
               </p>
-              {conversation.lastMessage.createdAt && (
+              {conversation.lastMessage?.createdAt && (
                 <p className=' text-xs  text-gray-400 font-light' style={{ color: themeColorSet.colorText3 }}>
-                  {formatDateTime(conversation.lastMessage.createdAt)}
+                  {formatDateTime(conversation.lastMessage?.createdAt)}
                 </p>
               )}
             </div>
