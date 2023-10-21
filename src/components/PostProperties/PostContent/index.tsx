@@ -3,13 +3,13 @@ import ReactQuill from 'react-quill';
 import { Image } from 'antd';
 import 'react-quill/dist/quill.bubble.css';
 
-import { useIntersectionObserver } from '@/hooks/special';
 import { useViewPost } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { imageErrorFallback } from '@/util/constants/SettingSystem';
 import { TypeOfLink } from '@/types';
 import StyleProvider from './cssPostContent';
+import { useIntersectionObserver } from '@/hooks/special';
 
 interface ContentPostProps {
   postID: string;
@@ -38,12 +38,14 @@ const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, img, 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
 
+  console.log('inContentView', contentRef);
+
   const onIntersect = useCallback(() => {
     if (isMoreThan500 && expanded) mutateViewPost(postID);
     else if (!isMoreThan500) mutateViewPost(postID);
   }, [postID, isMoreThan500, expanded]);
 
-  useIntersectionObserver(contentRef, onIntersect);
+  useIntersectionObserver(contentRef, onIntersect, { delay: 5000 });
 
   return (
     <StyleProvider ref={contentRef} theme={themeColorSet}>

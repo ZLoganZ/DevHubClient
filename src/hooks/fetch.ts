@@ -1,5 +1,6 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { MessageType } from '@/types';
 import { userService } from '@/services/UserService';
 import ApplyDefaults from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
@@ -391,50 +392,52 @@ export const useFollowersData = (userID: string) => {
  * - `refetchMessages` is a function that refetches the messages data.
  */
 export const useMessagesData = (conversationID: string) => {
-  const {
-    data,
-    isPending,
-    isError,
-    isFetching,
-    refetch,
-    hasPreviousPage,
-    fetchPreviousPage,
-    isFetchingNextPage
-  } = useInfiniteQuery({
-    queryKey: ['messages', conversationID],
-    queryFn: async ({ pageParam }) => {
-      const { data } = await messageService.getMessages(conversationID, pageParam);
-      return data.metadata;
-    },
-    initialPageParam: 1,
-    getPreviousPageParam: (lastPage, _, lastPageParam) => {
-      if (lastPage.length === 0) {
-        return undefined;
-      }
-      return lastPageParam + 1;
-    },
-    getNextPageParam: (_, __, firstPageParam) => {
-      if (firstPageParam <= 1) {
-        return undefined;
-      }
-      return firstPageParam - 1;
-    },
-    select: (data) => {
-      return data.pages.flat();
-    },
-    notifyOnChangeProps: 'all',
-    staleTime: Infinity,
-    enabled: !!conversationID
-  });
+  const queryClient = useQueryClient();
+  const messages = queryClient.getQueryData<InfiniteData<MessageType[], number>>([
+    'messages',
+    conversationID
+  ]);
+  let extend = 0;
+  if (messages) {
+    if (messages.pages[messages.pages.length - 1].length >= 30) {
+      extend = messages.pages[messages.pages.length - 1].length - 30;
+    }
+  }
+
+  const { data, isPending, isError, isFetching, hasPreviousPage, fetchPreviousPage, isFetchingPreviousPage } =
+    useInfiniteQuery({
+      queryKey: ['messages', conversationID],
+      queryFn: async ({ pageParam }) => {
+        const { data } = await messageService.getMessages(conversationID, pageParam, extend);
+        return data.metadata;
+      },
+      initialPageParam: 1,
+      getPreviousPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length === 0) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+      getNextPageParam: (_, __, firstPageParam) => {
+        if (firstPageParam <= 1) {
+          return undefined;
+        }
+        return firstPageParam - 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity,
+      enabled: !!conversationID
+    });
 
   return {
     isLoadingMessages: isPending,
     isErrorMessages: isError,
     messages: data!,
     isFetchingMessages: isFetching,
-    refetchMessages: refetch,
     hasPreviousMessages: hasPreviousPage,
     fetchPreviousMessages: fetchPreviousPage,
-    isFetchingNextPageMessages: isFetchingNextPage
+    isFetchingPreviousPage: isFetchingPreviousPage
   };
 };

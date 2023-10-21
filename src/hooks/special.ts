@@ -16,68 +16,58 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
  */
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
+interface ObserverOptions {
+  threshold?: number;
+  delay?: number;
+  pauseOnTabChange?: boolean;
+}
 /**
  * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
- * API to detect when a target element intersects with the viewport and triggers a callback function.
- * @param targetRef - A React ref object that references the target element to be observed for
- * intersection.
- * @param onIntersect - The `onIntersect` parameter is a callback function that will be called when the
- * target element intersects with the viewport. It is typically used to trigger some action or update
- * the UI when the element becomes visible to the user.
- * @param options - The `options` parameter is an object that allows you to customize the behavior of
- * the `useIntersectionObserver` hook. It has the following properties:
- * - `threshold` - The `threshold` property is a number between 0 and 1 that represents the percentage
- * of the target element that must be visible to the user before the intersection is detected. The
- * default value is 0.9, which means that 90% of the target element must be visible to the user before
- * the intersection is detected.
- * - `delay` - The `delay` property is a number that represents the number of milliseconds that the
- * target element must be visible to the user before the intersection is detected. The default value
- * is 5000, which means that the target element must be visible to the user for 5 seconds before the
- * intersection is detected.
- * - `pauseOnTabChange` - The `pauseOnTabChange` property is a boolean that determines whether the
- * intersection detection should be paused when the user switches tabs. The default value is true,
- * which means that the intersection detection will be paused when the user switches tabs.
+ * API to determine if a target element is in the viewport and returns a ref to the target element and
+ * a boolean indicating if it is in view.
+ * @param [options] - An optional object that contains the following properties:
+ * @param [options.threshold] - The `threshold` property is of type `number` and represents the
+ * percentage of the target element that must be visible to trigger the callback function.
+ * @param [options.delay] - The `delay` property is of type `number` and represents the number of
+ * milliseconds to wait before triggering the callback function.
+ * @param [options.pauseOnTabChange] - The `pauseOnTabChange` property is of type `boolean` and
+ * indicates whether or not to pause the Intersection Observer when the user changes tabs.
+ * @returns The function `useIntersectionObserver` returns an array with two elements: a
+ * `React.RefObject<HTMLDivElement>` and a boolean value.
+ *
+ * @example
+ * const [targetRef, inView] = useIntersectionObserver({ threshold: 0.85, delay: 5000, pauseOnTabChange: true });
+ *
+ * <div ref={targetRef}>
+ *  {inView && <p>Target element is in view!</p>}
+ * </div>
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API Intersection Observer API}
  */
 export const useIntersectionObserver = (
-  targetRef: React.RefObject<HTMLDivElement>,
+  targetRef: React.RefObject<Element>,
   onIntersect: () => void,
-  options: {
-    threshold?: number;
-    delay?: number;
-    pauseOnTabChange?: boolean;
-  } = {}
+  options?: ObserverOptions
 ) => {
-  const { threshold = 0.85, delay = 5000, pauseOnTabChange = true } = options;
+  const { threshold = 0.85, delay = 0, pauseOnTabChange = true } = options || {};
 
   useEffect(() => {
-    let intersectTimeoutID: NodeJS.Timeout;
-    let intersectTime: number = 0;
-
-    const handleIntersect = debounce(([entry]) => {
-      if (entry.isIntersecting && document.hasFocus()) {
-        intersectTime = intersectTime || Date.now();
-
-        intersectTimeoutID = setInterval(() => {
-          if (Date.now() - intersectTime >= delay) {
-            clearInterval(intersectTimeoutID);
-            onIntersect();
-          }
-        }, 100);
-      } else {
-        clearInterval(intersectTimeoutID);
-        intersectTime = 0;
-      }
+    const handleIntersect = debounce((entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && document.hasFocus()) {
+          onIntersect();
+        }
+      });
     }, delay);
 
-    const observer = new IntersectionObserver(handleIntersect, {
-      threshold
-    });
+    const observer = new IntersectionObserver(handleIntersect, { threshold });
 
     const handleVisibilityChange = () => {
+      if (!targetRef.current) return;
       if (document.visibilityState === 'hidden' && pauseOnTabChange) {
-        observer.unobserve(targetRef.current!);
+        observer.unobserve(targetRef.current);
       } else {
-        observer.observe(targetRef.current!);
+        observer.observe(targetRef.current);
       }
     };
 
@@ -89,12 +79,12 @@ export const useIntersectionObserver = (
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearInterval(intersectTimeoutID);
+
       if (targetRef.current) {
         observer.unobserve(targetRef.current);
       }
     };
-  }, [targetRef, onIntersect, threshold, delay, pauseOnTabChange]);
+  }, [targetRef, onIntersect]);
 };
 
 /**

@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
 import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
-import { useIntersectionObserver, useOtherUser, useAppSelector } from '@/hooks/special';
+import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
@@ -38,8 +38,9 @@ const MessageChat: React.FC<IParams> = ({
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
-  const { messages, isLoadingMessages, fetchPreviousMessages } = useMessagesData(conversationID);
-  console.log(messages);
+  const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage } =
+    useMessagesData(conversationID);
+
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
@@ -116,23 +117,30 @@ const MessageChat: React.FC<IParams> = ({
         userID: currentUserInfo._id
       });
     }
-  }, [seenState, currentUserInfo, conversationID, messages]);
+  }, [seenState, conversationID, messages]);
+
+  const fetchPreMessages = useCallback(() => {
+    if (!isFetchingPreviousPage && messages && messages.length >= 20) fetchPreviousMessages();
+  }, [isFetchingPreviousPage, messages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  useIntersectionObserver(bottomRef, seenMessage, { delay: 0, threshold: 0 });
-
   const topRef = useRef<HTMLDivElement>(null);
-  useIntersectionObserver(topRef, fetchPreviousMessages, { delay: 0, threshold: 0 });
 
-  const scrollToBottom = (type: ScrollBehavior) => {
-    if (bottomRef?.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
-  };
+  useIntersectionObserver(bottomRef, seenMessage);
+  useIntersectionObserver(topRef, fetchPreMessages);
+
+  const scrollToBottom = useCallback(
+    (type: ScrollBehavior) => {
+      if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
+    },
+    [bottomRef.current]
+  );
 
   useEffect(() => {
     if (!messages) return;
-    if (count > 0) scrollToBottom('smooth');
-    if (count === 0) scrollToBottom('auto');
-    setCount(count + 1);
+    if (count === 0) scrollToBottom('instant');
+    if (messages.length - count === 1) scrollToBottom('auto');
+    setCount(messages.length);
   }, [messages]);
 
   const styleStatus = useMemo(() => {
@@ -140,31 +148,27 @@ const MessageChat: React.FC<IParams> = ({
   }, [isActive, themeColorSet]);
 
   const isPrevMesGroup = useCallback(
-    (message: MessageType, index: number) => {
+    (message: MessageType, index: number, preMessage: MessageType) => {
       if (index === 0) return false;
       if (!messages) return false;
 
-      const isSameSender = message.sender._id === messages[index - 1].sender._id;
+      const isSameSender = message.sender._id === preMessage.sender._id;
       if (!isSameSender) return false;
 
-      return (
-        new Date(message.createdAt).getTime() - new Date(messages[index - 1].createdAt).getTime() < 60000
-      );
+      return new Date(message.createdAt).getTime() - new Date(preMessage.createdAt).getTime() < 60000;
     },
     [messages]
   );
 
   const isNextMesGroup = useCallback(
-    (message: MessageType, index: number) => {
+    (message: MessageType, index: number, nextMessage: MessageType) => {
       if (index === messages.length - 1) return false;
       if (!messages) return false;
 
-      const isSameSender = message.sender._id === messages[index + 1].sender._id;
+      const isSameSender = message.sender._id === nextMessage.sender._id;
       if (!isSameSender) return false;
 
-      return (
-        new Date(messages[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000
-      );
+      return new Date(nextMessage.createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
     },
     [messages]
   );
@@ -224,14 +228,14 @@ const MessageChat: React.FC<IParams> = ({
             }}>
             <div className='flex-1 overflow-y-hidden'>
               <div className='pt-1' ref={topRef} />
-              {messages.map((message, i) => (
+              {messages.map((message, i, mesArr) => (
                 <MessageBox
                   key={message._id}
                   isLastMes={i === messages.length - 1}
                   message={message}
                   seen={seenState}
-                  isPrevMesGroup={isPrevMesGroup(message, i)}
-                  isNextMesGroup={isNextMesGroup(message, i)}
+                  isPrevMesGroup={isPrevMesGroup(message, i, mesArr[i - 1])}
+                  isNextMesGroup={isNextMesGroup(message, i, mesArr[i + 1])}
                 />
               ))}
               <div className='pb-1' ref={bottomRef} />
