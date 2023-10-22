@@ -97,6 +97,7 @@ export type UserInfoType = {
   following: UserInfoType[];
   follower_number: number;
   following_number: number;
+  members: UserInfoType[];
   post_number: number;
   is_followed: boolean;
 };
@@ -233,6 +234,13 @@ export type ConversationType = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreateConversationDataType = {
+  type: TypeofConversation;
+  members: string[];
+  name?: string;
+  image?: string;
+}
 
 export type MessageType = {
   _id: string;

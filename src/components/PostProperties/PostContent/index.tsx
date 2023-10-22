@@ -38,8 +38,6 @@ const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, img, 
   // ------------------------ View ------------------------
   const contentRef = useRef<HTMLDivElement>(null);
 
-  console.log('inContentView', contentRef);
-
   const onIntersect = useCallback(() => {
     if (isMoreThan500 && expanded) mutateViewPost(postID);
     else if (!isMoreThan500) mutateViewPost(postID);

@@ -28,3 +28,4 @@ export const LIGHT_THEME = 'light';
 export const PRIVATE_MSG = 'PRIVATE_MSG';
 export const SEEN_MSG = 'SEEN_MSG';
 export const PRIVATE_CONVERSATION = 'PRIVATE_CONVERSATION';
+export const NEW_CONVERSATION = 'NEW_CONVERSATION';

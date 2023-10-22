@@ -1,6 +1,12 @@
 import { AxiosResponse } from 'axios';
 import { BaseService } from './BaseService';
-import { ConversationType, CreateMessageDataType, MessageType, ResponseType } from '@/types';
+import {
+  ConversationType,
+  CreateConversationDataType,
+  CreateMessageDataType,
+  MessageType,
+  ResponseType
+} from '@/types';
 
 export class MessageService extends BaseService {
   constructor() {
@@ -11,7 +17,9 @@ export class MessageService extends BaseService {
     return this.get(`/chat/conversations`);
   };
 
-  createConversation = (payload: any) => {
+  createConversation = (
+    payload: CreateConversationDataType
+  ): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
     return this.post(`/chat/conversations/create`, payload);
   };
 

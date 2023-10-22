@@ -32,6 +32,18 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
     return currentUserInfo._id === conversation.lastMessage?.sender?._id ?? false;
   }, [conversation.lastMessage]);
 
+  const senderName = useMemo(() => {
+    if (isOwn) return 'You: ';
+
+    if (conversation.type === 'private') return '';
+
+    const lastMessageSenderName = conversation.lastMessage?.sender?.name;
+    if (!lastMessageSenderName) return '';
+
+    const arr = lastMessageSenderName.split(' ');
+    return arr[arr.length - 1] + ': ';
+  }, [isOwn, conversation.lastMessage?.sender?.name, conversation.type]);
+
   const userID = useMemo(() => {
     return currentUserInfo._id;
   }, [currentUserInfo]);
@@ -93,7 +105,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
           backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
         }}>
         {conversation.type === 'group' ? (
-          <AvatarGroup key={conversation._id} users={conversation.members} />
+          <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
         ) : (
           <Avatar key={conversation._id} user={otherUser} />
         )}
@@ -116,9 +128,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
               )}
             </div>
             <p className={`truncate text-sm ${!isOwn && !hasSeen && `font-bold`}`}>
-              <span style={{ color: themeColorSet.colorText1 }}>
-                {isOwn ? `You: ${lastMessageText}` : lastMessageText}
-              </span>
+              <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
             </p>
           </div>
         </div>

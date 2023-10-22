@@ -46,6 +46,10 @@ const PresenceService = () => {
     if (currentUserInfo) {
       presenceSocket.emit(SET_PRESENCE, currentUserInfo._id);
 
+      currentUserInfo.members = [...currentUserInfo.followers, ...currentUserInfo.following].filter(
+        (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
+      );
+
       const followers = currentUserInfo.followers.map((follower) => follower._id);
       const following = currentUserInfo.following.map((following) => following._id);
 

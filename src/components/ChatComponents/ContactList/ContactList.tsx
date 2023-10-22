@@ -24,18 +24,21 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
   const navigate = useNavigate();
 
   const HandleOnClick = async (userFollow: string) => {
-    const { data } = await messageService.createConversation({
-      type: 'private',
-      members: [userFollow]
-    });
-    navigate(`/message/${data.metadata._id}`);
+    messageService
+      .createConversation({
+        type: 'private',
+        members: [userFollow]
+      })
+      .then((res) => {
+        navigate(`/message/${res.data.metadata._id}`);
+      });
   };
 
-  const handleItemName = (name: string) => {
-    // chỉ lấy 2 từ cuối cùng của tên
-    const arr = name.split(' ');
-    return arr[arr.length - 2] + ' ' + arr[arr.length - 1];
-  };
+  // const handleItemName = (name: string) => {
+  //   // chỉ lấy 2 từ cuối cùng của tên
+  //   const arr = name.split(' ');
+  //   return arr[arr.length - 2] + ' ' + arr[arr.length - 1];
+  // };
 
   return (
     <StyleProvider theme={themeColorSet}>

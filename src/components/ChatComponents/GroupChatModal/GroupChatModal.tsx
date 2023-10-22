@@ -7,11 +7,17 @@ import StyleProvider from './cssGroupChatModal';
 
 interface GroupChatModalProps {
   users: UserInfoType[];
-  setValue: (value: []) => void;
-  setName: (name: string) => void;
+  setValue: React.Dispatch<React.SetStateAction<string[]>>;
+  setName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const GroupChatModal = (Props: GroupChatModalProps) => {
+interface Option {
+  label: string;
+  value: string;
+  id: string;
+}
+
+const GroupChatModal: React.FC<GroupChatModalProps> = ({ users, setName, setValue }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -33,19 +39,19 @@ const GroupChatModal = (Props: GroupChatModalProps) => {
                 placeholder={`Group's name`}
                 allowClear
                 onChange={(event) => {
-                  Props.setName(event.currentTarget.value);
+                  setName(event.currentTarget.value);
                 }}
               />
               <Select
                 mode='multiple'
                 placeholder='Select members'
-                options={Props.users.map((user) => ({
+                options={users.map((user) => ({
                   label: user.name,
                   value: user.name,
                   id: user._id
                 }))}
-                onChange={(value) => {
-                  Props.setValue(value);
+                onChange={(_, option) => {
+                  setValue((option as unknown as Option[]).map((item) => item.id));
                 }}
               />
             </div>

@@ -1,5 +1,3 @@
-import { Image } from 'antd';
-
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
@@ -17,8 +15,7 @@ const AvatarMessage: React.FC<AvatarProps> = ({ user }) => {
   return (
     <div className='relative'>
       <div className='relative rounded-full overflow-hidden h-9 w-9 md:h-11 md:w-11 flex'>
-        <Image
-          preview={false}
+        <img
           src={getImageURL(user?.user_image)}
           alt='Avatar'
           style={{

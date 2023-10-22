@@ -56,7 +56,7 @@ export const ButtonActiveNonHover = () => {
 
 type ButtonCancelHoverProps = {
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
   className?: string;
 };

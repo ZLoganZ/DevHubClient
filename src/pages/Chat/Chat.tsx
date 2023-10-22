@@ -113,7 +113,7 @@ const Chat = () => {
         {isLoadingConversations ? (
           <LoadingChat />
         ) : (
-          <div className='chat'>
+          <div className='chat overflow-hidden'>
             <Row className='h-screen slider'>
               <Col span={1} className='py-3 flex flex-col justify-between items-center'>
                 <div>

@@ -15,7 +15,7 @@ import { RepositoryType } from '@/types';
 
 interface ReposProps {
   repositories: RepositoryType[];
-  setRepositories: (repos: RepositoryType[]) => void;
+  setRepositories: React.Dispatch<React.SetStateAction<RepositoryType[]>>;
 }
 
 const AddRepositoryForm = (Props: ReposProps) => {

@@ -139,7 +139,7 @@ const MessageChat: React.FC<IParams> = ({
   useEffect(() => {
     if (!messages) return;
     if (count === 0) scrollToBottom('instant');
-    if (messages.length - count === 1) scrollToBottom('auto');
+    if (messages.length - count === 1) scrollToBottom('smooth');
     setCount(messages.length);
   }, [messages]);
 
@@ -188,7 +188,11 @@ const MessageChat: React.FC<IParams> = ({
             }}>
             <div className='flex gap-3 items-center'>
               {currentConversation.type === 'group' ? (
-                <AvatarGroup key={currentConversation._id} users={currentConversation.members} />
+                <AvatarGroup
+                  key={currentConversation._id}
+                  users={currentConversation.members}
+                  image={currentConversation.image}
+                />
               ) : (
                 <NavLink to={`/user/${otherUser._id}`}>
                   <Avatar key={otherUser._id} user={otherUser} />
@@ -230,7 +234,7 @@ const MessageChat: React.FC<IParams> = ({
               <div className='pt-1' ref={topRef} />
               {messages.map((message, i, mesArr) => (
                 <MessageBox
-                  key={message._id}
+                  key={`${conversationID}-${message._id}`}
                   isLastMes={i === messages.length - 1}
                   message={message}
                   seen={seenState}

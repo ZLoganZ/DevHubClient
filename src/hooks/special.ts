@@ -60,7 +60,7 @@ export const useIntersectionObserver = (
       });
     }, delay);
 
-    const observer = new IntersectionObserver(handleIntersect, { threshold });
+    const observer = new IntersectionObserver(handleIntersect, { rootMargin: '0px', threshold });
 
     const handleVisibilityChange = () => {
       if (!targetRef.current) return;

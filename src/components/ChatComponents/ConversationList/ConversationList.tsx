@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Col, ConfigProvider, Input, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +10,7 @@ import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
+import OpenGroupModal from '@/components/OpenGroupModal';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ConversationType } from '@/types';
@@ -32,6 +33,15 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { userID } = useAppSelector((state) => state.auth);
+  const { visible } = useAppSelector((state) => state.modalHOC);
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  useEffect(() => {
+    if (!visible && isOpenModal) {
+      setIsOpenModal(false);
+    }
+  }, [visible]);
 
   useEffect(() => {
     chatSocket.on(PRIVATE_CONVERSATION + userID, (conversation: ConversationType) => {
@@ -47,7 +57,22 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
         } else {
           old.unshift(conversation);
         }
-        setConversations([...old]);
+
+        return [...old];
+      });
+
+      setConversations((old) => {
+        if (!old) return [conversation];
+
+        const index = old.findIndex((item) => item._id === conversation._id);
+        if (index !== -1) {
+          old[index].updatedAt = conversation.updatedAt;
+          old.sort((a, b) => {
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          });
+        } else {
+          old.unshift(conversation);
+        }
 
         return [...old];
       });
@@ -56,6 +81,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   return (
     <StyleProvider theme={themeColorSet}>
+      {isOpenModal && <OpenGroupModal users={currentUserInfo.members} setConversations={setConversations} />}
       <Row className='searchChat'>
         <Col span={24}>
           <Row>
@@ -64,7 +90,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
               style={{
                 borderColor: themeColorSet.colorBg4
               }}>
-              <div className='flex'>
+              <div className='flex justify-between items-center'>
                 <NavLink to={`/user/${currentUserInfo._id}`}>
                   <div className='avatar mr-3'>
                     <Avatar key={currentUserInfo._id} user={currentUserInfo} />
@@ -86,11 +112,15 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                     style={{
                       color: themeColorSet.colorText3
                     }}>
-                    UX/UI Designer
+                    {currentUserInfo.experiences[0]?.position_name}
                   </div>
                 </div>
               </div>
-              <div className='iconPlus cursor-pointer' onClick={() => {}}>
+              <div
+                className='iconPlus cursor-pointer'
+                onClick={() => {
+                  setIsOpenModal(!isOpenModal);
+                }}>
                 <FontAwesomeIcon className='text-xl' icon={faUsersLine} color={themeColorSet.colorText1} />
               </div>
             </Space>

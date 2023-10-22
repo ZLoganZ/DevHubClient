@@ -12,7 +12,7 @@ type NotificationType = 'success' | 'info' | 'warning' | 'error';
 interface DeleteModalProps {
   isOpen: boolean;
   postID: string;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   image?: string;
 }
 

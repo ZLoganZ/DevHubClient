@@ -11,7 +11,7 @@ import { ExperienceType } from '@/types';
 
 interface EditProps {
   experiences: ExperienceType[];
-  setExperiences: (experiences: ExperienceType[]) => void;
+  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
   itemCurrent: ExperienceType;
   indexCurrent: number;
 }

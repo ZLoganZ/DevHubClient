@@ -11,7 +11,7 @@ import StyleProvider from './cssAddExperienceForm';
 
 interface EditProps {
   experiences: ExperienceType[];
-  setExperiences: (experiences: ExperienceType[]) => void;
+  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
 }
 
 const { RangePicker } = DatePicker;
