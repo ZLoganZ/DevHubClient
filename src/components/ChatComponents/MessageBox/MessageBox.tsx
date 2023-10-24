@@ -95,11 +95,7 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
               </div>
             </Tooltip>
           </div>
-          <div
-            className={`seen-message text-xs font-light`}
-            style={{
-              color: themeColorSet.colorText3
-            }}>
+          <div className='seen-message text-xs font-light' style={{ color: themeColorSet.colorText3 }}>
             <div className='relative flex flex-row'>
               {isLastMes &&
                 isOwn &&

@@ -244,7 +244,7 @@ export type CreateConversationDataType = {
 
 export type MessageType = {
   _id: string;
-  conversation_id: ConversationType;
+  conversation_id: string;
   sender: UserInfoType;
   content: string;
   isSending?: boolean;

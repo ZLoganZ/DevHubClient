@@ -21,28 +21,22 @@ interface ObserverOptions {
   delay?: number;
   pauseOnTabChange?: boolean;
 }
+
 /**
- * The `useIntersectionObserver` function is a custom React hook that uses the Intersection Observer
- * API to determine if a target element is in the viewport and returns a ref to the target element and
- * a boolean indicating if it is in view.
- * @param [options] - An optional object that contains the following properties:
- * @param [options.threshold] - The `threshold` property is of type `number` and represents the
- * percentage of the target element that must be visible to trigger the callback function.
- * @param [options.delay] - The `delay` property is of type `number` and represents the number of
- * milliseconds to wait before triggering the callback function.
- * @param [options.pauseOnTabChange] - The `pauseOnTabChange` property is of type `boolean` and
- * indicates whether or not to pause the Intersection Observer when the user changes tabs.
- * @returns The function `useIntersectionObserver` returns an array with two elements: a
- * `React.RefObject<HTMLDivElement>` and a boolean value.
- *
+ * The `useIntersectionObserver` function is a custom React hook that allows you to observe when an
+ * element intersects with the viewport using the Intersection Observer API.
+ * @param targetRef - A React ref object that references the element that you want to observe for
+ * intersection.
+ * @param onIntersect - A callback function that will be called when the target element intersects with
+ * the viewport.
+ * @param {ObserverOptions} [options] - An optional object that contains additional configuration
+ * options for the Intersection Observer.
  * @example
- * const [targetRef, inView] = useIntersectionObserver({ threshold: 0.85, delay: 5000, pauseOnTabChange: true });
- *
- * <div ref={targetRef}>
- *  {inView && <p>Target element is in view!</p>}
- * </div>
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API Intersection Observer API}
+ * const targetRef = useRef(null);
+ * const onIntersect = () => {
+ *  // Do something when the target element intersects with the viewport.
+ * };
+ * useIntersectionObserver(targetRef, onIntersect);
  */
 export const useIntersectionObserver = (
   targetRef: React.RefObject<Element>,
@@ -54,7 +48,7 @@ export const useIntersectionObserver = (
   useEffect(() => {
     const handleIntersect = debounce((entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && document.hasFocus()) {
+        if (entry.isIntersecting) {
           onIntersect();
         }
       });

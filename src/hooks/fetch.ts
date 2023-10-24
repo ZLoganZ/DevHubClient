@@ -189,7 +189,6 @@ export const useUserPostsData = (userID: string) => {
       const { data } = await postService.getAllPostByUserID(userID);
       return ApplyDefaults(data.metadata);
     },
-    enabled: !!userID,
     staleTime: Infinity
   });
 
@@ -248,7 +247,6 @@ export const useCommentsData = (postID: string) => {
       const { data } = await postService.getParentComments(postID);
       return data;
     },
-    enabled: !!postID,
     staleTime: Infinity
   });
 
@@ -367,8 +365,7 @@ export const useFollowersData = (userID: string) => {
       const { data } = await userService.getFollowers(userID);
       return data.metadata;
     },
-    staleTime: Infinity,
-    enabled: !!userID
+    staleTime: Infinity
   });
 
   return {
@@ -427,8 +424,7 @@ export const useMessagesData = (conversationID: string) => {
       select: (data) => {
         return data.pages.flat();
       },
-      staleTime: Infinity,
-      enabled: !!conversationID
+      staleTime: Infinity
     });
 
   return {

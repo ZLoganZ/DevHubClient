@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
-import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
+import { SEEN_MSG } from '@/util/constants/SettingSystem';
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -13,28 +12,20 @@ import MessageBox from '@/components/ChatComponents/MessageBox';
 import InputChat from '@/components/ChatComponents/InputChat/InputChat';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
-import { ConversationType, MessageType, UserInfoType } from '@/types';
+import { MessageType } from '@/types';
 import StyleProvider from './cssMessageChat';
 
 interface IParams {
   conversationID: string;
   isDisplayShare: boolean;
   setIsDisplayShare: React.Dispatch<React.SetStateAction<boolean>>;
-  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const MessageChat: React.FC<IParams> = ({
-  conversationID,
-  isDisplayShare,
-  setIsDisplayShare,
-  setConversations
-}) => {
+const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsDisplayShare }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   const { members, chatSocket } = useAppSelector((state) => state.socketIO);
-
-  const queryClient = useQueryClient();
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
@@ -53,71 +44,18 @@ const MessageChat: React.FC<IParams> = ({
     return isActive ? 'Online' : 'Offline';
   }, [currentConversation, isActive]);
 
-  const [seenState, setSeenState] = useState<UserInfoType[]>(currentConversation.seen);
-
-  useEffect(() => {
-    if (conversationID && currentUserInfo) {
-      chatSocket.on(SEEN_MSG + conversationID, (data: ConversationType) => {
-        queryClient.setQueryData<ConversationType>(['conversation', conversationID], (oldData) => {
-          if (!oldData) return;
-
-          return {
-            ...oldData,
-            seen: data.seen
-          };
-        });
-        setSeenState(data.seen);
-      });
-
-      chatSocket.on(PRIVATE_MSG + conversationID, (data: MessageType) => {
-        queryClient.setQueryData<InfiniteData<MessageType[], number>>(
-          ['messages', conversationID],
-          (messages) => {
-            if (!messages) return { pages: [[data]], pageParams: [0] };
-
-            const index = messages.pages.findIndex((page) =>
-              page.some((message) => message._id === data._id)
-            );
-
-            if (index !== -1) {
-              const updatedMessages = messages.pages[index].map((message) => {
-                if (message._id === data._id) {
-                  return {
-                    ...message,
-                    isSending: false
-                  };
-                }
-                return message;
-              });
-
-              const newPages = [...messages.pages];
-              newPages[index] = updatedMessages;
-
-              return { pages: newPages, pageParams: messages.pageParams };
-            } else {
-              return {
-                pages: [[...messages.pages[messages.pages.length - 1], data]],
-                pageParams: [...messages.pageParams]
-              };
-            }
-          }
-        );
-      });
-    }
-  }, [conversationID, currentUserInfo]);
-
   const seenMessage = useCallback(() => {
     if (
       messages.length > 0 &&
       messages[messages.length - 1].sender._id !== currentUserInfo._id &&
-      !seenState.some((user) => user._id === currentUserInfo._id)
+      !currentConversation.seen.some((user) => user._id === currentUserInfo._id)
     ) {
       chatSocket.emit(SEEN_MSG, {
         conversationID,
         userID: currentUserInfo._id
       });
     }
-  }, [seenState, conversationID, messages]);
+  }, [currentConversation.seen, conversationID, messages]);
 
   const fetchPreMessages = useCallback(() => {
     if (!isFetchingPreviousPage && messages && messages.length >= 20) fetchPreviousMessages();
@@ -237,7 +175,7 @@ const MessageChat: React.FC<IParams> = ({
                   key={`${conversationID}-${message._id}`}
                   isLastMes={i === messages.length - 1}
                   message={message}
-                  seen={seenState}
+                  seen={currentConversation.seen}
                   isPrevMesGroup={isPrevMesGroup(message, i, mesArr[i - 1])}
                   isNextMesGroup={isNextMesGroup(message, i, mesArr[i + 1])}
                 />
@@ -245,11 +183,7 @@ const MessageChat: React.FC<IParams> = ({
               <div className='pb-1' ref={bottomRef} />
             </div>
           </div>
-          <InputChat
-            conversationID={conversationID}
-            setSeenState={setSeenState}
-            setConversations={setConversations}
-          />
+          <InputChat conversationID={conversationID} />
         </>
       )}
     </StyleProvider>

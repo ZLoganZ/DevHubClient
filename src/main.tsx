@@ -9,13 +9,7 @@ import { store } from '@/redux/configStore';
 import App from '@/App.tsx';
 import '@/index.css';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false
-    }
-  }
-});
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>

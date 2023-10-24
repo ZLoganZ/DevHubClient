@@ -1,6 +1,6 @@
 import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
@@ -21,7 +21,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { getTheme } from '@/util/theme';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
-import { ConversationType } from '@/types';
+
 import StyleProvider from './cssChat';
 
 const Chat = () => {
@@ -42,13 +42,6 @@ const Chat = () => {
   }, [currentUserInfo]);
 
   const [isDisplayShare, setIsDisplayShare] = useState(false);
-  const [conversationsState, setConversationsState] = useState<ConversationType[]>([]);
-
-  useEffect(() => {
-    if (conversations && !isLoadingConversations) {
-      setConversationsState(conversations);
-    }
-  }, [isLoadingConversations]);
 
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
@@ -83,13 +76,7 @@ const Chat = () => {
     (check: number) => {
       switch (check) {
         case 0:
-          return (
-            <ConversationList
-              conversations={conversationsState}
-              selected={conversationID}
-              setConversations={setConversationsState}
-            />
-          );
+          return <ConversationList conversations={conversations} selected={conversationID} />;
         case 1:
           return <ContactList followers={followers ?? []} />;
         case 2:
@@ -100,7 +87,7 @@ const Chat = () => {
           return <></>;
       }
     },
-    [conversations, conversationsState, followers, conversationID]
+    [conversations, followers, conversationID]
   );
 
   useMediaQuery({ maxWidth: 639 });
@@ -183,7 +170,6 @@ const Chat = () => {
                         conversationID={conversationID}
                         setIsDisplayShare={setIsDisplayShare}
                         isDisplayShare={isDisplayShare}
-                        setConversations={setConversationsState}
                       />
                     </div>
                   )}

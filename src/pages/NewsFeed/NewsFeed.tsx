@@ -195,26 +195,30 @@ const NewsFeed = () => {
                     trigger={['click']}
                     onOpenChange={handleOpenPopularChange}
                     open={popularOpen}>
-                    <div onClick={(e) => e.preventDefault()}>
-                      <Space
+                    <Space
+                      style={{
+                        maxWidth: 100,
+                        width: 100,
+                        fontWeight: 600,
+                        fontSize: 16,
+                        color: themeColorSet.colorText1,
+                        cursor: 'pointer'
+                      }}>
+                      <span
                         style={{
-                          maxWidth: 100,
-                          width: 100,
-                          fontWeight: 600,
-                          fontSize: 16,
-                          color: themeColorSet.colorText1,
-                          cursor: 'pointer'
+                          fontSize: '0.9rem',
+                          color: themeColorSet.colorText2
                         }}>
-                        <span
-                          style={{
-                            fontSize: '0.9rem',
-                            color: themeColorSet.colorText2
-                          }}>
-                          {popularvalue}
-                        </span>
-                        <DownOutlined style={{ fontSize: '0.7rem' }} />
-                      </Space>
-                    </div>
+                        {popularvalue}
+                      </span>
+                      <DownOutlined
+                        style={{
+                          fontSize: '0.7rem',
+                          transform: popularOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: '0.2s ease-in'
+                        }}
+                      />
+                    </Space>
                   </Dropdown>
                 </div>
                 <div

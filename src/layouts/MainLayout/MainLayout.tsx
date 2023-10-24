@@ -29,9 +29,9 @@ const MainLayout = (props: PropsMainTemplate) => {
   if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   return (
-    <ConfigProvider theme={{token: themeColor}}>
+    <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider className='abcdef' theme={themeColorSet}>
-        <Layout style={{ backgroundColor: themeColorSet.colorBg1 }}>
+        <Layout>
           <Headers />
           <Layout>
             <Menu />
@@ -40,7 +40,7 @@ const MainLayout = (props: PropsMainTemplate) => {
               <Content
                 className='xs:ml-0 xs:mt-20 ml-20'
                 style={{
-                  marginTop: '5rem'
+                  paddingTop: '5rem'
                   // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
                   // backgroundAttachment: 'fixed',
                   // backgroundRepeat: 'no-repeat',

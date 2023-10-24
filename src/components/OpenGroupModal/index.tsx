@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,22 +6,22 @@ import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ConversationType, UserInfoType } from '@/types';
+import { UserInfoType } from '@/types';
 import { NEW_CONVERSATION } from '@/util/constants/SettingSystem';
+import { useReceiveConversation } from '@/hooks/mutation';
 
 interface Props {
   users: UserInfoType[];
-  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const OpenGroupModal: React.FC<Props> = ({ users, setConversations }) => {
+const OpenGroupModal: React.FC<Props> = ({ users }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
-  const queryClient = useQueryClient();
+  const { mutateReceiveConversation } = useReceiveConversation();
 
   const navigate = useNavigate();
 
@@ -45,37 +44,7 @@ const OpenGroupModal: React.FC<Props> = ({ users, setConversations }) => {
 
         chatSocket.emit(NEW_CONVERSATION, res.data.metadata);
 
-        setConversations((old) => {
-          if (!old) return [res.data.metadata];
-
-          const index = old.findIndex((item) => item._id === res.data.metadata._id);
-          if (index !== -1) {
-            old[index].updatedAt = res.data.metadata.updatedAt;
-            old.sort((a, b) => {
-              return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-            });
-          } else {
-            old.unshift(res.data.metadata);
-          }
-
-          return [...old];
-        });
-
-        queryClient.setQueryData<ConversationType[]>(['conversations'], (old) => {
-          if (!old) return [res.data.metadata];
-
-          const index = old.findIndex((item) => item._id === res.data.metadata._id);
-          if (index !== -1) {
-            old[index].updatedAt = res.data.metadata.updatedAt;
-            old.sort((a, b) => {
-              return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-            });
-          } else {
-            old.unshift(res.data.metadata);
-          }
-
-          return [...old];
-        });
+        mutateReceiveConversation(res.data.metadata);
 
         dispatch(closeModal());
 

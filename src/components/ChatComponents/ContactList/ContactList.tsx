@@ -95,18 +95,18 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
           <Row>
             <div className='userActive px-3 w-full'>
               <div
-                className='listUser flex mt-5'
+                className='listUser flex flex-col'
                 style={{
                   overflow: 'auto'
                 }}>
                 {followers.map((item) => {
                   return (
                     <div
-                      className='user flex items-center cursor-pointer'
-                      key={item?._id}
+                      className='user flex items-center cursor-pointer mt-5'
+                      key={item._id}
                       onClick={() => HandleOnClick(item._id)}>
                       <div className='avatar relative'>
-                        <Avatar key={item?._id} user={item} />
+                        <Avatar key={item._id} user={item} />
                       </div>
                       <div
                         className='name text-center ml-2'
@@ -115,7 +115,7 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
                           color: themeColorSet.colorText1
                         }}>
                         {/* {handleItemName(item?.name)} */}
-                        {item?.name}
+                        {item.name}
                       </div>
                     </div>
                   );

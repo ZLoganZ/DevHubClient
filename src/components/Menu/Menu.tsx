@@ -50,24 +50,18 @@ const MenuMain = () => {
 
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/') {
-      setKey('1');
-    } else if (path === '/me' || path === `/user/${currentUserInfo._id}`) {
-      setKey('2');
-    } else if (path === '/explore') {
-      setKey('3');
-    } else if (path === '/collaboration') {
-      setKey('4');
-    } else if (path === '/work') {
-      setKey('5');
-    } else if (path === '/bookmark') {
-      setKey('6');
-    } else if (path === '/community') {
-      setKey('7');
-    } else {
-      setKey('');
-    }
-  }, [location, currentUserInfo]);
+    const pathMap: { [key: string]: string } = {
+      '/': '1',
+      '/me': '2',
+      [`/user/${currentUserInfo._id}`]: '2',
+      '/explore': '3',
+      '/collaboration': '4',
+      '/work': '5',
+      '/bookmark': '6',
+      '/community': '7'
+    };
+    setKey(pathMap[path] || '');
+  }, [location.pathname]);
 
   const [showMenu, setShowMenu] = useState(false);
   const handleShowMenu = () => {
@@ -98,7 +92,6 @@ const MenuMain = () => {
         }}>
         <FontAwesomeIcon icon={faBars} />
       </div>
-
       <Sider
         trigger={null}
         collapsible
@@ -106,11 +99,11 @@ const MenuMain = () => {
         width={240}
         className={showMenu ? 'sider' : 'hidden'}
         style={{
-          // overflow: 'auto',
+          overflow: 'auto',
           height: '100vh',
           position: 'fixed',
           left: 0,
-          top: 76,
+          top: 80,
           bottom: 0,
           zIndex: 1000
         }}
@@ -120,6 +113,7 @@ const MenuMain = () => {
           mode='inline'
           defaultSelectedKeys={[key]}
           selectedKeys={[key]}
+          style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg1 }}
           className='h-full'
           items={[
             {

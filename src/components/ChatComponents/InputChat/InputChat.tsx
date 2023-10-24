@@ -3,7 +3,6 @@ import { ConfigProvider, Input, Popover, Space } from 'antd';
 import { useState } from 'react';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 
 import { getTheme } from '@/util/theme';
 import { PRIVATE_MSG } from '@/util/constants/SettingSystem';
@@ -11,29 +10,28 @@ import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { ConversationType, MessageType, UserInfoType } from '@/types';
+import { useSendMessage } from '@/hooks/mutation';
+import { MessageType } from '@/types';
 
 interface Props {
   conversationID: string;
-  setSeenState: React.Dispatch<React.SetStateAction<UserInfoType[]>>;
-  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversations }) => {
+const InputChat: React.FC<Props> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const queryClient = useQueryClient();
-
-  const { chatSocket } = useAppSelector((state) => state.socketIO);
-
   const [message, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
   const [id, setId] = useState(Math.random().toString(36).substring(7));
+
+  const { mutateSendMessage } = useSendMessage();
 
   const handleSubmit = async (content: string) => {
     if (!conversationID) return;
@@ -43,6 +41,7 @@ const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversat
 
     const message = {
       _id: id,
+      conversation_id: conversationID,
       sender: {
         _id: currentUserInfo._id,
         user_image: currentUserInfo.user_image,
@@ -54,35 +53,12 @@ const InputChat: React.FC<Props> = ({ conversationID, setSeenState, setConversat
     };
 
     chatSocket.emit(PRIVATE_MSG, {
-      conversationID,
+      conversationID: message.conversation_id,
       message
     });
 
     setId(Math.random().toString(36).substring(7));
-    setSeenState([]);
-
-    queryClient.setQueryData<InfiniteData<MessageType[], number>>(['messages', conversationID], (oldData) => {
-      if (!oldData) return { pages: [], pageParams: [1] };
-
-      oldData.pages[oldData.pages.length - 1].push(message as unknown as MessageType);
-
-      return { ...oldData };
-    });
-
-    queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
-      if (!oldData) return [];
-
-      const index = oldData.findIndex((item) => item._id === conversationID);
-      if (index !== -1) {
-        oldData[index].lastMessage = message as unknown as MessageType;
-        oldData.sort((a, b) => {
-          return new Date(b.lastMessage?.createdAt).getTime() - new Date(a.lastMessage?.createdAt).getTime();
-        });
-      }
-      setConversations([...oldData]);
-
-      return [...oldData];
-    });
+    mutateSendMessage(message as unknown as MessageType);
   };
 
   const handleUpload = async (error: any, result: any, widget: any) => {

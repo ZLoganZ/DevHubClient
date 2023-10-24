@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Col, ConfigProvider, Input, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
@@ -15,25 +14,25 @@ import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ConversationType } from '@/types';
 import { PRIVATE_CONVERSATION } from '@/util/constants/SettingSystem';
+import { useReceiveConversation } from '@/hooks/mutation';
 
 interface ConversationListProps {
   conversations: ConversationType[];
   selected?: string;
-  setConversations: React.Dispatch<React.SetStateAction<ConversationType[]>>;
 }
 
-const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, setConversations }) => {
+const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
-
-  const queryClient = useQueryClient();
 
   const { currentUserInfo } = useCurrentUserInfo();
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { userID } = useAppSelector((state) => state.auth);
   const { visible } = useAppSelector((state) => state.modalHOC);
+
+  const { mutateReceiveConversation } = useReceiveConversation();
 
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -45,43 +44,13 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   useEffect(() => {
     chatSocket.on(PRIVATE_CONVERSATION + userID, (conversation: ConversationType) => {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (old) => {
-        if (!old) return [conversation];
-
-        const index = old.findIndex((item) => item._id === conversation._id);
-        if (index !== -1) {
-          old[index].updatedAt = conversation.updatedAt;
-          old.sort((a, b) => {
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-          });
-        } else {
-          old.unshift(conversation);
-        }
-
-        return [...old];
-      });
-
-      setConversations((old) => {
-        if (!old) return [conversation];
-
-        const index = old.findIndex((item) => item._id === conversation._id);
-        if (index !== -1) {
-          old[index].updatedAt = conversation.updatedAt;
-          old.sort((a, b) => {
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-          });
-        } else {
-          old.unshift(conversation);
-        }
-
-        return [...old];
-      });
+      mutateReceiveConversation(conversation);
     });
   }, [userID]);
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isOpenModal && <OpenGroupModal users={currentUserInfo.members} setConversations={setConversations} />}
+      {isOpenModal && <OpenGroupModal users={currentUserInfo.members} />}
       <Row className='searchChat'>
         <Col span={24}>
           <Row>

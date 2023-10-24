@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -8,7 +7,8 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { ConversationType, MessageType, UserInfoType } from '@/types';
+import { useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
+import { ConversationType, MessageType } from '@/types';
 import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
@@ -23,10 +23,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
 
-  const queryClient = useQueryClient();
-
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
+  const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
+  const { mutateReceiveMessage } = useReceiveMessage();
 
   const isOwn = useMemo(() => {
     return currentUserInfo._id === conversation.lastMessage?.sender?._id ?? false;
@@ -48,46 +48,21 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
     return currentUserInfo._id;
   }, [currentUserInfo]);
 
-  const [seenArr, setSeenArr] = useState<UserInfoType[]>(conversation.seen);
-
   useEffect(() => {
     chatSocket.on(PRIVATE_MSG + conversation._id, (message: MessageType) => {
-      setSeenArr([]);
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
-        if (!oldData) return [{ ...conversation, lastMessage: message }];
-
-        const index = oldData.findIndex((item) => item._id === conversation._id);
-        if (index !== -1) {
-          oldData[index].lastMessage = message;
-          oldData[index].seen = [];
-        } else {
-          oldData.unshift({ ...conversation, lastMessage: message });
-        }
-
-        return [...oldData];
-      });
+      mutateReceiveMessage(message);
     });
 
     chatSocket.on(SEEN_MSG + conversation._id, (conversation: ConversationType) => {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
-        if (!oldData) return [conversation];
-
-        const index = oldData.findIndex((item) => item._id === conversation._id);
-        if (index !== -1) {
-          oldData[index].seen = conversation.seen;
-        }
-
-        return [...oldData];
-      });
-      setSeenArr(conversation.seen);
+      mutateReceiveSeenConversation(conversation);
     });
   }, []);
 
   const hasSeen = useMemo(() => {
     if (!conversation.lastMessage) return false;
 
-    return seenArr.some((user) => user._id === userID);
-  }, [conversation.lastMessage, seenArr]);
+    return conversation.seen.some((user) => user._id === userID);
+  }, [conversation.lastMessage, conversation.seen]);
 
   const lastMessageText = useMemo(() => {
     if (conversation.lastMessage?.image) return 'Sent an image';
