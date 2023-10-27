@@ -95,14 +95,13 @@ const CommentInput: React.FC<CommentInputProps> = ({ currentUser, postID }) => {
               <Popover
                 placement={!isXsScreen ? 'right' : 'top'}
                 trigger='click'
-                title={'Emoji'}
                 content={
                   <Picker
                     theme={themeColorSet.colorPicker}
                     data={async () => {
                       const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
-                      return response.json();
+                      return await response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
                       setCursor(cursor + emoji.native.length);

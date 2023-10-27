@@ -29,11 +29,6 @@ const StyleProvider = styled.div`
     .follow {
       color: ${(props) => props.theme.colorText1};
       background-color: ${(props) => props.theme.colorBg2};
-      :hover {
-        color: ${commonColor.colorBlue1};
-        cursor: pointer;
-        transition: all 0.5s;
-      }
     }
   }
   .id_address_join {

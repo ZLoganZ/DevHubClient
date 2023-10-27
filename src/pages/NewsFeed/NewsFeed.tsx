@@ -188,6 +188,7 @@ const NewsFeed = () => {
                     Popular Post
                   </span>
                   <Dropdown
+                    placement='bottom'
                     menu={{
                       items: popular_time,
                       onClick: handlePopularClick
@@ -197,8 +198,7 @@ const NewsFeed = () => {
                     open={popularOpen}>
                     <Space
                       style={{
-                        maxWidth: 100,
-                        width: 100,
+                        marginRight: 15,
                         fontWeight: 600,
                         fontSize: 16,
                         color: themeColorSet.colorText1,
@@ -215,7 +215,7 @@ const NewsFeed = () => {
                         style={{
                           fontSize: '0.7rem',
                           transform: popularOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: '0.2s ease-in'
+                          transition: popularOpen ? 'transform 0.3s' : 'transform 0.3s 0.3s'
                         }}
                       />
                     </Space>

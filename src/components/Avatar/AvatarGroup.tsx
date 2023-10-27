@@ -28,9 +28,9 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
   };
 
   return (
-    <div className='relative h-9 w-9 md:h-11 md:w-11'>
+    <div className='relative h-9 w-9'>
       {image ? (
-        <div className='relative rounded-full overflow-hidden h-9 w-9 md:h-11 md:w-11'>
+        <div className='relative rounded-full overflow-hidden h-9 w-9'>
           <img
             src={getImageURL(image)}
             alt='Avatar'
@@ -45,7 +45,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
         slicedUsers.map((user, index) => (
           <div
             key={user._id}
-            className={`absolute inline-block rounded-full overflow-hidden h-[18px] w-[18px] md:h-[21px] md:w-[21px] ${positionMap[index]}`}>
+            className={`absolute inline-block rounded-full overflow-hidden h-[18px] w-[18px] ${positionMap[index]}`}>
             <img
               src={getImageURL(user.user_image)}
               alt='Avatar'
@@ -59,7 +59,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
         ))
       )}
       {isActive && (
-        <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 right-0 h-2 w-2 md:h-3 md:w-3' />
+        <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 right-0 h-2 w-2' />
       )}
     </div>
   );

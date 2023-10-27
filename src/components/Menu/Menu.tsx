@@ -114,7 +114,7 @@ const MenuMain = () => {
           defaultSelectedKeys={[key]}
           selectedKeys={[key]}
           style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg1 }}
-          className='h-full'
+          className='min-h-full max-h-fit'
           items={[
             {
               key: '1',

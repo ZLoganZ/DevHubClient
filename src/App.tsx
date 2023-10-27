@@ -9,6 +9,7 @@ import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 
 import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
 import PresenceService from '@/components/ActionComponent/PresenceService';
+import VideoCall from '@/components/VideoCall';
 
 import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
 
@@ -60,6 +61,7 @@ const App = () => {
           <Route path='/post/:postID' element={<MainLayout Component={<PostWrapper />} />} />
           <Route path='/community/:communityID' element={<MainLayout Component={<CommunityWrapper />} />} />
           <Route path='*' element={<NotFound404 />} />
+          <Route path='call/:conversationID?' element={<VideoCall />} />
         </Route>
       </Routes>
     </>

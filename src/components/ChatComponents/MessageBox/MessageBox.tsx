@@ -100,30 +100,40 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
               {isLastMes &&
                 isOwn &&
                 seenList.length > 0 &&
-                seenList.map((user, index) => (
+                seenList.map((userImage, index) => (
                   <div key={index} className='inline-block rounded-full overflow-hidden h-4 w-4 mr-2'>
                     <img
                       className='h-4 w-4'
-                      src={getImageURL(user, 'avatar_mini')}
+                      src={getImageURL(userImage, 'avatar_mini')}
                       style={{ objectFit: 'cover' }}
                     />
                   </div>
                 ))}
-              {isLastMes && isOwn && seenList.length === 0 && (
-                <svg
-                  className='w-4 h-4 text-gray-400 mr-2'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'>
-                  {message.isSending ? (
-                    <circle cx='10' cy='10' r='8' stroke='currentColor' fill='none' />
-                  ) : (
-                    <path
-                      fillRule='evenodd'
-                      d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
-                    />
+              {isOwn && (
+                <>
+                  {seenList.length === 0 && message.isSending && (
+                    <svg
+                      className='w-4 h-4 text-gray-400 mr-2'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                      xmlns='http://www.w3.org/2000/svg'>
+                      <circle cx='10' cy='10' r='8' stroke='currentColor' fill='none' />
+                    </svg>
                   )}
-                </svg>
+
+                  {isLastMes && seenList.length === 0 && !message.isSending && (
+                    <svg
+                      className='w-4 h-4 text-gray-400 mr-2'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                      xmlns='http://www.w3.org/2000/svg'>
+                      <path
+                        fillRule='evenodd'
+                        d='M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 7.707a1 1 0 00-1.414 1.414l2.5 2.5a1 1 0 001.414 0l5.5-5.5a1 1 0 10-1.414-1.414L10.5 9.086 8.707 7.707z'
+                      />
+                    </svg>
+                  )}
+                </>
               )}
             </div>
           </div>

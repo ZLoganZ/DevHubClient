@@ -42,6 +42,10 @@ export class MessageService extends BaseService {
   sendMessage = (payload: CreateMessageDataType) => {
     return this.post(`/chat/messages`, payload);
   };
+
+  callVideo = (payload: string): Promise<AxiosResponse<ResponseType<string>>> => {
+    return this.get(`/chat/token/?conversation_id=${payload}`);
+  };
 }
 
 export const messageService = new MessageService();

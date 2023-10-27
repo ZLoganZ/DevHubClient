@@ -1,17 +1,19 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Input, Popover, Space } from 'antd';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
-import { PRIVATE_MSG } from '@/util/constants/SettingSystem';
+import { IS_TYPING, PRIVATE_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import UploadComponent from '@/components/UploadComponent';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
 import { MessageType } from '@/types';
+import { debounce } from 'lodash';
 
 interface Props {
   conversationID: string;
@@ -29,7 +31,7 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const [id, setId] = useState(Math.random().toString(36).substring(7));
+  const [id, setId] = useState(uuidv4().replace(/-/g, ''));
 
   const { mutateSendMessage } = useSendMessage();
 
@@ -57,7 +59,9 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
       message
     });
 
-    setId(Math.random().toString(36).substring(7));
+    chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id });
+
+    setId(uuidv4().replace(/-/g, ''));
     mutateSendMessage(message as unknown as MessageType);
   };
 
@@ -83,6 +87,13 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
     }
   };
 
+  const handleStopTyping = useCallback(
+    debounce(() => {
+      chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id });
+    }, 1000),
+    []
+  );
+
   return (
     <div
       className='footer flex justify-between items-center'
@@ -97,7 +108,6 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
         <Popover
           placement='top'
           trigger='click'
-          title='Emoji'
           content={
             <Picker
               data={async () => {
@@ -143,14 +153,14 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
               setCursor(cursorPosition || 0);
             }}
             onChange={(e) => {
+              chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id });
               setMessage(e.currentTarget.value);
+              handleStopTyping();
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
               setCursor(cursorPosition || 0);
             }}
-            onPressEnter={(e) => {
-              handleSubmit(e.currentTarget.value);
-            }}
+            onPressEnter={() => handleSubmit(message)}
             suffix={
               <span
                 className={`cursor-pointer hover:text-blue-700 ${

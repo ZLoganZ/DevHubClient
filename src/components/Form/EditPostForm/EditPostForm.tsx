@@ -221,7 +221,6 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
               <Popover
                 placement='top'
                 trigger='click'
-                title={'Members'}
                 content={
                   <Picker
                     theme={themeColorSet.colorPicker}

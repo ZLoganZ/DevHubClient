@@ -7,18 +7,21 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
+import { setLoading } from '@/redux/Slice/AuthSlice';
 import { UserRegisterDataType } from '@/types';
-import { useAppDispatch } from '@/hooks/special';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
+import { ButtonActiveHover } from '@/components/MiniComponent';
 import StyleProvider from './cssRegister';
 
 const Register = () => {
   const dispatch = useAppDispatch();
 
+  const { loading } = useAppSelector((state) => state.auth);
+
   const form = useForm({
     defaultValues: {
-      firstname: '',
-      lastname: '',
+      name: '',
       email: '',
       password: '',
       confirm: ''
@@ -26,6 +29,7 @@ const Register = () => {
   });
 
   const onSubmit = (values: UserRegisterDataType) => {
+    dispatch(setLoading(true));
     dispatch(REGISTER_SAGA(values));
   };
 
@@ -60,52 +64,27 @@ const Register = () => {
                     <span className='login ml-1'>Login</span>
                   </NavLink>
                 </div>
-
-                <Form className='mt-5 formAccount' onFinish={form.handleSubmit(onSubmit)}>
-                  <Form.Item>
-                    <Form.Item
-                      style={{
-                        display: 'inline-block',
-                        width: 'calc(50% - 8px)',
-                        marginRight: '16px'
+                <Form
+                  name='register'
+                  className='mt-5 formAccount'
+                  onFinish={form.handleSubmit(onSubmit)}
+                  autoComplete='off'>
+                  <Form.Item
+                    name='firstname'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your firstname!'
+                      }
+                    ]}>
+                    <Input
+                      placeholder='Full name'
+                      allowClear
+                      prefix={<UserOutlined />}
+                      onChange={(e) => {
+                        form.setValue('name', e.target.value);
                       }}
-                      name='lastname'
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please input your lastname!'
-                        }
-                      ]}>
-                      <Input
-                        placeholder='Last name'
-                        allowClear
-                        prefix={<UserOutlined />}
-                        onChange={(e) => {
-                          form.setValue('lastname', e.target.value);
-                        }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      style={{
-                        display: 'inline-block',
-                        width: 'calc(50% - 8px)'
-                      }}
-                      name='firstname'
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please input your firstname!'
-                        }
-                      ]}>
-                      <Input
-                        placeholder='First name'
-                        allowClear
-                        prefix={<UserOutlined />}
-                        onChange={(e) => {
-                          form.setValue('firstname', e.target.value);
-                        }}
-                      />
-                    </Form.Item>
+                    />
                   </Form.Item>
                   <Form.Item
                     name='email'
@@ -171,9 +150,9 @@ const Register = () => {
                       }}
                     />
                   </Form.Item>
-                  <button className='buttonCreate mt-3' type='submit'>
+                  <ButtonActiveHover loading={loading} type='primary' className='buttonCreate mt-3'>
                     Create account
-                  </button>
+                  </ButtonActiveHover>
                 </Form>
               </div>
             </div>
