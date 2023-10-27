@@ -8,12 +8,15 @@ const getUserID = async () => {
 
     return data.metadata._id;
   } catch (error) {
+    console.log(error);
+    window.location.replace('/login');
     return 'Méo có UserID!';
   }
 };
 
 const initialState = {
-  userID: await getUserID()
+  userID: await getUserID(),
+  loading: false
 };
 
 const authSlice = createSlice({
@@ -22,9 +25,12 @@ const authSlice = createSlice({
   reducers: {
     setUserID: (state, action) => {
       return { ...state, userID: action.payload };
+    },
+    setLoading: (state, action) => {
+      return { ...state, loading: action.payload };
     }
   }
 });
 
-export const { setUserID } = authSlice.actions;
+export const { setUserID, setLoading } = authSlice.actions;
 export default authSlice.reducer;

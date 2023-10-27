@@ -24,6 +24,7 @@ import 'react-quill/dist/quill.bubble.css';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
+import { ButtonActiveHover } from '@/components/MiniComponent';
 import RenderRepositoryIem from '@/components/ActionComponent/RenderRepositoryIem';
 
 import descArray from '@/util/Descriptions/Tags';
@@ -48,7 +49,7 @@ const Profile = ({ userID }: Props) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { mutateFollowUser } = useFollowUser();
+  const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
@@ -154,14 +155,15 @@ const Profile = ({ userID }: Props) => {
               </Col>
               <Col span={6}>
                 <div className='chat_Follow flex justify-around items-center w-full h-full'>
-                  <div
-                    className='follow px-4 py-2 rounded-full'
+                  <ButtonActiveHover
+                    className='follow px-6 h-11 rounded-full'
+                    type='default'
+                    loading={isLoadingFollowUser}
                     onClick={() => {
-                      setIsFollowing(!isFollowing);
                       mutateFollowUser(userID);
                     }}>
-                    <span>{isFollowing ? 'Following' : 'Follow'}</span>
-                  </div>
+                    {isFollowing ? 'Following' : 'Follow'}
+                  </ButtonActiveHover>
                 </div>
               </Col>
             </Row>

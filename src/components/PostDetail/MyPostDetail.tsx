@@ -15,10 +15,10 @@ import { useMediaQuery } from 'react-responsive';
 interface PostProps {
   post: PostType;
   postAuthor: UserInfoType;
-  isOpenByModal?: boolean;
+  isDetail?: boolean;
 }
 
-const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isOpenByModal }) => {
+const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isDetail }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -50,7 +50,7 @@ const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isOpenByModal }) 
           <div
             className='postDetail rounded-lg'
             style={
-              isOpenByModal
+              isDetail
                 ? {
                     overflow: 'auto',
                     backgroundColor: themeColorSet.colorBg2,
@@ -105,7 +105,7 @@ const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isOpenByModal }) 
                 })
               )}
             </div>
-            {!isOpenByModal && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
+            {isDetail && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
           </div>
         </Col>
       </Row>

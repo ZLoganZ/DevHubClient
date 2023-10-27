@@ -109,7 +109,7 @@ export const PostWrapper = () => {
             backgroundColor: themeColorSet.colorBg1,
             minHeight: 'calc(100vh - 5rem)'
           }}>
-          <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} isOpenByModal={false} />
+          <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} isDetail />
         </div>
       );
     } else
@@ -125,7 +125,7 @@ export const PostWrapper = () => {
             post={post}
             postAuthor={post.post_attributes.user}
             currentUser={currentUserInfo}
-            isOpenByModal={false}
+            isDetail
           />
         </div>
       );

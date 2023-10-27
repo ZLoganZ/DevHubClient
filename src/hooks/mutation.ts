@@ -440,23 +440,27 @@ export const useFollowUser = () => {
     mutationFn: async (userID: string) => {
       await userService.followUser(userID);
     },
-    onMutate(userID) {
+    onSuccess(_, userID) {
       queryClient.setQueryData<UserInfoType>(['currentUserInfo'], (oldData) => {
-        if (oldData)
+        if (oldData) {
+          const index = oldData.following.findIndex((item) => item._id === userID);
           return {
             ...oldData,
-            following_number: oldData.following_number + 1
+            following_number: oldData.following_number + (index !== -1 ? -1 : 1)
           };
+        }
 
         return oldData;
       });
 
       queryClient.setQueryData<UserInfoType>(['otherUserInfo', userID], (oldData) => {
-        if (oldData)
+        if (oldData) {
           return {
             ...oldData,
-            follower_number: oldData.follower_number + 1
+            follower_number: oldData.follower_number + (oldData.is_followed ? -1 : 1),
+            is_followed: !oldData.is_followed
           };
+        }
 
         return oldData;
       });

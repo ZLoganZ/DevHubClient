@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { RcFile } from 'antd/es/upload';
 import { sha1 } from 'crypto-hash';
+import { v4 as uuidv4 } from 'uuid';
 import 'react-quill/dist/quill.bubble.css';
 
 import QuillEdit from '@/components/QuillEdit';
@@ -270,7 +271,7 @@ const EditProfileForm = () => {
                   title: 'Add Experiences',
                   component: (
                     <EditExperienceForm
-                      key={Math.random()}
+                      key={uuidv4().replace(/-/g, '')}
                       experiences={experiences}
                       setExperiences={setExperiences}
                       itemCurrent={item}
@@ -462,7 +463,11 @@ const EditProfileForm = () => {
                 openModal({
                   title: 'Update Social Links',
                   component: (
-                    <AddContacts key={Math.random()} callback={handleChangeLinks} contacts={contacts} />
+                    <AddContacts
+                      key={uuidv4().replace(/-/g, '')}
+                      callback={handleChangeLinks}
+                      contacts={contacts}
+                    />
                   ),
                   footer: false
                 })
@@ -582,7 +587,9 @@ const EditProfileForm = () => {
                 dispatch(
                   openModal({
                     title: 'Add Tags',
-                    component: <AddTags key={Math.random()} callback={handleChangeTags} tags={tags} />,
+                    component: (
+                      <AddTags key={uuidv4().replace(/-/g, '')} callback={handleChangeTags} tags={tags} />
+                    ),
                     footer: true
                   })
                 );
@@ -610,7 +617,7 @@ const EditProfileForm = () => {
                       title: 'Add About',
                       component: (
                         <QuillEdit
-                          key={Math.random()}
+                          key={uuidv4().replace(/-/g, '')}
                           placeholder='Write something about yourself...'
                           content={about as string}
                           callbackFunction={handleChangeAbout}
@@ -646,7 +653,7 @@ const EditProfileForm = () => {
                     title: 'Add About',
                     component: (
                       <QuillEdit
-                        key={Math.random()}
+                        key={uuidv4().replace(/-/g, '')}
                         placeholder='Write something about yourself...'
                         content=''
                         callbackFunction={handleChangeAbout}
@@ -677,7 +684,7 @@ const EditProfileForm = () => {
                       title: 'Add About',
                       component: (
                         <AddExperienceForm
-                          key={Math.random()}
+                          key={uuidv4().replace(/-/g, '')}
                           experiences={experiences}
                           setExperiences={setExperiences}
                         />
@@ -706,7 +713,7 @@ const EditProfileForm = () => {
                     title: 'Add Experiences',
                     component: (
                       <AddExperienceForm
-                        key={Math.random()}
+                        key={uuidv4().replace(/-/g, '')}
                         experiences={experiences}
                         setExperiences={setExperiences}
                       />
@@ -762,7 +769,7 @@ const EditProfileForm = () => {
                         title: 'Feature Repositories',
                         component: (
                           <AddRepositoryForm
-                            key={Math.random()}
+                            key={uuidv4().replace(/-/g, '')}
                             repositories={repositories}
                             setRepositories={setRepositories}
                           />
@@ -793,7 +800,7 @@ const EditProfileForm = () => {
                     title: 'Feature Repositories',
                     component: (
                       <AddRepositoryForm
-                        key={Math.random()}
+                        key={uuidv4().replace(/-/g, '')}
                         repositories={repositories}
                         setRepositories={setRepositories}
                       />

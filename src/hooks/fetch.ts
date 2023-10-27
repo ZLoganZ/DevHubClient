@@ -437,3 +437,22 @@ export const useMessagesData = (conversationID: string) => {
     isFetchingPreviousPage: isFetchingPreviousPage
   };
 };
+
+export const useVideoCall = (conversationID: string) => {
+  const { data, isPending, isError, isFetching, refetch } = useQuery({
+    queryKey: ['videoCall', conversationID],
+    queryFn: async () => {
+      const { data } = await messageService.callVideo(conversationID);
+      return data.metadata;
+    },
+    staleTime: Infinity,
+  });
+
+  return {
+    isLoadingVideoCall: isPending,
+    isErrorVideoCall: isError,
+    videoCall: data!,
+    isFetchingVideoCall: isFetching,
+    fetchVideoCall: refetch
+  };
+};

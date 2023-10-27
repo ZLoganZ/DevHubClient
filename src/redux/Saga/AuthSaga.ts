@@ -1,4 +1,4 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, select, takeLatest } from 'redux-saga/effects';
 
 import {
   CHECK_RESET_PASSWORD_SAGA,
@@ -11,17 +11,9 @@ import {
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
-import { setUserID } from '@/redux/Slice/AuthSlice';
-import { setTheme } from '@/redux/Slice/ThemeSlice';
 
 import { authService } from '@/services/AuthService';
-import {
-  DARK_THEME,
-  STATUS_CODE,
-  AUTHORIZATION,
-  GITHUB_TOKEN,
-  CLIENT_ID
-} from '@/util/constants/SettingSystem';
+import { STATUS_CODE, AUTHORIZATION, GITHUB_TOKEN, CLIENT_ID } from '@/util/constants/SettingSystem';
 
 // LoginSaga
 function* LoginSaga({ payload }: any) {
@@ -31,11 +23,6 @@ function* LoginSaga({ payload }: any) {
       // Lưu token vào localStorage
       localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
       localStorage.setItem(CLIENT_ID, data.metadata.user._id);
-
-      // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
-
-      yield put(setUserID(data.metadata.user._id));
 
       const { location } = yield select((state) => state.hook);
 
@@ -61,11 +48,6 @@ function* RegisterSaga({ payload }: any) {
       // Lưu token vào localStorage
       localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
       localStorage.setItem(CLIENT_ID, data.metadata.user._id);
-
-      // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
-
-      yield put(setUserID(data.metadata.user._id));
 
       window.location.replace('/');
     }
@@ -106,9 +88,6 @@ function* LoginWithGoogleSaga({ payload }: any) {
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
       localStorage.setItem(AUTHORIZATION, data.metadata?.accessToken);
-
-      // Lưu theme vào localStorage
-      yield put(setTheme({ theme: DARK_THEME }));
 
       const { location } = yield select((state) => state.hook);
 

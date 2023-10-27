@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { custom_scrollBar, flex_center_row } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
-  height: fit-content;
+  height: 100vh;
   background-color: ${(props) => props.theme.colorBg1};
   .chat {
     .slider {

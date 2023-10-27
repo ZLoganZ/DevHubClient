@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
-import { SEEN_MSG } from '@/util/constants/SettingSystem';
+import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -13,6 +13,7 @@ import InputChat from '@/components/ChatComponents/InputChat/InputChat';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { MessageType } from '@/types';
+import getImageURL from '@/util/getImageURL';
 import StyleProvider from './cssMessageChat';
 
 interface IParams {
@@ -35,7 +36,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
-
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
   const statusText = useMemo(() => {
@@ -63,6 +65,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
+  const typingDiv = useRef<HTMLDivElement>(null);
 
   useIntersectionObserver(bottomRef, seenMessage);
   useIntersectionObserver(topRef, fetchPreMessages);
@@ -81,35 +84,57 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
     setCount(messages.length);
   }, [messages]);
 
+  useEffect(() => {
+    chatSocket.on(IS_TYPING + conversationID, (data: string) => {
+      setTypingUsers((prev) =>
+        prev.some((user) => user === data) || data === currentUserInfo._id ? prev : [...prev, data]
+      );
+      setIsTyping(true);
+    });
+    chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
+      setIsTyping(false);
+      setTimeout(() => {
+        setTypingUsers((prev) => prev.filter((user) => user !== data));
+      }, 500);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typingDiv.current) {
+      typingDiv.current.style.transition = '0.4s';
+      if (typingUsers.length === 0 || !isTyping) {
+        typingDiv.current.style.opacity = '0';
+        typingDiv.current.style.transform = 'translateY(0)';
+      } else {
+        typingDiv.current.style.opacity = '1';
+        typingDiv.current.style.transform = 'translateY(-2rem)';
+      }
+    }
+  }, [typingUsers, isTyping]);
+
   const styleStatus = useMemo(() => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
   }, [isActive, themeColorSet]);
 
-  const isPrevMesGroup = useCallback(
-    (message: MessageType, index: number, preMessage: MessageType) => {
-      if (index === 0) return false;
-      if (!messages) return false;
+  const isPrevMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === 0) return false;
+    if (!messArr) return false;
 
-      const isSameSender = message.sender._id === preMessage.sender._id;
-      if (!isSameSender) return false;
+    const isSameSender = message.sender._id === messArr[index - 1].sender._id;
+    if (!isSameSender) return false;
 
-      return new Date(message.createdAt).getTime() - new Date(preMessage.createdAt).getTime() < 60000;
-    },
-    [messages]
-  );
+    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() < 60000;
+  }, []);
 
-  const isNextMesGroup = useCallback(
-    (message: MessageType, index: number, nextMessage: MessageType) => {
-      if (index === messages.length - 1) return false;
-      if (!messages) return false;
+  const isNextMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === messArr.length - 1) return false;
+    if (!messArr) return false;
 
-      const isSameSender = message.sender._id === nextMessage.sender._id;
-      if (!isSameSender) return false;
+    const isSameSender = message.sender._id === messArr[index + 1].sender._id;
+    if (!isSameSender) return false;
 
-      return new Date(nextMessage.createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
-    },
-    [messages]
-  );
+    return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
+  }, []);
 
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
@@ -138,7 +163,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
               )}
               <div className='flex flex-col'>
                 <div style={{ color: themeColorSet.colorText1 }}>
-                  {currentConversation.name || (
+                  {currentConversation.name ?? (
                     <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
                   )}
                 </div>
@@ -151,6 +176,21 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
                   {statusText}
                 </div>
               </div>
+            </div>
+            <div
+              className='call'
+              onClick={async () => {
+                const width = window.screen.width / 2; // Width of the pop-up window
+                const height = window.screen.height / 2; // Height of the pop-up window
+                const left = window.screen.width / 2 - width / 2;
+                const top = window.screen.height / 2 - height / 2;
+                window.open(
+                  `/call/${conversationID}`,
+                  'videoCall',
+                  `width=${width},height=${height},top=${top},left=${left}`
+                );
+              }}>
+              <FontAwesomeIcon className='text-xl mr-0 cursor-pointer' icon={faVideoCamera} />
             </div>
             <div className='displayShare'>
               <FontAwesomeIcon
@@ -165,22 +205,46 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
           <div
             className='body px-3'
             style={{
-              height: '88%',
+              height: '89%',
               overflow: 'auto'
             }}>
             <div className='flex-1 overflow-y-hidden'>
               <div className='pt-1' ref={topRef} />
-              {messages.map((message, i, mesArr) => (
+              {messages.map((message, index, messArr) => (
                 <MessageBox
                   key={`${conversationID}-${message._id}`}
-                  isLastMes={i === messages.length - 1}
+                  isLastMes={index === messages.length - 1}
                   message={message}
                   seen={currentConversation.seen}
-                  isPrevMesGroup={isPrevMesGroup(message, i, mesArr[i - 1])}
-                  isNextMesGroup={isNextMesGroup(message, i, mesArr[i + 1])}
+                  isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                  isNextMesGroup={isNextMesGroup(message, index, messArr)}
                 />
               ))}
               <div className='pb-1' ref={bottomRef} />
+            </div>
+          </div>
+          <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
+            {currentConversation.members.map((member) => {
+              const index = typingUsers.findIndex((user) => user === member._id);
+              if (index !== -1) {
+                return (
+                  <img
+                    key={member._id}
+                    className={`rounded-full top-3 left-${
+                      index * 8 + typingUsers.length * 1
+                    } absolute h-6 w-6 overflow-hidden`}
+                    src={getImageURL(member.user_image, 'avatar_mini')}
+                  />
+                );
+              }
+              return null;
+            })}
+            <div
+              className={`typing-indicator rounded-full left-${
+                typingUsers.length * 8 + typingUsers.length * 2
+              }`}
+              style={{ backgroundColor: themeColorSet.colorBg4 }}>
+              <div /> <div /> <div />
             </div>
           </div>
           <InputChat conversationID={conversationID} />

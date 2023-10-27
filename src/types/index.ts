@@ -10,8 +10,7 @@ export type GoogleLoginDataType = {
 export type UserRegisterDataType = {
   email: string;
   password: string;
-  firstname: string;
-  lastname: string;
+  name: string;
   confirm: string;
 };
 
@@ -240,7 +239,7 @@ export type CreateConversationDataType = {
   members: string[];
   name?: string;
   image?: string;
-}
+};
 
 export type MessageType = {
   _id: string;

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
 import { useMediaQuery } from 'react-responsive';
+import { v4 as uuidv4 } from 'uuid';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -63,11 +64,30 @@ const Chat = () => {
     }
   ];
 
+  const notSeenCount = useMemo(() => {
+    if (!currentUserInfo || !conversations) return 0;
+    return conversations.reduce((count, conversation) => {
+      if (
+        conversation.seen.some((user) => user._id === currentUserInfo._id) ||
+        conversation.lastMessage?.sender?._id === currentUserInfo._id ||
+        !conversation.lastMessage
+      )
+        return count;
+
+      return count + 1;
+    }, 0);
+  }, [conversations]);
+
+  const contactCount = useMemo(() => {
+    if (!followers) return 0;
+    return followers.length;
+  }, [followers]);
+
   const [optionIndex, setOptionIndex] = useState(0);
 
   const options = [
-    { name: 'message', icon: faComment, count: 96 },
-    { name: 'contact', icon: faUser, count: 69 },
+    { name: 'message', icon: faComment, count: notSeenCount },
+    { name: 'contact', icon: faUser, count: contactCount },
     { name: 'notification', icon: faBell, count: 99 },
     { name: 'voice-call', icon: faPhone, count: 66 }
   ];
@@ -87,7 +107,7 @@ const Chat = () => {
           return <></>;
       }
     },
-    [conversations, followers, conversationID]
+    [conversations, followers, conversationID, notSeenCount, contactCount]
   );
 
   useMediaQuery({ maxWidth: 639 });
@@ -101,7 +121,7 @@ const Chat = () => {
           <LoadingChat />
         ) : (
           <div className='chat overflow-hidden'>
-            <Row className='h-screen slider'>
+            <Row className='slider'>
               <Col span={1} className='py-3 flex flex-col justify-between items-center'>
                 <div>
                   <div className='logo items-center'>
@@ -120,9 +140,9 @@ const Chat = () => {
                           <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
                           <span
                             className='absolute rounded-full 
-                            bg-red-600 ring-1 
-                            ring-orange-50 top-4 -right-1 
-                            h-4 w-4 flex items-center justify-center 
+                            bg-red-600 
+                            top-4 -right-2 
+                            h-5 w-5 flex items-center justify-center 
                             text-xs text-gray-50'>
                             {option.count}
                           </span>
@@ -160,7 +180,7 @@ const Chat = () => {
                     borderColor: themeColorSet.colorBg4
                   }}>
                   {!conversationID ? (
-                    <EmptyChat key={Math.random()} />
+                    <EmptyChat key={uuidv4().replace(/-/g, '')} />
                   ) : isLoadingCurrentConversation ? (
                     <LoadingConversation />
                   ) : (

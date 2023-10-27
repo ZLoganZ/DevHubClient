@@ -1,6 +1,5 @@
 import { all } from 'redux-saga/effects';
 import * as authSaga from './AuthSaga';
-import * as messageSaga from './MessageSaga';
 import * as getStartedSaga from './GetStartedSaga';
 import * as communitySaga from './CommunitySaga';
 
@@ -39,13 +38,13 @@ export function* rootSaga() {
     // postSaga.theoDoiLikeCommentPostSaga(),
     // postSaga.theoDoiDislikeCommentPostSaga(),
 
-    // messageSaga
-    messageSaga.theoDoiGetConversationsSaga(),
-    messageSaga.theoDoiCreateConversationSaga(),
-    messageSaga.theoDoiGetConversationSaga(),
-    messageSaga.theoDoiGetMessagesSaga(),
-    messageSaga.theoDoiSeenMessageSaga(),
-    messageSaga.theoDoiSendMessageSaga(),
+    // // messageSaga
+    // messageSaga.theoDoiGetConversationsSaga(),
+    // messageSaga.theoDoiCreateConversationSaga(),
+    // messageSaga.theoDoiGetConversationSaga(),
+    // messageSaga.theoDoiGetMessagesSaga(),
+    // messageSaga.theoDoiSeenMessageSaga(),
+    // messageSaga.theoDoiSendMessageSaga(),
 
     // getStartedSaga
     getStartedSaga.theoDoiChooseGetStartedSaga(),

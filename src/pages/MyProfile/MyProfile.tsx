@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
+import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSnowflake,
@@ -150,7 +151,7 @@ const MyProfile = () => {
                         dispatch(
                           openDrawer({
                             title: 'Edit Profile',
-                            component: <EditProfileForm key={Math.random()} />
+                            component: <EditProfileForm key={uuidv4().replace(/-/g, '')} />
                           })
                         );
                       }}>

@@ -2,6 +2,7 @@ import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 // import { sha1 } from 'crypto-hash';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -45,7 +46,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
 
   const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
 
-  const [random, setRandom] = useState(0);
+  const [random, setRandom] = useState(uuidv4().replace(/-/g, ''));
 
   const [file, setFile]: any = useState(null);
 
@@ -103,7 +104,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
   useEffect(() => {
     if (isSuccessCreatePost) {
       setContent('');
-      setRandom(Math.random());
+      setRandom(uuidv4().replace(/-/g, ''));
       setFile(null);
       form.setValue('title', '');
       form.setValue('linkImage', null);
@@ -223,7 +224,6 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
               <Popover
                 placement='top'
                 trigger='click'
-                title={'Emoji'}
                 content={
                   <Picker
                     theme={themeColorSet.colorPicker}
