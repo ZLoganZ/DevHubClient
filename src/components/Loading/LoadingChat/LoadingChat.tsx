@@ -1,7 +1,8 @@
-import { Skeleton, Space } from 'antd';
+import { Col, ConfigProvider, Row, Skeleton, Space } from 'antd';
 
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
+import LoadingConversation from '../LoadingConversation';
 
 const LoadingChat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -9,109 +10,106 @@ const LoadingChat = () => {
   const { themeColorSet } = getTheme();
 
   return (
-    <div className='chat flex'>
-      <div
-        className='slider flex flex-col justify-between items-center h-screen py-3'
-        style={{
-          width: '5%',
-          borderRight: '1px solid',
-          borderColor: themeColorSet.colorBg4,
-          position: 'fixed',
-          backgroundColor: themeColorSet.colorBg1
-        }}>
-        <div className='logo'>
-          <Skeleton.Button active size='large' shape='circle' />
-        </div>
-        <div className='option'>
-          <Space size={30} direction='vertical'>
-            <Skeleton.Button active size='large' shape='circle' />
-            <Skeleton.Button active size='large' shape='circle' />
-            <Skeleton.Button active size='large' shape='circle' />
-          </Space>
-        </div>
-        <div className='mode'>
-          <Skeleton.Button active size='large' shape='circle' />
-        </div>
-      </div>
-      <div
-        className='insteadComponent'
-        style={{
-          marginLeft: '5%',
-          width: '23%',
-          height: '100vh',
-          position: 'fixed',
-          borderRight: '1px solid',
-          borderColor: themeColorSet.colorBg4
-        }}>
-        <div
-          className='searchChat h-screen'
-          style={{
-            backgroundColor: themeColorSet.colorBg1
-          }}>
-          <div
-            className='flex items-center w-full px-3 py-4'
-            style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '12%'
-            }}>
-            <Skeleton avatar paragraph={{ rows: 0 }} active />
+    <div className='chat overflow-hidden'>
+      <Row className='h-screen slider'>
+        <Col span={1} className='py-3 flex flex-col justify-between items-center'>
+          <div>
+            <div className='logo items-center'>
+              <Skeleton.Button active size='large' shape='circle' />
+            </div>
+            <div className='option py-8 flex flex-col items-center'>
+              <Space size={35} direction='vertical' align='center'>
+                <div className='optionItem relative'>
+                  <Skeleton.Button active size='large' shape='circle' />
+                </div>
+                <div className='optionItem relative'>
+                  <Skeleton.Button active size='large' shape='circle' />
+                </div>
+                <div className='optionItem relative'>
+                  <Skeleton.Button active size='large' shape='circle' />
+                </div>
+                <div className='optionItem relative'>
+                  <Skeleton.Button active size='large' shape='circle' />
+                </div>
+              </Space>
+            </div>
           </div>
-          <div
-            className='searchInput px-3 py-4 w-full flex justify-between items-center'
-            style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '11%'
-            }}>
-            <Skeleton.Button active size='large' block />
-          </div>
-          <div
-            className='userActive px-3 py-4 w-full'
-            style={{
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4,
-              height: '20%'
-            }}>
-            <div className='listUser grid grid-cols-5 mt-5 '>
+          <div className='flex flex-col items-center'>
+            <div className='mode optionItem py-6'>
               <Skeleton.Button active size='large' shape='circle' />
-              <Skeleton.Button active size='large' shape='circle' />
-              <Skeleton.Button active size='large' shape='circle' />
-              <Skeleton.Button active size='large' shape='circle' />
+            </div>
+            <div className='mode'>
               <Skeleton.Button active size='large' shape='circle' />
             </div>
           </div>
-          <div className='listUser px-3 py-4'>
-            <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-            <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-            <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-            <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-            <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-          </div>
-        </div>
-      </div>
-      <div
-        className='chatBox flex flex-col items-center px-4 py-6'
-        style={{
-          width: '92%',
-          marginLeft: '28%',
-          height: '100vh',
-          position: 'fixed',
-          backgroundColor: themeColorSet.colorBg1,
-          borderRight: '1px solid',
-          borderColor: themeColorSet.colorBg4
-        }}>
-        <div
-          style={{
-            height: 500,
-            width: '100%'
-          }}>
-          <Skeleton className='mt-8' active />
-          <Skeleton className='mt-8' active />
-          <Skeleton className='mt-8' active />
-          <Skeleton className='mt-8' active />
-        </div>
-      </div>
+        </Col>
+        <Col span={5}>
+          <Row className='searchChat'>
+            <Col span={24}>
+              <Row>
+                <Space
+                  className='myInfo flex justify-between items-start py-4 px-3 w-full'
+                  style={{
+                    borderColor: themeColorSet.colorBg4
+                  }}>
+                  <div className='flex justify-between items-center'>
+                    <div className='avatar mr-3'>
+                      <Skeleton.Avatar active size='large' />
+                    </div>
+                  </div>
+                  <div className='iconPlus cursor-pointer'>
+                    <Skeleton.Button active size='large' shape='circle' />
+                  </div>
+                </Space>
+              </Row>
+              <Row>
+                <div
+                  className='searchInput pl-3 py-4 w-full flex justify-between items-center'
+                  style={{
+                    borderColor: themeColorSet.colorBg4
+                  }}>
+                  <div className='input flex items-center w-full'>
+                    <div
+                      className='iconSearch mr-2'
+                      style={{
+                        color: themeColorSet.colorText3
+                      }}>
+                      <Skeleton.Button active size='large' shape='circle' />
+                    </div>
+                    <ConfigProvider
+                      theme={{
+                        token: {
+                          lineWidth: 0,
+                          controlHeight: 40
+                        }
+                      }}>
+                      <Skeleton.Input active size='large' block />
+                    </ConfigProvider>
+                  </div>
+                </div>
+              </Row>
+              <Row>
+                <div
+                  className='userChat w-full'
+                  style={{
+                    overflow: 'auto'
+                  }}>
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton active avatar paragraph={{ rows: 0 }} />
+                </div>
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={18}>
+          <LoadingConversation />
+        </Col>
+      </Row>
     </div>
   );
 };

@@ -14,6 +14,8 @@ import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { MessageType } from '@/types';
 import StyleProvider from './cssMessageChat';
+import { Col, Row } from 'antd';
+import SharedMedia from '../SharedMedia';
 
 interface IParams {
   conversationID: string;
@@ -116,75 +118,78 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
-        <>
-          <div
-            className='header flex justify-between items-center py-6 px-6'
-            style={{
-              height: '13%',
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4
-            }}>
-            <div className='flex gap-3 items-center'>
-              {currentConversation.type === 'group' ? (
-                <AvatarGroup
-                  key={currentConversation._id}
-                  users={currentConversation.members}
-                  image={currentConversation.image}
-                />
-              ) : (
-                <NavLink to={`/user/${otherUser._id}`}>
-                  <Avatar key={otherUser._id} user={otherUser} />
-                </NavLink>
-              )}
-              <div className='flex flex-col'>
-                <div style={{ color: themeColorSet.colorText1 }}>
-                  {currentConversation.name || (
-                    <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
-                  )}
-                </div>
-                <div
-                  className='text-sm'
-                  style={{
-                    color: styleStatus,
-                    fontWeight: 400
-                  }}>
-                  {statusText}
+        <Row className='h-full'>
+          <Col span={16}>
+            <div
+              className='header flex justify-between items-center py-6 px-6'
+              style={{
+                height: '13%',
+              }}>
+              <div className='flex gap-3 items-center'>
+                {currentConversation.type === 'group' ? (
+                  <AvatarGroup
+                    key={currentConversation._id}
+                    users={currentConversation.members}
+                    image={currentConversation.image}
+                  />
+                ) : (
+                  <NavLink to={`/user/${otherUser._id}`}>
+                    <Avatar key={otherUser._id} user={otherUser} />
+                  </NavLink>
+                )}
+                <div className='flex flex-col'>
+                  <div style={{ color: themeColorSet.colorText1 }}>
+                    {currentConversation.name || (
+                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                    )}
+                  </div>
+                  <div
+                    className='text-sm'
+                    style={{
+                      color: styleStatus,
+                      fontWeight: 400
+                    }}>
+                    {statusText}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='displayShare'>
-              <FontAwesomeIcon
-                className='text-xl mr-0 cursor-pointer'
-                icon={faBars}
-                onClick={() => {
-                  setIsDisplayShare(!isDisplayShare);
-                }}
-              />
-            </div>
-          </div>
-          <div
-            className='body px-3'
-            style={{
-              height: '88%',
-              overflow: 'auto'
-            }}>
-            <div className='flex-1 overflow-y-hidden'>
-              <div className='pt-1' ref={topRef} />
-              {messages.map((message, i, mesArr) => (
-                <MessageBox
-                  key={`${conversationID}-${message._id}`}
-                  isLastMes={i === messages.length - 1}
-                  message={message}
-                  seen={currentConversation.seen}
-                  isPrevMesGroup={isPrevMesGroup(message, i, mesArr[i - 1])}
-                  isNextMesGroup={isNextMesGroup(message, i, mesArr[i + 1])}
+              <div className='displayShare'>
+                <FontAwesomeIcon
+                  className='text-xl mr-0 cursor-pointer'
+                  icon={faBars}
+                  onClick={() => {
+                    setIsDisplayShare(!isDisplayShare);
+                  }}
                 />
-              ))}
-              <div className='pb-1' ref={bottomRef} />
+              </div>
             </div>
-          </div>
-          <InputChat conversationID={conversationID} />
-        </>
+            <div
+              className='body px-3'
+              style={{
+                height: '88%',
+                overflow: 'auto'
+              }}>
+              <div className='flex-1 overflow-y-hidden'>
+                <div className='pt-1' ref={topRef} />
+                {messages.map((message, i, mesArr) => (
+                  <MessageBox
+                    key={`${conversationID}-${message._id}`}
+                    isLastMes={i === messages.length - 1}
+                    message={message}
+                    seen={currentConversation.seen}
+                    isPrevMesGroup={isPrevMesGroup(message, i, mesArr[i - 1])}
+                    isNextMesGroup={isNextMesGroup(message, i, mesArr[i + 1])}
+                  />
+                ))}
+                <div className='pb-1' ref={bottomRef} />
+              </div>
+            </div>
+            <InputChat conversationID={conversationID} />
+          </Col>
+          <Col span={8}>
+            <SharedMedia conversationID={conversationID!} />
+          </Col>
+        </Row>
       )}
     </StyleProvider>
   );

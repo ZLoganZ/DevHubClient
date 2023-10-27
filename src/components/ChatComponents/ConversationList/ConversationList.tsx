@@ -21,7 +21,7 @@ interface ConversationListProps {
   selected?: string;
 }
 
-const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected, }) => {
+const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -127,11 +127,24 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 overflow: 'auto',
                 maxHeight: 'calc(100vh - 160px)'
               }}>
-              {conversations.map((conversation) => (
-                <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                  <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                </NavLink>
-              ))}
+              <div className='userChatContact'>
+                {conversations.map((conversation) => (
+                  <>
+                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
+                    </NavLink>
+                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
+                    </NavLink>
+                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
+                    </NavLink>
+                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
+                    </NavLink>
+                  </>
+                ))}
+              </div>
             </div>
           </Row>
         </Col>

@@ -100,6 +100,8 @@ const Chat = () => {
         {isLoadingConversations ? (
           <LoadingChat />
         ) : (
+          // <LoadingChat />
+
           <div className='chat overflow-hidden'>
             <Row className='h-screen slider'>
               <Col span={1} className='py-3 flex flex-col justify-between items-center'>
@@ -151,18 +153,18 @@ const Chat = () => {
                 </div>
               </Col>
               <Col span={5}> {changeOptions(optionIndex)}</Col>
-              <Col span={isDisplayShare ? 12 : 18}>
+              <Col span={18}>
                 <div
                   className='chatBox'
                   style={{
-                    height: '99vh',
-                    borderRight: isDisplayShare ? '1px solid' : 'none',
-                    borderColor: themeColorSet.colorBg4
+                    height: '99vh'
                   }}>
                   {!conversationID ? (
                     <EmptyChat key={Math.random()} />
                   ) : isLoadingCurrentConversation ? (
-                    <LoadingConversation />
+                    <div style={{ height: '92%' }}>
+                      <LoadingConversation />
+                    </div>
                   ) : (
                     <div style={{ height: '92%' }}>
                       <MessageChat
@@ -175,7 +177,6 @@ const Chat = () => {
                   )}
                 </div>
               </Col>
-              {isDisplayShare && <SharedMedia conversationID={conversationID!} />}
             </Row>
           </div>
         )}
