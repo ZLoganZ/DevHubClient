@@ -15,7 +15,6 @@ import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import LoadingLogo from '@/components/Loading/LoadingLogo';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
-import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
 import { useConversationsData, useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -41,8 +40,6 @@ const Chat = () => {
       (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
     );
   }, [currentUserInfo]);
-
-  const [isDisplayShare, setIsDisplayShare] = useState(false);
 
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
@@ -139,10 +136,10 @@ const Chat = () => {
                           style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
                           <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
                           <span
-                            className='absolute rounded-full 
-                            bg-red-600 
-                            top-4 -right-2 
-                            h-5 w-5 flex items-center justify-center 
+                            className='absolute rounded-full
+                            bg-red-600
+                            top-4 -right-2
+                            h-5 w-5 flex items-center justify-center
                             text-xs text-gray-50'>
                             {option.count}
                           </span>
@@ -171,31 +168,28 @@ const Chat = () => {
                 </div>
               </Col>
               <Col span={5}> {changeOptions(optionIndex)}</Col>
-              <Col span={isDisplayShare ? 12 : 18}>
+              <Col span={18}>
                 <div
                   className='chatBox'
                   style={{
-                    height: '99vh',
-                    borderRight: isDisplayShare ? '1px solid' : 'none',
-                    borderColor: themeColorSet.colorBg4
+                    height: '99vh'
                   }}>
                   {!conversationID ? (
                     <EmptyChat key={uuidv4().replace(/-/g, '')} />
                   ) : isLoadingCurrentConversation ? (
-                    <LoadingConversation />
+                    <div style={{ height: '92%' }}>
+                      <LoadingConversation />
+                    </div>
                   ) : (
                     <div style={{ height: '92%' }}>
                       <MessageChat
                         key={conversationID}
                         conversationID={conversationID}
-                        setIsDisplayShare={setIsDisplayShare}
-                        isDisplayShare={isDisplayShare}
                       />
                     </div>
                   )}
                 </div>
               </Col>
-              {isDisplayShare && <SharedMedia conversationID={conversationID!} />}
             </Row>
           </div>
         )}

@@ -56,18 +56,15 @@ const SharedMedia = (Props: SharedMediaProps) => {
           <div
             className='shared'
             style={{
-              width: '23%',
-              height: '100vh',
-              marginLeft: '77%',
+              width: '25%',
+              height: '91%',
               position: 'fixed',
               backgroundColor: themeColorSet.colorBg1
             }}>
             <div
               className='extension px-3 flex items-center'
               style={{
-                height: '12%',
-                borderBottom: '1px solid',
-                borderColor: themeColorSet.colorBg4
+                height: '13%',
               }}>
               <div className='flex justify-center items-center w-full'>
                 <div
@@ -127,18 +124,15 @@ const SharedMedia = (Props: SharedMediaProps) => {
           <div
             className='shared'
             style={{
-              width: '23%',
-              height: '100vh',
-              marginLeft: '77%',
+              width: '25%',
+              height: '91%',
               position: 'fixed',
               backgroundColor: themeColorSet.colorBg1
             }}>
             <div
               className='extension px-3 flex items-center'
               style={{
-                height: '12%',
-                borderBottom: '1px solid',
-                borderColor: themeColorSet.colorBg4
+                height: '13%',
               }}>
               <div
                 className='flex justify-center items-center w-full'

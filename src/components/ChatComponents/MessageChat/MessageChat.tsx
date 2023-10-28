@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
@@ -15,14 +15,14 @@ import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import StyleProvider from './cssMessageChat';
+import { Col, Row, Space } from 'antd';
+import SharedMedia from '../SharedMedia';
 
 interface IParams {
   conversationID: string;
-  isDisplayShare: boolean;
-  setIsDisplayShare: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsDisplayShare }) => {
+const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -39,6 +39,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
+
+  const [isDisplayShare, setIsDisplayShare] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
@@ -144,110 +146,124 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
-        <>
-          <div
-            className='header flex justify-between items-center py-6 px-6'
-            style={{
-              height: '13%',
-              borderBottom: '1px solid',
-              borderColor: themeColorSet.colorBg4
-            }}>
-            <div className='flex gap-3 items-center'>
-              {currentConversation.type === 'group' ? (
-                <AvatarGroup
-                  key={currentConversation._id}
-                  users={currentConversation.members}
-                  image={currentConversation.image}
-                />
-              ) : (
-                <NavLink to={`/user/${otherUser._id}`}>
-                  <Avatar key={otherUser._id} user={otherUser} />
-                </NavLink>
-              )}
-              <div className='flex flex-col'>
-                <div style={{ color: themeColorSet.colorText1 }}>
-                  {currentConversation.name ?? (
-                    <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
-                  )}
-                </div>
-                <div
-                  className='text-sm'
-                  style={{
-                    color: styleStatus,
-                    fontWeight: 400
-                  }}>
-                  {statusText}
+        <Row className='h-full'>
+          <Col span={isDisplayShare ? 16 : 24} className='h-full'>
+            <div
+              className='header flex justify-between items-center py-6 px-6'
+              style={{
+                height: '13%'
+              }}>
+              <div className='flex gap-3 items-center'>
+                {currentConversation.type === 'group' ? (
+                  <AvatarGroup
+                    key={currentConversation._id}
+                    users={currentConversation.members}
+                    image={currentConversation.image}
+                  />
+                ) : (
+                  <NavLink to={`/user/${otherUser._id}`}>
+                    <Avatar key={otherUser._id} user={otherUser} />
+                  </NavLink>
+                )}
+                <div className='flex flex-col'>
+                  <div style={{ color: themeColorSet.colorText1 }}>
+                    {currentConversation.name ?? (
+                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                    )}
+                  </div>
+                  <div
+                    className='text-sm'
+                    style={{
+                      color: styleStatus,
+                      fontWeight: 400
+                    }}>
+                    {statusText}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div
-              className='call'
-              onClick={async () => {
-                const width = window.screen.width / 2; // Width of the pop-up window
-                const height = window.screen.height / 2; // Height of the pop-up window
-                const left = window.screen.width / 2 - width / 2;
-                const top = window.screen.height / 2 - height / 2;
-                window.open(
-                  `/call/${conversationID}`,
-                  'videoCall',
-                  `width=${width},height=${height},top=${top},left=${left}`
-                );
-              }}>
-              <FontAwesomeIcon className='text-xl mr-0 cursor-pointer' icon={faVideoCamera} />
-            </div>
-            <div className='displayShare'>
-              <FontAwesomeIcon
-                className='text-xl mr-0 cursor-pointer'
-                icon={faBars}
-                onClick={() => {
-                  setIsDisplayShare(!isDisplayShare);
-                }}
-              />
-            </div>
-          </div>
-          <div
-            className='body px-3'
-            style={{
-              height: '89%',
-              overflow: 'auto'
-            }}>
-            <div className='flex-1 overflow-y-hidden'>
-              <div className='pt-1' ref={topRef} />
-              {messages.map((message, index, messArr) => (
-                <MessageBox
-                  key={`${conversationID}-${message._id}`}
-                  isLastMes={index === messages.length - 1}
-                  message={message}
-                  seen={currentConversation.seen}
-                  isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
-                  isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                />
-              ))}
-              <div className='pb-1' ref={bottomRef} />
-            </div>
-          </div>
-          <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
-            {currentConversation.members.map((member) => {
-              const index = typingUsers.findIndex((user) => user === member._id);
-              if (index !== -1) {
-                return (
-                  <img
-                    key={member._id}
-                    className={`rounded-full top-3 left-${index * 8} absolute h-6 w-6 overflow-hidden`}
-                    src={getImageURL(member.user_image, 'avatar_mini')}
+              <Space align='center' size={20} className='flex gap-3'>
+                <div className='call p-1'>
+                  <FontAwesomeIcon className='text-lg cursor-pointer' icon={faPhone} />
+                </div>
+                <div
+                  className='call p-1'
+                  onClick={async () => {
+                    const width = window.screen.width / 2; // Width of the pop-up window
+                    const height = window.screen.height / 2; // Height of the pop-up window
+                    const left = window.screen.width / 2 - width / 2;
+                    const top = window.screen.height / 2 - height / 2;
+                    window.open(
+                      `/call/${conversationID}`,
+                      'videoCall',
+                      `width=${width},height=${height},top=${top},left=${left}`
+                    );
+                  }}>
+                  <FontAwesomeIcon className='text-xl cursor-pointer' icon={faVideoCamera} />
+                </div>
+                <div className='displayShare ml-4 p-1'>
+                  <FontAwesomeIcon
+                    className='text-xl cursor-pointer'
+                    icon={faCircleInfo}
+                    onClick={() => {
+                      setIsDisplayShare(!isDisplayShare);
+                    }}
                   />
-                );
-              }
-              return null;
-            })}
-            <div
-              className={`typing-indicator rounded-full left-${typingUsers.length * 8}`}
-              style={{ backgroundColor: themeColorSet.colorBg4 }}>
-              <div /> <div /> <div />
+                </div>
+              </Space>
             </div>
-          </div>
-          <InputChat conversationID={conversationID} />
-        </>
+            <div
+              className='body px-3'
+              style={{
+                height: '89%',
+                overflow: 'auto'
+              }}>
+              <div className='flex-1 overflow-y-hidden'>
+                <div className='pt-1' ref={topRef} />
+                {messages.map((message, index, messArr) => (
+                  <MessageBox
+                    key={`${conversationID}-${message._id}`}
+                    isLastMes={index === messages.length - 1}
+                    message={message}
+                    seen={currentConversation.seen}
+                    isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                    isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                  />
+                ))}
+                <div className='pb-1' ref={bottomRef} />
+              </div>
+            </div>
+            <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
+              {currentConversation.members.map((member) => {
+                const index = typingUsers.findIndex((user) => user === member._id);
+                if (index !== -1) {
+                  return (
+                    <img
+                      key={member._id}
+                      className={`rounded-full top-3 left-${
+                        index * 8 + typingUsers.length * 1
+                      } absolute h-6 w-6 overflow-hidden`}
+                      src={getImageURL(member.user_image, 'avatar_mini')}
+                    />
+                  );
+                }
+                return null;
+              })}
+              <div
+                className={`typing-indicator rounded-full left-${
+                  typingUsers.length * 8 + typingUsers.length * 2
+                }`}
+                style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                <div /> <div /> <div />
+              </div>
+            </div>
+            <InputChat conversationID={conversationID} />
+          </Col>
+          {isDisplayShare && (
+            <Col span={8}>
+              <SharedMedia conversationID={conversationID!} />
+            </Col>
+          )}
+        </Row>
       )}
     </StyleProvider>
   );
