@@ -29,7 +29,7 @@ export const VideoCall = () => {
       audio
       video
       token={tokenVideo}
-      connectOptions={{ autoSubscribe: false }}
+      connectOptions={{ autoSubscribe: true }}
       serverUrl={serverUrl}
       data-lk-theme='default'
       onDisconnected={onDisconnected}
@@ -53,7 +53,7 @@ export const VoiceCall = () => {
       audio
       video={false}
       token={tokenAudio}
-      connectOptions={{ autoSubscribe: false }}
+      connectOptions={{ autoSubscribe: true }}
       serverUrl={serverUrl}
       data-lk-theme='default'
       onDisconnected={onDisconnected}
