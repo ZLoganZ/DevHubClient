@@ -1,16 +1,10 @@
 import '@livekit/components-styles';
-import {
-  LiveKitRoom,
-  useTracks,
-  GridLayout,
-  ParticipantTile,
-  RoomAudioRenderer,
-  ControlBar
-} from '@livekit/components-react';
+import { LiveKitRoom, useTracks, GridLayout, RoomAudioRenderer, ControlBar } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { useParams } from 'react-router-dom';
 
 import { useMessageCall } from '@/hooks/fetch';
+import { ParticipantTile } from './ParticipantTile';
 
 const serverUrl = import.meta.env.VITE_LK_SERVER_URL;
 
@@ -29,7 +23,6 @@ export const VideoCall = () => {
       audio
       video
       token={tokenVideo}
-      connectOptions={{ autoSubscribe: false }}
       serverUrl={serverUrl}
       data-lk-theme='default'
       onDisconnected={onDisconnected}
@@ -53,7 +46,6 @@ export const VoiceCall = () => {
       audio
       video={false}
       token={tokenAudio}
-      connectOptions={{ autoSubscribe: false }}
       serverUrl={serverUrl}
       data-lk-theme='default'
       onDisconnected={onDisconnected}
@@ -84,7 +76,7 @@ const VideoConference = () => {
 
 const AudioConference = () => {
   const tracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: true }], {
-    onlySubscribed: true
+    onlySubscribed: false
   });
 
   return (
