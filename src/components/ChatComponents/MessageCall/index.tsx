@@ -42,7 +42,7 @@ export const VideoCall = () => {
   );
 };
 
-export const AudioCall = () => {
+export const VoiceCall = () => {
   const conversationID = useParams<{ conversationID: string }>().conversationID;
 
   const { tokenMessageCall: tokenAudio } = useMessageCall(conversationID, 'audio');

@@ -1,6 +1,7 @@
+import { Col, Row, Space } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
@@ -10,13 +11,12 @@ import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from 
 import Avatar from '@/components/Avatar/AvatarMessage';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import InputChat from '@/components/ChatComponents/InputChat/InputChat';
+import SharedMedia from '@/components/ChatComponents/SharedMedia';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import StyleProvider from './cssMessageChat';
-import { Col, Row, Space } from 'antd';
-import SharedMedia from '../SharedMedia';
 
 interface IParams {
   conversationID: string;
@@ -182,7 +182,19 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
               <Space align='center' size={20} className='flex gap-3'>
-                <div className='call p-1'>
+                <div
+                  className='call p-1'
+                  onClick={async () => {
+                    const width = window.screen.width / 2; // Width of the pop-up window
+                    const height = window.screen.height / 2; // Height of the pop-up window
+                    const left = window.screen.width / 2 - width / 2;
+                    const top = window.screen.height / 2 - height / 2;
+                    window.open(
+                      `/call/${conversationID}/voice`,
+                      'audioCall',
+                      `width=${width},height=${height},top=${top},left=${left}`
+                    );
+                  }}>
                   <FontAwesomeIcon className='text-lg cursor-pointer' icon={faPhone} />
                 </div>
                 <div
@@ -193,7 +205,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     const left = window.screen.width / 2 - width / 2;
                     const top = window.screen.height / 2 - height / 2;
                     window.open(
-                      `/call/${conversationID}`,
+                      `/call/${conversationID}/video`,
                       'videoCall',
                       `width=${width},height=${height},top=${top},left=${left}`
                     );
