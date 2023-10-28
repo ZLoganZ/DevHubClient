@@ -106,7 +106,7 @@ const LoadingChat = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={18}>
+        <Col span={18} style={{ height: '92%' }}>
           <LoadingConversation />
         </Col>
       </Row>

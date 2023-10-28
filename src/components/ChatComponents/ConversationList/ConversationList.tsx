@@ -129,20 +129,9 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
               }}>
               <div className='userChatContact'>
                 {conversations.map((conversation) => (
-                  <>
-                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                    </NavLink>
-                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                    </NavLink>
-                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                    </NavLink>
-                    <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                      <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                    </NavLink>
-                  </>
+                  <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
+                    <ConversationBox conversation={conversation} selected={conversation._id === selected} />
+                  </NavLink>
                 ))}
               </div>
             </div>

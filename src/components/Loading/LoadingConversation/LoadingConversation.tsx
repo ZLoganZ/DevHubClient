@@ -8,80 +8,6 @@ const LoadingConversation = () => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (
-    // <div className='px-4'>
-    //   <Skeleton className='mt-8' active />
-    //   <Skeleton className='mt-8' active />
-    //   <Skeleton className='mt-8' active />
-    //   <Skeleton className='mt-8' active />
-    //   <div
-    //     className='shared'
-    //     style={{
-    //       width: '23%',
-    //       height: '100vh',
-    //       marginLeft: '77%',
-    //       position: 'fixed',
-    //       backgroundColor: themeColorSet.colorBg1
-    //     }}>
-    //     <div
-    //       className='extension px-3 flex items-center'
-    //       style={{
-    //         height: '12%',
-    //         borderBottom: '1px solid',
-    //         borderColor: themeColorSet.colorBg4
-    //       }}>
-    //       <div className='flex justify-center items-center w-full'>
-    //         <div
-    //           className='setting text-center'
-    //           style={{
-    //             width: '25%'
-    //           }}>
-    //           <Skeleton.Button active size='large' shape='circle' />
-    //         </div>
-    //         <div
-    //           className='notification text-center'
-    //           style={{
-    //             width: '25%'
-    //           }}>
-    //           <Skeleton.Button active size='large' shape='circle' />
-    //         </div>
-    //         <div
-    //           className='warning text-center'
-    //           style={{
-    //             width: '25%'
-    //           }}>
-    //           <Skeleton.Button active size='large' shape='circle' />
-    //         </div>
-    //         <div
-    //           className='logout text-center'
-    //           style={{
-    //             width: '25%'
-    //           }}>
-    //           <Skeleton.Button active size='large' shape='circle' />
-    //         </div>
-    //       </div>
-    //     </div>
-    //     <div className='fileShare px-3 py-4'>
-    //       <div className='sharedMedia'>
-    //         <Space className='content' size={20}>
-    //           <Skeleton.Image active />
-    //           <Skeleton.Image active />
-    //           <Skeleton.Image active />
-    //         </Space>
-    //       </div>
-    //       <div className='sharedFile mt-5'>
-    //         <div className='flex justify-between items-center mb-3'></div>
-    //         <div className='content'>
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //           <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
     <>
       <div
         className='flex justify-between items-center py-6 px-6'
@@ -90,12 +16,21 @@ const LoadingConversation = () => {
           borderBottom: '1px solid',
           borderColor: themeColorSet.colorBg4
         }}>
-        <div className='flex gap-3 items-center'>
+        <div className='flex flex-row items-center w-96'>
           <Skeleton.Avatar active size='large' />
+          <Skeleton className='pl-2' active paragraph={{ rows: 1 }} />
         </div>
-        <div className='displayShare'>
-          <Skeleton.Button active size='large' shape='circle' />
-        </div>
+        <Space align='center' size={20} className='flex gap-3'>
+          <div className='call p-1'>
+            <Skeleton.Button active size='small' shape='circle' />
+          </div>
+          <div className='call p-1'>
+            <Skeleton.Button active size='small' shape='circle' />
+          </div>
+          <div className='displayShare ml-4 p-1'>
+            <Skeleton.Button active size='small' shape='circle' />
+          </div>
+        </Space>
       </div>
       <div
         className='body px-3'
@@ -114,7 +49,24 @@ const LoadingConversation = () => {
           <div className='pb-1' />
         </div>
       </div>
-      <Skeleton.Input active size='large' block />
+      <div className='flex justify-between items-center px-5'>
+        <div className='mr-2'>
+          <Skeleton.Button active size='small' shape='circle' />
+        </div>
+        <Skeleton.Input active size='large' block />
+        <Space
+          className='extension flex justify-center items-center'
+          style={{
+            width: '12%'
+          }}>
+          <div className='upload'>
+            <Skeleton.Button active size='small' shape='circle' />
+          </div>
+          <div className='micro'>
+            <Skeleton.Button active size='small' shape='circle' />
+          </div>
+        </Space>
+      </div>
     </>
   );
 };

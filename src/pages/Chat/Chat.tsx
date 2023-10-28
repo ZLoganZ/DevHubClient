@@ -15,7 +15,6 @@ import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import LoadingLogo from '@/components/Loading/LoadingLogo';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
-import SharedMedia from '@/components/ChatComponents/SharedMedia';
 
 import { useConversationsData, useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -41,8 +40,6 @@ const Chat = () => {
       (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
     );
   }, [currentUserInfo]);
-
-  const [isDisplayShare, setIsDisplayShare] = useState(false);
 
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
@@ -120,8 +117,6 @@ const Chat = () => {
         {isLoadingConversations ? (
           <LoadingChat />
         ) : (
-          // <LoadingChat />
-
           <div className='chat overflow-hidden'>
             <Row className='slider'>
               <Col span={1} className='py-3 flex flex-col justify-between items-center'>
@@ -141,10 +136,10 @@ const Chat = () => {
                           style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
                           <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
                           <span
-                            className='absolute rounded-full 
-                            bg-red-600 
-                            top-4 -right-2 
-                            h-5 w-5 flex items-center justify-center 
+                            className='absolute rounded-full
+                            bg-red-600
+                            top-4 -right-2
+                            h-5 w-5 flex items-center justify-center
                             text-xs text-gray-50'>
                             {option.count}
                           </span>
@@ -190,8 +185,6 @@ const Chat = () => {
                       <MessageChat
                         key={conversationID}
                         conversationID={conversationID}
-                        setIsDisplayShare={setIsDisplayShare}
-                        isDisplayShare={isDisplayShare}
                       />
                     </div>
                   )}
