@@ -97,7 +97,6 @@ export const change_color_autoFill = css`
 `;
 export const custom_scrollBar = css`
   &::-webkit-scrollbar {
-    width: 1rem;
     border-radius: 0.5rem;
     width: 10px;
   }
