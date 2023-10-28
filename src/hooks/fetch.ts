@@ -36,7 +36,8 @@ export const useCurrentUserInfo = () => {
       userInfo.metadata.following = Following.metadata;
       return ApplyDefaults(userInfo.metadata);
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: window.location.pathname !== '/login' && window.location.pathname !== '/register'
   });
 
   return {
@@ -438,21 +439,22 @@ export const useMessagesData = (conversationID: string) => {
   };
 };
 
-export const useVideoCall = (conversationID: string) => {
+export const useMessageCall = (conversationID: string | undefined, type: string) => {
   const { data, isPending, isError, isFetching, refetch } = useQuery({
-    queryKey: ['videoCall', conversationID],
+    queryKey: ['messageCall', conversationID, type],
     queryFn: async () => {
-      const { data } = await messageService.callVideo(conversationID);
+      const { data } = await messageService.callVideo(conversationID, type);
       return data.metadata;
     },
     staleTime: Infinity,
+    enabled: !!conversationID
   });
 
   return {
-    isLoadingVideoCall: isPending,
-    isErrorVideoCall: isError,
-    videoCall: data!,
-    isFetchingVideoCall: isFetching,
-    fetchVideoCall: refetch
+    isLoadingMessageCall: isPending,
+    isErrorMessageCall: isError,
+    tokenMessageCall: data!,
+    isFetchingMessageCall: isFetching,
+    fetchMessageCall: refetch
   };
 };

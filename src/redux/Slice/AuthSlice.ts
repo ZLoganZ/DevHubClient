@@ -4,12 +4,14 @@ import { userService } from '@/services/UserService';
 
 const getUserID = async () => {
   try {
+    const pathname = window.location.pathname;
+    if (pathname === '/login' || pathname === '/register') return 'Méo có UserID!';
+
     const { data } = await userService.getUserInfo();
 
     return data.metadata._id;
   } catch (error) {
     console.log(error);
-    window.location.replace('/login');
     return 'Méo có UserID!';
   }
 };

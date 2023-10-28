@@ -92,14 +92,12 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
       setIsTyping(true);
     });
     chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
-      setIsTyping(false);
+      setIsTyping(typingUsers.length !== 1);
       setTimeout(() => {
         setTypingUsers((prev) => prev.filter((user) => user !== data));
       }, 500);
     });
-  }, []);
 
-  useEffect(() => {
     if (typingDiv.current) {
       typingDiv.current.style.transition = '0.4s';
       if (typingUsers.length === 0 || !isTyping) {
@@ -110,7 +108,12 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
         typingDiv.current.style.transform = 'translateY(-2rem)';
       }
     }
-  }, [typingUsers, isTyping]);
+
+    return () => {
+      chatSocket.off(IS_TYPING + conversationID);
+      chatSocket.off(STOP_TYPING + conversationID);
+    };
+  }, [typingUsers.length, currentUserInfo, isTyping]);
 
   const styleStatus = useMemo(() => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
@@ -230,9 +233,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
                 return (
                   <img
                     key={member._id}
-                    className={`rounded-full top-3 left-${
-                      index * 8 + typingUsers.length * 1
-                    } absolute h-6 w-6 overflow-hidden`}
+                    className={`rounded-full top-3 left-${index * 8} absolute h-6 w-6 overflow-hidden`}
                     src={getImageURL(member.user_image, 'avatar_mini')}
                   />
                 );
@@ -240,9 +241,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID, isDisplayShare, setIsD
               return null;
             })}
             <div
-              className={`typing-indicator rounded-full left-${
-                typingUsers.length * 8 + typingUsers.length * 2
-              }`}
+              className={`typing-indicator rounded-full left-${typingUsers.length * 8}`}
               style={{ backgroundColor: themeColorSet.colorBg4 }}>
               <div /> <div /> <div />
             </div>
