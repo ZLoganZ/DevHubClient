@@ -11,8 +11,6 @@ const AvatarMessage: React.FC<AvatarProps> = ({ size = 36, user }) => {
   const { members } = useAppSelector((state) => state.socketIO);
   const isActive = members.indexOf(user?._id!) !== -1;
 
-  // const isActive = true;
-
   return (
     <div className='relative'>
       <div
