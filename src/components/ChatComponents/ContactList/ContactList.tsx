@@ -81,6 +81,7 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
                     }
                   }}>
                   <Input
+                    allowClear
                     placeholder='Search conversation'
                     className='rounded-full mx-0'
                     prefix={<SearchOutlined className='text-2xl' />}

@@ -1,4 +1,6 @@
+import { Dropdown, MenuProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -17,6 +19,21 @@ interface ConversationBoxProps {
   conversation: ConversationType;
   selected?: boolean;
 }
+
+const items: MenuProps['items'] = [
+  {
+    label: 'Mark as unread',
+    key: '2'
+  },
+  {
+    label: 'Mute',
+    key: '3'
+  },
+  {
+    label: 'Delete chat',
+    key: '4'
+  }
+];
 
 const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selected }) => {
   useAppSelector((state) => state.theme.change);
@@ -83,40 +100,48 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div
-        className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-lg transition'
-        style={{
-          backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
-        }}>
-        {conversation.type === 'group' ? (
-          <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
-        ) : (
-          <Avatar key={conversation._id} user={otherUser} />
-        )}
+      <Dropdown menu={{ items }} trigger={['contextMenu']}>
+        <NavLink to={`/message/${conversation._id}`}>
+          <div
+            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-lg transition'
+            style={{
+              backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
+            }}>
+            {conversation.type === 'group' ? (
+              <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
+            ) : (
+              <Avatar key={conversation._id} user={otherUser} />
+            )}
 
-        <div className='min-w-0 flex-1'>
-          <div className='focus:outline-none'>
-            <span className='absolute inset-0' aria-hidden='true' />
-            <div className='flex justify-between items-center mb-1'>
-              <p
-                className={`text-md font-medium`}
-                style={{
-                  color: themeColorSet.colorText1
-                }}>
-                <span style={{ color: themeColorSet.colorText1 }}>{conversation.name ?? otherUser.name}</span>
-              </p>
-              {conversation.lastMessage?.createdAt && (
-                <p className=' text-xs  text-gray-400 font-light' style={{ color: themeColorSet.colorText3 }}>
-                  {isShowTime}
+            <div className='min-w-0 flex-1'>
+              <div className='focus:outline-none'>
+                <span className='absolute inset-0' aria-hidden='true' />
+                <div className='flex justify-between items-center mb-1'>
+                  <p
+                    className={`text-md font-medium`}
+                    style={{
+                      color: themeColorSet.colorText1
+                    }}>
+                    <span style={{ color: themeColorSet.colorText1 }}>
+                      {conversation.name ?? otherUser.name}
+                    </span>
+                  </p>
+                  {conversation.lastMessage?.createdAt && (
+                    <p
+                      className=' text-xs  text-gray-400 font-light'
+                      style={{ color: themeColorSet.colorText3 }}>
+                      {isShowTime}
+                    </p>
+                  )}
+                </div>
+                <p className={`truncate text-sm ${!isOwn && !hasSeen && `font-bold`}`}>
+                  <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
                 </p>
-              )}
+              </div>
             </div>
-            <p className={`truncate text-sm ${!isOwn && !hasSeen && `font-bold`}`}>
-              <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
-            </p>
           </div>
-        </div>
-      </div>
+        </NavLink>
+      </Dropdown>
     </StyleProvider>
   );
 };

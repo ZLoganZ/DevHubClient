@@ -46,6 +46,10 @@ export class MessageService extends BaseService {
   callVideo = (payload: string | undefined, type: string): Promise<AxiosResponse<ResponseType<string>>> => {
     return this.get(`/chat/token/?conversation_id=${payload}&type=${type}`);
   };
+
+  deleteConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+    return this.delete(`/chat/conversations/${payload}`);
+  };
 }
 
 export const messageService = new MessageService();

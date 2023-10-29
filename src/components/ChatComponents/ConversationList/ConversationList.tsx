@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Col, ConfigProvider, Input, Row, Space } from 'antd';
+import { Col, ConfigProvider, Empty, Input, Row, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersLine } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
@@ -34,6 +34,8 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   const { mutateReceiveConversation } = useReceiveConversation();
 
+  const [search, setSearch] = useState('');
+  const [searchConversation, setSearchConversation] = useState<ConversationType[]>(conversations);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
@@ -47,6 +49,36 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
       mutateReceiveConversation(conversation);
     });
   }, [userID]);
+
+  useEffect(() => {
+    if (search === '') {
+      setSearchConversation(conversations);
+    } else {
+      const searchTerm = removeAccents(search).toLowerCase();
+
+      setSearchConversation(
+        conversations.filter((conversation) => {
+          if (conversation.type === 'group') {
+            const name = removeAccents(conversation.name);
+            return name.toLowerCase().includes(searchTerm);
+          } else {
+            const otherUser = conversation.members.filter((member) => member._id !== currentUserInfo._id)[0];
+
+            const name = removeAccents(otherUser.name);
+            return name.toLowerCase().includes(searchTerm);
+          }
+        })
+      );
+    }
+  }, [search]);
+
+  const removeAccents = (str: string) => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D');
+  };
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -109,8 +141,11 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                     }
                   }}>
                   <Input
+                    allowClear
                     placeholder='Search conversation'
                     className='rounded-full mx-0'
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                     prefix={<SearchOutlined className='text-2xl' />}
                   />
                 </ConfigProvider>
@@ -125,11 +160,24 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 maxHeight: 'calc(100vh - 160px)'
               }}>
               <div className='userChatContact'>
-                {conversations.map((conversation) => (
-                  <NavLink to={`/message/${conversation._id}`} key={conversation._id}>
-                    <ConversationBox conversation={conversation} selected={conversation._id === selected} />
-                  </NavLink>
-                ))}
+                {searchConversation.length === 0 ? (
+                  <Empty
+                    image='https://cdn.iconscout.com/icon/free/png-256/free-empty-folder-2702275-2244989.png'
+                    description={<p style={{ color: themeColorSet.colorText3 }}>No conversation found</p>}
+                    imageStyle={{
+                      display: 'flex',
+                      justifyContent: 'center'
+                    }}
+                  />
+                ) : (
+                  searchConversation.map((conversation) => (
+                    <ConversationBox
+                      key={conversation._id}
+                      conversation={conversation}
+                      selected={conversation._id === selected}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </Row>

@@ -439,6 +439,21 @@ export const useMessagesData = (conversationID: string) => {
   };
 };
 
+/**
+ * The `useMessageCall` function is a custom hook that fetches video call data for a specific
+ * conversation ID and type.
+ * @param {string | undefined} conversationID - The conversationID parameter is a string that
+ * represents the ID of the conversation for which the message call is being made. It is optional and
+ * can be undefined if there is no conversation ID available.
+ * @param {string} type - The `type` parameter is a string that represents the type of message call. It
+ * could be "video", "audio", or any other type of call.
+ * @returns The function `useMessageCall` returns an object with the following properties:
+ * - `isLoadingMessageCall` is a boolean that indicates whether the message call data is still loading.
+ * - `isErrorMessageCall` is a boolean that indicates whether there is an error.
+ * - `tokenMessageCall` is an object that contains information about the message call token.
+ * - `isFetchingMessageCall` is a boolean that indicates whether the query is currently fetching.
+ * - `fetchMessageCall` is a function that refetches the message call data.
+ */
 export const useMessageCall = (conversationID: string | undefined, type: string) => {
   const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['messageCall', conversationID, type],

@@ -16,6 +16,7 @@ import {
   UserUpdateDataType
 } from '@/types';
 import { useAppDispatch, useAppSelector } from './special';
+import { messageService } from '@/services/MessageService';
 
 // ----------------------------- MUTATIONS -----------------------------
 
@@ -474,6 +475,16 @@ export const useFollowUser = () => {
   };
 };
 
+/**
+ * The `useSendMessage` function is a custom hook in TypeScript that handles sending a message and
+ * updating the query data for conversations and messages.
+ * @returns The `useSendMessage` hook returns an object with the following properties:
+ * - `mutateSendMessage` is a function that handles the mutation of the message.
+ * - `isLoadingSendMessage` is a boolean that indicates whether the message is still loading.
+ * - `isErrorSendMessage` is a boolean that indicates whether there is an error.
+ * - `isSuccessSendMessage` is a boolean that indicates whether the message was successfully sent.
+ * - `message` is the message object.
+ */
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
@@ -541,6 +552,16 @@ export const useSendMessage = () => {
   };
 };
 
+/**
+ * The `useReceiveMessage` function is a custom hook in TypeScript that handles receiving and updating
+ * messages in a conversation.
+ * @returns The `useReceiveMessage` hook returns an object with the following properties:
+ * - `mutateReceiveMessage` is a function that handles the mutation of the message.
+ * - `isLoadingReceiveMessage` is a boolean that indicates whether the message is still loading.
+ * - `isErrorReceiveMessage` is a boolean that indicates whether there is an error.
+ * - `isSuccessReceiveMessage` is a boolean that indicates whether the message was successfully received.
+ * - `message` is the message object.
+ */
 export const useReceiveMessage = () => {
   const queryClient = useQueryClient();
 
@@ -628,6 +649,16 @@ export const useReceiveMessage = () => {
   };
 };
 
+/**
+ * The `useReceiveConversation` function is a custom hook that handles the mutation of a conversation
+ * object and updates the query data for conversations.
+ * @returns The function `useReceiveConversation` returns an object with the following properties:
+ * - `mutateReceiveConversation` is a function that handles the mutation of the conversation.
+ * - `isLoadingReceiveConversation` is a boolean that indicates whether the conversation is still loading.
+ * - `isErrorReceiveConversation` is a boolean that indicates whether there is an error.
+ * - `isSuccessReceiveConversation` is a boolean that indicates whether the conversation was successfully received.
+ * - `conversation` is the conversation object.
+ */
 export const useReceiveConversation = () => {
   const queryClient = useQueryClient();
 
@@ -668,6 +699,19 @@ export const useReceiveConversation = () => {
   };
 };
 
+/**
+ * The `useReceiveSeenConversation` function is a custom hook in TypeScript that handles the mutation
+ * of a conversation's "seen" status and updates the query data accordingly.
+ * @returns The function `useReceiveSeenConversation` returns an object with the following
+ * properties:
+ * - `mutateReceiveSeenConversation` is a function that handles the mutation of the conversation.
+ * - `isLoadingReceiveSeenConversation` is a boolean that indicates whether the conversation is still
+ * loading.
+ * - `isErrorReceiveSeenConversation` is a boolean that indicates whether there is an error.
+ * - `isSuccessReceiveSeenConversation` is a boolean that indicates whether the conversation was
+ * successfully received.
+ * - `conversation` is the conversation object.
+ */
 export const useReceiveSeenConversation = () => {
   const queryClient = useQueryClient();
 
@@ -708,5 +752,31 @@ export const useReceiveSeenConversation = () => {
     isErrorReceiveSeenConversation: isError,
     isSuccessReceiveSeenConversation: isSuccess,
     conversation: variables
+  };
+};
+
+export const useDeleteConversation = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (conversationID: string) => {
+      await messageService.deleteConversation(conversationID);
+    },
+    onSuccess(_, conversationID) {
+      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+        if (!oldData) return;
+
+        const newData = [...oldData];
+
+        return newData.filter((item) => item._id !== conversationID);
+      });
+    }
+  });
+
+  return {
+    mutateDeleteConversation: mutate,
+    isLoadingDeleteConversation: isPending,
+    isErrorDeleteConversation: isError,
+    isSuccessDeleteConversation: isSuccess
   };
 };
