@@ -42,7 +42,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
-  const [isDisplayShare, setIsDisplayShare] = useState(false);
+  const [isDisplayShare, setIsDisplayShare] = useState(true);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
@@ -149,7 +149,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={true ? 16 : 24} className='h-full'>
+          <Col span={isDisplayShare ? 16 : 24} className='h-full'>
             <div
               className='header flex justify-between items-center py-6 px-6'
               style={{
@@ -272,8 +272,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
             </div>
             <InputChat conversationID={conversationID} />
           </Col>
-          {true && (
-            <Col span={8}>
+          {isDisplayShare && (
+            <Col span={8} className='h-full'>
               <SharedMedia conversationID={conversationID!} />
             </Col>
           )}
