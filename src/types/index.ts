@@ -229,7 +229,7 @@ export type ConversationType = {
   name: string;
   lastMessage: MessageType;
   seen: UserInfoType[];
-  image?: ImageType;
+  image?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -255,13 +255,4 @@ export type CreateMessageDataType = {
   conversation_id: string;
   content?: string;
   image?: string;
-};
-
-export type ImageType = {
-  _id: string;
-  key: string;
-  link: string;
-  user_id: string;
-  createdAt: string;
-  updatedAt: string;
 };

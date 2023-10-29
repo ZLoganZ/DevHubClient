@@ -9,13 +9,16 @@ import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import InputChat from '@/components/ChatComponents/InputChat/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
-import { ConversationType, MessageType } from '@/types';
+import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
+import audioCall from '@/util/audioCall';
+import videoChat from '@/util/videoChat';
 import StyleProvider from './cssMessageChat';
 
 interface IParams {
@@ -30,10 +33,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
-  const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage } =
+  const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage, hasPreviousMessages } =
     useMessagesData(conversationID);
-
-    console.log('currentConversation.image::', currentConversation.image);
 
   const otherUser = useOtherUser(currentConversation);
 
@@ -184,34 +185,10 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
               <Space align='center' size={20} className='flex gap-3'>
-                <div
-                  className='call p-1'
-                  onClick={async () => {
-                    const width = window.screen.width / 2; // Width of the pop-up window
-                    const height = window.screen.height / 2; // Height of the pop-up window
-                    const left = window.screen.width / 2 - width / 2;
-                    const top = window.screen.height / 2 - height / 2;
-                    window.open(
-                      `/call/${conversationID}/voice`,
-                      'audioCall',
-                      `width=${width},height=${height},top=${top},left=${left}`
-                    );
-                  }}>
+                <div className='call p-1' onClick={() => audioCall(conversationID)}>
                   <FontAwesomeIcon className='text-lg cursor-pointer' icon={faPhone} />
                 </div>
-                <div
-                  className='call p-1'
-                  onClick={async () => {
-                    const width = window.screen.width / 2; // Width of the pop-up window
-                    const height = window.screen.height / 2; // Height of the pop-up window
-                    const left = window.screen.width / 2 - width / 2;
-                    const top = window.screen.height / 2 - height / 2;
-                    window.open(
-                      `/call/${conversationID}/video`,
-                      'videoCall',
-                      `width=${width},height=${height},top=${top},left=${left}`
-                    );
-                  }}>
+                <div className='call p-1' onClick={() => videoChat(conversationID)}>
                   <FontAwesomeIcon className='text-xl cursor-pointer' icon={faVideoCamera} />
                 </div>
                 <div className='displayShare ml-4 p-1'>
@@ -232,6 +209,15 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 overflow: 'auto'
               }}>
               <div className='flex-1 overflow-y-hidden'>
+                {!hasPreviousMessages && (
+                  <ChatWelcome
+                    type={currentConversation.type}
+                    name={currentConversation.name}
+                    members={currentConversation.members}
+                    otherUser={otherUser}
+                    image={currentConversation.image}
+                  />
+                )}
                 <div className='pt-1' ref={topRef} />
                 {messages.map((message, index, messArr) => (
                   <MessageBox

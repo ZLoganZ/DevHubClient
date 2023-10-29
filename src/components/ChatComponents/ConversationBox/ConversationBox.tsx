@@ -1,17 +1,30 @@
 import { Dropdown, MenuProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBellSlash,
+  faPhone,
+  faRightFromBracket,
+  faSquareCheck,
+  faTrash,
+  faUser,
+  faVideoCamera
+} from '@fortawesome/free-solid-svg-icons';
+import { faSquareCheck as faReSquareCheck } from '@fortawesome/free-regular-svg-icons';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import videoChat from '@/util/videoChat';
+import audioCall from '@/util/audioCall';
 import { getTheme } from '@/util/theme';
 import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
+import { useLeaveGroup, useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
 import { ConversationType, MessageType } from '@/types';
-import { PRIVATE_MSG, SEEN_MSG } from '@/util/constants/SettingSystem';
+import { PRIVATE_MSG, SEEN_MSG, UNSEEN_MSG } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
 
@@ -20,30 +33,97 @@ interface ConversationBoxProps {
   selected?: boolean;
 }
 
-const items: MenuProps['items'] = [
-  {
-    label: 'Mark as unread',
-    key: '2'
-  },
-  {
-    label: 'Mute',
-    key: '3'
-  },
-  {
-    label: 'Delete chat',
-    key: '4'
-  }
-];
-
 const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selected }) => {
   useAppSelector((state) => state.theme.change);
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
 
+  const navigate = useNavigate();
+
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
   const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
   const { mutateReceiveMessage } = useReceiveMessage();
+  const { mutateLeaveGroup } = useLeaveGroup();
+
+  const items: MenuProps['items'] = [
+    {
+      label: conversation.seen.some((user) => user._id === currentUserInfo._id)
+        ? 'Mark as Unread'
+        : 'Mark as Read',
+      style: {
+        display:
+          !!!conversation.lastMessage || conversation.lastMessage.sender._id === currentUserInfo._id
+            ? 'none'
+            : 'block'
+      },
+      key: '1',
+      icon: conversation.seen.some((user) => user._id === currentUserInfo._id) ? (
+        <FontAwesomeIcon icon={faReSquareCheck} />
+      ) : (
+        <FontAwesomeIcon icon={faSquareCheck} />
+      ),
+      onClick: () => {
+        !conversation.seen.some((user) => user._id === currentUserInfo._id)
+          ? chatSocket.emit(SEEN_MSG, {
+              conversationID: conversation._id,
+              userID: currentUserInfo._id
+            })
+          : chatSocket.emit(UNSEEN_MSG, {
+              conversationID: conversation._id,
+              userID: currentUserInfo._id
+            });
+      }
+    },
+    {
+      label: 'Mute',
+      key: '2',
+      icon: <FontAwesomeIcon icon={faBellSlash} />
+    },
+    {
+      label: 'View Profile',
+      key: '4',
+      icon: <FontAwesomeIcon icon={faUser} />,
+      onClick: () => {
+        navigate(`/user/${otherUser._id}`);
+      },
+      style: {
+        display: conversation.type === 'group' ? 'none' : 'block'
+      }
+    },
+    {
+      type: 'divider'
+    },
+    {
+      label: 'Audio Call',
+      key: '5',
+      icon: <FontAwesomeIcon icon={faPhone} />,
+      onClick: () => audioCall(conversation._id)
+    },
+    {
+      label: 'Video Chat',
+      key: '6',
+      icon: <FontAwesomeIcon icon={faVideoCamera} />,
+      onClick: () => videoChat(conversation._id)
+    },
+    {
+      type: 'divider'
+    },
+    {
+      label: conversation.type === 'group' ? 'Leave Group' : 'Delete Chat',
+      danger: true,
+      key: '3',
+      onClick: () => {
+        mutateLeaveGroup(conversation._id);
+      },
+      icon:
+        conversation.type === 'group' ? (
+          <FontAwesomeIcon icon={faRightFromBracket} />
+        ) : (
+          <FontAwesomeIcon icon={faTrash} />
+        )
+    }
+  ];
 
   const isOwn = useMemo(() => {
     return currentUserInfo._id === conversation.lastMessage?.sender?._id ?? false;

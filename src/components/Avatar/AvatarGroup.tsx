@@ -1,4 +1,4 @@
-import { ImageType, UserInfoType } from '@/types';
+import { UserInfoType } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import getImageURL from '@/util/getImageURL';
@@ -8,10 +8,11 @@ import { getTheme } from '@/util/theme';
 
 interface AvatarGroupProps {
   users: UserInfoType[];
-  image?: ImageType;
+  size?: number;
+  image?: string;
 }
 
-const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
+const AvatarGroup: React.FC<AvatarGroupProps> = ({ size = 36, users, image }) => {
   const { themeColorSet } = getTheme();
 
   const { members } = useAppSelector((state) => state.socketIO);
@@ -27,7 +28,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
       .indexOf(true) !== -1;
 
   const positionMap: { [key: number]: string } = {
-    0: 'top-0 left-[9px]',
+    0: `top-0 left-[${size / 4}px]`,
     1: 'bottom-1',
     2: 'bottom-1 right-0'
   };
@@ -39,16 +40,17 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
     positionMap[3] = 'bottom-0 right-0';
   }
 
-  console.log('image::', image);
-
   return (
-    <div className='relative h-9 w-9'>
+    <div
+      className='relative'
+      style={{
+        width: size,
+        height: size
+      }}>
       {image ? (
-        <div className='relative rounded-full overflow-hidden h-9 w-9'>
+        <div className='relative rounded-full overflow-hidden'>
           <img
-            // src={getImageURL(image)}
-            // src={image.link}
-            src={`https://ik.imagekit.io/admintck/${image.key}?tr=w-200,h=200`}
+            src={getImageURL(image, 'avatar_mini')}
             alt='Avatar'
             style={{
               width: '100%',
@@ -61,10 +63,14 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
         slicedUsers.map((user, index) => (
           <div
             key={user._id}
-            className={`absolute inline-block rounded-full overflow-hidden h-[18px] w-[18px] ${positionMap[index]}`}>
+            className={`absolute inline-block rounded-full overflow-hidden ${positionMap[index]}`}
+            style={{
+              width: size / 2,
+              height: size / 2
+            }}>
             {index < 3 ? (
               <img
-                src={getImageURL(user.user_image)}
+                src={getImageURL(user.user_image, 'avatar_mini')}
                 alt='Avatar'
                 style={{
                   width: '100%',
@@ -99,7 +105,15 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
         ))
       )}
       {isActive && (
-        <span className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 right-0 h-2 w-2' />
+        <span
+          className={`absolute block rounded-full bg-green-500 ring-2 ring-white ${
+            image ? 'top-0 right-0' : '-top-1 -right-1'
+          } `}
+          style={{
+            width: size / 4,
+            height: size / 4
+          }}
+        />
       )}
     </div>
   );

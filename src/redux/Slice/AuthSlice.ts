@@ -1,11 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { userService } from '@/services/UserService';
+import { AUTHORIZATION } from '@/util/constants/SettingSystem';
 
 const getUserID = async () => {
   try {
     const pathname = window.location.pathname;
-    if (pathname === '/login' || pathname === '/register') return 'Méo có UserID!';
+    if (
+      (pathname === '/login' && !localStorage.getItem(AUTHORIZATION)) ||
+      (pathname === '/register' && !localStorage.getItem(AUTHORIZATION))
+    )
+      return 'Méo có UserID!';
 
     const { data } = await userService.getUserInfo();
 

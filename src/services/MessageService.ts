@@ -50,6 +50,10 @@ export class MessageService extends BaseService {
   deleteConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
     return this.delete(`/chat/conversations/${payload}`);
   };
+
+  leaveGroup = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+    return this.put(`/chat/conversations/${payload}/leave`);
+  };
 }
 
 export const messageService = new MessageService();

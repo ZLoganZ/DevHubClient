@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
@@ -17,6 +18,7 @@ import {
 } from '@/types';
 import { useAppDispatch, useAppSelector } from './special';
 import { messageService } from '@/services/MessageService';
+import { LEAVE_GROUP } from '@/util/constants/SettingSystem';
 
 // ----------------------------- MUTATIONS -----------------------------
 
@@ -778,5 +780,81 @@ export const useDeleteConversation = () => {
     isLoadingDeleteConversation: isPending,
     isErrorDeleteConversation: isError,
     isSuccessDeleteConversation: isSuccess
+  };
+};
+
+export const useLeaveGroup = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (conversationID: string) => {
+      const { data } = await messageService.leaveGroup(conversationID);
+      return data.metadata;
+    },
+    onSuccess(conversation, conversationID) {
+      if (window.location.pathname.includes(conversationID)) navigate('/message');
+      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+        if (!oldData) return;
+
+        const newData = [...oldData].filter((item) => item._id !== conversationID);
+
+        return newData;
+      });
+
+      chatSocket.emit(LEAVE_GROUP, conversation);
+    }
+  });
+
+  return {
+    mutateLeaveGroup: mutate,
+    isLoadingLeaveGroup: isPending,
+    isErrorLeaveGroup: isError,
+    isSuccessLeaveGroup: isSuccess
+  };
+};
+
+export const useReceiveLeaveGroup = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+    mutationFn: async (conversation: ConversationType) => conversation,
+    onSuccess(conversation) {
+      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+        if (!oldData) return;
+
+        const newData = [...oldData];
+
+        const index = newData.findIndex((item) => item._id === conversation._id);
+
+        if (index !== -1) {
+          newData[index] = {
+            ...newData[index],
+            members: conversation.members
+          };
+        }
+
+        return newData;
+      });
+
+      queryClient.setQueryData<ConversationType>(['conversation', conversation._id], (oldData) => {
+        if (!oldData) return;
+
+        return {
+          ...oldData,
+          members: conversation.members
+        };
+      });
+    }
+  });
+
+  return {
+    mutateReceiveLeaveGroup: mutate,
+    isLoadingReceiveLeaveGroup: isPending,
+    isErrorReceiveLeaveGroup: isError,
+    isSuccessReceiveLeaveGroup: isSuccess,
+    conversation: variables
   };
 };

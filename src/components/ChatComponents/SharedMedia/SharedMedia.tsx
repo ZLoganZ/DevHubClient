@@ -21,7 +21,6 @@ const SharedMedia = (Props: SharedMediaProps) => {
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(
     Props.conversationID
   );
-  console.log(currentConversation)
 
   const [items, setItems] = useState<any>([]);
 
@@ -325,9 +324,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
             </div>
 
             <Col>
-              <Row>
-
-              </Row>
+              <Row></Row>
             </Col>
           </div>
         </>

@@ -1,6 +1,6 @@
 import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
@@ -89,23 +89,20 @@ const Chat = () => {
     { name: 'voice-call', icon: faPhone, count: 66 }
   ];
 
-  const changeOptions = useCallback(
-    (check: number) => {
-      switch (check) {
-        case 0:
-          return <ConversationList conversations={conversations} selected={conversationID} />;
-        case 1:
-          return <ContactList followers={followers ?? []} />;
-        case 2:
-          return <></>;
-        case 3:
-          return <></>;
-        default:
-          return <></>;
-      }
-    },
-    [conversations, followers, conversationID, notSeenCount, contactCount]
-  );
+  const OptionRender = useMemo(() => {
+    switch (optionIndex) {
+      case 0:
+        return <ConversationList conversations={conversations} selected={conversationID} />;
+      case 1:
+        return <ContactList followers={followers ?? []} />;
+      case 2:
+        return <></>;
+      case 3:
+        return <></>;
+      default:
+        return <></>;
+    }
+  }, [conversations, followers, conversationID, optionIndex]);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -167,7 +164,7 @@ const Chat = () => {
                   </div>
                 </div>
               </Col>
-              <Col span={5}> {changeOptions(optionIndex)}</Col>
+              <Col span={5}>{OptionRender}</Col>
               <Col span={18}>
                 <div
                   className='chatBox'
@@ -182,10 +179,7 @@ const Chat = () => {
                     </div>
                   ) : (
                     <div style={{ height: '92%' }}>
-                      <MessageChat
-                        key={conversationID}
-                        conversationID={conversationID}
-                      />
+                      <MessageChat key={conversationID} conversationID={conversationID} />
                     </div>
                   )}
                 </div>
