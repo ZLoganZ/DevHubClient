@@ -43,7 +43,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
-  const [isDisplayShare, setIsDisplayShare] = useState(true);
+  const [isDisplayShare, setIsDisplayShare] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
@@ -222,6 +222,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 {messages.map((message, index, messArr) => (
                   <MessageBox
                     key={`${conversationID}-${message._id}`}
+                    type={currentConversation.type}
                     isLastMes={index === messages.length - 1}
                     message={message}
                     seen={currentConversation.seen}

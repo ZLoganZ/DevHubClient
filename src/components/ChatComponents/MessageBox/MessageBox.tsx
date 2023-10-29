@@ -9,7 +9,7 @@ import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 
-import { MessageType, UserInfoType } from '@/types';
+import { MessageType, TypeofConversation, UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 
 interface IMessageBox {
@@ -18,9 +18,17 @@ interface IMessageBox {
   isPrevMesGroup: boolean;
   isNextMesGroup: boolean;
   isLastMes: boolean;
+  type: TypeofConversation;
 }
 
-const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMesGroup, isPrevMesGroup }) => {
+const MessageBox: React.FC<IMessageBox> = ({
+  message,
+  isLastMes,
+  seen,
+  isNextMesGroup,
+  isPrevMesGroup,
+  type
+}) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -32,7 +40,7 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
     return seen.filter((user) => user._id !== message.sender._id).map((user) => user.user_image);
   }, [seen, message]);
 
-  const containerStyle = `flex gap-3 px-2 items-center
+  const containerStyle = `flex gap-3 px-2 items-end
   ${isNextMesGroup && isPrevMesGroup ? 'py-0.5' : ''}
   ${isNextMesGroup && !isPrevMesGroup ? 'pt-2 pb-0.5' : ''}
   ${!isNextMesGroup && isPrevMesGroup ? 'pt-0.5 pb-2' : ''}
@@ -72,6 +80,17 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
         </NavLink>
         <div className={`flex flex-col ${isOwn && 'items-end'}`}>
           <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
+            {type === 'group' && !isOwn && !isPrevMesGroup && (
+              <div className='flex items-center gap-1 mb-1'>
+                <div
+                  className='text-sm'
+                  style={{
+                    color: themeColorSet.colorText2
+                  }}>
+                  {message.sender.name}
+                </div>
+              </div>
+            )}
             <Tooltip
               placement={isOwn ? 'left' : 'right'}
               arrow={false}

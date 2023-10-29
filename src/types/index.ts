@@ -220,7 +220,7 @@ export type ResponseType<T> = {
   metadata: T;
 };
 
-type TypeofConversation = 'private' | 'group';
+export type TypeofConversation = 'private' | 'group';
 
 export type ConversationType = {
   _id: string;

@@ -40,8 +40,8 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ name, type, members, otherUse
           <div className='chatWelcome__container__body'>
             <div className='chatWelcome__container__body__text'>
               {type === 'private'
-                ? `Send photos and messages to your friend.`
-                : `Send photos and messages to your group.`}
+                ? `Send photos and messages to your friend`
+                : `Send photos and messages to your group`}
             </div>
           </div>
         </div>

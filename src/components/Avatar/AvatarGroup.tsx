@@ -86,7 +86,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ size = 36, users, image }) =>
                 }}>
                 <FontAwesomeIcon
                   style={{
-                    fontSize: '5px',
+                    fontSize: size / 7,
                     color: themeColorSet.colorText2
                   }}
                   icon={faPlus}
@@ -94,7 +94,7 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ size = 36, users, image }) =>
                 <div
                   className='text-xs'
                   style={{
-                    fontSize: '9px',
+                    fontSize: size / 4,
                     color: themeColorSet.colorText2
                   }}>
                   {users.length - 3}

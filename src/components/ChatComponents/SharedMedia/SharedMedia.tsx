@@ -1,5 +1,4 @@
-import { ReactHTMLElement, useEffect, useState } from 'react';
-import { LogoutOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
 import {
   faCaretDown,
   faCaretRight,
@@ -166,7 +165,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
               <div className='mt-3 w-full flex flex-row justify-between items-center'>
                 <div className='user flex items-center' key={item._id}>
                   <div className='avatar-member relative cursor-pointer'>
-                    <Avatar key={item._id} user={item} width={6} />
+                    <Avatar key={item._id} user={item} />
                   </div>
                   <div
                     className='name flex flex-col text-left ml-2'
@@ -378,13 +377,16 @@ const SharedMedia = (Props: SharedMediaProps) => {
                         key={currentConversation._id}
                         users={currentConversation.members}
                         image={currentConversation.image}
+                        size={80}
                       />
                     ) : (
-                      <Avatar key={otherUser._id} user={otherUser} width={32} />
+                      <Avatar key={otherUser._id} user={otherUser} size={80} />
                     )}
                   </div>
                   <div className='name'>
-                    <span className='font-semibold'>{currentConversation.name ?? otherUser.name}</span>
+                    <span className='font-semibold text-xl'>
+                      {currentConversation.name ?? otherUser.name}
+                    </span>
                   </div>
                 </Space>
               </Row>

@@ -37,6 +37,7 @@ const StyleProvider = styled.div`
           margin-top: 10px;
           font-size: 1.2rem;
           font-weight: 600;
+          color: ${(props) => props.theme.colorText1};
         }
 
         &__members {
