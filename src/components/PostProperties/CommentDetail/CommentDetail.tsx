@@ -5,7 +5,7 @@ import Icon, { DislikeFilled, DislikeOutlined, LikeFilled, LikeOutlined } from '
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
@@ -179,7 +179,7 @@ const CommentDetail: React.FC<CommentProps> = ({ comment, children, postID }) =>
               style={{
                 color: themeColorSet.colorText3
               }}>
-              {comment.createdAt === 'sending...' ? comment.createdAt : formatDateTime(comment.createdAt)}
+              {comment.createdAt === 'sending...' ? comment.createdAt : getDateTimeToNow(comment.createdAt)}
             </div>
           }
           avatar={

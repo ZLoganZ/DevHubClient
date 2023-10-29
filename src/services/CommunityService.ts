@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService';
 
-export class CommunityService extends BaseService {
+class CommunityService extends BaseService {
   constructor() {
     super();
   }

@@ -99,7 +99,7 @@ const MyProfile = () => {
           <Col span={24} className='avatar_cover relative'>
             <div className='cover flex justify-center w-full min-h-80 max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
-                src={getImageURL(currentUserInfo.cover_image) || `/images/ProfilePage/cover.jpg`}
+                src={getImageURL(currentUserInfo.cover_image)}
                 alt='avt'
                 style={{
                   width: '100%',

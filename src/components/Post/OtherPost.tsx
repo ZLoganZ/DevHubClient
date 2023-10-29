@@ -8,7 +8,7 @@ import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
@@ -30,11 +30,11 @@ const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
   const { themeColorSet } = getTheme();
 
   //format date to get full date
-  const [isShowTime, setIsShowTime] = useState(formatDateTime(post.createdAt));
+  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(post.createdAt));
 
   useEffect(() => {
     const timeoutId = setInterval(() => {
-      setIsShowTime(formatDateTime(post.createdAt));
+      setIsShowTime(getDateTimeToNow(post.createdAt));
     }, 60000);
     return () => clearInterval(timeoutId);
   }, []);
@@ -77,7 +77,7 @@ const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
             postID={post._id}
             title={post.post_attributes.title!}
             content={post.post_attributes.content!}
-            img={post.post_attributes.img}
+            image={post.post_attributes.images}
             link={link}
           />
           <Divider style={{ backgroundColor: themeColorSet.colorText1, marginTop: 0 }} />

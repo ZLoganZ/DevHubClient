@@ -1,5 +1,5 @@
 import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,6 +22,7 @@ import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
+import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
 
 const toolbarOptions = [
@@ -48,7 +49,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
 
   const [random, setRandom] = useState(uuidv4().replace(/-/g, ''));
 
-  const [file, setFile]: any = useState(null);
+  const [file, setFile] = useState<RcFile>();
 
   const [content, setContent] = useState('');
 
@@ -81,33 +82,37 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
 
   const form = useForm({
     defaultValues: {
-      title: '',
-      linkImage: null
+      title: ''
     }
   });
 
-  const onSubmit = async (values: any) => {
-    if (content === '<p><br></p>' || content === '<p></p>') {
-      error();
-    } else {
-      const result = await handleUploadImage(file);
-      if (result.status === 'done') {
+  const onSubmit = useCallback(
+    async (values: { title: string }) => {
+      if (content === '<p><br></p>' || content === '<p></p>') {
+        error();
+      } else {
+        const formData = new FormData();
+        if (file) {
+          const result = await handleUploadImage(file);
+          formData.append('image', result.url);
+        }
+
         mutateCreatePost({
           title: values.title,
           content: content,
-          img: result.url
+          image: formData.get('image')?.toString()
         });
       }
-    }
-  };
+    },
+    [content, file]
+  );
 
   useEffect(() => {
     if (isSuccessCreatePost) {
       setContent('');
       setRandom(uuidv4().replace(/-/g, ''));
-      setFile(null);
+      setFile(undefined);
       form.setValue('title', '');
-      form.setValue('linkImage', null);
       messageApi.success('Create post successfully');
     }
 
@@ -116,50 +121,15 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
     }
   }, [isSuccessCreatePost, isErrorCreatePost]);
 
-  const handleUpload = (info: any) => {
-    if (info.fileList.length === 0) return;
-
-    setFile(info?.fileList[0]?.originFileObj);
-    form.setValue('linkImage', info?.fileList[0]?.originFileObj);
-  };
-
   const handleUploadImage = async (file: RcFile) => {
-    if (!file)
-      return {
-        url: null,
-        status: 'done'
-      };
-
     const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
+    formData.append('image', file);
+    const { data } = await imageService.uploadImage(formData);
     return {
-      url: data.secure_url,
+      url: data.metadata.key,
       status: 'done'
     };
   };
-
-  // const handleRemoveImage = async () => {
-  //   form.setValue('linkImage', null);
-  //   const formData = new FormData();
-  //   const public_id = file.public_id;
-  //   formData.append('api_key', '235531261932754');
-  //   formData.append('public_id', public_id);
-  //   const timestamp = String(Date.now());
-  //   formData.append('timestamp', timestamp);
-  //   const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-  //   formData.append('signature', signature);
-  //   const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-  //     method: 'POST',
-  //     body: formData
-  //   });
-  //   const data = await res.json();
-  //   setFile(data);
-  // };
 
   return (
     <ConfigProvider
@@ -180,13 +150,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
           </div>
           <div className='newPostBody'>
             <div className='name_avatar flex items-center'>
-              <Avatar
-                size={isXsScreen ? 40 : 50}
-                src={
-                  getImageURL(currentUser.user_image, 'avatar_mini') ||
-                  './images/DefaultAvatar/default_avatar.png'
-                }
-              />
+              <Avatar size={isXsScreen ? 40 : 50} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
               <div className='name font-bold ml-2'>
                 <NavLink to={`/user/${currentUser._id}`}>{currentUser.name}</NavLink>
               </div>
@@ -246,19 +210,19 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
               </Popover>
               <span>
                 <Upload
-                  accept='image/*'
+                  accept='image/png, image/jpeg, image/jpg'
                   key={random}
                   maxCount={1}
-                  customRequest={async ({ onSuccess }: any) => {
-                    onSuccess('ok');
+                  customRequest={async ({ onSuccess }) => {
+                    if (onSuccess) onSuccess('ok');
                   }}
                   data={() => {
                     return {};
                   }}
                   listType='picture'
-                  onChange={handleUpload}
+                  onChange={(info) => setFile(info.file.originFileObj)}
                   onRemove={() => {
-                    setFile(null);
+                    setFile(undefined);
                   }}>
                   <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>

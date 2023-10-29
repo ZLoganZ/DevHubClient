@@ -1,6 +1,6 @@
-import { format } from 'date-fns';
+import { format, isToday, isThisWeek, isThisYear } from 'date-fns';
 
-const formatDateTime = (date: string) => {
+export const getDateTimeToNow = (date: string) => {
   if (!date) {
     return '';
   }
@@ -28,10 +28,29 @@ const formatDateTime = (date: string) => {
   }
 
   if (diffDays <= 365) {
-    return format(commentDate, 'MMM dd • HH:mm');
+    return format(commentDate, 'MMM dd • h:mm a');
   }
 
   return format(commentDate, 'MMM dd, yyyy');
 };
 
-export default formatDateTime;
+export const getDateTime = (date: string) => {
+  if (!date) {
+    return '';
+  }
+  const commentDate = new Date(date);
+
+  if (isToday(commentDate)) {
+    return format(commentDate, 'h:mm a');
+  }
+
+  if (isThisWeek(commentDate, { weekStartsOn: 0 })) {
+    return format(commentDate, 'EEEE • h:mm a');
+  }
+
+  if (isThisYear(commentDate)) {
+    return format(commentDate, 'MMM dd • h:mm a');
+  }
+
+  return format(commentDate, 'MMM dd, yyyy • h:mm a');
+};

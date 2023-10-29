@@ -12,7 +12,7 @@ import Avatar from '@/components/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import InputChat from '@/components/ChatComponents/InputChat/InputChat';
-import SharedMedia from '@/components/ChatComponents/SharedMedia';
+import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { MessageType } from '@/types';
@@ -43,7 +43,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
-  const [isDisplayShare, setIsDisplayShare] = useState(false);
+  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
@@ -144,13 +144,20 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
   }, []);
 
+  const isMoreThan10Min = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === 0) return true;
+    if (!messArr) return false;
+
+    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() > 600000;
+  }, []);
+
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayShare ? 16 : 24} className='h-full'>
+          <Col span={isDisplayConversationOption ? 16 : 24} className='h-full'>
             <div
               className='header flex justify-between items-center py-6 px-6'
               style={{
@@ -169,7 +176,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </NavLink>
                 )}
                 <div className='flex flex-col'>
-                  <div style={{ color: themeColorSet.colorText1 }}>
+                  <div className='font-semibold' style={{ color: themeColorSet.colorText1 }}>
                     {currentConversation.name ?? (
                       <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
                     )}
@@ -196,7 +203,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     className='text-xl cursor-pointer'
                     icon={faCircleInfo}
                     onClick={() => {
-                      setIsDisplayShare(!isDisplayShare);
+                      setIsDisplayConversationOption(!isDisplayConversationOption);
                     }}
                   />
                 </div>
@@ -228,6 +235,11 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     seen={currentConversation.seen}
                     isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
                     isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                    isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
+                    isAdmin={
+                      currentConversation.admins &&
+                      currentConversation.admins.some((admin) => admin._id === message.sender._id)
+                    }
                   />
                 ))}
                 <div className='pb-1' ref={bottomRef} />
@@ -259,9 +271,9 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
             </div>
             <InputChat conversationID={conversationID} />
           </Col>
-          {isDisplayShare && (
+          {isDisplayConversationOption && (
             <Col span={8} className='h-full'>
-              <SharedMedia conversationID={conversationID!} />
+              <ConversationOption conversationID={conversationID!} />
             </Col>
           )}
         </Row>

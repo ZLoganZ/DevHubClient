@@ -15,8 +15,9 @@ const getUserID = async () => {
     const { data } = await userService.getUserInfo();
 
     return data.metadata._id;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
+    if (error.response.status === 500) localStorage.removeItem(AUTHORIZATION);
     return 'Méo có UserID!';
   }
 };

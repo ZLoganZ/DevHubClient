@@ -8,7 +8,7 @@ import {
   ResponseType
 } from '@/types';
 
-export class MessageService extends BaseService {
+class MessageService extends BaseService {
   constructor() {
     super();
   }

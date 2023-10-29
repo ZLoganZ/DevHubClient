@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { RepositoryType, ResponseType, UserUpdateDataType, UserInfoType } from '@/types';
 import { BaseService } from './BaseService';
 
-export class UserService extends BaseService {
+class UserService extends BaseService {
   constructor() {
     super();
   }

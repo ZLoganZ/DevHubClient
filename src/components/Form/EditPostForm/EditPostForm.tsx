@@ -1,8 +1,7 @@
 import { Button, ConfigProvider, Input, message, Popover, Upload, UploadFile } from 'antd';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState, useMemo, useRef } from 'react';
-import { sha1 } from 'crypto-hash';
+import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,6 +15,7 @@ import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import getImageURL from '@/util/getImageURL';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssEditPostForm';
 
 const toolbarOptions = [
@@ -29,10 +29,10 @@ interface PostProps {
   id: string;
   title: string;
   content: string;
-  img?: string;
+  image?: string[];
 }
 
-const EditPostForm = ({ id, title, content, img }: PostProps) => {
+const EditPostForm = ({ id, title, content, image }: PostProps) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -43,6 +43,7 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
   const { mutateUpdatePost } = useUpdatePost();
 
   const [contentQuill, setContentQuill] = useState(content);
+  const [imageFile, setImageFile] = useState<RcFile>();
 
   useEffect(() => {
     setContentQuill(contentQuill);
@@ -50,76 +51,38 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
 
   const ReactQuillRef = useRef<any>();
 
-  const handleUploadImage = async (file: RcFile | string) => {
-    if (!file)
-      return {
-        url: null,
-        status: 'done'
-      };
-
+  const handleUploadImage = async (file: RcFile) => {
     const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
+    formData.append('image', file);
+    const { data } = await imageService.uploadImage(formData);
     return {
-      url: data.secure_url,
-      status: 'done'
-    };
-  };
-
-  const handleRemoveImage = async (imageURL: string) => {
-    const nameSplit = imageURL.split('/');
-    const duplicateName = nameSplit.pop();
-
-    // Remove .
-    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
-
-    const formData = new FormData();
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id!);
-    const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    return {
-      url: data,
+      url: data.metadata.key,
       status: 'done'
     };
   };
 
   const form = useForm({
     defaultValues: {
-      title: title,
-      img: img
+      title: title
     }
   });
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: { title: string }) => {
     if (contentQuill === '<p><br></p>') {
       error();
     } else {
+      const formdata = new FormData();
       dispatch(setLoading(true));
-      if (form.getValues('img') !== img) {
-        if (form.getValues('img')) {
-          const result = await handleUploadImage(form.getValues('img')!);
-          form.setValue('img', result.url);
-        }
-        if (img) await handleRemoveImage(img);
+      if (imageFile) {
+        const result = await handleUploadImage(imageFile);
+        formdata.append('image', result.url);
+
+        // if (image) await handleRemoveImage(image);
       }
-      values.img = form.getValues('img');
-      values.content = contentQuill;
 
       mutateUpdatePost({
         id: id,
-        postUpdate: values
+        postUpdate: { ...values, content: contentQuill, image: formdata.get('image')?.toString() }
       });
     }
   };
@@ -149,7 +112,7 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
   useEffect(() => {
     // Dispatch callback submit lên cho DrawerHOC
     dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
-  }, [contentQuill, form]);
+  }, [contentQuill, form, imageFile]);
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -159,20 +122,12 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
     });
   };
 
-  const nameImage = useMemo(() => {
-    return img?.replace(/\_[^_]*$/, '');
-  }, [img]);
-
-  const handleUpload = (info: any) => {
-    form.setValue('img', info?.fileList[0]?.originFileObj);
-  };
-
   const fileList: UploadFile[] = [
     {
       uid: '-1',
-      name: nameImage!,
+      name: image![0],
       status: 'done',
-      url: getImageURL(img!, 'post_mini')
+      url: getImageURL(image![0], 'post_mini')
     }
   ];
 
@@ -243,11 +198,11 @@ const EditPostForm = ({ id, title, content, img }: PostProps) => {
               </Popover>
               <span>
                 <Upload
-                  name='img'
+                  name='image'
                   listType='picture'
-                  onChange={handleUpload}
+                  onChange={(info) => setImageFile(info.file.originFileObj)}
                   accept='image/png, image/jpeg, image/jpg'
-                  defaultFileList={img ? [...fileList] : []}
+                  defaultFileList={image ? [...fileList] : []}
                   maxCount={1}
                   customRequest={async ({ onSuccess }) => {
                     if (onSuccess) {

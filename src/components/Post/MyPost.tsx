@@ -12,7 +12,7 @@ import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
 import DeleteModal from '@/components/PostProperties/DeletePostModal';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
@@ -33,11 +33,11 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
   const { themeColorSet } = getTheme();
 
   //format date to get full date
-  const [isShowTime, setIsShowTime] = useState(formatDateTime(post.createdAt));
+  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(post.createdAt));
 
   useEffect(() => {
     const timeoutId = setInterval(() => {
-      setIsShowTime(formatDateTime(post.createdAt));
+      setIsShowTime(getDateTimeToNow(post.createdAt));
     }, 60000);
     return () => clearInterval(timeoutId);
   }, []);
@@ -83,7 +83,7 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
                 id={post._id}
                 title={post.post_attributes.title!}
                 content={post.post_attributes.content!}
-                img={post.post_attributes.img}
+                image={post.post_attributes.images}
               />
             )
           })
@@ -110,7 +110,7 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         postID={post._id}
-        image={post.post_attributes.img}
+        image={post.post_attributes.images}
       />
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
@@ -130,7 +130,7 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
             postID={post._id}
             title={post.post_attributes.title!}
             content={post.post_attributes.content!}
-            img={post.post_attributes.img}
+            image={post.post_attributes.images}
             link={link}
           />
           <Divider style={{ backgroundColor: themeColorSet.colorText1, marginTop: 0 }} />

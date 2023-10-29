@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService';
 
-export class GetStartedService extends BaseService {
+class GetStartedService extends BaseService {
   constructor() {
     super();
   }

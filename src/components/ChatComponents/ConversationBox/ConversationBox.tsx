@@ -7,7 +7,7 @@ import {
   faPhone,
   faRightFromBracket,
   faSquareCheck,
-  faTrash,
+  faTrashCan,
   faUser,
   faVideoCamera
 } from '@fortawesome/free-solid-svg-icons';
@@ -20,7 +20,7 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import videoChat from '@/util/videoChat';
 import audioCall from '@/util/audioCall';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { useLeaveGroup, useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
 import { ConversationType, MessageType } from '@/types';
@@ -49,8 +49,8 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const items: MenuProps['items'] = [
     {
       label: conversation.seen.some((user) => user._id === currentUserInfo._id)
-        ? 'Mark as Unread'
-        : 'Mark as Read',
+        ? 'Undo reading'
+        : 'Mark as read',
       style: {
         display:
           !!!conversation.lastMessage || conversation.lastMessage.sender._id === currentUserInfo._id
@@ -76,12 +76,12 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
       }
     },
     {
-      label: 'Mute',
+      label: 'Mute notifications',
       key: '2',
       icon: <FontAwesomeIcon icon={faBellSlash} />
     },
     {
-      label: 'View Profile',
+      label: 'View profile',
       key: '4',
       icon: <FontAwesomeIcon icon={faUser} />,
       onClick: () => {
@@ -95,13 +95,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
       type: 'divider'
     },
     {
-      label: 'Audio Call',
+      label: 'Audio call',
       key: '5',
       icon: <FontAwesomeIcon icon={faPhone} />,
       onClick: () => audioCall(conversation._id)
     },
     {
-      label: 'Video Chat',
+      label: 'Video chat',
       key: '6',
       icon: <FontAwesomeIcon icon={faVideoCamera} />,
       onClick: () => videoChat(conversation._id)
@@ -110,7 +110,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
       type: 'divider'
     },
     {
-      label: conversation.type === 'group' ? 'Leave Group' : 'Delete Chat',
+      label: conversation.type === 'group' ? 'Leave group' : 'Delete chat',
       danger: true,
       key: '3',
       onClick: () => {
@@ -120,7 +120,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
         conversation.type === 'group' ? (
           <FontAwesomeIcon icon={faRightFromBracket} />
         ) : (
-          <FontAwesomeIcon icon={faTrash} />
+          <FontAwesomeIcon icon={faTrashCan} />
         )
     }
   ];
@@ -168,11 +168,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
 
     return 'Start a conversation';
   }, [conversation.lastMessage, userID]);
-  const [isShowTime, setIsShowTime] = useState(formatDateTime(conversation.lastMessage?.createdAt));
+  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(conversation.lastMessage?.createdAt));
 
   useEffect(() => {
     const timeoutId = setInterval(() => {
-      setIsShowTime(formatDateTime(conversation.lastMessage?.createdAt));
+      setIsShowTime(getDateTimeToNow(conversation.lastMessage?.createdAt));
     }, 60000);
 
     return () => clearInterval(timeoutId);

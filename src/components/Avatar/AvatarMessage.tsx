@@ -20,7 +20,7 @@ const AvatarMessage: React.FC<AvatarProps> = ({ size = 36, user }) => {
           height: size
         }}>
         <img
-          src={getImageURL(user.user_image)}
+          src={getImageURL(user.user_image, 'avatar_mini')}
           alt='Avatar'
           style={{
             width: '100%',

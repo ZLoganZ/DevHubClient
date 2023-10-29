@@ -15,11 +15,11 @@ interface ContentPostProps {
   postID: string;
   title: string;
   content: string;
-  img?: string;
+  image?: string[];
   link?: TypeOfLink;
 }
 
-const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, img, link }) => {
+const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, image, link }) => {
   const { themeColorSet } = getTheme();
 
   const [expanded, setExpanded] = useState(false);
@@ -57,9 +57,9 @@ const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, img, 
             </a>
           )}
         </div>
-        {img ? (
+        {image && image?.length !== 0 ? (
           <div className='contentImage overflow-hidden h-full w-full object-cover my-3 flex items-center justify-center'>
-            <Image src={getImageURL(img, 'post')} alt='pic content' fallback={imageErrorFallback} />
+            <Image src={getImageURL(image[0], 'post')} alt='pic content' fallback={imageErrorFallback} />
           </div>
         ) : (
           link && (

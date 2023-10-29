@@ -110,7 +110,7 @@ const Profile = ({ userID }: Props) => {
           <Col span={24} className='avatar_cover relative'>
             <div className='cover flex justify-center w-full max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
-                src={getImageURL(otherUserInfo.cover_image) || `/images/ProfilePage/cover.jpg`}
+                src={getImageURL(otherUserInfo.cover_image)}
                 alt='avt'
                 style={{
                   width: '100%',
@@ -121,7 +121,7 @@ const Profile = ({ userID }: Props) => {
             </div>
             <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
               <Image
-                src={getImageURL(otherUserInfo.user_image)}
+                src={getImageURL(otherUserInfo.user_image, 'avatar')}
                 alt='avt'
                 style={{
                   width: '100%',

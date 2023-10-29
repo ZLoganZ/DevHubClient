@@ -1,7 +1,6 @@
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal, notification } from 'antd';
-import { sha1 } from 'crypto-hash';
 
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import { useDeletePost } from '@/hooks/mutation';
@@ -13,39 +12,14 @@ interface DeleteModalProps {
   isOpen: boolean;
   postID: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  image?: string;
+  image?: string[];
 }
 
 const DeletePostModal: React.FC<DeleteModalProps> = ({ postID, isOpen, setIsOpen, image }) => {
   const { isLoadingDeletePost, mutateDeletePost } = useDeletePost();
 
-  const handleRemoveImage = async (imageURL: string) => {
-    const nameSplit = imageURL.split('/');
-    const duplicateName = nameSplit.pop();
-
-    // Remove .
-    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
-
-    const formData = new FormData();
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id!);
-    const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    return {
-      url: data,
-      status: 'done'
-    };
-  };
-
   const handleOk = async () => {
-    if (image) await handleRemoveImage(image);
+    // if (image) await handleRemoveImage(image);
 
     mutateDeletePost(postID);
 

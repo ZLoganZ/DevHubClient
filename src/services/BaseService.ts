@@ -12,7 +12,7 @@ const githubHeaders = {
   ...headers
 };
 
-export class BaseService {
+class BaseService {
   private request(method: string, url: string, data?: object | string, customHeaders?: object) {
     const requestHeaders = customHeaders ? { ...headers, ...customHeaders } : headers;
     const requestConfig = { headers: requestHeaders, data };
@@ -40,3 +40,5 @@ export class BaseService {
     return this.request('get', url, undefined, githubHeaders);
   }
 }
+
+export { BaseService };

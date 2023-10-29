@@ -8,7 +8,7 @@ import UserInfoPost from '@/components/PostProperties/PostUserInfo';
 import ContentPost from '@/components/PostProperties/PostContent';
 import PostFooter from '@/components/PostProperties/PostFooter';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
@@ -31,15 +31,15 @@ const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postShare
   const link = post?.post_attributes.url;
 
   //format date to get full date
-  const [isShowTime, setIsShowTime] = useState(formatDateTime(postShared.createdAt));
+  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(postShared.createdAt));
 
   //format date to get full date
-  const [postDate, setPostDate] = useState(formatDateTime(post!.createdAt));
+  const [postDate, setPostDate] = useState(getDateTimeToNow(post!.createdAt));
 
   useEffect(() => {
     const timeoutId = setInterval(() => {
-      setIsShowTime(formatDateTime(postShared.createdAt));
-      setPostDate(formatDateTime(post!.createdAt));
+      setIsShowTime(getDateTimeToNow(postShared.createdAt));
+      setPostDate(getDateTimeToNow(post!.createdAt));
     }, 60000);
     return () => clearInterval(timeoutId);
   }, []);
@@ -88,7 +88,7 @@ const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postShare
               postID={postShared._id}
               title={post!.post_attributes.title!}
               content={post!.post_attributes.content!}
-              img={post!.post_attributes.img}
+              image={post!.post_attributes.images}
               link={link}
             />
           </div>

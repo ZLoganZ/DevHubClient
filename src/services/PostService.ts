@@ -12,7 +12,7 @@ import {
 } from '@/types';
 import { BaseService } from './BaseService';
 
-export class PostService extends BaseService {
+class PostService extends BaseService {
   constructor() {
     super();
   }

@@ -171,7 +171,11 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 {searchConversation.length === 0 ? (
                   <Empty
                     image='https://cdn.iconscout.com/icon/free/png-256/free-empty-folder-2702275-2244989.png'
-                    description={<p style={{ color: themeColorSet.colorText3 }}>No conversation found</p>}
+                    description={
+                      <p className='text-sm' style={{ color: themeColorSet.colorText3 }}>
+                        No conversation found
+                      </p>
+                    }
                     imageStyle={{
                       display: 'flex',
                       justifyContent: 'center'

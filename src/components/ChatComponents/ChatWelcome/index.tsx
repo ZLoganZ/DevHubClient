@@ -1,3 +1,5 @@
+import { NavLink } from 'react-router-dom';
+
 import Avatar from '@/components/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import { useAppSelector } from '@/hooks/special';
@@ -25,13 +27,15 @@ const ChatWelcome: React.FC<ChatWelcomeProps> = ({ name, type, members, otherUse
           <div className='chatWelcome__container__header'>
             <div className='chatWelcome__container__header__avatar'>
               {type === 'private' ? (
-                <Avatar user={otherUser} size={80} />
+                <NavLink to={`/user/${otherUser._id}`}>
+                  <Avatar user={otherUser} size={80} />
+                </NavLink>
               ) : (
                 <AvatarGroup users={members} image={image} size={80} />
               )}
             </div>
             <div className='chatWelcome__container__header__name'>
-              {type === 'private' ? otherUser.name : name}
+              {name ?? <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>}
             </div>
             <div className='chatWelcome__container__header__members'>
               {type === 'private' ? '' : `${members.length} members in this group`}

@@ -1,79 +1,91 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
+  IconDefinition,
   faCaretDown,
   faCaretRight,
   faDownload,
   faEllipsisVertical,
   faImage,
+  faLink,
   faPen,
   faPlusCircle,
   faRightFromBracket,
-  faUserShield
+  faShieldHalved,
+  faUserShield,
+  faUserSlash
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileAudio as faReFileAudio,
+  faFolderOpen as faReFolderOpen,
+  faImages as faReImages
+} from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, Space, Empty, Skeleton, Col, Row, MenuProps, Dropdown, Collapse, ConfigProvider } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import type { CollapseProps } from 'antd';
 
-import StyleProvider from './cssSharedMedia';
 import { useCurrentConversationData } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
-interface SharedMediaProps {
+import { ConversationType } from '@/types';
+import StyleProvider from './cssConversationOption';
+
+interface ConversationOptionProps {
   conversationID: string;
 }
 
-const SharedMedia = (Props: SharedMediaProps) => {
+const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID }) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(
-    Props.conversationID
-  );
+  const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
 
-  const [items, setItems] = useState<any>([]);
+  const [images, setImages] = useState<any>([]);
 
-  useEffect(() => {
-    if (isLoadingCurrentConversation) return;
+  const memberOptions = (userID: string): MenuProps['items'] => {
+    return [
+      {
+        key: '1',
+        label: (
+          <div className='item flex items-center'>
+            <span className=''>Commission as administrator</span>
+          </div>
+        ),
+        icon: <FontAwesomeIcon icon={faUserShield} />,
+        style: {
+          display: currentConversation.admins?.some((admin) => admin._id === userID) ? 'none' : ''
+        }
+      },
+      {
+        key: '2',
+        label: (
+          <div className='item flex items-center'>
+            <span className=''>
+              {currentConversation.admins?.some((admin) => admin._id === userID)
+                ? 'Leave group'
+                : 'Remove member'}
+            </span>
+          </div>
+        ),
+        danger: true,
+        icon: <FontAwesomeIcon icon={faUserSlash} />
+      }
+    ];
+  };
 
-    setItems(currentConversation.image);
-  }, [isLoadingCurrentConversation, currentConversation]);
-
-  const memberOptions: MenuProps['items'] = [
-    {
-      key: '1',
-      label: (
-        <div className='item flex items-center'>
-          <span className=''>Promote to Admin</span>
-        </div>
-      ),
-      icon: <FontAwesomeIcon icon={faUserShield} />
-    },
-    {
-      key: '2',
-      label: (
-        <div className='item flex items-center'>
-          <span className=''>Remove member</span>
-        </div>
-      ),
-      danger: true,
-      icon: <FontAwesomeIcon icon={faRightFromBracket} />
-    }
-  ];
-
-  const downloadImage = async (url: any) => {
+  const downloadImage = async (url: string) => {
     const originalImage = url;
     const image = await fetch(originalImage);
 
     //Split image name
     const nameSplit = originalImage.split('/');
     const duplicateName = nameSplit.pop();
-    const name = duplicateName.substring(0, duplicateName.lastIndexOf('_'));
+    const name = duplicateName?.substring(0, duplicateName.lastIndexOf('_'));
 
     const imageBlog = await image.blob();
     const imageURL = URL.createObjectURL(imageBlog);
@@ -85,58 +97,62 @@ const SharedMedia = (Props: SharedMediaProps) => {
     document.body.removeChild(link);
   };
 
-  const listImages = (items: any) => {
+  const listItems = (items: any, icon: IconDefinition, description: string) => {
     return (
       <div className='content'>
         {items == null ? (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <Empty
+            image={<FontAwesomeIcon icon={icon} />}
+            description={
+              <p className='text-sm' style={{ color: themeColorSet.colorText3 }}>
+                {description}
+              </p>
+            }
+          />
         ) : (
           <>
-            {items?.map((item: any, index: any) => {
-              if (index > 3) return;
-              return (
-                <div className='fileContent flex justify-between items-center mb-2 ml-2'>
-                  <div className='left flex justify-between items-center'>
-                    <div className='image mr-2'>
-                      <Image
-                        key={item._id}
-                        src={item.image}
-                        alt='image'
-                        style={{
-                          height: '3.5rem',
-                          borderRadius: '10px',
-                          width: '3.5rem',
-                          objectFit: 'cover'
-                        }}
-                      />
+            {items?.slice(0, 4).map((item: any, index: any) => (
+              <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
+                <div className='left flex justify-between items-center'>
+                  <div className='image mr-2'>
+                    <Image
+                      key={item._id}
+                      src={item.image}
+                      alt='image'
+                      style={{
+                        height: '3.5rem',
+                        borderRadius: '10px',
+                        width: '3.5rem',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </div>
+                  <Space className='info' direction='vertical'>
+                    <div
+                      className='name'
+                      style={{
+                        color: themeColorSet.colorText1,
+                        fontWeight: '600'
+                      }}>
+                      {item.sender.name}
                     </div>
-                    <Space className='info' direction='vertical'>
-                      <div
-                        className='name'
-                        style={{
-                          color: themeColorSet.colorText1,
-                          fontWeight: '600'
-                        }}>
-                        {item.sender.name}
-                      </div>
-                      <Space
-                        style={{
-                          color: themeColorSet.colorText3
-                        }}>
-                        <div className='date'>{formatDateTime(item.createdAt)}</div>
-                      </Space>
+                    <Space
+                      style={{
+                        color: themeColorSet.colorText3
+                      }}>
+                      <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
                     </Space>
-                  </div>
-                  <div
-                    className='right cursor-pointer'
-                    onClick={() => {
-                      downloadImage(item.image);
-                    }}>
-                    <FontAwesomeIcon icon={faDownload} />
-                  </div>
+                  </Space>
                 </div>
-              );
-            })}
+                <div
+                  className='right cursor-pointer'
+                  onClick={() => {
+                    downloadImage(item.image);
+                  }}>
+                  <FontAwesomeIcon icon={faDownload} />
+                </div>
+              </div>
+            ))}
             <div
               className='seeAll flex items-end justify-end'
               style={{
@@ -152,7 +168,23 @@ const SharedMedia = (Props: SharedMediaProps) => {
     );
   };
 
-  const listMembers = (currentConversation: any) => {
+  const listImages = (items: any) => {
+    return listItems(items, faReImages, 'No images');
+  };
+
+  const listFiles = (items: any) => {
+    return listItems(items, faReFolderOpen, 'No files');
+  };
+
+  const listLinks = (items: any) => {
+    return listItems(items, faLink, 'No links');
+  };
+
+  const listAudio = (items: any) => {
+    return listItems(items, faReFileAudio, 'No audio');
+  };
+
+  const listMembers = (currentConversation: ConversationType) => {
     return (
       <div className='pr-5 w-full'>
         <div
@@ -160,12 +192,12 @@ const SharedMedia = (Props: SharedMediaProps) => {
           style={{
             overflow: 'auto'
           }}>
-          {currentConversation.members.map((item: any) => {
+          {currentConversation.members.map((member) => {
             return (
-              <div className='mt-3 w-full flex flex-row justify-between items-center'>
-                <div className='user flex items-center' key={item._id}>
+              <div key={member._id} className='mt-3 w-full flex flex-row justify-between items-center'>
+                <div className='user flex items-center' key={member._id}>
                   <div className='avatar-member relative cursor-pointer'>
-                    <Avatar key={item._id} user={item} />
+                    <Avatar key={member._id} user={member} />
                   </div>
                   <div
                     className='name flex flex-col text-left ml-2'
@@ -173,12 +205,20 @@ const SharedMedia = (Props: SharedMediaProps) => {
                       fontSize: '0.9rem',
                       color: themeColorSet.colorText1
                     }}>
-                    {item.name}
-                    <div className='text-xs'>admin</div>
+                    <div>
+                      {member.name}{' '}
+                      {currentConversation.admins?.some((admin) => admin._id === member._id) && (
+                        <FontAwesomeIcon icon={faShieldHalved} />
+                      )}
+                    </div>
+
+                    {currentConversation.admins?.some((admin) => admin._id === member._id) && (
+                      <div className='text-xs'>Admin</div>
+                    )}
                   </div>
                 </div>
                 <div className='options rounded-full'>
-                  <Dropdown menu={{ items: memberOptions }} trigger={['click']}>
+                  <Dropdown menu={{ items: memberOptions(member._id) }} trigger={['click']}>
                     <FontAwesomeIcon
                       className='text-lg cursor-pointer py-1 px-3 '
                       icon={faEllipsisVertical}
@@ -232,22 +272,22 @@ const SharedMedia = (Props: SharedMediaProps) => {
     {
       key: '1',
       label: <span className='text-base font-semibold'>Images</span>,
-      children: listImages(items)
+      children: listImages(images)
     },
     {
       key: '2',
       label: <span className='text-base font-semibold'>Files</span>,
-      children: <div className='content'></div>
+      children: listFiles(images)
     },
     {
       key: '3',
       label: <span className='text-base font-semibold'>Links</span>,
-      children: <div className='content'></div>
+      children: listLinks(images)
     },
     {
       key: '4',
       label: <span className='text-base font-semibold'>Audio</span>,
-      children: <div className='content'></div>
+      children: listAudio(images)
     },
     {
       key: '5',
@@ -412,4 +452,4 @@ const SharedMedia = (Props: SharedMediaProps) => {
   );
 };
 
-export default SharedMedia;
+export default ConversationOption;

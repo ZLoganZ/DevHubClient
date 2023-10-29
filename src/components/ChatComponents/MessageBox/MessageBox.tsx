@@ -1,10 +1,12 @@
 import { Image, Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 
 import StyleProvider from './cssMessageBox';
 import { getTheme } from '@/util/theme';
-import formatDateTime from '@/util/formatDateTime';
+import { getDateTime, getDateTimeToNow } from '@/util/formatDateTime';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
@@ -19,6 +21,8 @@ interface IMessageBox {
   isNextMesGroup: boolean;
   isLastMes: boolean;
   type: TypeofConversation;
+  isMoreThan10Min?: boolean;
+  isAdmin?: boolean;
 }
 
 const MessageBox: React.FC<IMessageBox> = ({
@@ -27,7 +31,9 @@ const MessageBox: React.FC<IMessageBox> = ({
   seen,
   isNextMesGroup,
   isPrevMesGroup,
-  type
+  type,
+  isMoreThan10Min,
+  isAdmin
 }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
@@ -62,11 +68,11 @@ const MessageBox: React.FC<IMessageBox> = ({
   ${!isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tr-2xl' : ''}
   ${!isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}`;
 
-  const [isShowTime, setIsShowTime] = useState(formatDateTime(message.createdAt));
+  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(message.createdAt));
 
   useEffect(() => {
     const timeoutId = setInterval(() => {
-      setIsShowTime(formatDateTime(message.createdAt));
+      setIsShowTime(getDateTimeToNow(message.createdAt));
     }, 60000);
 
     return () => clearInterval(timeoutId);
@@ -74,6 +80,13 @@ const MessageBox: React.FC<IMessageBox> = ({
 
   return (
     <StyleProvider theme={themeColorSet}>
+      {isMoreThan10Min && (
+        <div className='flex justify-center mb-2'>
+          <div className='text-xs font-semibold' style={{ color: themeColorSet.colorText3 }}>
+            {getDateTime(message.createdAt)}
+          </div>
+        </div>
+      )}
       <div className={containerStyle}>
         <NavLink className={avatarStyle} to={`/user/${message.sender._id}`}>
           <Avatar key={message.sender._id} user={message.sender} />
@@ -87,7 +100,9 @@ const MessageBox: React.FC<IMessageBox> = ({
                   style={{
                     color: themeColorSet.colorText2
                   }}>
-                  {message.sender.name}
+                  <NavLink to={`/user/${message.sender._id}`}>
+                    {message.sender.name} {isAdmin && <FontAwesomeIcon icon={faShieldHalved} />}
+                  </NavLink>
                 </div>
               </div>
             )}

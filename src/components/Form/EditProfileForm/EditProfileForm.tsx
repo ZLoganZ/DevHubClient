@@ -1,5 +1,5 @@
 import { Space, Tag, Avatar, Upload, Image, message } from 'antd';
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   faFacebookF,
   faTwitter,
@@ -11,12 +11,10 @@ import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { RcFile } from 'antd/es/upload';
-import { sha1 } from 'crypto-hash';
 import { v4 as uuidv4 } from 'uuid';
 import 'react-quill/dist/quill.bubble.css';
 
 import QuillEdit from '@/components/QuillEdit';
-import descArray from '@/util/Descriptions/Tags';
 import AddExperienceForm from '@/components/Form/ExperienceForm/AddExperienceForm';
 import EditExperienceForm from '@/components/Form/ExperienceForm/EditExperienceForm';
 import RenderRepositoryIem from '@/components/ActionComponent/RenderRepositoryIem';
@@ -27,12 +25,14 @@ import AddContacts from '@/components/AddContacts';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
+import descArray from '@/util/Descriptions/Tags';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ContactType, ExperienceType } from '@/types';
+import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssEditProfileForm';
 
 const EditProfileForm = () => {
@@ -58,15 +58,11 @@ const EditProfileForm = () => {
 
   const [location, setLocation] = useState(currentUserInfo.location || '');
 
-  const [avatar, setAvatar] = useState(
-    getImageURL(currentUserInfo.user_image, 'avatar') || '/images/TimeLinePage/avatar.jpg'
-  );
-  const [fileAvatar, setFileAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(getImageURL(currentUserInfo.user_image, 'avatar'));
+  const [fileAvatar, setFileAvatar] = useState<RcFile>();
 
-  const [cover, setCover] = useState(
-    getImageURL(currentUserInfo.cover_image) || '/images/ProfilePage/cover.jpg'
-  );
-  const [fileCover, setFileCover] = useState(null);
+  const [cover, setCover] = useState(getImageURL(currentUserInfo.cover_image));
+  const [fileCover, setFileCover] = useState<RcFile>();
 
   const [about, setAbout] = useState(currentUserInfo.about || '');
 
@@ -74,65 +70,30 @@ const EditProfileForm = () => {
 
   const [repositories, setRepositories] = useState(currentUserInfo?.repositories || []);
 
-  const initialAvatar = useMemo(() => {
-    return currentUserInfo.user_image || null;
-  }, [currentUserInfo.user_image]);
+  // const initialAvatar = useMemo(() => {
+  //   return currentUserInfo.user_image || null;
+  // }, [currentUserInfo.user_image]);
 
-  const initialCover = useMemo(() => {
-    return currentUserInfo.cover_image || null;
-  }, [currentUserInfo.cover_image]);
+  // const initialCover = useMemo(() => {
+  //   return currentUserInfo.cover_image || null;
+  // }, [currentUserInfo.cover_image]);
 
-  const handleChangeAvatar = useCallback((image: any) => {
+  const handleChangeAvatar = useCallback((image: RcFile) => {
     setAvatar(URL.createObjectURL(image));
     setFileAvatar(image);
   }, []);
 
-  const handleChangeCover = useCallback((image: any) => {
+  const handleChangeCover = useCallback((image: RcFile) => {
     setCover(URL.createObjectURL(image));
     setFileCover(image);
   }, []);
 
   const handleUploadImage = async (file: RcFile) => {
-    if (!file)
-      return {
-        url: null,
-        status: 'done'
-      };
-
     const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/upload?upload_preset=mysoslzj', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
+    formData.append('image', file);
+    const { data } = await imageService.uploadImage(formData);
     return {
-      url: data.secure_url,
-      status: 'done'
-    };
-  };
-
-  const handleRemoveImage = async (imageURL: string) => {
-    const nameSplit = imageURL.split('/');
-    const duplicateName = nameSplit.pop();
-
-    // Remove .
-    const public_id = duplicateName?.split('.').slice(0, -1).join('.');
-
-    const formData = new FormData();
-    formData.append('api_key', '235531261932754');
-    formData.append('public_id', public_id!);
-    const timestamp = String(Date.now());
-    formData.append('timestamp', timestamp);
-    const signature = await sha1(`public_id=${public_id}&timestamp=${timestamp}qb8OEaGwU1kucykT-Kb7M8fBVQk`);
-    formData.append('signature', signature);
-    const res = await fetch('https://api.cloudinary.com/v1_1/dp58kf8pw/image/destroy', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    return {
-      url: data,
+      url: data.metadata.key,
       status: 'done'
     };
   };
@@ -141,11 +102,7 @@ const EditProfileForm = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
-  // const handleChangeFirstName = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFirstName(e.target.value);
-  // };
-
-  const handleChangeLastName = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
 
@@ -175,20 +132,20 @@ const EditProfileForm = () => {
     if (fileAvatar) {
       const res = await handleUploadImage(fileAvatar);
       formData.append('userImage', res.url);
-      if (initialAvatar) await handleRemoveImage(initialAvatar);
+      // if (initialAvatar) await handleRemoveImage(initialAvatar);
     }
     if (fileCover) {
       const res = await handleUploadImage(fileCover);
       formData.append('coverImage', res.url);
-      if (initialCover) await handleRemoveImage(initialCover);
+      // if (initialCover) await handleRemoveImage(initialCover);
     }
 
     mutateUpdateUser({
-      name: name /* + ' ' + firstname */,
+      name: name,
       alias,
       location,
-      user_image: fileAvatar || formData.get('userImage')?.toString(),
-      cover_image: fileCover || formData.get('coverImage')?.toString(),
+      user_image: formData.get('userImage')?.toString(),
+      cover_image: formData.get('coverImage')?.toString(),
       tags,
       contacts: contacts,
       about,
@@ -199,19 +156,7 @@ const EditProfileForm = () => {
 
   useEffect(() => {
     dispatch(callBackSubmitDrawer(onSubmit));
-  }, [
-    tags,
-    // firstname,
-    name,
-    contacts,
-    fileAvatar,
-    fileCover,
-    alias,
-    location,
-    about,
-    experiences,
-    repositories
-  ]);
+  }, [tags, name, contacts, fileAvatar, fileCover, alias, location, about, experiences, repositories]);
 
   const beforeUpload = (file: any) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
@@ -338,7 +283,7 @@ const EditProfileForm = () => {
                 customRequest={() => {}}
                 maxCount={1}
                 accept='image/png, image/jpeg, image/jpg'
-                onChange={(file) => handleChangeCover(file?.file?.originFileObj)}
+                onChange={(file) => handleChangeCover(file.file.originFileObj!)}
                 showUploadList={false}
                 beforeUpload={beforeUpload}>
                 <span style={{ color: commonColor.colorWhile1 }}>Change Cover Image</span>
@@ -383,7 +328,7 @@ const EditProfileForm = () => {
               accept='image/png, image/jpeg, image/jpg'
               customRequest={() => {}}
               maxCount={1}
-              onChange={(file) => handleChangeAvatar(file?.file?.originFileObj)}
+              onChange={(file) => handleChangeAvatar(file?.file?.originFileObj!)}
               showUploadList={false}
               className='btnChange px-4 py-2'>
               <span style={{ color: commonColor.colorWhile1 }}>Change Avatar</span>
@@ -503,7 +448,7 @@ const EditProfileForm = () => {
                 name='name'
                 id='name'
                 required
-                onChange={handleChangeLastName}
+                onChange={handleChangeName}
                 autoComplete='off'
               />
               <label htmlFor='name' className='form__label'>
@@ -732,24 +677,6 @@ const EditProfileForm = () => {
             </div>
           )}
         </section>
-        {/* <section className="techStack mt-7">
-            <div
-              className="title mb-2"
-              style={{
-                color: themeColorSet.colorText1,
-                fontWeight: 600,
-                fontSize: '1.2rem',
-              }}
-            >
-              Tech Stack
-            </div>
-            {componentNoInfo(
-              'Add your familiar Skills',
-              'Showcase your familiar skills and technologies and label them by years of experience so others know what you like working with.',
-              'Add Tech Stack',
-              () => {},
-            )}
-          </section> */}
         <section className='repositories mt-7'>
           <div
             className='title mb-2'
@@ -819,24 +746,6 @@ const EditProfileForm = () => {
             </div>
           )}
         </section>
-        {/* <section className="memberOf mt-7">
-            <div
-              className="title mb-2"
-              style={{
-                color: themeColorSet.colorText1,
-                fontWeight: 600,
-                fontSize: '1.2rem',
-              }}
-            >
-              Member of
-            </div>
-            {componentNoInfo(
-              'You currently have no featured Communities',
-              'Showcase your featured communities to be highlighted on your profile',
-              'Feature Communities',
-              () => {},
-            )}
-          </section> */}
       </div>
     </StyleProvider>
   );

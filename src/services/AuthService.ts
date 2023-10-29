@@ -8,7 +8,7 @@ import {
 } from '@/types';
 import { BaseService } from './BaseService';
 
-export class AuthService extends BaseService {
+class AuthService extends BaseService {
   constructor() {
     super();
   }

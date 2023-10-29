@@ -113,7 +113,7 @@ export type TypeOfLink = {
 export type CreatePostDataType = {
   title: string;
   content: string;
-  img?: string;
+  image?: string;
 };
 
 export type UpdatePostDataType = {
@@ -135,7 +135,7 @@ export type PostType = {
     //if type is post
     title?: string;
     content?: string;
-    img?: string;
+    images?: string[];
     url?: TypeOfLink;
 
     //if type is share
@@ -229,6 +229,7 @@ export type ConversationType = {
   name: string;
   lastMessage: MessageType;
   seen: UserInfoType[];
+  admins?: UserInfoType[];
   image?: string;
   createdAt: string;
   updatedAt: string;
@@ -255,4 +256,8 @@ export type CreateMessageDataType = {
   conversation_id: string;
   content?: string;
   image?: string;
+};
+
+export type ImageResponse = {
+  key: string;
 };
