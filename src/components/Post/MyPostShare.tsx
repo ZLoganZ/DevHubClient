@@ -1,5 +1,5 @@
 import { faUpRightFromSquare, faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
@@ -31,10 +31,18 @@ const MyPostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSha
   const link = post?.post_attributes.url;
 
   //format date to get full date
-  const date = formatDateTime(postShared.createdAt);
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(postShared.createdAt));
 
   //format date to get full date
-  const postDate = formatDateTime(post!.createdAt);
+  const [postDate, setPostDate] = useState(formatDateTime(post!.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(postShared.createdAt));
+      setPostDate(formatDateTime(post!.createdAt));
+    }, 60000);
+    return () => clearInterval(timeoutId);
+  }, []);
 
   // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,7 +87,7 @@ const MyPostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSha
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={isShowTime} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

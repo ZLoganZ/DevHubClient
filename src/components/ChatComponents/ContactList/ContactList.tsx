@@ -68,18 +68,11 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
           </Row>
           <Row>
             <div
-              className='searchInput pl-3 py-4 w-full flex justify-between items-center'
+              className='searchInput py-4 px-2 w-full flex justify-between items-center'
               style={{
                 borderColor: themeColorSet.colorBg4
               }}>
-              <div className='input flex items-center w-full'>
-                <div
-                  className='iconSearch mr-2'
-                  style={{
-                    color: themeColorSet.colorText3
-                  }}>
-                  <SearchOutlined className='text-2xl' />
-                </div>
+              <div className='input flex items-center w-full '>
                 <ConfigProvider
                   theme={{
                     token: {
@@ -87,7 +80,11 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
                       controlHeight: 40
                     }
                   }}>
-                  <Input placeholder='Search' className='rounded-md' />
+                  <Input
+                    placeholder='Search conversation'
+                    className='rounded-full mx-0'
+                    prefix={<SearchOutlined className='text-2xl' />}
+                  />
                 </ConfigProvider>
               </div>
             </div>

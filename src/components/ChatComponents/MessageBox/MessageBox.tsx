@@ -1,5 +1,5 @@
 import { Image, Tooltip } from 'antd';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import StyleProvider from './cssMessageBox';
@@ -54,6 +54,16 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
   ${!isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tr-2xl' : ''}
   ${!isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}`;
 
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(message.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(message.createdAt));
+    }, 60000);
+
+    return () => clearInterval(timeoutId);
+  }, []);
+
   return (
     <StyleProvider theme={themeColorSet}>
       <div className={containerStyle}>
@@ -65,7 +75,7 @@ const MessageBox: React.FC<IMessageBox> = ({ message, isLastMes, seen, isNextMes
             <Tooltip
               placement={isOwn ? 'left' : 'right'}
               arrow={false}
-              title={formatDateTime(message.createdAt)}
+              title={isShowTime}
               overlayInnerStyle={{
                 borderRadius: '0.55rem',
                 backgroundColor: themeColorSet.colorBgReverse3,

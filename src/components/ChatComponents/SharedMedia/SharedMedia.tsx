@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BellOutlined, ExclamationCircleOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Image, Space, Empty, Skeleton } from 'antd';
+import { Image, Space, Empty, Skeleton, Col, Row } from 'antd';
 
 import StyleProvider from './cssSharedMedia';
 import { useCurrentConversationData } from '@/hooks/fetch';
@@ -21,6 +21,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(
     Props.conversationID
   );
+  console.log(currentConversation)
 
   const [items, setItems] = useState<any>([]);
 
@@ -64,7 +65,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
             <div
               className='extension px-3 flex items-center'
               style={{
-                height: '13%',
+                height: '13%'
               }}>
               <div className='flex justify-center items-center w-full'>
                 <div
@@ -132,7 +133,7 @@ const SharedMedia = (Props: SharedMediaProps) => {
             <div
               className='extension px-3 flex items-center'
               style={{
-                height: '13%',
+                height: '13%'
               }}>
               <div
                 className='flex justify-center items-center w-full'
@@ -322,6 +323,12 @@ const SharedMedia = (Props: SharedMediaProps) => {
             </div> 
           </div>*/}
             </div>
+
+            <Col>
+              <Row>
+
+              </Row>
+            </Col>
           </div>
         </>
       )}
