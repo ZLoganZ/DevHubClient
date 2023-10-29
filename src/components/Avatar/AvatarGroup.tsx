@@ -1,4 +1,4 @@
-import { UserInfoType } from '@/types';
+import { ImageType, UserInfoType } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import getImageURL from '@/util/getImageURL';
@@ -8,7 +8,7 @@ import { getTheme } from '@/util/theme';
 
 interface AvatarGroupProps {
   users: UserInfoType[];
-  image?: string;
+  image?: ImageType;
 }
 
 const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
@@ -39,12 +39,16 @@ const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, image }) => {
     positionMap[3] = 'bottom-0 right-0';
   }
 
+  console.log('image::', image);
+
   return (
     <div className='relative h-9 w-9'>
       {image ? (
         <div className='relative rounded-full overflow-hidden h-9 w-9'>
           <img
-            src={getImageURL(image)}
+            // src={getImageURL(image)}
+            // src={image.link}
+            src={`https://ik.imagekit.io/admintck/${image.key}?tr=w-200,h=200`}
             alt='Avatar'
             style={{
               width: '100%',
