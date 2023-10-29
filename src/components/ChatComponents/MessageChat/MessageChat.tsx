@@ -14,7 +14,7 @@ import InputChat from '@/components/ChatComponents/InputChat/InputChat';
 import SharedMedia from '@/components/ChatComponents/SharedMedia';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
-import { MessageType } from '@/types';
+import { ConversationType, MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import StyleProvider from './cssMessageChat';
 
@@ -32,6 +32,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const { currentConversation } = useCurrentConversationData(conversationID);
   const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage } =
     useMessagesData(conversationID);
+
+    console.log('currentConversation.image::', currentConversation.image);
 
   const otherUser = useOtherUser(currentConversation);
 
