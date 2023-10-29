@@ -12,6 +12,7 @@ import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
+import { useEffect, useState } from 'react';
 
 interface PostProps {
   post: PostType;
@@ -29,7 +30,14 @@ const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
   const { themeColorSet } = getTheme();
 
   //format date to get full date
-  const date = formatDateTime(post.createdAt);
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(post.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(post.createdAt));
+    }, 60000);
+    return () => clearInterval(timeoutId);
+  }, []);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -54,7 +62,7 @@ const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={post.post_attributes.user} postID={post._id} date={date} />
+            <UserInfoPost userInfo={post.post_attributes.user} postID={post._id} date={isShowTime} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

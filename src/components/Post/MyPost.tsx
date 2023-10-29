@@ -2,7 +2,7 @@ import { faUpRightFromSquare, faEllipsis, faPenToSquare, faTrash } from '@fortaw
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Divider, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
@@ -33,7 +33,14 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
   const { themeColorSet } = getTheme();
 
   //format date to get full date
-  const date = formatDateTime(post.createdAt);
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(post.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(post.createdAt));
+    }, 60000);
+    return () => clearInterval(timeoutId);
+  }, []);
 
   // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,7 +115,7 @@ const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={postAuthor} postID={post._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={post._id} date={isShowTime} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

@@ -49,14 +49,10 @@ function TrackRefContextIfNeeded(
 }
 
 export interface ParticipantTileProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** The track reference to display. */
   trackRef?: TrackReferenceOrPlaceholder;
   disableSpeakingIndicator?: boolean;
-  /** @deprecated This parameter will be removed in a future version use `trackRef` instead. */
   participant?: Participant;
-  /** @deprecated This parameter will be removed in a future version use `trackRef` instead. */
   source?: Track.Source;
-  /** @deprecated This parameter will be removed in a future version use `trackRef` instead. */
   publication?: TrackPublication;
   onParticipantClick?: (event: ParticipantClickEvent) => void;
 }

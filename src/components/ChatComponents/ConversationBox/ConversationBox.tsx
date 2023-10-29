@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
@@ -71,6 +71,15 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
 
     return 'Start a conversation';
   }, [conversation.lastMessage, userID]);
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(conversation.lastMessage?.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(conversation.lastMessage?.createdAt));
+    }, 60000);
+
+    return () => clearInterval(timeoutId);
+  }, []);
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -98,7 +107,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
               </p>
               {conversation.lastMessage?.createdAt && (
                 <p className=' text-xs  text-gray-400 font-light' style={{ color: themeColorSet.colorText3 }}>
-                  {formatDateTime(conversation.lastMessage?.createdAt)}
+                  {isShowTime}
                 </p>
               )}
             </div>

@@ -147,7 +147,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayShare ? 16 : 24} className='h-full'>
+          <Col span={true ? 16 : 24} className='h-full'>
             <div
               className='header flex justify-between items-center py-6 px-6'
               style={{
@@ -270,7 +270,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
             </div>
             <InputChat conversationID={conversationID} />
           </Col>
-          {isDisplayShare && (
+          {true && (
             <Col span={8}>
               <SharedMedia conversationID={conversationID!} />
             </Col>

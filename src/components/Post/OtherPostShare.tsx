@@ -12,6 +12,7 @@ import formatDateTime from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
+import { useEffect, useState } from 'react';
 interface PostShareProps {
   postShared: PostType;
   postAuthor: UserInfoType;
@@ -30,10 +31,18 @@ const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postShare
   const link = post?.post_attributes.url;
 
   //format date to get full date
-  const date = formatDateTime(postShared.createdAt);
+  const [isShowTime, setIsShowTime] = useState(formatDateTime(postShared.createdAt));
 
   //format date to get full date
-  const postDate = formatDateTime(post!.createdAt);
+  const [postDate, setPostDate] = useState(formatDateTime(post!.createdAt));
+
+  useEffect(() => {
+    const timeoutId = setInterval(() => {
+      setIsShowTime(formatDateTime(postShared.createdAt));
+      setPostDate(formatDateTime(post!.createdAt));
+    }, 60000);
+    return () => clearInterval(timeoutId);
+  }, []);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -58,7 +67,7 @@ const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postShare
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={date} />
+            <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={isShowTime} />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

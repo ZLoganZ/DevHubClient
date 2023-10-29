@@ -1,6 +1,10 @@
 import { format } from 'date-fns';
 
 const formatDateTime = (date: string) => {
+  if (!date) {
+    return '';
+  }
+
   const today = new Date();
   const commentDate = new Date(date);
   const diff = Math.abs(today.getTime() - commentDate.getTime());
