@@ -10,8 +10,6 @@ const AvatarMessage: React.FC<AvatarProps> = ({ user }) => {
   const { members } = useAppSelector((state) => state.socketIO);
   const isActive = members.indexOf(user?._id!) !== -1;
 
-  // const isActive = true;
-
   return (
     <div className='relative'>
       <div className='relative rounded-full overflow-hidden h-9 w-9 flex'>
