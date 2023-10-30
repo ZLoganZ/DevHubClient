@@ -35,7 +35,7 @@ const LoadingConversation = () => {
       <div
         className='body px-3'
         style={{
-          height: '88%',
+          height: '80%',
           overflow: 'auto'
         }}>
         <div className='flex-1 overflow-y-hidden'>

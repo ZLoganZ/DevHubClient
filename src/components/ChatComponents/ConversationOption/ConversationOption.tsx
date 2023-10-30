@@ -3,6 +3,7 @@ import {
   IconDefinition,
   faCaretDown,
   faCaretRight,
+  faCommentDots,
   faDownload,
   faEllipsisVertical,
   faImage,
@@ -11,6 +12,7 @@ import {
   faPlusCircle,
   faRightFromBracket,
   faShieldHalved,
+  faUser,
   faUserShield,
   faUserSlash
 } from '@fortawesome/free-solid-svg-icons';
@@ -20,17 +22,30 @@ import {
   faImages as faReImages
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Image, Space, Empty, Skeleton, Col, Row, MenuProps, Dropdown, Collapse, ConfigProvider } from 'antd';
+import {
+  Image,
+  Space,
+  Empty,
+  Skeleton,
+  Col,
+  Row,
+  MenuProps,
+  Dropdown,
+  Collapse,
+  ConfigProvider,
+  Tooltip
+} from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import type { CollapseProps } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-import { useCurrentConversationData } from '@/hooks/fetch';
+import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import Avatar from '@/components/Avatar/AvatarMessage';
-import { ConversationType } from '@/types';
+import { ConversationType, MessageType } from '@/types';
 import StyleProvider from './cssConversationOption';
 
 interface ConversationOptionProps {
@@ -41,6 +56,9 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
+  const navigate = useNavigate();
+
+  const { currentUserInfo } = useCurrentUserInfo();
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
@@ -51,29 +69,64 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
     return [
       {
         key: '1',
-        label: (
-          <div className='item flex items-center'>
-            <span className=''>Commission as administrator</span>
-          </div>
-        ),
+        label: 'Commission as administrator',
         icon: <FontAwesomeIcon icon={faUserShield} />,
         style: {
-          display: currentConversation.admins?.some((admin) => admin._id === userID) ? 'none' : ''
+          display:
+            !currentConversation.admins?.some((admin) => admin._id === userID) &&
+            currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id)
+              ? ''
+              : 'none'
+        }
+      },
+      {
+        key: '3',
+        label: 'Message',
+        icon: <FontAwesomeIcon icon={faCommentDots} />,
+        style: {
+          display: userID === currentUserInfo._id ? 'none' : ''
+        }
+      },
+      {
+        label: 'View profile',
+        key: '4',
+        icon: <FontAwesomeIcon icon={faUser} />,
+        onClick: () => {
+          navigate(`/user/${otherUser._id}`);
+        }
+      },
+      {
+        type: 'divider',
+        style: {
+          display:
+            currentConversation.admins?.some((admin) => admin._id === userID) &&
+            userID !== currentUserInfo._id
+              ? 'none'
+              : ''
         }
       },
       {
         key: '2',
-        label: (
-          <div className='item flex items-center'>
-            <span className=''>
-              {currentConversation.admins?.some((admin) => admin._id === userID)
-                ? 'Leave group'
-                : 'Remove member'}
-            </span>
-          </div>
-        ),
+        label:
+          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
+          userID === currentUserInfo._id
+            ? 'Leave group'
+            : 'Remove member',
         danger: true,
-        icon: <FontAwesomeIcon icon={faUserSlash} />
+        icon:
+          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
+          userID === currentUserInfo._id ? (
+            <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
+          ) : (
+            <FontAwesomeIcon icon={faUserSlash} />
+          ),
+        style: {
+          display:
+            currentConversation.admins?.some((admin) => admin._id === userID) &&
+            userID !== currentUserInfo._id
+              ? 'none'
+              : ''
+        }
       }
     ];
   };
@@ -100,7 +153,7 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
   const listItems = (items: any, icon: IconDefinition, description: string) => {
     return (
       <div className='content'>
-        {items == null ? (
+        {items.length === 0 ? (
           <Empty
             image={<FontAwesomeIcon icon={icon} />}
             description={
@@ -111,12 +164,11 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
           />
         ) : (
           <>
-            {items?.slice(0, 4).map((item: any, index: any) => (
+            {items?.slice(0, 4).map((item: any, index: number) => (
               <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
                 <div className='left flex justify-between items-center'>
                   <div className='image mr-2'>
                     <Image
-                      key={item._id}
                       src={item.image}
                       alt='image'
                       style={{
@@ -168,7 +220,7 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
     );
   };
 
-  const listImages = (items: any) => {
+  const listImages = (items: MessageType[]) => {
     return listItems(items, faReImages, 'No images');
   };
 
@@ -187,18 +239,27 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
   const listMembers = (currentConversation: ConversationType) => {
     return (
       <div className='pr-5 w-full'>
-        <div
-          className='listUser flex flex-col w-full pl-3'
-          style={{
-            overflow: 'auto'
-          }}>
+        <div className='listUser flex flex-col w-full pl-3' style={{ overflow: 'auto' }}>
           {currentConversation.members.map((member) => {
             return (
               <div key={member._id} className='mt-3 w-full flex flex-row justify-between items-center'>
                 <div className='user flex items-center' key={member._id}>
-                  <div className='avatar-member relative cursor-pointer'>
-                    <Avatar key={member._id} user={member} />
-                  </div>
+                  <Tooltip
+                    arrow
+                    title={`Message ${member.name}`}
+                    overlayInnerStyle={{
+                      borderRadius: '0.55rem',
+                      backgroundColor: themeColorSet.colorBgReverse3,
+                      color: themeColorSet.colorTextReverse2,
+                      fontWeight: 500
+                    }}
+                    mouseEnterDelay={0.2}
+                    destroyTooltipOnHide
+                    autoAdjustOverflow>
+                    <div className='avatar-member relative cursor-pointer'>
+                      <Avatar key={member._id} user={member} />
+                    </div>
+                  </Tooltip>
                   <div
                     className='name flex flex-col text-left ml-2'
                     style={{
@@ -206,9 +267,9 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
                       color: themeColorSet.colorText1
                     }}>
                     <div>
-                      {member.name}{' '}
+                      {member.name}
                       {currentConversation.admins?.some((admin) => admin._id === member._id) && (
-                        <FontAwesomeIcon icon={faShieldHalved} />
+                        <FontAwesomeIcon className='ml-1' icon={faShieldHalved} />
                       )}
                     </div>
 
@@ -231,14 +292,7 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
         </div>
         <div className='add-member mt-3 w-full flex flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'>
           <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
-          <div
-            className='name flex flex-col text-left ml-2'
-            style={{
-              fontSize: '0.9rem',
-              color: themeColorSet.colorText1
-            }}>
-            Add members
-          </div>
+          <div className='name flex items-center text-sm font-medium text-left ml-2'>Add members</div>
         </div>
       </div>
     );
@@ -249,24 +303,16 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
       key: 0,
       label: <span className='text-base font-semibold'>Conversation setting</span>,
       children: (
-        <Space className='conversation-setting ml-3' direction='vertical' size={10}>
-          <div
-            className='rename cursor-pointer rounded-full flex items-center'
-            style={{
-              color: themeColorSet.colorText1
-            }}>
+        <>
+          <div className='rename w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
             <FontAwesomeIcon className='text-lg mr-2' icon={faPen} />
             Change name
           </div>
-          <div
-            className='change-image cursor-pointer rounded-full flex items-center'
-            style={{
-              color: themeColorSet.colorText1
-            }}>
+          <div className='change-image w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
             <FontAwesomeIcon className='text-lg mr-2' icon={faImage} />
             Change image
           </div>
-        </Space>
+        </>
       )
     },
     {
@@ -298,16 +344,9 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
       key: '6',
       label: <span className='text-base font-semibold'>Private & Supports</span>,
       children: (
-        <div className='leave-group w-full flex flex-row items-center cursor-pointer pl-3 pr-3 py-2 rounded-full'>
-          <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
-          <div
-            className='name flex flex-col text-left ml-2'
-            style={{
-              fontSize: '0.9rem',
-              color: themeColorSet.colorText1
-            }}>
-            Leave group
-          </div>
+        <div className='leave-group w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
+          <FontAwesomeIcon className='text-lg mr-2' icon={faRightFromBracket} />
+          Leave group
         </div>
       )
     }
@@ -405,13 +444,13 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
           <div
             className='shared h-full overflow-auto'
             style={{
-              borderLeft: '1px solid ' + themeColorSet.colorText3,
+              borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
               backgroundColor: themeColorSet.colorBg1
             }}>
             <Col className='info h-full'>
-              <Row className='mt-4' align='middle' justify='center'>
+              <Row align='middle' justify='center'>
                 <Space size={10} direction='vertical' align='center'>
-                  <div className='avatar'>
+                  <div className='avatar mt-5'>
                     {currentConversation.type === 'group' ? (
                       <AvatarGroup
                         key={currentConversation._id}

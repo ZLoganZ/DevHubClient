@@ -87,7 +87,7 @@ const MyProfile = () => {
   }, [isLoadingUserPosts]);
 
   useEffect(() => {
-    document.title = `${currentUserInfo.name} | DevHub`;
+    document.title = `${currentUserInfo.name} - DevHub`;
   }, []);
 
   return (

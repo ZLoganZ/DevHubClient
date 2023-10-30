@@ -158,7 +158,7 @@ const EditProfileForm = () => {
     dispatch(callBackSubmitDrawer(onSubmit));
   }, [tags, name, contacts, fileAvatar, fileCover, alias, location, about, experiences, repositories]);
 
-  const beforeUpload = (file: any) => {
+  const beforeUpload = (file: RcFile) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
       messageApi.error('Image must smaller than 3MB!');
@@ -286,7 +286,7 @@ const EditProfileForm = () => {
                 onChange={(file) => handleChangeCover(file.file.originFileObj!)}
                 showUploadList={false}
                 beforeUpload={beforeUpload}>
-                <span style={{ color: commonColor.colorWhile1 }}>Change Cover Image</span>
+                <span style={{ color: commonColor.colorWhite1 }}>Change Cover Image</span>
               </Upload>
               <button
                 className='btnRemove px-4 py-2'
@@ -294,7 +294,7 @@ const EditProfileForm = () => {
                   backgroundColor: commonColor.colorRed1,
                   fontWeight: 600
                 }}>
-                <span style={{ color: commonColor.colorWhile1 }}>Remove</span>
+                <span style={{ color: commonColor.colorWhite1 }}>Remove</span>
               </button>
             </Space>
           </div>
@@ -331,7 +331,7 @@ const EditProfileForm = () => {
               onChange={(file) => handleChangeAvatar(file?.file?.originFileObj!)}
               showUploadList={false}
               className='btnChange px-4 py-2'>
-              <span style={{ color: commonColor.colorWhile1 }}>Change Avatar</span>
+              <span style={{ color: commonColor.colorWhite1 }}>Change Avatar</span>
             </Upload>
           </Space>
         </section>

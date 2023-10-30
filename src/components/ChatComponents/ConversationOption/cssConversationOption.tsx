@@ -1,4 +1,4 @@
-import { custom_scrollBar } from '@/util/cssVariable';
+import { custom_scrollBar, commonColor } from '@/util/cssVariable';
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
@@ -9,24 +9,24 @@ const StyleProvider = styled.div`
     .fileShared,
     .conversation-setting {
       color: ${(props) => props.theme.colorText3};
-    }
-    .add-member,
-    .options,
-    .rename,
-    .change-image {
-      color: ${(props) => props.theme.colorText3};
-      :hover {
-        background-color: ${(props) => props.theme.colorBg3}!important;
-        color: ${(props) => props.theme.colorText1};
-        transition: all 0.5s;
+      .add-member,
+      .options,
+      .rename,
+      .change-image {
+        color: ${(props) => props.theme.colorText3};
+        :hover {
+          background-color: ${commonColor.colorBlue1};
+          color: ${commonColor.colorWhite1};
+          transition: all 0.3s;
+        }
       }
     }
     .leave-group {
       color: ${(props) => props.theme.colorText3};
       :hover {
+        color: ${commonColor.colorWhite1};
         background-color: #f42f2f;
-        color: ${(props) => props.theme.colorText1};
-        transition: all 0.5s;
+        transition: all 0.3s;
       }
     }
   }

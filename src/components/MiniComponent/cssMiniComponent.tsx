@@ -3,11 +3,11 @@ import { commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   .ButtonActiveHover {
-    color: ${commonColor.colorWhile1};
+    color: ${commonColor.colorWhite1};
     background-color: ${commonColor.colorBlue1};
     border: none;
     :hover {
-      color: ${commonColor.colorWhile1};
+      color: ${commonColor.colorWhite1};
       background-color: ${commonColor.colorBlue3};
       transition: all 0.5s;
     }

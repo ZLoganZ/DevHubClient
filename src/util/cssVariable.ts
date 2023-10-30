@@ -67,8 +67,8 @@ export const commonColor = {
   colorGreen1: '#00ae8c',
   colorRed1: '#c2032f',
   colorRed2: '#aa052c',
-  colorWhile1: '#FFFFFFD9',
-  colorWhile2: '#d4d4d4',
+  colorWhite1: '#FFFFFFD9',
+  colorWhite2: '#d4d4d4',
   colorWarning1: '#ff6b6b'
 };
 

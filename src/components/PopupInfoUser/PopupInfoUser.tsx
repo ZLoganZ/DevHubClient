@@ -99,7 +99,7 @@ const PopupInfoUser: React.FC<PopUpProps> = ({ userInfo, userID }) => {
                     mutateFollowUser(userInfo._id);
                     setIsFollowed(!isFollowed);
                   }}>
-                  <span style={{ color: commonColor.colorWhile1 }}>
+                  <span style={{ color: commonColor.colorWhite1 }}>
                     {isFollowed ? 'Following' : 'Follow'}
                   </span>
                 </button>

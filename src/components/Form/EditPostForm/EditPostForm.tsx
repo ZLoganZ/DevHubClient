@@ -203,7 +203,7 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
                   onChange={(info) => setImageFile(info.file.originFileObj)}
                   accept='image/png, image/jpeg, image/jpg'
                   defaultFileList={image ? [...fileList] : []}
-                  maxCount={1}
+                  maxCount={5}
                   customRequest={async ({ onSuccess }) => {
                     if (onSuccess) {
                       onSuccess('ok');

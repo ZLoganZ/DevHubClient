@@ -43,7 +43,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
-  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
+  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(true);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
@@ -152,12 +152,18 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, []);
 
   return (
-    <StyleProvider className='h-full' theme={themeColorSet}>
+    <StyleProvider
+      className='h-full ml-3'
+      theme={themeColorSet}
+      style={{
+        borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
+        backgroundColor: themeColorSet.colorBg1
+      }}>
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayConversationOption ? 16 : 24} className='h-full'>
+          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[91%]'>
             <div
               className='header flex justify-between items-center py-6 px-6'
               style={{

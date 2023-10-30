@@ -95,7 +95,7 @@ const Profile = ({ userID }: Props) => {
   };
 
   useEffect(() => {
-    document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo.name} | DevHub`;
+    document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo.name} - DevHub`;
     if (!isLoadingOtherUserInfo && otherUserInfo) {
       setExperiences(otherUserInfo?.experiences || []);
     }

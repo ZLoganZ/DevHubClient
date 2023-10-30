@@ -131,6 +131,14 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
     };
   };
 
+  const beforeUpload = (file: RcFile) => {
+    const isLt2M = file.size / 1024 / 1024 < 3;
+    if (!isLt2M) {
+      messageApi.error('Image must smaller than 3MB!');
+    }
+    return isLt2M;
+  };
+
   return (
     <ConfigProvider
       theme={{
@@ -212,14 +220,12 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
                 <Upload
                   accept='image/png, image/jpeg, image/jpg'
                   key={random}
-                  maxCount={1}
+                  maxCount={5}
                   customRequest={async ({ onSuccess }) => {
                     if (onSuccess) onSuccess('ok');
                   }}
-                  data={() => {
-                    return {};
-                  }}
                   listType='picture'
+                  beforeUpload={beforeUpload}
                   onChange={(info) => setFile(info.file.originFileObj)}
                   onRemove={() => {
                     setFile(undefined);
@@ -230,7 +236,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
             </div>
             <div className='newPostFooter__right'>
               <ButtonActiveHover rounded onClick={form.handleSubmit(onSubmit)} loading={isLoadingCreatePost}>
-                <span style={{ color: commonColor.colorWhile1 }}>
+                <span style={{ color: commonColor.colorWhite1 }}>
                   {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>
               </ButtonActiveHover>

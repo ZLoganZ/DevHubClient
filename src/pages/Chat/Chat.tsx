@@ -1,6 +1,6 @@
 import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
@@ -49,6 +49,10 @@ const Chat = () => {
       dispatch(setTheme({ theme: LIGHT_THEME }));
     }
   };
+
+  useEffect(() => {
+    document.title = 'DevHub Chat';
+  }, []);
 
   const settingItem: MenuProps['items'] = [
     {
@@ -166,19 +170,13 @@ const Chat = () => {
               </Col>
               <Col span={5}>{OptionRender}</Col>
               <Col span={18}>
-                <div
-                  className='chatBox'
-                  style={{
-                    height: '99vh'
-                  }}>
+                <div className='chatBox h-screen'>
                   {!conversationID ? (
                     <EmptyChat key={uuidv4().replace(/-/g, '')} />
                   ) : isLoadingCurrentConversation ? (
-                    <div style={{ height: '92%' }}>
-                      <LoadingConversation />
-                    </div>
+                    <LoadingConversation />
                   ) : (
-                    <div style={{ height: '92%' }}>
+                    <div className='h-screen'>
                       <MessageChat key={conversationID} conversationID={conversationID} />
                     </div>
                   )}
