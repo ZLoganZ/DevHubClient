@@ -112,7 +112,6 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
     debounce(() => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id }), 1000),
     []
   );
-
   return (
     <div className='footer flex justify-between items-center' style={{ height: '8%' }}>
       {contextHolder}
