@@ -2,15 +2,8 @@ import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
 import type { MenuProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSnowflake,
-  faComment,
-  faUser,
-  faBell,
-  faPhone,
-  faGear
-} from '@fortawesome/free-solid-svg-icons';
-import { faSun, faMoon } from '@fortawesome/free-regular-svg-icons';
+import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faMoon } from '@fortawesome/free-regular-svg-icons';
 import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
 import { v4 as uuidv4 } from 'uuid';
@@ -24,11 +17,7 @@ import LoadingLogo from '@/components/Loading/LoadingLogo';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
 
-import {
-  useConversationsData,
-  useCurrentConversationData,
-  useCurrentUserInfo
-} from '@/hooks/fetch';
+import { useConversationsData, useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { getTheme } from '@/util/theme';
@@ -38,22 +27,18 @@ import StyleProvider from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
 
   const { isLoadingCurrentUserInfo, currentUserInfo } = useCurrentUserInfo();
   const { conversations, isLoadingConversations } = useConversationsData();
-  const { isLoadingCurrentConversation } =
-    useCurrentConversationData(conversationID);
+  const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
 
   const followers = useMemo(() => {
-    return [
-      ...(currentUserInfo?.followers ?? []),
-      ...(currentUserInfo?.following ?? [])
-    ].filter(
-      (item, index, arr) => arr.findIndex(t => t._id === item._id) === index
+    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
+      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
     );
   }, [currentUserInfo]);
 
@@ -85,7 +70,7 @@ const Chat = () => {
     if (!currentUserInfo || !conversations) return 0;
     return conversations.reduce((count, conversation) => {
       if (
-        conversation.seen.some(user => user._id === currentUserInfo._id) ||
+        conversation.seen.some((user) => user._id === currentUserInfo._id) ||
         conversation.lastMessage?.sender?._id === currentUserInfo._id ||
         !conversation.lastMessage
       )
@@ -112,12 +97,7 @@ const Chat = () => {
   const OptionRender = useMemo(() => {
     switch (optionIndex) {
       case 0:
-        return (
-          <ConversationList
-            conversations={conversations}
-            selected={conversationID}
-          />
-        );
+        return <ConversationList conversations={conversations} selected={conversationID} />;
       case 1:
         return <ContactList followers={followers ?? []} />;
       case 2:
@@ -158,15 +138,8 @@ const Chat = () => {
                           key={index}
                           className={`optionItem relative ${option.name}`}
                           onClick={() => setOptionIndex(index)}
-                          style={
-                            optionIndex === index
-                              ? { color: themeColorSet.colorText1 }
-                              : {}
-                          }>
-                          <FontAwesomeIcon
-                            className='icon text-2xl'
-                            icon={option.icon}
-                          />
+                          style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
+                          <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
                           <span
                             className='absolute rounded-full
                             bg-red-600
@@ -184,9 +157,7 @@ const Chat = () => {
                   <div className='mode optionItem py-6'>
                     <FontAwesomeIcon
                       className='icon text-2xl'
-                      icon={
-                        themeColorSet.colorPicker === 'light' ? faMoon : faCloudSun
-                      }
+                      icon={themeColorSet.colorPicker === 'light' ? faMoon : faCloudSun}
                       onClick={() => {
                         change(themeColorSet.colorPicker === 'light');
                       }}
@@ -195,10 +166,7 @@ const Chat = () => {
                   <div className='mode'>
                     <Dropdown menu={{ items: settingItem }} trigger={['click']}>
                       <div className='Setting optionItem'>
-                        <FontAwesomeIcon
-                          className='icon text-3xl'
-                          icon={faGear}
-                        />
+                        <FontAwesomeIcon className='icon text-3xl' icon={faGear} />
                       </div>
                     </Dropdown>
                   </div>
@@ -218,10 +186,7 @@ const Chat = () => {
                     <LoadingConversation />
                   ) : (
                     <div className='h-screen'>
-                      <MessageChat
-                        key={conversationID}
-                        conversationID={conversationID}
-                      />
+                      <MessageChat key={conversationID} conversationID={conversationID} />
                     </div>
                   )}
                 </div>

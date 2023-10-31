@@ -1,10 +1,8 @@
 import { UserInfoType } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import getImageURL from '@/util/getImageURL';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 
 interface IAvatarGroup {
   users: UserInfoType[];
@@ -84,20 +82,13 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
                 style={{
                   backgroundColor: themeColorSet.colorBg3
                 }}>
-                <FontAwesomeIcon
-                  style={{
-                    fontSize: size / 7,
-                    color: themeColorSet.colorText2
-                  }}
-                  icon={faPlus}
-                />
                 <div
                   className='text-xs'
                   style={{
                     fontSize: size / 4,
                     color: themeColorSet.colorText2
                   }}>
-                  {users.length - 3}
+                  +{users.length - 3}
                 </div>
               </span>
             )}
