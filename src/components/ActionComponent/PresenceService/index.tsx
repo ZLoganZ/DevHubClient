@@ -45,6 +45,14 @@ const PresenceService = () => {
           return { ...member, isActive: false, last_online: Date.now(), is_online: false };
         });
 
+        activeMembers.push({
+          _id: currentUserInfo._id,
+          last_online: Date.now(),
+          first_online: 0,
+          is_online: true,
+          isActive: true
+        });
+
         dispatch(setMembers(activeMembers));
       });
     }
