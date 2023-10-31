@@ -23,7 +23,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
     users
       .map((user) => {
         if (user._id === currentUserInfo._id) return;
-        return members.indexOf(user._id) !== -1;
+        return members.some((member) => member._id === user._id && member.is_online);
       })
       .indexOf(true) !== -1;
 

@@ -44,19 +44,29 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const isActive = members.some((memberID) => memberID === otherUser._id);
+  const activeUser = members.find((member) => member._id === otherUser._id);
 
   const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') {
-      const membersActive = currentConversation.members.filter((member) => members.includes(member._id));
+      const membersActive = currentConversation.members.filter(
+        (member) =>
+          member._id === currentUserInfo._id ||
+          members.some((user) => user._id === member._id && user.is_online)
+      );
 
-      return `${currentConversation.members.length} members - ${membersActive.length} online`;
+      const memberCount = currentConversation.members.length;
+      const activeMemberCount = membersActive.length;
+
+      return `${memberCount} members - ${activeMemberCount === 1 ? 'Only you' : activeMemberCount} online`;
     }
 
-    return isActive ? 'Online' : getLastOnline(otherUser.last_online);
-  }, [currentConversation, isActive, members]);
+    const lastOnline =
+      activeUser?.first_online === 0 || !activeUser ? otherUser.last_online : activeUser.last_online;
+
+    return activeUser?.is_online ? 'Online' : getLastOnline(lastOnline);
+  }, [currentConversation, activeUser, members]);
 
   const seenMessage = useCallback(() => {
     if (
@@ -131,8 +141,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, [typingUsers, currentUserInfo, isTyping]);
 
   const styleStatus = useMemo(() => {
-    return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
-  }, [isActive, themeColorSet]);
+    return activeUser?.is_online ? themeColorSet.colorText2 : themeColorSet.colorText3;
+  }, [activeUser, themeColorSet]);
 
   const isPrevMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
     if (index === 0) return false;

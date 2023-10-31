@@ -1,8 +1,14 @@
 import { Socket, io } from 'socket.io-client';
 import { createSlice } from '@reduxjs/toolkit';
 
+interface member {
+  _id: string;
+  last_online: string;
+  first_online: number;
+  is_online: boolean;
+}
 interface State {
-  members: string[];
+  members: member[];
   presenceSocket: Socket;
   chatSocket: Socket;
 }

@@ -9,7 +9,7 @@ interface IAvatar {
 
 const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user }) => {
   const { members } = useAppSelector((state) => state.socketIO);
-  const isActive = members.indexOf(user._id) !== -1;
+  const isActive = members.some((member) => member._id === user._id && member.is_online);
 
   return (
     <div className='relative'>
