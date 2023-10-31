@@ -177,13 +177,11 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[96%]'>
+          <Col span={isDisplayConversationOption ? 16 : 24} className='h-full'>
             <div
               className='header flex justify-between items-center py-4 px-6'
               style={{
-                height: '8%',
-                borderBottom: '1px solid ' + themeColorSet.colorTextReverse2,
-                backgroundColor: themeColorSet.colorBg1,
+                height: '10%',
                 boxShadow: '5px 1px 10px' + themeColorSet.colorBg2
               }}>
               <div className='flex gap-3 items-center'>
@@ -242,72 +240,94 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
               </Space>
             </div>
             <div
-              className='body'
               style={{
-                height: '89%',
+                height: '90%',
                 overflow: 'auto',
                 backgroundImage: `url(${getImageURL(currentConversation.cover_image)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
-              }}>
+              }}
+              >
               <div
+                className='body'
                 style={{
-                  backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
+                  height: '92%',
+                  overflow: 'auto'
                 }}>
-                <div className='flex-1 overflow-y-hidden'>
-                  {!hasPreviousMessages && (
-                    <ChatWelcome
-                      type={currentConversation.type}
-                      name={currentConversation.name}
-                      members={currentConversation.members}
-                      otherUser={otherUser}
-                      image={currentConversation.image}
-                    />
-                  )}
-                  <div className='pt-1' ref={topRef} />
-                  {messages.map((message, index, messArr) => (
-                    <MessageBox
-                      key={`${conversationID}-${message._id}`}
-                      type={currentConversation.type}
-                      isLastMes={index === messages.length - 1}
-                      message={message}
-                      seen={currentConversation.seen}
-                      isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
-                      isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                      isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
-                      isAdmin={
-                        currentConversation.admins &&
-                        currentConversation.admins.some((admin) => admin._id === message.sender._id)
-                      }
-                    />
-                  ))}
-                  <div className='pb-1' ref={bottomRef} />
+                <div
+                  className=''
+                  style={{
+                    // backgroundColor: 'rgba(0,0,0,0.5)',
+                    backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
+                  }}>
+                  <div className='flex-1 overflow-y-hidden'>
+                    {!hasPreviousMessages && (
+                      <ChatWelcome
+                        type={currentConversation.type}
+                        name={currentConversation.name}
+                        members={currentConversation.members}
+                        otherUser={otherUser}
+                        image={currentConversation.image}
+                      />
+                    )}
+                    <div className='pt-1' ref={topRef} />
+                    {messages.map((message, index, messArr) => (
+                      <MessageBox
+                        key={`${conversationID}-${message._id}`}
+                        type={currentConversation.type}
+                        isLastMes={index === messages.length - 1}
+                        message={message}
+                        seen={currentConversation.seen}
+                        isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                        isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                        isMoreThan10Min={isMoreThan10Min(
+                          message,
+                          index,
+                          messArr
+                        )}
+                        isAdmin={
+                          currentConversation.admins &&
+                          currentConversation.admins.some(
+                            admin => admin._id === message.sender._id
+                          )
+                        }
+                      />
+                    ))}
+                    <div className='pb-1' ref={bottomRef} />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
-              {currentConversation.members.map((member) => {
-                const index = typingUsers.findIndex((user) => user === member._id);
-                if (index !== -1) {
-                  return (
-                    <img
-                      key={member._id}
-                      className='rounded-full top-3 absolute h-6 w-6 overflow-hidden'
-                      src={getImageURL(member.user_image, 'avatar_mini')}
-                      style={{ left: (index + 1) * 10 }}
-                    />
-                  );
-                }
-                return null;
-              })}
               <div
-                className='typing-indicator rounded-full'
-                style={{ backgroundColor: themeColorSet.colorBg4, left: typingUsers.length * 40 }}>
-                <div /> <div /> <div />
+                className='px-2 flex flex-row items-center opacity-0'
+                ref={typingDiv}>
+                {currentConversation.members.map(member => {
+                  const index = typingUsers.findIndex(
+                    user => user === member._id
+                  );
+                  if (index !== -1) {
+                    return (
+                      <img
+                        key={member._id}
+                        className={`rounded-full top-3 left-${
+                          index * 8 + typingUsers.length * 1
+                        } absolute h-6 w-6 overflow-hidden`}
+                        src={getImageURL(member.user_image, 'avatar_mini')}
+                      />
+                    );
+                  }
+                  return null;
+                })}
+                <div
+                  className={`typing-indicator rounded-full left-${
+                    typingUsers.length * 8 + typingUsers.length * 2
+                  }`}
+                  style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                  <div /> <div /> <div />
+                </div>
               </div>
+              <InputChat conversationID={conversationID} />
             </div>
-            <ChatInput conversationID={conversationID} />
           </Col>
           {isDisplayConversationOption && (
             <Col span={8} className='h-full'>
