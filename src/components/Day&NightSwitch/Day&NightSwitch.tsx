@@ -1,12 +1,12 @@
 import { useAppSelector } from '@/hooks/special';
 import './Day&NightSwitch.css';
 
-interface Props {
+interface ISwitch {
   checked: boolean;
   onChange: (checked: boolean) => void;
 }
 
-const DayNightSwitch: React.FC<Props> = ({ checked, onChange }) => {
+const DayNightSwitch: React.FC<ISwitch> = ({ checked, onChange }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 

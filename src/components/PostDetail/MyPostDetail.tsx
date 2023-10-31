@@ -12,13 +12,13 @@ import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
 import { useMediaQuery } from 'react-responsive';
-interface PostProps {
+interface IPost {
   post: PostType;
   postAuthor: UserInfoType;
   isDetail?: boolean;
 }
 
-const MyPostDetail: React.FC<PostProps> = ({ post, postAuthor, isDetail }) => {
+const MyPostDetail: React.FC<IPost> = ({ post, postAuthor, isDetail }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

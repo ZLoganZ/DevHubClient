@@ -1,33 +1,18 @@
 import { Col, Row, Space } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleInfo,
-  faPhone,
-  faVideoCamera
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
+import { debounce } from 'lodash';
 
 import { getTheme } from '@/util/theme';
-import {
-  IS_TYPING,
-  SEEN_MSG,
-  STOP_TYPING
-} from '@/util/constants/SettingSystem';
-import {
-  useOtherUser,
-  useAppSelector,
-  useIntersectionObserver
-} from '@/hooks/special';
-import {
-  useCurrentConversationData,
-  useCurrentUserInfo,
-  useMessagesData
-} from '@/hooks/fetch';
-import Avatar from '@/components/Avatar/AvatarMessage';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
+import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
+import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
-import InputChat from '@/components/ChatComponents/InputChat/InputChat';
+import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
 import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
@@ -35,6 +20,7 @@ import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import audioCall from '@/util/audioCall';
 import videoChat from '@/util/videoChat';
+import { getLastOnline } from '@/util/formatDateTime';
 import StyleProvider from './cssMessageChat';
 import { commonColor } from '@/util/cssVariable';
 import { url } from 'inspector';
@@ -45,42 +31,49 @@ interface IParams {
 
 const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
-  const { members, chatSocket } = useAppSelector(state => state.socketIO);
+  const { members, chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
-  const {
-    messages,
-    isLoadingMessages,
-    fetchPreviousMessages,
-    isFetchingPreviousPage,
-    hasPreviousMessages
-  } = useMessagesData(conversationID);
+  const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage, hasPreviousMessages } =
+    useMessagesData(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const isActive = members.some(memberID => memberID === otherUser._id);
+  const activeUser = members.find((member) => member._id === otherUser._id);
 
-  const [isDisplayConversationOption, setIsDisplayConversationOption] =
-    useState(true);
+  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
 
   const statusText = useMemo(() => {
-    if (currentConversation.type === 'group')
-      return `${currentConversation.members.length} members`;
+    if (currentConversation.type === 'group') {
+      const membersActive = currentConversation.members.filter(
+        (member) =>
+          member._id === currentUserInfo._id ||
+          members.some((user) => user._id === member._id && user.is_online)
+      );
 
-    return isActive ? 'Online' : 'Offline';
-  }, [currentConversation, isActive]);
+      const memberCount = currentConversation.members.length;
+      const activeMemberCount = membersActive.length;
+
+      return `${memberCount} members - ${activeMemberCount === 1 ? 'Only you' : activeMemberCount} online`;
+    }
+
+    const lastOnline =
+      activeUser?.first_online === 0 || !activeUser ? otherUser.last_online : activeUser.last_online;
+
+    return activeUser?.is_online ? 'Online' : getLastOnline(lastOnline);
+  }, [currentConversation, activeUser, members]);
 
   const seenMessage = useCallback(() => {
     if (
       messages.length > 0 &&
       messages[messages.length - 1].sender._id !== currentUserInfo._id &&
-      !currentConversation.seen.some(user => user._id === currentUserInfo._id)
+      !currentConversation.seen.some((user) => user._id === currentUserInfo._id)
     ) {
       chatSocket.emit(SEEN_MSG, {
         conversationID,
@@ -90,8 +83,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, [currentConversation.seen, conversationID, messages]);
 
   const fetchPreMessages = useCallback(() => {
-    if (!isFetchingPreviousPage && messages && messages.length >= 20)
-      fetchPreviousMessages();
+    if (!isFetchingPreviousPage && messages && messages.length >= 20) void fetchPreviousMessages();
   }, [isFetchingPreviousPage, messages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -103,10 +95,14 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   const scrollToBottom = useCallback(
     (type: ScrollBehavior) => {
-      if (bottomRef.current)
-        bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
+      if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
     },
     [bottomRef.current]
+  );
+
+  const setTyping = useCallback(
+    debounce((data: string) => setTypingUsers((prev) => prev.filter((user) => user !== data)), 500),
+    []
   );
 
   useEffect(() => {
@@ -118,18 +114,14 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   useEffect(() => {
     chatSocket.on(IS_TYPING + conversationID, (data: string) => {
-      setTypingUsers(prev =>
-        prev.some(user => user === data) || data === currentUserInfo._id
-          ? prev
-          : [...prev, data]
+      setTypingUsers((prev) =>
+        prev.some((user) => user === data) || data === currentUserInfo._id ? prev : [...prev, data]
       );
       setIsTyping(true);
     });
     chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
       setIsTyping(typingUsers.length !== 1);
-      setTimeout(() => {
-        setTypingUsers(prev => prev.filter(user => user !== data));
-      }, 500);
+      setTyping(data);
     });
 
     if (typingDiv.current) {
@@ -147,77 +139,52 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
       chatSocket.off(IS_TYPING + conversationID);
       chatSocket.off(STOP_TYPING + conversationID);
     };
-  }, [typingUsers.length, currentUserInfo, isTyping]);
+  }, [typingUsers, currentUserInfo, isTyping]);
 
   const styleStatus = useMemo(() => {
-    return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
-  }, [isActive, themeColorSet]);
+    return activeUser?.is_online ? themeColorSet.colorText2 : themeColorSet.colorText3;
+  }, [activeUser, themeColorSet]);
 
-  const isPrevMesGroup = useCallback(
-    (message: MessageType, index: number, messArr: MessageType[]) => {
-      if (index === 0) return false;
-      if (!messArr) return false;
+  const isPrevMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === 0) return false;
+    if (!messArr) return false;
 
-      const isSameSender = message.sender._id === messArr[index - 1].sender._id;
-      if (!isSameSender) return false;
+    const isSameSender = message.sender._id === messArr[index - 1].sender._id;
+    if (!isSameSender) return false;
 
-      return (
-        new Date(message.createdAt).getTime() -
-          new Date(messArr[index - 1].createdAt).getTime() <
-        60000
-      );
-    },
-    []
-  );
+    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() < 60000;
+  }, []);
 
-  const isNextMesGroup = useCallback(
-    (message: MessageType, index: number, messArr: MessageType[]) => {
-      if (index === messArr.length - 1) return false;
-      if (!messArr) return false;
+  const isNextMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === messArr.length - 1) return false;
+    if (!messArr) return false;
 
-      const isSameSender = message.sender._id === messArr[index + 1].sender._id;
-      if (!isSameSender) return false;
+    const isSameSender = message.sender._id === messArr[index + 1].sender._id;
+    if (!isSameSender) return false;
 
-      return (
-        new Date(messArr[index + 1].createdAt).getTime() -
-          new Date(message.createdAt).getTime() <
-        60000
-      );
-    },
-    []
-  );
+    return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
+  }, []);
 
-  const isMoreThan10Min = useCallback(
-    (message: MessageType, index: number, messArr: MessageType[]) => {
-      if (index === 0) return true;
-      if (!messArr) return false;
+  const isMoreThan10Min = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+    if (index === 0) return true;
+    if (!messArr) return false;
 
-      return (
-        new Date(message.createdAt).getTime() -
-          new Date(messArr[index - 1].createdAt).getTime() >
-        600000
-      );
-    },
-    []
-  );
+    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() > 600000;
+  }, []);
 
   return (
-    <StyleProvider
-      className='h-full ml-3'
-      theme={themeColorSet}
-      style={{
-        borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
-        backgroundColor: themeColorSet.colorBg1
-      }}>
+    <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[91%]'>
+          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[96%]'>
             <div
-              className='header flex justify-between items-center py-6 px-6'
+              className='header flex justify-between items-center py-4 px-6'
               style={{
-                height: '13%',
+                height: '8%',
+                borderBottom: '1px solid ' + themeColorSet.colorTextReverse2,
+                backgroundColor: themeColorSet.colorBg1,
                 boxShadow: '5px 1px 10px' + themeColorSet.colorBg2
               }}>
               <div className='flex gap-3 items-center'>
@@ -233,13 +200,9 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </NavLink>
                 )}
                 <div className='flex flex-col'>
-                  <div
-                    className='font-semibold'
-                    style={{ color: themeColorSet.colorText1 }}>
+                  <div className='font-semibold' style={{ color: themeColorSet.colorText1 }}>
                     {currentConversation.name ?? (
-                      <NavLink to={`/user/${otherUser._id}`}>
-                        {otherUser.name}
-                      </NavLink>
+                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
                     )}
                   </div>
                   <div
@@ -253,18 +216,14 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
               <Space align='center' size={20} className='flex gap-3'>
-                <div
-                  className='audio-call'
-                  onClick={() => audioCall(conversationID)}>
+                <div className='audio-call' onClick={() => audioCall(conversationID)}>
                   <FontAwesomeIcon
                     className='icon text-lg cursor-pointer'
                     icon={faPhone}
                     style={{ color: commonColor.colorBlue1 }}
                   />
                 </div>
-                <div
-                  className='video-call'
-                  onClick={() => videoChat(conversationID)}>
+                <div className='video-call' onClick={() => videoChat(conversationID)}>
                   <FontAwesomeIcon
                     className='icon text-xl cursor-pointer'
                     icon={faVideoCamera}
@@ -276,9 +235,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     className='icon text-xl cursor-pointer'
                     icon={faCircleInfo}
                     onClick={() => {
-                      setIsDisplayConversationOption(
-                        !isDisplayConversationOption
-                      );
+                      setIsDisplayConversationOption(!isDisplayConversationOption);
                     }}
                     style={{ color: commonColor.colorBlue1 }}
                   />
@@ -334,39 +291,32 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
             </div>
-            <div
-              className='px-2 flex flex-row items-center opacity-0'
-              ref={typingDiv}>
-              {currentConversation.members.map(member => {
-                const index = typingUsers.findIndex(
-                  user => user === member._id
-                );
+            <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
+              {currentConversation.members.map((member) => {
+                const index = typingUsers.findIndex((user) => user === member._id);
                 if (index !== -1) {
                   return (
                     <img
                       key={member._id}
-                      className={`rounded-full top-3 left-${
-                        index * 8 + typingUsers.length * 1
-                      } absolute h-6 w-6 overflow-hidden`}
+                      className='rounded-full top-3 absolute h-6 w-6 overflow-hidden'
                       src={getImageURL(member.user_image, 'avatar_mini')}
+                      style={{ left: (index + 1) * 10 }}
                     />
                   );
                 }
                 return null;
               })}
               <div
-                className={`typing-indicator rounded-full left-${
-                  typingUsers.length * 8 + typingUsers.length * 2
-                }`}
-                style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                className='typing-indicator rounded-full'
+                style={{ backgroundColor: themeColorSet.colorBg4, left: typingUsers.length * 40 }}>
                 <div /> <div /> <div />
               </div>
             </div>
-            <InputChat conversationID={conversationID} />
+            <ChatInput conversationID={conversationID} />
           </Col>
           {isDisplayConversationOption && (
             <Col span={8} className='h-full'>
-              <ConversationOption conversationID={conversationID!} />
+              <ConversationOption conversationID={conversationID} />
             </Col>
           )}
         </Row>

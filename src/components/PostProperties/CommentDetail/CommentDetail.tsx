@@ -13,14 +13,14 @@ import { setData } from '@/redux/Slice/ModalHOCSlice';
 import { CommentType } from '@/types';
 import StyleProvider from './cssCommentDetail';
 
-interface CommentProps {
+interface IComment {
   comment: CommentType;
   postID: string;
   children?: React.ReactNode;
   isReply?: boolean;
 }
 
-const CommentDetail: React.FC<CommentProps> = ({ comment, children, postID }) => {
+const CommentDetail: React.FC<IComment> = ({ comment, children, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -33,8 +33,8 @@ const CommentDetail: React.FC<CommentProps> = ({ comment, children, postID }) =>
 
   const { themeColorSet } = getTheme();
 
-  const [likes, setLike] = useState(comment.like_number || 0);
-  const [dislikes, setDislike] = useState(comment.dislike_number || 0);
+  const [likes, setLike] = useState(comment.like_number ?? 0);
+  const [dislikes, setDislike] = useState(comment.dislike_number ?? 0);
   const [action, setAction] = useState('');
 
   useEffect(() => {

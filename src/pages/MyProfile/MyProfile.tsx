@@ -69,7 +69,7 @@ const MyProfile = () => {
         : positionNames.join(' & ')
       : 'No job position';
 
-  const iconMap: { [key: string]: IconDefinition } = {
+  const iconMap: Record<string, IconDefinition> = {
     '0': faFacebookF,
     '1': faGithub,
     '2': faTwitter,
@@ -162,10 +162,10 @@ const MyProfile = () => {
               </Col>
             </Row>
             <div className='id_address_join xs:pl-3'>
-              <span className='id item mr-2'>@{currentUserInfo.alias || 'user'}</span>
+              <span className='id item mr-2'>@{currentUserInfo.alias ?? 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                {currentUserInfo.location || 'Global'}
+                {currentUserInfo.location ?? 'Global'}
               </span>
               <span className='join'>
                 <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
@@ -195,15 +195,15 @@ const MyProfile = () => {
             </Col>
             <div className='follow mt-5 xs:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.follower_number || 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>{' '}
                 {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className='following item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.following_number || 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>{' '}
                 {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
               </span>
               <span className='post mr-2'>
-                <span className='mr-1'>{currentUserInfo?.post_number || 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>{' '}
                 {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>

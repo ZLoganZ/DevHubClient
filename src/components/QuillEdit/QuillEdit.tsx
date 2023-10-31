@@ -15,13 +15,13 @@ const toolbarOptions = [
   ['link']
 ];
 
-interface QuillEditProps {
+interface IQuillEdit {
   placeholder: string;
   content: string;
   callbackFunction: (value: string) => void;
 }
 
-const QuillEdit: React.FC<QuillEditProps> = ({ placeholder, callbackFunction, content }) => {
+const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, content }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
@@ -69,7 +69,7 @@ const QuillEdit: React.FC<QuillEditProps> = ({ placeholder, callbackFunction, co
         modules={{
           toolbar: toolbarOptions
         }}
-        placeholder={placeholder || 'Add a Content'}
+        placeholder={placeholder ?? 'Add a Content'}
         theme='snow'
       />
     </StyleProvider>

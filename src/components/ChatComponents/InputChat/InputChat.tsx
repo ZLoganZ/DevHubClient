@@ -1,32 +1,35 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ConfigProvider, Input, Popover, Space } from 'antd';
+import { ConfigProvider, Input, Popover, Space, Upload, message } from 'antd';
 import { useCallback, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { debounce } from 'lodash';
 
 import { getTheme } from '@/util/theme';
 import { IS_TYPING, PRIVATE_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
-import UploadComponent from '@/components/UploadComponent';
+import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
 import { MessageType } from '@/types';
-import { debounce } from 'lodash';
 import { commonColor } from '@/util/cssVariable';
 
-interface Props {
+interface IChatInput {
   conversationID: string;
 }
 
-const InputChat: React.FC<Props> = ({ conversationID }) => {
+const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [message, setMessage] = useState('');
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const [messageContent, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
+  const [file, setFile] = useState<File>();
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -36,7 +39,7 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
 
   const { mutateSendMessage } = useSendMessage();
 
-  const handleSubmit = async (content: string) => {
+  const handleSubmit = (content: string) => {
     if (!conversationID) return;
     if (!content) return;
 
@@ -66,22 +69,39 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
     mutateSendMessage(message as unknown as MessageType);
   };
 
-  const handleUpload = async (error: any, result: any, widget: any) => {
-    if (error) {
-      widget.close({
-        quiet: true
-      });
-      return;
+  const handleUpload = async () => {
+    const formData = new FormData();
+    if (file) {
+      const result = await handleUploadImage(file);
+      formData.append('image', result.url);
     }
-
     await messageService.sendMessage({
       conversation_id: conversationID,
-      image: result?.info?.secure_url
+      content: messageContent,
+      image: formData.get('image')?.toString()
     });
   };
 
+  const handleUploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const { data } = await imageService.uploadImage(formData);
+    return {
+      url: data.metadata.key,
+      status: 'done'
+    };
+  };
+
+  const beforeUpload = (file: File) => {
+    const isLt2M = file.size / 1024 / 1024 < 3;
+    if (!isLt2M) {
+      void messageApi.error('Image must smaller than 3MB!');
+    }
+    return isLt2M;
+  };
+
   const checkEmpty = () => {
-    if (message === '') {
+    if (messageContent === '') {
       return true;
     } else {
       return false;
@@ -89,23 +109,14 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
   };
 
   const handleStopTyping = useCallback(
-    debounce(() => {
-      chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id });
-    }, 1000),
+    debounce(() => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id }), 1000),
     []
   );
 
   return (
-    <div
-      className='footer flex justify-between items-center'
-      style={{
-        height: '8%'
-      }}>
-      <div
-        className='iconEmoji text-center'
-        style={{
-          width: '5%'
-        }}>
+    <div className='footer flex justify-between items-center' style={{ height: '8%' }}>
+      {contextHolder}
+      <div className='iconEmoji text-center' style={{ width: '5%' }}>
         <Popover
           placement='top'
           trigger='click'
@@ -117,7 +128,7 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
                 return response.json();
               }}
               onEmojiSelect={(emoji: any) => {
-                setMessage(message.slice(0, cursor) + emoji.native + message.slice(cursor));
+                setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
               }}
               theme={themeColorSet.colorPicker}
             />
@@ -131,31 +142,21 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
           </span>
         </Popover>
       </div>
-      <div
-        className='input'
-        style={{
-          width: '100%'
-        }}>
-        <ConfigProvider
-          theme={{
-            token: {
-              controlHeight: 32,
-              lineWidth: 0
-            }
-          }}>
+      <div className='input' style={{ width: '100%' }}>
+        <ConfigProvider theme={{ token: { controlHeight: 32, lineWidth: 0 } }}>
           <Input
             allowClear
             placeholder='Write a message'
-            value={message}
+            value={messageContent}
             onKeyUp={(e) => {
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
-              setCursor(cursorPosition || 0);
+              setCursor(cursorPosition ?? 0);
             }}
             onClick={(e) => {
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
-              setCursor(cursorPosition || 0);
+              setCursor(cursorPosition ?? 0);
             }}
             onChange={(e) => {
               chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id });
@@ -163,31 +164,33 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
               handleStopTyping();
               // get cursor position
               const cursorPosition = e.currentTarget.selectionStart;
-              setCursor(cursorPosition || 0);
+              setCursor(cursorPosition ?? 0);
             }}
-            onPressEnter={() => handleSubmit(message)}
+            onPressEnter={() => handleSubmit(messageContent)}
             suffix={
               <span
                 className={`cursor-pointer hover:text-blue-700 ${
                   checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
                 }`}
-                onClick={() => handleSubmit(message)}>
+                onClick={() => handleSubmit(messageContent)}>
                 <FontAwesomeIcon icon={faPaperPlane} style={{color: commonColor.colorBlue1}}/>
               </span>
             }
           />
         </ConfigProvider>
       </div>
-      <Space
-        className='extension flex justify-center items-center'
-        style={{
-          width: '12%'
-        }}>
-        <UploadComponent onUpload={handleUpload}>
-          <div className='upload'>
-            <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
-          </div>
-        </UploadComponent>
+      <Space className='extension flex justify-center items-center' style={{ width: '12%' }}>
+        <Upload
+          maxCount={5}
+          customRequest={({ onSuccess }) => {
+            if (onSuccess) onSuccess('ok');
+          }}
+          showUploadList={false}
+          listType='picture'
+          beforeUpload={beforeUpload}
+          onChange={(info) => setFile(info.file.originFileObj)}>
+          <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
+        </Upload>
         <div className='micro'>
           <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} style={{color: commonColor.colorBlue1}}/>
         </div>
@@ -196,4 +199,4 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
   );
 };
 
-export default InputChat;
+export default ChatInput;

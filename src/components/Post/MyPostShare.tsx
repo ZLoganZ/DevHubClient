@@ -14,13 +14,14 @@ import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
-interface PostShareProps {
+
+interface IPostShare {
   postShared: PostType;
   postAuthor: UserInfoType;
   postSharer: UserInfoType;
 }
 
-const MyPostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSharer }) => {
+const MyPostShare: React.FC<IPostShare> = ({ postShared, postAuthor, postSharer }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

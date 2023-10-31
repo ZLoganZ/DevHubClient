@@ -118,12 +118,12 @@ const NewsFeed = () => {
   }, [isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts]);
 
   const popular = useMemo(() => {
-    return [...(allPopularPosts || [])];
+    return [...(allPopularPosts ?? [])];
   }, [allPopularPosts]);
 
   const handlePopularClick: MenuProps['onClick'] = (e) => {
     const a = popular_time.find((item) => item.key === e.key);
-    setPopularvalue(a?.label || popularvalue);
+    setPopularvalue(a?.label ?? popularvalue);
     setPopularOpen(false);
   };
 
@@ -303,8 +303,8 @@ const NewsFeed = () => {
                                     marginLeft: 5,
                                     color: themeColorSet.colorText3
                                   }}>
-                                  {ConvertNumber(item.post_attributes.view_number!)} view
-                                  {item.post_attributes.view_number! > 0 ? 's' : ''}
+                                  {ConvertNumber(item.post_attributes.view_number)} view
+                                  {item.post_attributes.view_number > 0 ? 's' : ''}
                                 </span>
                               </div>
                             </div>

@@ -1,14 +1,14 @@
 import { NavLink } from 'react-router-dom';
 
-import Avatar from '@/components/Avatar/AvatarMessage';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import { getTheme } from '@/util/theme';
 import StyleProvider from './cssChatWelcome';
 
 type TypeofConversation = 'private' | 'group';
-interface ChatWelcomeProps {
+interface IChatWelcome {
   type: TypeofConversation;
   name: string;
   otherUser: UserInfoType;
@@ -16,12 +16,12 @@ interface ChatWelcomeProps {
   image?: string;
 }
 
-const ChatWelcome: React.FC<ChatWelcomeProps> = ({ name, type, members, otherUser, image }) => {
+const ChatWelcome: React.FC<IChatWelcome> = ({ name, type, members, otherUser, image }) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
   return (
-    <StyleProvider theme={themeColorSet}>
+    <StyleProvider className='pt-2' theme={themeColorSet}>
       <div className='chatWelcome'>
         <div className='chatWelcome__container'>
           <div className='chatWelcome__container__header'>

@@ -54,3 +54,33 @@ export const getDateTime = (date: string) => {
 
   return format(commentDate, 'MMM dd, yyyy • h:mm a');
 };
+
+export const getLastOnline = (date: string) => {
+  if (!date) {
+    return '';
+  }
+
+  const today = new Date();
+  const commentDate = new Date(date);
+  const diff = Math.abs(today.getTime() - commentDate.getTime());
+  const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+  if (diffDays === 1) {
+    const diffHours = Math.ceil(diff / (1000 * 3600));
+    if (diffHours === 1) {
+      const diffMinutes = Math.ceil(diff / (1000 * 60));
+      return `Online ${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+    }
+    return `Online ${diffHours - 1} hour${diffHours - 1 === 1 ? '' : 's'} ago`;
+  }
+
+  if (diffDays <= 7) {
+    return `Online ${diffDays - 1} day${diffDays - 1 === 1 ? '' : 's'} ago`;
+  }
+
+  if (diffDays <= 365) {
+    return 'Last seen at ' + format(commentDate, 'MMM dd • h:mm a');
+  }
+
+  return 'Last seen at ' + format(commentDate, 'MMM dd, yyyy');
+};

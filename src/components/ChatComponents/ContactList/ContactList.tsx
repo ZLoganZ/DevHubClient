@@ -7,15 +7,15 @@ import { SearchOutlined } from '@ant-design/icons';
 import StyleProvider from './cssContactList';
 import { getTheme } from '@/util/theme';
 import { messageService } from '@/services/MessageService';
-import Avatar from '@/components/Avatar/AvatarMessage';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 
-interface ContactsListProps {
+interface IContactsList {
   followers: UserInfoType[];
 }
 
-const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
+const ConversationList: React.FC<IContactsList> = ({ followers }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -23,8 +23,8 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
 
   const navigate = useNavigate();
 
-  const HandleOnClick = async (userFollow: string) => {
-    messageService
+  const HandleOnClick = (userFollow: string) => {
+    void messageService
       .createConversation({
         type: 'private',
         members: [userFollow]
@@ -73,13 +73,7 @@ const ConversationList: React.FC<ContactsListProps> = ({ followers }) => {
                 borderColor: themeColorSet.colorBg4
               }}>
               <div className='input flex items-center w-full '>
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      lineWidth: 0,
-                      controlHeight: 40
-                    }
-                  }}>
+                <ConfigProvider theme={{ token: { lineWidth: 0, controlHeight: 40 } }}>
                   <Input
                     allowClear
                     placeholder='Search conversation'

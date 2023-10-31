@@ -27,7 +27,7 @@ const RenderPeopleItem = ({ item }: any) => {
             width: '10%'
           }}>
           <img
-            src={item.userImage || '/images/DefaultAvatar/default_avatar.png'}
+            src={item.userImage}
             alt=''
             style={{
               borderRadius: '50%'

@@ -1,39 +1,39 @@
-export type UserLoginDataType = {
+export interface UserLoginDataType {
   email: string;
   password: string;
-};
+}
 
-export type GoogleLoginDataType = {
+export interface GoogleLoginDataType {
   token: string;
-};
+}
 
-export type UserRegisterDataType = {
+export interface UserRegisterDataType {
   email: string;
   password: string;
   name: string;
   confirm: string;
-};
+}
 
-export type UserATokenType = {
+export interface UserATokenType {
   accessToken: string;
-};
+}
 
-export type ForgotPasswordDataType = {
+export interface ForgotPasswordDataType {
   email: string;
-};
+}
 
-export type VerifyCodeDataType = {
+export interface VerifyCodeDataType {
   email: string;
   code: string;
-};
+}
 
-export type ResetPasswordDataType = {
+export interface ResetPasswordDataType {
   email: string;
   password: string;
   confirm?: string;
-};
+}
 
-export type UserUpdateDataType = {
+export interface UserUpdateDataType {
   name?: string;
   phone_number?: string;
   user_image?: string;
@@ -45,9 +45,9 @@ export type UserUpdateDataType = {
   repositories?: RepositoryType[];
   contacts?: ContactType[];
   location?: string;
-};
+}
 
-export type RepositoryType = {
+export interface RepositoryType {
   id: string;
   name: string;
   private: boolean;
@@ -56,27 +56,28 @@ export type RepositoryType = {
   forks_count: number;
   stargazers_count: number;
   languages: string;
-};
+}
 
-export type ExperienceType = {
+export interface ExperienceType {
   position_name: string;
   company_name: string;
   start_date: string;
   end_date: string;
-};
+}
 
-export type ContactType = {
+export interface ContactType {
   key: string;
   tooltip: string;
   link: string;
   state?: boolean;
-};
+}
 
-export type UserInfoType = {
+export interface UserInfoType {
   _id: string;
   name: string;
   email: string;
   role: string[];
+  last_online: string;
   phone_number: string;
   user_image: string;
   cover_image: string;
@@ -99,34 +100,34 @@ export type UserInfoType = {
   members: UserInfoType[];
   post_number: number;
   is_followed: boolean;
-};
+}
 
 type TypeofPost = 'Post' | 'Share';
 
-export type TypeOfLink = {
+export interface TypeOfLink {
   address: string;
   title: string;
   description: string;
   image: string;
-};
+}
 
-export type CreatePostDataType = {
+export interface CreatePostDataType {
   title: string;
   content: string;
   image?: string;
-};
+}
 
-export type UpdatePostDataType = {
+export interface UpdatePostDataType {
   id: string;
   postUpdate: CreatePostDataType;
-};
+}
 
-export type SharePostDataType = {
+export interface SharePostDataType {
   post: string;
   owner_post: string;
-};
+}
 
-export type PostType = {
+export interface PostType {
   _id: string;
   type: TypeofPost;
   post_attributes: {
@@ -151,51 +152,51 @@ export type PostType = {
   is_shared: boolean;
   is_saved: boolean;
   createdAt: string;
-};
+}
 
-export type LikeType = {
+export interface LikeType {
   _id: string;
   user: UserInfoType;
   post: PostType;
   owner_post: UserInfoType;
-};
+}
 
 type TypeofComment = 'parent' | 'child';
 
-export type CreateCommentDataType = {
+export interface CreateCommentDataType {
   content: string;
   type: TypeofComment;
   post: string;
   parent?: string;
-};
+}
 
-export type CreateLikeCommentType = {
+export interface CreateLikeCommentType {
   id: string;
   comment: LikeCommentType;
-};
+}
 
-export type GetChildCommentsType = {
+export interface GetChildCommentsType {
   post: string;
   parent: string;
-};
+}
 
-export type LikeCommentType = {
+export interface LikeCommentType {
   type: TypeofComment;
   post: string;
   owner_comment: string;
-};
+}
 
-export type CommentType = {
+export interface CommentType {
   _id: string;
   post: PostType;
   user: UserInfoType;
   content: string;
   type: TypeofComment;
 
-  //if type is child
+  //if interface is child
   parent?: CommentType;
 
-  //if type is parent
+  //if interface is parent
   children?: CommentType[];
 
   is_liked: boolean;
@@ -205,24 +206,24 @@ export type CommentType = {
   like_number: number;
   dislike_number: number;
   createdAt: string;
-};
+}
 
-export type SelectedCommentValues = {
+export interface SelectedCommentValues {
   isReply: boolean;
   idComment: string | null;
   name: string | null;
   user_image: string | null;
-};
+}
 
-export type ResponseType<T> = {
+export interface ResponseType<T> {
   message: string;
   status: number;
   metadata: T;
-};
+}
 
 export type TypeofConversation = 'private' | 'group';
 
-export type ConversationType = {
+export interface ConversationType {
   _id: string;
   type: TypeofConversation;
   members: UserInfoType[];
@@ -233,31 +234,34 @@ export type ConversationType = {
   image?: string;
   createdAt: string;
   updatedAt: string;
-};
+}
 
-export type CreateConversationDataType = {
+export interface CreateConversationDataType {
   type: TypeofConversation;
   members: string[];
   name?: string;
   image?: string;
-};
+}
 
-export type MessageType = {
+type TypeofMessage = 'text' | 'notification' | 'audio' | 'file';
+
+export interface MessageType {
   _id: string;
   conversation_id: string;
+  type: TypeofMessage;
   sender: UserInfoType;
   content: string;
   isSending?: boolean;
   image?: string;
   createdAt: string;
-};
+}
 
-export type CreateMessageDataType = {
+export interface CreateMessageDataType {
   conversation_id: string;
   content?: string;
   image?: string;
-};
+}
 
-export type ImageResponse = {
+export interface ImageResponse {
   key: string;
-};
+}

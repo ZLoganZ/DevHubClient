@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
 import StyleProvider from './cssAddExperienceForm';
 
-interface EditProps {
+interface IEditExperience {
   experiences: ExperienceType[];
   setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
 }
@@ -18,7 +18,7 @@ const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
 const dateFormat = 'MM/YYYY';
 
-const AddExperienceForm = (Props: EditProps) => {
+const AddExperienceForm: React.FC<IEditExperience> = ({ experiences, setExperiences }) => {
   const dispatch = useAppDispatch();
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -37,7 +37,7 @@ const AddExperienceForm = (Props: EditProps) => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please fill in all fields'
     });
@@ -59,7 +59,7 @@ const AddExperienceForm = (Props: EditProps) => {
       error();
       return;
     } else {
-      Props.setExperiences([...Props.experiences, experience]);
+      setExperiences([...experiences, experience]);
       dispatch(closeModal());
     }
   };

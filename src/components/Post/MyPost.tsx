@@ -17,14 +17,14 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 
-interface PostProps {
+interface IPost {
   post: PostType;
   postAuthor: UserInfoType;
 }
 
 // -----------------------------------------------------
 
-const MyPost: React.FC<PostProps> = ({ post, postAuthor }) => {
+const MyPost: React.FC<IPost> = ({ post, postAuthor }) => {
   const link = post.post_attributes.url;
   const dispatch = useAppDispatch();
 

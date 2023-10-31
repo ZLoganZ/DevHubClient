@@ -14,7 +14,7 @@ import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 import { useEffect, useState } from 'react';
 
-interface PostProps {
+interface IPost {
   post: PostType;
   postAuthor: UserInfoType;
   currentUser: UserInfoType;
@@ -22,7 +22,7 @@ interface PostProps {
 
 // -----------------------------------------------------
 
-const OtherPost: React.FC<PostProps> = ({ post, postAuthor, currentUser }) => {
+const OtherPost: React.FC<IPost> = ({ post, postAuthor, currentUser }) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css

@@ -8,17 +8,17 @@ import { commonColor } from '@/util/cssVariable';
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
-interface DeleteModalProps {
+interface IDeleteModal {
   isOpen: boolean;
   postID: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   image?: string[];
 }
 
-const DeletePostModal: React.FC<DeleteModalProps> = ({ postID, isOpen, setIsOpen, image }) => {
+const DeletePostModal: React.FC<IDeleteModal> = ({ postID, isOpen, setIsOpen }) => {
   const { isLoadingDeletePost, mutateDeletePost } = useDeletePost();
 
-  const handleOk = async () => {
+  const handleOk = () => {
     // if (image) await handleRemoveImage(image);
 
     mutateDeletePost(postID);

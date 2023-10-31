@@ -12,7 +12,7 @@ const LoadingConversation = () => {
       <div
         className='flex justify-between items-center py-6 px-6'
         style={{
-          height: '13%',
+          height: '8%',
           borderBottom: '1px solid',
           borderColor: themeColorSet.colorBg4
         }}>
@@ -35,7 +35,7 @@ const LoadingConversation = () => {
       <div
         className='body px-3'
         style={{
-          height: '80%',
+          height: '86%',
           overflow: 'auto'
         }}>
         <div className='flex-1 overflow-y-hidden'>

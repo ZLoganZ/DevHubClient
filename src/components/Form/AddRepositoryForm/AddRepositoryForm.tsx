@@ -13,12 +13,12 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useGetRepository } from '@/hooks/fetch';
 import { RepositoryType } from '@/types';
 
-interface ReposProps {
+interface IRepos {
   repositories: RepositoryType[];
   setRepositories: React.Dispatch<React.SetStateAction<RepositoryType[]>>;
 }
 
-const AddRepositoryForm = (Props: ReposProps) => {
+const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
@@ -63,10 +63,10 @@ const AddRepositoryForm = (Props: ReposProps) => {
     }, 300);
   };
 
-  const newRepositories = [...Props.repositories];
+  const newRepositories = [...repositories];
 
   const handleChangeRepositories = () => {
-    Props.setRepositories(newRepositories);
+    setRepositories(newRepositories);
     dispatch(closeModal());
   };
 
@@ -137,13 +137,7 @@ const AddRepositoryForm = (Props: ReposProps) => {
           </div>
         </Space>
         <div className='right'>
-          <ConfigProvider
-            theme={{
-              token: {
-                controlHeight: 40,
-                colorBorder: themeColorSet.colorText3
-              }
-            }}>
+          <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorText3 } }}>
             <Checkbox
               defaultChecked={newRepositories.some((repo) => {
                 return repo.id === item.id;

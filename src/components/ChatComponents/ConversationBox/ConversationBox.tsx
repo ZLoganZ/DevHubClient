@@ -1,5 +1,5 @@
 import { Dropdown, MenuProps } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -13,8 +13,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquareCheck as faReSquareCheck } from '@fortawesome/free-regular-svg-icons';
 
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
-import Avatar from '@/components/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import videoChat from '@/util/videoChat';
@@ -28,12 +28,12 @@ import { PRIVATE_MSG, SEEN_MSG, UNSEEN_MSG } from '@/util/constants/SettingSyste
 
 import StyleProvider from './cssConversationBox';
 
-interface ConversationBoxProps {
+interface IConversationBox {
   conversation: ConversationType;
   selected?: boolean;
 }
 
-const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selected }) => {
+const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected }) => {
   useAppSelector((state) => state.theme.change);
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
@@ -46,33 +46,20 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const { mutateReceiveMessage } = useReceiveMessage();
   const { mutateLeaveGroup } = useLeaveGroup();
 
+  const isSeen = conversation.seen.some((user) => user._id === currentUserInfo._id);
+  const isGroup = conversation.type === 'group';
+  const isLastMessageFromCurrentUser =
+    conversation.lastMessage && conversation.lastMessage.sender._id === currentUserInfo._id;
+
   const items: MenuProps['items'] = [
     {
-      label: conversation.seen.some((user) => user._id === currentUserInfo._id)
-        ? 'Undo reading'
-        : 'Mark as read',
-      style: {
-        display:
-          !!!conversation.lastMessage || conversation.lastMessage.sender._id === currentUserInfo._id
-            ? 'none'
-            : 'block'
-      },
+      label: isSeen ? 'Undo reading' : 'Mark as read',
+      style: { display: isLastMessageFromCurrentUser ? 'none' : 'block' },
       key: '1',
-      icon: conversation.seen.some((user) => user._id === currentUserInfo._id) ? (
-        <FontAwesomeIcon icon={faReSquareCheck} />
-      ) : (
-        <FontAwesomeIcon icon={faSquareCheck} />
-      ),
+      icon: <FontAwesomeIcon icon={isSeen ? faReSquareCheck : faSquareCheck} />,
       onClick: () => {
-        !conversation.seen.some((user) => user._id === currentUserInfo._id)
-          ? chatSocket.emit(SEEN_MSG, {
-              conversationID: conversation._id,
-              userID: currentUserInfo._id
-            })
-          : chatSocket.emit(UNSEEN_MSG, {
-              conversationID: conversation._id,
-              userID: currentUserInfo._id
-            });
+        const emitType = isSeen ? UNSEEN_MSG : SEEN_MSG;
+        chatSocket.emit(emitType, { conversationID: conversation._id, userID: currentUserInfo._id });
       }
     },
     {
@@ -84,16 +71,10 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
       label: 'View profile',
       key: '4',
       icon: <FontAwesomeIcon icon={faUser} />,
-      onClick: () => {
-        navigate(`/user/${otherUser._id}`);
-      },
-      style: {
-        display: conversation.type === 'group' ? 'none' : 'block'
-      }
+      onClick: () => navigate(`/user/${otherUser._id}`),
+      style: { display: isGroup ? 'none' : 'block' }
     },
-    {
-      type: 'divider'
-    },
+    { type: 'divider' },
     {
       label: 'Audio call',
       key: '5',
@@ -106,22 +87,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
       icon: <FontAwesomeIcon icon={faVideoCamera} />,
       onClick: () => videoChat(conversation._id)
     },
+    { type: 'divider' },
     {
-      type: 'divider'
-    },
-    {
-      label: conversation.type === 'group' ? 'Leave group' : 'Delete chat',
+      label: isGroup ? 'Leave group' : 'Delete chat',
       danger: true,
       key: '3',
-      onClick: () => {
-        mutateLeaveGroup(conversation._id);
-      },
-      icon:
-        conversation.type === 'group' ? (
-          <FontAwesomeIcon icon={faRightFromBracket} />
-        ) : (
-          <FontAwesomeIcon icon={faTrashCan} />
-        )
+      onClick: () => mutateLeaveGroup(conversation._id),
+      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrashCan} />
     }
   ];
 
@@ -132,18 +104,17 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const senderName = useMemo(() => {
     if (isOwn) return 'You: ';
 
+    const lastMessageSenderName = conversation.lastMessage?.sender?.name;
+    const arr = lastMessageSenderName.split(' ');
+
+    if (conversation.lastMessage.type === 'notification') return arr[arr.length - 1] + ' ';
+
     if (conversation.type === 'private') return '';
 
-    const lastMessageSenderName = conversation.lastMessage?.sender?.name;
     if (!lastMessageSenderName) return '';
 
-    const arr = lastMessageSenderName.split(' ');
     return arr[arr.length - 1] + ': ';
-  }, [isOwn, conversation.lastMessage?.sender?.name, conversation.type]);
-
-  const userID = useMemo(() => {
-    return currentUserInfo._id;
-  }, [currentUserInfo]);
+  }, [isOwn, conversation.lastMessage, conversation.type]);
 
   useEffect(() => {
     chatSocket.on(PRIVATE_MSG + conversation._id, (message: MessageType) => {
@@ -158,7 +129,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
   const hasSeen = useMemo(() => {
     if (!conversation.lastMessage) return false;
 
-    return conversation.seen.some((user) => user._id === userID);
+    return conversation.seen.some((user) => user._id === currentUserInfo._id);
   }, [conversation.lastMessage, conversation.seen]);
 
   const lastMessageText = useMemo(() => {
@@ -167,23 +138,14 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
     if (conversation.lastMessage?.content) return conversation.lastMessage.content;
 
     return 'Start a conversation';
-  }, [conversation.lastMessage, userID]);
-  const [isShowTime, setIsShowTime] = useState(getDateTimeToNow(conversation.lastMessage?.createdAt));
-
-  useEffect(() => {
-    const timeoutId = setInterval(() => {
-      setIsShowTime(getDateTimeToNow(conversation.lastMessage?.createdAt));
-    }, 60000);
-
-    return () => clearInterval(timeoutId);
-  }, []);
+  }, [conversation.lastMessage]);
 
   return (
     <StyleProvider theme={themeColorSet}>
       <Dropdown menu={{ items }} trigger={['contextMenu']}>
         <NavLink to={`/message/${conversation._id}`}>
           <div
-            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3  transition'
+            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-xl transition'
             style={{
               backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
             }}>
@@ -206,11 +168,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({ conversation, selecte
                       {conversation.name ?? otherUser.name}
                     </span>
                   </p>
-                  {conversation.lastMessage?.createdAt && (
+                  {conversation.lastMessage.createdAt && (
                     <p
                       className=' text-xs  text-gray-400 font-light'
                       style={{ color: themeColorSet.colorText3 }}>
-                      {isShowTime}
+                      {getDateTimeToNow(conversation.lastMessage.createdAt)}
                     </p>
                   )}
                 </div>

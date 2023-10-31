@@ -44,16 +44,13 @@ export const CommunityAdmin = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${community?.coverImage}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img
-                  src={community?.communityImage || '/images/DefaultAvatar/default_avatar.png'}
-                  alt='avt'
-                />
+                <img src={community?.communityImage} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>
@@ -327,16 +324,13 @@ export const CommunityMember = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${community?.coverImage}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img
-                  src={community?.communityImage || '/images/DefaultAvatar/default_avatar.png'}
-                  alt='avt'
-                />
+                <img src={community?.communityImage} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>
@@ -608,16 +602,13 @@ export const CommunityNoMember = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage || `/images/ProfilePage/cover.jpg`}")`,
+                  backgroundImage: `url("${community?.coverImage}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img
-                  src={community?.communityImage || '/images/DefaultAvatar/default_avatar.png'}
-                  alt='avt'
-                />
+                <img src={community?.communityImage} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>

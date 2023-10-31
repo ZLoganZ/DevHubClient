@@ -126,7 +126,7 @@ export const useUpdatePost = () => {
 
       queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
 
-      queryClient.invalidateQueries({ queryKey: ['post', updatedPost.metadata._id] });
+      void queryClient.invalidateQueries({ queryKey: ['post', updatedPost.metadata._id] });
     }
   });
   return {
@@ -194,9 +194,7 @@ export const useLikePost = () => {
       await postService.likePost(post);
     },
     onSuccess(_, postLike) {
-      queryClient.invalidateQueries({
-        queryKey: ['post', postLike.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['post', postLike.post] });
     }
   });
   return {
@@ -224,9 +222,7 @@ export const useSharePost = () => {
       await postService.sharePost(post);
     },
     onSuccess(_, postShare) {
-      queryClient.invalidateQueries({
-        queryKey: ['post', postShare.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['post', postShare.post] });
     }
   });
   return {
@@ -254,9 +250,7 @@ export const useSavePost = () => {
       await postService.savePost(postID);
     },
     onSuccess(_, postID) {
-      queryClient.invalidateQueries({
-        queryKey: ['post', postID]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['post', postID] });
     }
   });
   return {
@@ -287,13 +281,9 @@ export const useCommentPost = () => {
       return data;
     },
     onSuccess(_, newComment) {
-      queryClient.invalidateQueries({
-        queryKey: ['comments', newComment.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['comments', newComment.post] });
 
-      queryClient.invalidateQueries({
-        queryKey: ['post', newComment.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['post', newComment.post] });
 
       const updatePostData = (oldData: PostType[] | undefined) => {
         if (!oldData) return;
@@ -344,9 +334,7 @@ export const useLikeComment = () => {
       await postService.likeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
-      queryClient.invalidateQueries({
-        queryKey: ['comments', payload.comment.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
     }
   });
   return {
@@ -374,9 +362,7 @@ export const useDislikeComment = () => {
       await postService.dislikeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
-      queryClient.invalidateQueries({
-        queryKey: ['comments', payload.comment.post]
-      });
+      void queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
     }
   });
   return {
@@ -491,7 +477,7 @@ export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (message: MessageType) => message,
+    mutationFn: async (message: MessageType) => await Promise.resolve(message),
     onSuccess(message) {
       queryClient.setQueryData<InfiniteData<MessageType[], number>>(
         ['messages', message.conversation_id],
@@ -528,8 +514,8 @@ export const useSendMessage = () => {
         }
 
         return newData.sort((a, b) => {
-          const aTime = a.lastMessage?.createdAt || 0;
-          const bTime = b.lastMessage?.createdAt || 0;
+          const aTime = a.lastMessage?.createdAt ?? 0;
+          const bTime = b.lastMessage?.createdAt ?? 0;
           return new Date(bTime).getTime() - new Date(aTime).getTime();
         });
       });
@@ -568,7 +554,7 @@ export const useReceiveMessage = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (message: MessageType) => message,
+    mutationFn: async (message: MessageType) => await Promise.resolve(message),
     onSuccess(message) {
       queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
         if (!oldData) return;
@@ -585,8 +571,8 @@ export const useReceiveMessage = () => {
           };
 
           newData.sort((a, b) => {
-            const aTime = a.lastMessage?.createdAt || 0;
-            const bTime = b.lastMessage?.createdAt || 0;
+            const aTime = a.lastMessage?.createdAt ?? 0;
+            const bTime = b.lastMessage?.createdAt ?? 0;
             return new Date(bTime).getTime() - new Date(aTime).getTime();
           });
         }
@@ -665,7 +651,7 @@ export const useReceiveConversation = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => conversation,
+    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
         if (!oldData) return;
@@ -718,7 +704,7 @@ export const useReceiveSeenConversation = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => conversation,
+    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
         if (!oldData) return;
@@ -820,7 +806,7 @@ export const useReceiveLeaveGroup = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => conversation,
+    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
         if (!oldData) return;
