@@ -1,13 +1,29 @@
 import { Col, Row, Space } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleInfo,
+  faPhone,
+  faVideoCamera
+} from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 
 import { getTheme } from '@/util/theme';
-import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
-import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
-import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
+import {
+  IS_TYPING,
+  SEEN_MSG,
+  STOP_TYPING
+} from '@/util/constants/SettingSystem';
+import {
+  useOtherUser,
+  useAppSelector,
+  useIntersectionObserver
+} from '@/hooks/special';
+import {
+  useCurrentConversationData,
+  useCurrentUserInfo,
+  useMessagesData
+} from '@/hooks/fetch';
 import Avatar from '@/components/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
@@ -20,6 +36,7 @@ import getImageURL from '@/util/getImageURL';
 import audioCall from '@/util/audioCall';
 import videoChat from '@/util/videoChat';
 import StyleProvider from './cssMessageChat';
+import { commonColor } from '@/util/cssVariable';
 
 interface IParams {
   conversationID: string;
@@ -27,26 +44,33 @@ interface IParams {
 
 const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector(state => state.theme.change);
   const { themeColorSet } = getTheme();
-  const { members, chatSocket } = useAppSelector((state) => state.socketIO);
+  const { members, chatSocket } = useAppSelector(state => state.socketIO);
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
-  const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage, hasPreviousMessages } =
-    useMessagesData(conversationID);
+  const {
+    messages,
+    isLoadingMessages,
+    fetchPreviousMessages,
+    isFetchingPreviousPage,
+    hasPreviousMessages
+  } = useMessagesData(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
 
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const isActive = members.some((memberID) => memberID === otherUser._id);
+  const isActive = members.some(memberID => memberID === otherUser._id);
 
-  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(true);
+  const [isDisplayConversationOption, setIsDisplayConversationOption] =
+    useState(true);
 
   const statusText = useMemo(() => {
-    if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
+    if (currentConversation.type === 'group')
+      return `${currentConversation.members.length} members`;
 
     return isActive ? 'Online' : 'Offline';
   }, [currentConversation, isActive]);
@@ -55,7 +79,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     if (
       messages.length > 0 &&
       messages[messages.length - 1].sender._id !== currentUserInfo._id &&
-      !currentConversation.seen.some((user) => user._id === currentUserInfo._id)
+      !currentConversation.seen.some(user => user._id === currentUserInfo._id)
     ) {
       chatSocket.emit(SEEN_MSG, {
         conversationID,
@@ -65,7 +89,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, [currentConversation.seen, conversationID, messages]);
 
   const fetchPreMessages = useCallback(() => {
-    if (!isFetchingPreviousPage && messages && messages.length >= 20) fetchPreviousMessages();
+    if (!isFetchingPreviousPage && messages && messages.length >= 20)
+      fetchPreviousMessages();
   }, [isFetchingPreviousPage, messages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -77,7 +102,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   const scrollToBottom = useCallback(
     (type: ScrollBehavior) => {
-      if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
+      if (bottomRef.current)
+        bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
     },
     [bottomRef.current]
   );
@@ -91,15 +117,17 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   useEffect(() => {
     chatSocket.on(IS_TYPING + conversationID, (data: string) => {
-      setTypingUsers((prev) =>
-        prev.some((user) => user === data) || data === currentUserInfo._id ? prev : [...prev, data]
+      setTypingUsers(prev =>
+        prev.some(user => user === data) || data === currentUserInfo._id
+          ? prev
+          : [...prev, data]
       );
       setIsTyping(true);
     });
     chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
       setIsTyping(typingUsers.length !== 1);
       setTimeout(() => {
-        setTypingUsers((prev) => prev.filter((user) => user !== data));
+        setTypingUsers(prev => prev.filter(user => user !== data));
       }, 500);
     });
 
@@ -124,32 +152,53 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
   }, [isActive, themeColorSet]);
 
-  const isPrevMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
-    if (index === 0) return false;
-    if (!messArr) return false;
+  const isPrevMesGroup = useCallback(
+    (message: MessageType, index: number, messArr: MessageType[]) => {
+      if (index === 0) return false;
+      if (!messArr) return false;
 
-    const isSameSender = message.sender._id === messArr[index - 1].sender._id;
-    if (!isSameSender) return false;
+      const isSameSender = message.sender._id === messArr[index - 1].sender._id;
+      if (!isSameSender) return false;
 
-    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() < 60000;
-  }, []);
+      return (
+        new Date(message.createdAt).getTime() -
+          new Date(messArr[index - 1].createdAt).getTime() <
+        60000
+      );
+    },
+    []
+  );
 
-  const isNextMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
-    if (index === messArr.length - 1) return false;
-    if (!messArr) return false;
+  const isNextMesGroup = useCallback(
+    (message: MessageType, index: number, messArr: MessageType[]) => {
+      if (index === messArr.length - 1) return false;
+      if (!messArr) return false;
 
-    const isSameSender = message.sender._id === messArr[index + 1].sender._id;
-    if (!isSameSender) return false;
+      const isSameSender = message.sender._id === messArr[index + 1].sender._id;
+      if (!isSameSender) return false;
 
-    return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
-  }, []);
+      return (
+        new Date(messArr[index + 1].createdAt).getTime() -
+          new Date(message.createdAt).getTime() <
+        60000
+      );
+    },
+    []
+  );
 
-  const isMoreThan10Min = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
-    if (index === 0) return true;
-    if (!messArr) return false;
+  const isMoreThan10Min = useCallback(
+    (message: MessageType, index: number, messArr: MessageType[]) => {
+      if (index === 0) return true;
+      if (!messArr) return false;
 
-    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() > 600000;
-  }, []);
+      return (
+        new Date(message.createdAt).getTime() -
+          new Date(messArr[index - 1].createdAt).getTime() >
+        600000
+      );
+    },
+    []
+  );
 
   return (
     <StyleProvider
@@ -167,7 +216,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
             <div
               className='header flex justify-between items-center py-6 px-6'
               style={{
-                height: '13%'
+                height: '13%',
+                boxShadow: '5px 1px 10px' + themeColorSet.colorBg2
               }}>
               <div className='flex gap-3 items-center'>
                 {currentConversation.type === 'group' ? (
@@ -182,9 +232,13 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </NavLink>
                 )}
                 <div className='flex flex-col'>
-                  <div className='font-semibold' style={{ color: themeColorSet.colorText1 }}>
+                  <div
+                    className='font-semibold'
+                    style={{ color: themeColorSet.colorText1 }}>
                     {currentConversation.name ?? (
-                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                      <NavLink to={`/user/${otherUser._id}`}>
+                        {otherUser.name}
+                      </NavLink>
                     )}
                   </div>
                   <div
@@ -198,19 +252,34 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
               <Space align='center' size={20} className='flex gap-3'>
-                <div className='call p-1' onClick={() => audioCall(conversationID)}>
-                  <FontAwesomeIcon className='text-lg cursor-pointer' icon={faPhone} />
-                </div>
-                <div className='call p-1' onClick={() => videoChat(conversationID)}>
-                  <FontAwesomeIcon className='text-xl cursor-pointer' icon={faVideoCamera} />
-                </div>
-                <div className='displayShare ml-4 p-1'>
+                <div
+                  className='audio-call'
+                  onClick={() => audioCall(conversationID)}>
                   <FontAwesomeIcon
-                    className='text-xl cursor-pointer'
+                    className='icon text-lg cursor-pointer'
+                    icon={faPhone}
+                    style={{ color: commonColor.colorBlue1 }}
+                  />
+                </div>
+                <div
+                  className='video-call'
+                  onClick={() => videoChat(conversationID)}>
+                  <FontAwesomeIcon
+                    className='icon text-xl cursor-pointer'
+                    icon={faVideoCamera}
+                    style={{ color: commonColor.colorBlue1 }}
+                  />
+                </div>
+                <div className='display-share'>
+                  <FontAwesomeIcon
+                    className='icon text-xl cursor-pointer'
                     icon={faCircleInfo}
                     onClick={() => {
-                      setIsDisplayConversationOption(!isDisplayConversationOption);
+                      setIsDisplayConversationOption(
+                        !isDisplayConversationOption
+                      );
                     }}
+                    style={{ color: commonColor.colorBlue1 }}
                   />
                 </div>
               </Space>
@@ -244,16 +313,22 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
                     isAdmin={
                       currentConversation.admins &&
-                      currentConversation.admins.some((admin) => admin._id === message.sender._id)
+                      currentConversation.admins.some(
+                        admin => admin._id === message.sender._id
+                      )
                     }
                   />
                 ))}
                 <div className='pb-1' ref={bottomRef} />
               </div>
             </div>
-            <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
-              {currentConversation.members.map((member) => {
-                const index = typingUsers.findIndex((user) => user === member._id);
+            <div
+              className='px-2 flex flex-row items-center opacity-0'
+              ref={typingDiv}>
+              {currentConversation.members.map(member => {
+                const index = typingUsers.findIndex(
+                  user => user === member._id
+                );
                 if (index !== -1) {
                   return (
                     <img

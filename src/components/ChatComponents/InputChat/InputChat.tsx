@@ -14,6 +14,7 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
 import { MessageType } from '@/types';
 import { debounce } from 'lodash';
+import { commonColor } from '@/util/cssVariable';
 
 interface Props {
   conversationID: string;
@@ -122,7 +123,11 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
             />
           }>
           <span className='emoji'>
-            <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
+            <FontAwesomeIcon 
+            className='item mr-3 ml-3' 
+            size='lg' icon={faFaceSmile} 
+            style={{color: commonColor.colorBlue1}}
+            />
           </span>
         </Popover>
       </div>
@@ -167,7 +172,7 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
                   checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
                 }`}
                 onClick={() => handleSubmit(message)}>
-                <FontAwesomeIcon icon={faPaperPlane} />
+                <FontAwesomeIcon icon={faPaperPlane} style={{color: commonColor.colorBlue1}}/>
               </span>
             }
           />
@@ -180,11 +185,11 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
         }}>
         <UploadComponent onUpload={handleUpload}>
           <div className='upload'>
-            <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} />
+            <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
           </div>
         </UploadComponent>
         <div className='micro'>
-          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} />
+          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} style={{color: commonColor.colorBlue1}}/>
         </div>
       </Space>
     </div>
