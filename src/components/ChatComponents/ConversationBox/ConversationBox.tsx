@@ -105,13 +105,13 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
     if (isOwn) return 'You: ';
 
     const lastMessageSenderName = conversation.lastMessage?.sender?.name;
+    if (!lastMessageSenderName) return '';
+
     const arr = lastMessageSenderName.split(' ');
 
     if (conversation.lastMessage.type === 'notification') return arr[arr.length - 1] + ' ';
 
     if (conversation.type === 'private') return '';
-
-    if (!lastMessageSenderName) return '';
 
     return arr[arr.length - 1] + ': ';
   }, [isOwn, conversation.lastMessage, conversation.type]);
