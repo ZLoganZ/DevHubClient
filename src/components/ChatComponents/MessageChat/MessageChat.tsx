@@ -23,6 +23,7 @@ import videoChat from '@/util/videoChat';
 import { getLastOnline } from '@/util/formatDateTime';
 import StyleProvider from './cssMessageChat';
 import { commonColor } from '@/util/cssVariable';
+import { url } from 'inspector';
 
 interface IParams {
   conversationID: string;
@@ -242,39 +243,52 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
               </Space>
             </div>
             <div
-              className='body px-3'
+              className='body'
               style={{
                 height: '89%',
-                overflow: 'auto'
+                overflow: 'auto',
+                backgroundImage: `url(${getImageURL(
+                  currentConversation.cover_image
+                )})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
               }}>
-              <div className='flex-1 overflow-y-hidden'>
-                {!hasPreviousMessages && (
-                  <ChatWelcome
-                    type={currentConversation.type}
-                    name={currentConversation.name}
-                    members={currentConversation.members}
-                    otherUser={otherUser}
-                    image={currentConversation.image}
-                  />
-                )}
-                <div className='pt-1' ref={topRef} />
-                {messages.map((message, index, messArr) => (
-                  <MessageBox
-                    key={`${conversationID}-${message._id}`}
-                    type={currentConversation.type}
-                    isLastMes={index === messages.length - 1}
-                    message={message}
-                    seen={currentConversation.seen}
-                    isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
-                    isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                    isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
-                    isAdmin={
-                      currentConversation.admins &&
-                      currentConversation.admins.some((admin) => admin._id === message.sender._id)
-                    }
-                  />
-                ))}
-                <div className='pb-1' ref={bottomRef} />
+              <div className='' style={{
+                // backgroundColor: 'rgba(0,0,0,0.5)',
+                backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
+              }}>
+                <div className='flex-1 overflow-y-hidden'>
+                  {!hasPreviousMessages && (
+                    <ChatWelcome
+                      type={currentConversation.type}
+                      name={currentConversation.name}
+                      members={currentConversation.members}
+                      otherUser={otherUser}
+                      image={currentConversation.image}
+                    />
+                  )}
+                  <div className='pt-1' ref={topRef} />
+                  {messages.map((message, index, messArr) => (
+                    <MessageBox
+                      key={`${conversationID}-${message._id}`}
+                      type={currentConversation.type}
+                      isLastMes={index === messages.length - 1}
+                      message={message}
+                      seen={currentConversation.seen}
+                      isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                      isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                      isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
+                      isAdmin={
+                        currentConversation.admins &&
+                        currentConversation.admins.some(
+                          admin => admin._id === message.sender._id
+                        )
+                      }
+                    />
+                  ))}
+                  <div className='pb-1' ref={bottomRef} />
+                </div>
               </div>
             </div>
             <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
