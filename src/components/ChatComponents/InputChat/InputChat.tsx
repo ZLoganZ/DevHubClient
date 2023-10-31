@@ -94,7 +94,6 @@ const InputChat: React.FC<Props> = ({ conversationID }) => {
     }, 1000),
     []
   );
-
   return (
     <div
       className='footer flex justify-between items-center'
