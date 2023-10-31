@@ -1,4 +1,4 @@
-import { Avatar, ConfigProvider, Upload } from 'antd';
+import { ConfigProvider, Upload } from 'antd';
 
 import { useAppSelector } from '@/hooks/special';
 import { getTheme } from '@/util/theme';
@@ -18,7 +18,7 @@ const AvatarGroupModal: React.FC<IChangeAvatarGroup> = ({ avatar, setAvatar }) =
     <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorBg4 } }}>
       <StyleProvider>
         <div className='flex items-center justify-center'>
-          <Avatar className='h-48 w-48' src={avatar} alt='Avatar' shape='circle' />
+          <img className='rounded-full h-48 w-48 overflow-hidden object-cover' src={avatar} alt='Avatar' />
           <Upload
             className='btnChange px-4 py-2 ml-5 rounded-full'
             accept='image/png, image/jpeg, image/jpg'
