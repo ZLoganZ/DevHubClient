@@ -247,8 +247,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
-              }}
-              >
+              }}>
               <div
                 className='body'
                 style={{
@@ -281,16 +280,10 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                         seen={currentConversation.seen}
                         isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
                         isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                        isMoreThan10Min={isMoreThan10Min(
-                          message,
-                          index,
-                          messArr
-                        )}
+                        isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
                         isAdmin={
                           currentConversation.admins &&
-                          currentConversation.admins.some(
-                            admin => admin._id === message.sender._id
-                          )
+                          currentConversation.admins.some((admin) => admin._id === message.sender._id)
                         }
                       />
                     ))}
@@ -298,13 +291,9 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </div>
                 </div>
               </div>
-              <div
-                className='px-2 flex flex-row items-center opacity-0'
-                ref={typingDiv}>
-                {currentConversation.members.map(member => {
-                  const index = typingUsers.findIndex(
-                    user => user === member._id
-                  );
+              <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
+                {currentConversation.members.map((member) => {
+                  const index = typingUsers.findIndex((user) => user === member._id);
                   if (index !== -1) {
                     return (
                       <img
@@ -326,7 +315,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   <div /> <div /> <div />
                 </div>
               </div>
-              <InputChat conversationID={conversationID} />
+              <ChatInput conversationID={conversationID} />
             </div>
           </Col>
           {isDisplayConversationOption && (
