@@ -7,21 +7,21 @@ import { SearchOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
-import Avatar from '@/components/Avatar/AvatarMessage';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
-import OpenGroupModal from '@/components/OpenGroupModal';
+import CreateGroupChat from '@/components/ChatComponents/OpenModal/CreateGroupChat';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { ConversationType } from '@/types';
 import { LEAVE_GROUP, PRIVATE_CONVERSATION } from '@/util/constants/SettingSystem';
 import { useReceiveConversation, useReceiveLeaveGroup } from '@/hooks/mutation';
 
-interface ConversationListProps {
+interface IConversationList {
   conversations: ConversationType[];
   selected?: string;
 }
 
-const ConversationList: React.FC<ConversationListProps> = ({ conversations, selected }) => {
+const ConversationList: React.FC<IConversationList> = ({ conversations, selected }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -90,7 +90,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isOpenModal && <OpenGroupModal users={currentUserInfo.members} />}
+      {isOpenModal && <CreateGroupChat users={currentUserInfo.members} />}
       <Row className='searchChat'>
         <Col span={24}>
           <Row>
@@ -141,13 +141,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
                 borderColor: themeColorSet.colorBg4
               }}>
               <div className='input flex items-center w-full '>
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      lineWidth: 0,
-                      controlHeight: 40
-                    }
-                  }}>
+                <ConfigProvider theme={{ token: { lineWidth: 0, controlHeight: 40 } }}>
                   <Input
                     allowClear
                     placeholder='Search conversation'

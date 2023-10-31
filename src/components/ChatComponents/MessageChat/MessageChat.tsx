@@ -3,15 +3,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
+import { debounce } from 'lodash';
 
 import { getTheme } from '@/util/theme';
 import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
-import Avatar from '@/components/Avatar/AvatarMessage';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
-import InputChat from '@/components/ChatComponents/InputChat/InputChat';
+import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
 import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
@@ -19,6 +20,7 @@ import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import audioCall from '@/util/audioCall';
 import videoChat from '@/util/videoChat';
+import { getLastOnline } from '@/util/formatDateTime';
 import StyleProvider from './cssMessageChat';
 
 interface IParams {
@@ -43,13 +45,17 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [isTyping, setIsTyping] = useState(false);
   const isActive = members.some((memberID) => memberID === otherUser._id);
 
-  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(true);
+  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
 
   const statusText = useMemo(() => {
-    if (currentConversation.type === 'group') return `${currentConversation.members.length} members`;
+    if (currentConversation.type === 'group') {
+      const membersActive = currentConversation.members.filter((member) => members.includes(member._id));
 
-    return isActive ? 'Online' : 'Offline';
-  }, [currentConversation, isActive]);
+      return `${currentConversation.members.length} members - ${membersActive.length} online`;
+    }
+
+    return isActive ? 'Online' : getLastOnline(otherUser.last_online);
+  }, [currentConversation, isActive, members]);
 
   const seenMessage = useCallback(() => {
     if (
@@ -65,7 +71,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, [currentConversation.seen, conversationID, messages]);
 
   const fetchPreMessages = useCallback(() => {
-    if (!isFetchingPreviousPage && messages && messages.length >= 20) fetchPreviousMessages();
+    if (!isFetchingPreviousPage && messages && messages.length >= 20) void fetchPreviousMessages();
   }, [isFetchingPreviousPage, messages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -80,6 +86,11 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
       if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: type, block: 'end' });
     },
     [bottomRef.current]
+  );
+
+  const setTyping = useCallback(
+    debounce((data: string) => setTypingUsers((prev) => prev.filter((user) => user !== data)), 500),
+    []
   );
 
   useEffect(() => {
@@ -98,9 +109,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     });
     chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
       setIsTyping(typingUsers.length !== 1);
-      setTimeout(() => {
-        setTypingUsers((prev) => prev.filter((user) => user !== data));
-      }, 500);
+      setTyping(data);
     });
 
     if (typingDiv.current) {
@@ -118,7 +127,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
       chatSocket.off(IS_TYPING + conversationID);
       chatSocket.off(STOP_TYPING + conversationID);
     };
-  }, [typingUsers.length, currentUserInfo, isTyping]);
+  }, [typingUsers, currentUserInfo, isTyping]);
 
   const styleStatus = useMemo(() => {
     return isActive ? themeColorSet.colorText2 : themeColorSet.colorText3;
@@ -152,22 +161,19 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, []);
 
   return (
-    <StyleProvider
-      className='h-full ml-3'
-      theme={themeColorSet}
-      style={{
-        borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
-        backgroundColor: themeColorSet.colorBg1
-      }}>
+    <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[91%]'>
+          <Col span={isDisplayConversationOption ? 16 : 24} className='h-[96%]'>
             <div
-              className='header flex justify-between items-center py-6 px-6'
+              className='header flex justify-between items-center py-4 px-6'
               style={{
-                height: '13%'
+                height: '8%',
+                borderBottom: '1px solid ' + themeColorSet.colorTextReverse2,
+                backgroundColor: themeColorSet.colorBg1,
+                boxShadow: '0 1px 1px 0 ' + themeColorSet.colorTextReverse2
               }}>
               <div className='flex gap-3 items-center'>
                 {currentConversation.type === 'group' ? (
@@ -258,28 +264,25 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   return (
                     <img
                       key={member._id}
-                      className={`rounded-full top-3 left-${
-                        index * 8 + typingUsers.length * 1
-                      } absolute h-6 w-6 overflow-hidden`}
+                      className='rounded-full top-3 absolute h-6 w-6 overflow-hidden'
                       src={getImageURL(member.user_image, 'avatar_mini')}
+                      style={{ left: (index + 1) * 10 }}
                     />
                   );
                 }
                 return null;
               })}
               <div
-                className={`typing-indicator rounded-full left-${
-                  typingUsers.length * 8 + typingUsers.length * 2
-                }`}
-                style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                className='typing-indicator rounded-full'
+                style={{ backgroundColor: themeColorSet.colorBg4, left: typingUsers.length * 40 }}>
                 <div /> <div /> <div />
               </div>
             </div>
-            <InputChat conversationID={conversationID} />
+            <ChatInput conversationID={conversationID} />
           </Col>
           {isDisplayConversationOption && (
             <Col span={8} className='h-full'>
-              <ConversationOption conversationID={conversationID!} />
+              <ConversationOption conversationID={conversationID} />
             </Col>
           )}
         </Row>

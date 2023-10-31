@@ -67,7 +67,7 @@ const Register = () => {
                 <Form
                   name='register'
                   className='mt-5 formAccount'
-                  onFinish={form.handleSubmit(onSubmit)}
+                  onFinish={() => form.handleSubmit(onSubmit)}
                   autoComplete='off'>
                   <Form.Item
                     name='firstname'

@@ -38,11 +38,11 @@ import { useFollowUser } from '@/hooks/mutation';
 import { ExperienceType } from '@/types';
 import StyleProvider from './cssProfile';
 
-interface Props {
+interface IProfile {
   userID: string;
 }
 
-const Profile = ({ userID }: Props) => {
+const Profile = ({ userID }: IProfile) => {
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -68,7 +68,7 @@ const Profile = ({ userID }: Props) => {
         : positionNames.join(' & ')
       : 'No job position';
 
-  const iconMap: { [key: string]: IconDefinition } = {
+  const iconMap: Record<string, IconDefinition> = {
     '0': faFacebookF,
     '1': faGithub,
     '2': faTwitter,
@@ -97,7 +97,7 @@ const Profile = ({ userID }: Props) => {
   useEffect(() => {
     document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo.name} - DevHub`;
     if (!isLoadingOtherUserInfo && otherUserInfo) {
-      setExperiences(otherUserInfo?.experiences || []);
+      setExperiences(otherUserInfo?.experiences ?? []);
     }
   }, [isLoadingOtherUserInfo, otherUserInfo]);
 
@@ -168,10 +168,10 @@ const Profile = ({ userID }: Props) => {
               </Col>
             </Row>
             <div className='id_address_join xs:pl-3'>
-              <span className='id item mr-2'>@{otherUserInfo.alias || 'user'}</span>
+              <span className='id item mr-2'>@{otherUserInfo.alias ?? 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                {otherUserInfo.location || 'Global'}
+                {otherUserInfo.location ?? 'Global'}
               </span>
               <span className='join'>
                 <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
@@ -201,15 +201,15 @@ const Profile = ({ userID }: Props) => {
             </Col>
             <div className='follow mt-5 xs:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.follower_number || 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.follower_number ?? 0}</span>{' '}
                 {otherUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className='following item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.following_number || 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.following_number ?? 0}</span>{' '}
                 {otherUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
               </span>
               <span className='post mr-2'>
-                <span className='mr-1'>{otherUserInfo?.post_number || 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.post_number ?? 0}</span>{' '}
                 {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>

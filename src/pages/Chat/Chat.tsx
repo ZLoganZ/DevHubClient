@@ -110,12 +110,12 @@ const Chat = () => {
 
   useMediaQuery({ maxWidth: 639 });
 
-  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
-
   return (
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
-        {isLoadingConversations ? (
+        {isLoadingCurrentUserInfo ? (
+          <LoadingLogo />
+        ) : isLoadingConversations ? (
           <LoadingChat />
         ) : (
           <div className='chat overflow-hidden'>
@@ -170,7 +170,12 @@ const Chat = () => {
               </Col>
               <Col span={5}>{OptionRender}</Col>
               <Col span={18}>
-                <div className='chatBox h-screen'>
+                <div
+                  className='chatBox h-screen ml-3'
+                  style={{
+                    borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
+                    backgroundColor: themeColorSet.colorBg1
+                  }}>
                   {!conversationID ? (
                     <EmptyChat key={uuidv4().replace(/-/g, '')} />
                   ) : isLoadingCurrentConversation ? (

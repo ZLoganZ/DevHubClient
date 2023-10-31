@@ -14,14 +14,14 @@ import ConvertNumber from '@/util/convertNumber';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import StyleProvider from './cssPostFooter';
 
-interface PostFooterProps {
+interface IPostFooter {
   post: PostType;
   postAuthor: UserInfoType;
   isPostShare?: boolean;
   currentUser: UserInfoType;
 }
 
-const PostFooter: React.FC<PostFooterProps> = ({ post, postAuthor, isPostShare, currentUser }) => {
+const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, currentUser }) => {
   const change = useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 

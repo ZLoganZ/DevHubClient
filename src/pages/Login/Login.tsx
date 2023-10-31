@@ -57,7 +57,7 @@ const Login = () => {
 
           // go to home page or redirect to previous page
           const state = location.state as { from: Location };
-          const from = state?.from?.pathname || '/';
+          const from = state?.from?.pathname ?? '/';
 
           window.location.replace(from);
         }

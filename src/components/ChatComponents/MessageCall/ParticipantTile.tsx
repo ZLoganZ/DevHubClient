@@ -95,8 +95,7 @@ export function ParticipantTile({
       if (
         trackReference.source &&
         !subscribed &&
-        layoutContext &&
-        layoutContext.pin.dispatch &&
+        layoutContext?.pin.dispatch &&
         isTrackReferencePinned(trackReference, layoutContext.pin.state)
       ) {
         layoutContext.pin.dispatch({ msg: 'clear_pin' });
@@ -127,7 +126,7 @@ export function ParticipantTile({
               )}
               <div className='lk-participant-placeholder'>
                 <img
-                  src={getImageURL(trackReference.participant.metadata!)}
+                  src={getImageURL(trackReference.participant.metadata)}
                   alt='avatar'
                   style={{
                     width: '320px',

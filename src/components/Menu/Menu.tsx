@@ -9,7 +9,7 @@ import {
   faBars
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Menu } from 'antd';
+import { Menu } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -50,7 +50,7 @@ const MenuMain = () => {
 
   useEffect(() => {
     const path = location.pathname;
-    const pathMap: { [key: string]: string } = {
+    const pathMap: Record<string, string> = {
       '/': '1',
       '/me': '2',
       [`/user/${currentUserInfo._id}`]: '2',
@@ -60,7 +60,7 @@ const MenuMain = () => {
       '/bookmark': '6',
       '/community': '7'
     };
-    setKey(pathMap[path] || '');
+    setKey(pathMap[path] ?? '');
   }, [location.pathname]);
 
   const [showMenu, setShowMenu] = useState(false);
@@ -129,11 +129,9 @@ const MenuMain = () => {
             {
               key: '2',
               icon: currentUserInfo.user_image ? (
-                <Avatar
-                  className='icon'
+                <img
+                  className='icon h-4 w-4 rounded-full overflow-hidden'
                   src={getImageURL(currentUserInfo.user_image, 'avatar_mini')}
-                  shape='circle'
-                  size={20}
                 />
               ) : (
                 <FontAwesomeIcon className='icon' icon={faUser} />
@@ -184,68 +182,68 @@ const MenuMain = () => {
             },
             {
               key: '8',
-              icon: <Avatar src='/images/MainLayout/Sider/javascript.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/javascript.png' />,
               label: 'Javascript',
               title: ''
             },
             {
               key: '9',
-              icon: <Avatar src='/images/MainLayout/Sider/graphQL.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/graphQL.png' />,
               label: 'GraphQL',
               title: ''
             },
             {
               key: '10',
-              icon: <Avatar src='/images/MainLayout/Sider/git.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/git.png' />,
               label: 'Git',
               title: ''
             },
             {
               key: '11',
-              icon: <Avatar src='/images/MainLayout/Sider/github.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/github.png' />,
               label: 'Github',
               title: ''
             },
 
             {
               key: '12',
-              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/python.png' />,
               label: 'Python',
               title: ''
             },
             {
               key: '13',
-              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/reactjs.png' />,
               label: 'React',
               title: ''
             },
             {
               key: '14',
-              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/python.png' />,
               label: 'Python',
               title: ''
             },
             {
               key: '15',
-              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/reactjs.png' />,
               label: 'React',
               title: ''
             },
             {
               key: '16',
-              icon: <Avatar src='/images/MainLayout/Sider/python.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/python.png' />,
               label: 'Python',
               title: ''
             },
             {
               key: '17',
-              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/reactjs.png' />,
               label: 'React',
               title: ''
             },
             {
               key: '18',
-              icon: <Avatar src='/images/MainLayout/Sider/reactjs.png' shape='square' size={20} />,
+              icon: <img className='h-4 w-4' src='/images/MainLayout/Sider/reactjs.png' />,
               label: 'React',
               title: ''
             }

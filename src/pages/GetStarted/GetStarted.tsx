@@ -15,7 +15,7 @@ import StyleProvider from './cssGetStarted';
 const GetStarted = () => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -109,13 +109,7 @@ const GetStarted = () => {
               onClick={handleChooseRadio1}>
               <Space className='content' size={15}>
                 <span className='radioButton'>
-                  <ConfigProvider
-                    theme={{
-                      token: {
-                        // đổi màu viền của radio button
-                        colorBorder: themeColorSet.colorBg3
-                      }
-                    }}>
+                  <ConfigProvider theme={{ token: { colorBorder: themeColorSet.colorBg3 } }}>
                     <Radio value={1} checked={radio1} onClick={handleChooseRadio1} />
                   </ConfigProvider>
                 </span>
@@ -151,13 +145,7 @@ const GetStarted = () => {
               onClick={handleChooseRadio2}>
               <Space className='content' size={15}>
                 <span className='radioButton'>
-                  <ConfigProvider
-                    theme={{
-                      token: {
-                        // đổi màu viền của radio button
-                        colorBorder: themeColorSet.colorBg3
-                      }
-                    }}>
+                  <ConfigProvider theme={{ token: { colorBorder: themeColorSet.colorBg3 } }}>
                     <Radio value={2} checked={radio2} onClick={handleChooseRadio2} />
                   </ConfigProvider>
                 </span>

@@ -12,24 +12,24 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ContactType } from '@/types';
 
-interface Props {
+interface IAddContacts {
   contacts: ContactType[];
   callback: (contacts: ContactType[]) => void;
 }
 
-const AddContacts = (Props: Props) => {
+const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
   useAppSelector((state) => state.theme.change);
 
   const dispatch = useAppDispatch();
-  const [addLinkArr, setAddLinkArr] = useState([...Props.contacts]);
-  const [addTooltips, setAddTooltips] = useState([...Props.contacts]);
+  const [addLinkArr, setAddLinkArr] = useState([...contacts]);
+  const [addTooltips, setAddTooltips] = useState([...contacts]);
   const [save, setSave] = useState(false);
 
   const contactArray = [...contactArrays];
   const { themeColorSet } = getTheme();
 
   const handleSubmit = () => {
-    Props.callback(addLinkArr);
+    callback(addLinkArr);
   };
 
   const handleDropClick = (e: any, index: number) => {
@@ -125,13 +125,7 @@ const AddContacts = (Props: Props) => {
   }, [save]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorBorder: themeColorSet.colorBg4,
-          controlHeight: 40
-        }
-      }}>
+    <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorBg4 } }}>
       <StyleProvider theme={themeColorSet}>
         <div className='flex flex-col mt-7'>
           {addLinkArr.map((item, index) => (

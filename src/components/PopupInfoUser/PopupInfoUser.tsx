@@ -12,12 +12,12 @@ import { useFollowUser } from '@/hooks/mutation';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssPopupInfoUser';
 
-interface PopUpProps {
+interface IPopUp {
   userInfo: UserInfoType;
   userID: string;
 }
 
-const PopupInfoUser: React.FC<PopUpProps> = ({ userInfo, userID }) => {
+const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -58,15 +58,15 @@ const PopupInfoUser: React.FC<PopUpProps> = ({ userInfo, userID }) => {
 
           <div className='follow mt-5'>
             <span className='follower item mr-2'>
-              <span className='mr-1'>{userInfo?.follower_number || 0}</span>{' '}
+              <span className='mr-1'>{userInfo?.follower_number ?? 0}</span>{' '}
               {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
             </span>
             <span className='following item mr-2'>
-              <span className='mr-1'>{userInfo?.following_number || 0}</span>{' '}
+              <span className='mr-1'>{userInfo?.following_number ?? 0}</span>{' '}
               {userInfo?.following_number > 1 ? 'Followings' : 'Following'}
             </span>
             <span className='post mr-2'>
-              <span className='mr-1'>{userInfo?.post_number || 0}</span>{' '}
+              <span className='mr-1'>{userInfo?.post_number ?? 0}</span>{' '}
               {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
             </span>
           </div>

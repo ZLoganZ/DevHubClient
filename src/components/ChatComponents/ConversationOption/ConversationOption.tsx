@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IconDefinition,
-  faCaretDown,
   faCaretRight,
   faCommentDots,
   faDownload,
@@ -43,18 +42,21 @@ import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector, useOtherUser } from '@/hooks/special';
-import AvatarGroup from '@/components/Avatar/AvatarGroup';
-import Avatar from '@/components/Avatar/AvatarMessage';
+import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
+import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
 import { ConversationType, MessageType } from '@/types';
 import StyleProvider from './cssConversationOption';
 
-interface ConversationOptionProps {
+interface IConversationOption {
   conversationID: string;
 }
 
-const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID }) => {
+const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
+
+  const { visible } = useAppSelector((state) => state.modalHOC);
 
   const navigate = useNavigate();
 
@@ -64,6 +66,13 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
   const otherUser = useOtherUser(currentConversation);
 
   const [images, setImages] = useState<any>([]);
+  const [openAvatar, setOpenAvatar] = useState(false);
+
+  useEffect(() => {
+    if (!visible && openAvatar) {
+      setOpenAvatar(false);
+    }
+  }, [visible]);
 
   const memberOptions = (userID: string): MenuProps['items'] => {
     return [
@@ -199,7 +208,7 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
                 <div
                   className='right cursor-pointer'
                   onClick={() => {
-                    downloadImage(item.image);
+                    void downloadImage(item.image);
                   }}>
                   <FontAwesomeIcon icon={faDownload} />
                 </div>
@@ -254,7 +263,6 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
                       fontWeight: 500
                     }}
                     mouseEnterDelay={0.2}
-                    destroyTooltipOnHide
                     autoAdjustOverflow>
                     <div className='avatar-member relative cursor-pointer'>
                       <Avatar key={member._id} user={member} />
@@ -308,7 +316,9 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
             <FontAwesomeIcon className='text-lg mr-2' icon={faPen} />
             Change name
           </div>
-          <div className='change-image w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
+          <div
+            className='change-image w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'
+            onClick={() => setOpenAvatar(!openAvatar)}>
             <FontAwesomeIcon className='text-lg mr-2' icon={faImage} />
             Change image
           </div>
@@ -363,15 +373,9 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
 
   return (
     <ConfigProvider
-      theme={{
-        components: {
-          Collapse: {
-            headerPadding: '8px 12px',
-            contentPadding: '0px 12px'
-          }
-        }
-      }}>
+      theme={{ components: { Collapse: { headerPadding: '8px 12px', contentPadding: '0px 12px' } } }}>
       <StyleProvider theme={themeColorSet}>
+        {openAvatar && <ChangeAvatarGroup image={currentConversation.image} />}
         {isLoadingCurrentConversation ? (
           <>
             <div
@@ -470,17 +474,24 @@ const ConversationOption: React.FC<ConversationOptionProps> = ({ conversationID 
                 </Space>
               </Row>
               <Row className='mt-2' justify='center'>
-                <Space size={20} direction='horizontal' align='center'>
-                  <SearchOutlined className='text-2xl cursor-pointer' />
-                </Space>
+                <SearchOutlined
+                  className='text-xl flex items-center justify-center px-2 py-2 rounded-full cursor-pointer'
+                  style={{ backgroundColor: themeColorSet.colorBg4 }}
+                />
               </Row>
-
               <Collapse
                 items={listOptions}
+                defaultActiveKey={['5']}
                 ghost
-                expandIconPosition='end'
+                expandIconPosition='start'
                 expandIcon={({ isActive }) => (
-                  <FontAwesomeIcon icon={isActive ? faCaretDown : faCaretRight} />
+                  <FontAwesomeIcon
+                    icon={faCaretRight}
+                    style={{
+                      transform: isActive ? 'rotate(90deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s'
+                    }}
+                  />
                 )}
               />
             </Col>

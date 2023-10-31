@@ -13,14 +13,14 @@ import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPostDetail';
 import { useMediaQuery } from 'react-responsive';
 
-interface PostProps {
+interface IPost {
   post: PostType;
   postAuthor: UserInfoType;
   currentUser: UserInfoType;
   isDetail?: boolean;
 }
 
-const OtherPostDetail: React.FC<PostProps> = ({ post, postAuthor, currentUser, isDetail }) => {
+const OtherPostDetail: React.FC<IPost> = ({ post, postAuthor, currentUser, isDetail }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

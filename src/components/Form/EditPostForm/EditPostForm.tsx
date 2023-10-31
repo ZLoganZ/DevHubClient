@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UploadOutlined } from '@ant-design/icons';
-import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
@@ -25,14 +24,14 @@ const toolbarOptions = [
   ['link']
 ];
 
-interface PostProps {
+interface IEditPost {
   id: string;
   title: string;
   content: string;
   image?: string[];
 }
 
-const EditPostForm = ({ id, title, content, image }: PostProps) => {
+const EditPostForm = ({ id, title, content, image }: IEditPost) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -43,7 +42,7 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
   const { mutateUpdatePost } = useUpdatePost();
 
   const [contentQuill, setContentQuill] = useState(content);
-  const [imageFile, setImageFile] = useState<RcFile>();
+  const [imageFile, setImageFile] = useState<File>();
 
   useEffect(() => {
     setContentQuill(contentQuill);
@@ -51,7 +50,7 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
 
   const ReactQuillRef = useRef<any>();
 
-  const handleUploadImage = async (file: RcFile) => {
+  const handleUploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
     const { data } = await imageService.uploadImage(formData);
@@ -87,10 +86,14 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
     }
   };
 
-  const beforeUpload = (file: RcFile) => {
+  const beforeUpload = (file: File, FileList: File[]) => {
+    if (FileList.length > 5) {
+      void messageApi.error('You can only upload 5 images at a time!');
+      return false;
+    }
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
-      messageApi.error('Image must smaller than 3MB!');
+      void messageApi.error('Image must smaller than 3MB!');
     }
     return isLt2M;
   };
@@ -116,7 +119,7 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please enter the content'
     });
@@ -132,14 +135,7 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
   ];
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          controlHeight: 40,
-          borderRadius: 0,
-          lineWidth: 0
-        }
-      }}>
+    <ConfigProvider theme={{ token: { controlHeight: 40, borderRadius: 0, lineWidth: 0 } }}>
       {contextHolder}
       <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
         <div className='newPost px-4 py-3'>
@@ -185,10 +181,10 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
-                      ReactQuillRef!.current?.getEditor().focus();
-                      ReactQuillRef!.current
+                      ReactQuillRef.current?.getEditor().focus();
+                      ReactQuillRef.current
                         ?.getEditor()
-                        .insertText(ReactQuillRef!.current?.getEditor().getSelection().index, emoji.native);
+                        .insertText(ReactQuillRef.current?.getEditor().getSelection().index, emoji.native);
                     }}
                   />
                 }>
@@ -204,13 +200,11 @@ const EditPostForm = ({ id, title, content, image }: PostProps) => {
                   accept='image/png, image/jpeg, image/jpg'
                   defaultFileList={image ? [...fileList] : []}
                   maxCount={5}
-                  customRequest={async ({ onSuccess }) => {
-                    if (onSuccess) {
-                      onSuccess('ok');
-                    }
+                  customRequest={({ onSuccess }) => {
+                    if (onSuccess) onSuccess('ok');
                   }}
                   beforeUpload={beforeUpload}>
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Upload (Max: 5)</Button>
                 </Upload>
               </span>
             </div>

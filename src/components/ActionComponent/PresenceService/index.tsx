@@ -1,34 +1,5 @@
-// import { clientPresence } from './presence.connect';
-
-// const SET_PRESENCE = 'SET_PRESENCE'
-
-// class PresenceService {
-//   constructor() {
-//     this.listen();
-//   }
-//   async listen() {
-//     try {
-//       clientPresence.on('connect', () => {
-//         console.log('connected presenceService');
-//       });
-//     } catch (error) {
-//       console.log(error);
-//       throw error;
-//     }
-//   }
-//   async setPresence(userId: String) {
-//     try {
-//       clientPresence.emit(SET_PRESENCE, userId);
-//     } catch (error) {
-//       console.log(error);
-//       throw error;
-//     }
-//   }
-// }
-
-// export default PresenceService;
-
 import { useEffect } from 'react';
+
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { setMembers } from '@/redux/Slice/SocketSlice';

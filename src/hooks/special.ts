@@ -43,7 +43,7 @@ export const useIntersectionObserver = (
   onIntersect: () => void,
   options?: ObserverOptions
 ) => {
-  const { threshold = 0.85, delay = 0, pauseOnTabChange = true } = options || {};
+  const { threshold = 0.85, delay = 0, pauseOnTabChange = true } = options ?? {};
 
   useEffect(() => {
     const handleIntersect = debounce((entries: IntersectionObserverEntry[]) => {

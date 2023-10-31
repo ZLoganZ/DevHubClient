@@ -6,12 +6,12 @@ import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/util/Descriptions/Tags';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
-interface Props {
+interface IAddTags {
   tags: string[];
   callback: (tags: string[]) => void;
 }
 
-const AddTags = (Props: Props) => {
+const AddTags: React.FC<IAddTags> = ({ tags, callback }) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -20,12 +20,12 @@ const AddTags = (Props: Props) => {
 
   const descArray = [...descArrays];
 
-  const [addTagArr, setAddTagArr] = useState([...Props.tags]);
+  const [addTagArr, setAddTagArr] = useState([...tags]);
 
   let addTagArrTemp = [...addTagArr];
 
   const handleSubmit = () => {
-    Props.callback(addTagArr);
+    callback(addTagArr);
     dispatch(closeModal());
   };
 
