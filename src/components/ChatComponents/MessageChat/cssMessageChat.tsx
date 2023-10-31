@@ -1,13 +1,17 @@
 import styled from 'styled-components';
+import { commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   .header {
-    .displayShare,
-    .call {
-      color: ${(props) => props.theme.colorText3};
+    .display-share,
+    .audio-call,
+    .video-call {
+      padding: 0.5rem;
+      border-radius: 50%;
       :hover {
-        color: ${(props) => props.theme.colorText1};
-        transition: all 0.5s;
+        background-color: ${props => props.theme.colorBg2};
+        transform: scale(1.1);
+        transition: .5s
       }
     }
   }
@@ -25,7 +29,7 @@ const StyleProvider = styled.div`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: ${(props) => props.theme.colorText3};
+    background: ${props => props.theme.colorText3};
     animation: typing-indicator-animate 0.8s infinite linear;
   }
   .typing-indicator div:nth-child(1) {

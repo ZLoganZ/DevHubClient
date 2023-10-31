@@ -22,6 +22,7 @@ import audioCall from '@/util/audioCall';
 import videoChat from '@/util/videoChat';
 import { getLastOnline } from '@/util/formatDateTime';
 import StyleProvider from './cssMessageChat';
+import { commonColor } from '@/util/cssVariable';
 
 interface IParams {
   conversationID: string;
@@ -173,7 +174,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 height: '8%',
                 borderBottom: '1px solid ' + themeColorSet.colorTextReverse2,
                 backgroundColor: themeColorSet.colorBg1,
-                boxShadow: '0 1px 1px 0 ' + themeColorSet.colorTextReverse2
+                boxShadow: '5px 1px 10px' + themeColorSet.colorBg2
               }}>
               <div className='flex gap-3 items-center'>
                 {currentConversation.type === 'group' ? (
@@ -204,19 +205,28 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 </div>
               </div>
               <Space align='center' size={20} className='flex gap-3'>
-                <div className='call p-1' onClick={() => audioCall(conversationID)}>
-                  <FontAwesomeIcon className='text-lg cursor-pointer' icon={faPhone} />
-                </div>
-                <div className='call p-1' onClick={() => videoChat(conversationID)}>
-                  <FontAwesomeIcon className='text-xl cursor-pointer' icon={faVideoCamera} />
-                </div>
-                <div className='displayShare ml-4 p-1'>
+                <div className='audio-call' onClick={() => audioCall(conversationID)}>
                   <FontAwesomeIcon
-                    className='text-xl cursor-pointer'
+                    className='icon text-lg cursor-pointer'
+                    icon={faPhone}
+                    style={{ color: commonColor.colorBlue1 }}
+                  />
+                </div>
+                <div className='video-call' onClick={() => videoChat(conversationID)}>
+                  <FontAwesomeIcon
+                    className='icon text-xl cursor-pointer'
+                    icon={faVideoCamera}
+                    style={{ color: commonColor.colorBlue1 }}
+                  />
+                </div>
+                <div className='display-share'>
+                  <FontAwesomeIcon
+                    className='icon text-xl cursor-pointer'
                     icon={faCircleInfo}
                     onClick={() => {
                       setIsDisplayConversationOption(!isDisplayConversationOption);
                     }}
+                    style={{ color: commonColor.colorBlue1 }}
                   />
                 </div>
               </Space>

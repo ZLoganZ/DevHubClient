@@ -14,6 +14,7 @@ import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
 import { MessageType } from '@/types';
+import { commonColor } from '@/util/cssVariable';
 
 interface IChatInput {
   conversationID: string;
@@ -133,7 +134,11 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
             />
           }>
           <span className='emoji'>
-            <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
+            <FontAwesomeIcon 
+            className='item mr-3 ml-3' 
+            size='lg' icon={faFaceSmile} 
+            style={{color: commonColor.colorBlue1}}
+            />
           </span>
         </Popover>
       </div>
@@ -168,7 +173,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
                   checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
                 }`}
                 onClick={() => handleSubmit(messageContent)}>
-                <FontAwesomeIcon icon={faPaperPlane} />
+                <FontAwesomeIcon icon={faPaperPlane} style={{color: commonColor.colorBlue1}}/>
               </span>
             }
           />
@@ -184,10 +189,10 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
           listType='picture'
           beforeUpload={beforeUpload}
           onChange={(info) => setFile(info.file.originFileObj)}>
-          <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} />
+          <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
         </Upload>
         <div className='micro'>
-          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} />
+          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} style={{color: commonColor.colorBlue1}}/>
         </div>
       </Space>
     </div>

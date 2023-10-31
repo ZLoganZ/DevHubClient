@@ -145,7 +145,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       <Dropdown menu={{ items }} trigger={['contextMenu']}>
         <NavLink to={`/message/${conversation._id}`}>
           <div
-            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-lg transition'
+            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3  transition'
             style={{
               backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
             }}>
