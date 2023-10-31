@@ -23,7 +23,6 @@ import videoChat from '@/util/videoChat';
 import { getLastOnline } from '@/util/formatDateTime';
 import StyleProvider from './cssMessageChat';
 import { commonColor } from '@/util/cssVariable';
-import { url } from 'inspector';
 
 interface IParams {
   conversationID: string;
@@ -108,7 +107,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   useEffect(() => {
     if (!messages) return;
     if (count === 0) scrollToBottom('instant');
-    if (messages.length - count === 1) scrollToBottom('smooth');
+    if (messages.length - count === 1) scrollToBottom('auto');
     setCount(messages.length);
   }, [messages]);
 
@@ -247,17 +246,15 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
               style={{
                 height: '89%',
                 overflow: 'auto',
-                backgroundImage: `url(${getImageURL(
-                  currentConversation.cover_image
-                )})`,
+                backgroundImage: `url(${getImageURL(currentConversation.cover_image)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <div className='' style={{
-                // backgroundColor: 'rgba(0,0,0,0.5)',
-                backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
-              }}>
+              <div
+                style={{
+                  backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
+                }}>
                 <div className='flex-1 overflow-y-hidden'>
                   {!hasPreviousMessages && (
                     <ChatWelcome
@@ -281,9 +278,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                       isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
                       isAdmin={
                         currentConversation.admins &&
-                        currentConversation.admins.some(
-                          admin => admin._id === message.sender._id
-                        )
+                        currentConversation.admins.some((admin) => admin._id === message.sender._id)
                       }
                     />
                   ))}

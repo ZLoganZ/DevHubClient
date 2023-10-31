@@ -232,6 +232,7 @@ export interface ConversationType {
   seen: UserInfoType[];
   admins?: UserInfoType[];
   image?: string;
+  cover_image?: string;
   createdAt: string;
   updatedAt: string;
 }
