@@ -3,15 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-// import { sha1 } from 'crypto-hash';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Picker from '@emoji-mart/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UploadOutlined } from '@ant-design/icons';
-import { RcFile } from 'antd/es/upload';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
-// import { sha1 } from 'crypto-hash';
 import { useMediaQuery } from 'react-responsive';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
@@ -32,13 +29,13 @@ const toolbarOptions = [
   ['link']
 ];
 
-interface NewPostProps {
+interface INewPost {
   currentUser: UserInfoType;
 }
 
 //===================================================
 
-const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
+const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -49,7 +46,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
 
   const [random, setRandom] = useState(uuidv4().replace(/-/g, ''));
 
-  const [file, setFile] = useState<RcFile>();
+  const [file, setFile] = useState<File>();
 
   const [content, setContent] = useState('');
 
@@ -74,7 +71,7 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please enter the content'
     });
@@ -113,15 +110,15 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
       setRandom(uuidv4().replace(/-/g, ''));
       setFile(undefined);
       form.setValue('title', '');
-      messageApi.success('Create post successfully');
+      void messageApi.success('Create post successfully');
     }
 
     if (isErrorCreatePost) {
-      messageApi.error('Create post failed');
+      void messageApi.error('Create post failed');
     }
   }, [isSuccessCreatePost, isErrorCreatePost]);
 
-  const handleUploadImage = async (file: RcFile) => {
+  const handleUploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
     const { data } = await imageService.uploadImage(formData);
@@ -131,23 +128,16 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
     };
   };
 
-  const beforeUpload = (file: RcFile) => {
+  const beforeUpload = (file: File) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
-      messageApi.error('Image must smaller than 3MB!');
+      void messageApi.error('Image must smaller than 3MB!');
     }
     return isLt2M;
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          controlHeight: 40,
-          borderRadius: 0,
-          lineWidth: 0
-        }
-      }}>
+    <ConfigProvider theme={{ token: { controlHeight: 40, borderRadius: 0, lineWidth: 0 } }}>
       {contextHolder}
       <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
         <div className='newPost px-4 py-3'>
@@ -205,10 +195,10 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
                       return response.json();
                     }}
                     onEmojiSelect={(emoji: any) => {
-                      ReactQuillRef!.current?.getEditor().focus();
-                      ReactQuillRef!.current
+                      ReactQuillRef.current?.getEditor().focus();
+                      ReactQuillRef.current
                         ?.getEditor()
-                        .insertText(ReactQuillRef!.current?.getEditor().getSelection().index, emoji.native);
+                        .insertText(ReactQuillRef.current?.getEditor().getSelection().index, emoji.native);
                     }}
                   />
                 }>
@@ -221,21 +211,25 @@ const NewPost: React.FC<NewPostProps> = ({ currentUser }) => {
                   accept='image/png, image/jpeg, image/jpg'
                   key={random}
                   maxCount={5}
-                  customRequest={async ({ onSuccess }) => {
+                  customRequest={({ onSuccess }) => {
                     if (onSuccess) onSuccess('ok');
                   }}
+                  multiple
                   listType='picture'
                   beforeUpload={beforeUpload}
                   onChange={(info) => setFile(info.file.originFileObj)}
                   onRemove={() => {
                     setFile(undefined);
                   }}>
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Upload (Max: 5)</Button>
                 </Upload>
               </span>
             </div>
             <div className='newPostFooter__right'>
-              <ButtonActiveHover rounded onClick={form.handleSubmit(onSubmit)} loading={isLoadingCreatePost}>
+              <ButtonActiveHover
+                rounded
+                onClick={() => form.handleSubmit(onSubmit)}
+                loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhite1 }}>
                   {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>

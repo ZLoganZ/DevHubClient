@@ -10,11 +10,11 @@ import { UserInfoType } from '@/types';
 import { NEW_CONVERSATION } from '@/util/constants/SettingSystem';
 import { useReceiveConversation } from '@/hooks/mutation';
 
-interface Props {
+interface IGroupModal {
   users: UserInfoType[];
 }
 
-const OpenGroupModal: React.FC<Props> = ({ users }) => {
+const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
@@ -51,9 +51,7 @@ const OpenGroupModal: React.FC<Props> = ({ users }) => {
         navigate(`/message/${res.data.metadata._id}`);
       })
       .catch(() => console.log('error'))
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => setIsLoading(false));
   }, [name, membersGroup]);
 
   useEffect(() => {
@@ -63,11 +61,7 @@ const OpenGroupModal: React.FC<Props> = ({ users }) => {
         component: <GroupChatModal setName={setGroupName} setValue={SetMembersGroup} users={users} />,
         footer: (
           <div className='mt-6 flex items-center justify-end gap-x-3'>
-            <ButtonCancelHover
-              onClick={() => {
-                dispatch(closeModal());
-              }}
-              disabled={isLoading}>
+            <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
             <ButtonActiveHover rounded loading={isLoading} onClick={onSubmit}>

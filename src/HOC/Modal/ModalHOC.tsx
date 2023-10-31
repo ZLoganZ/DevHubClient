@@ -23,10 +23,7 @@ const ModalHOC = () => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
+    <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Modal
           key={title}

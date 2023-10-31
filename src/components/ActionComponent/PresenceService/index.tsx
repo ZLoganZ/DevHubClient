@@ -1,34 +1,5 @@
-// import { clientPresence } from './presence.connect';
-
-// const SET_PRESENCE = 'SET_PRESENCE'
-
-// class PresenceService {
-//   constructor() {
-//     this.listen();
-//   }
-//   async listen() {
-//     try {
-//       clientPresence.on('connect', () => {
-//         console.log('connected presenceService');
-//       });
-//     } catch (error) {
-//       console.log(error);
-//       throw error;
-//     }
-//   }
-//   async setPresence(userId: String) {
-//     try {
-//       clientPresence.emit(SET_PRESENCE, userId);
-//     } catch (error) {
-//       console.log(error);
-//       throw error;
-//     }
-//   }
-// }
-
-// export default PresenceService;
-
 import { useEffect } from 'react';
+
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { setMembers } from '@/redux/Slice/SocketSlice';
@@ -50,15 +21,29 @@ const PresenceService = () => {
         (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
       );
 
-      const followers = currentUserInfo.followers.map((follower) => follower._id);
-      const following = currentUserInfo.following.map((following) => following._id);
+      const followers = currentUserInfo.followers.map((follower) => ({
+        _id: follower._id,
+        last_online: follower.last_online,
+        first_online: 0,
+        is_online: false
+      }));
+      const following = currentUserInfo.following.map((following) => ({
+        _id: following._id,
+        last_online: following.last_online,
+        first_online: 0,
+        is_online: false
+      }));
 
       // Combine followers, following and remove duplicate
       const members = [...followers, ...following].filter((item, index, arr) => arr.indexOf(item) === index);
 
       presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
-        const activeMembers = members.filter((member) => data.includes(member));
-        activeMembers.push(currentUserInfo._id);
+        const activeMembers = members.map((member) => {
+          if (data.includes(member._id)) {
+            return { ...member, isActive: true, first_online: member.first_online + 1, is_online: true };
+          }
+          return { ...member, isActive: false, last_online: Date.now(), is_online: false };
+        });
 
         dispatch(setMembers(activeMembers));
       });

@@ -9,13 +9,13 @@ import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import StyleProvider from './cssPostUserInfo';
 
-interface UserInfoPostProps {
+interface IUserInfoPost {
   userInfo: UserInfoType;
   postID: string;
   date: string;
 }
 
-const UserInfoPost: React.FC<UserInfoPostProps> = ({ userInfo, postID, date }) => {
+const UserInfoPost: React.FC<IUserInfoPost> = ({ userInfo, postID, date }) => {
   const { themeColorSet } = getTheme();
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });

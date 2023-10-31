@@ -9,8 +9,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { RcFile } from 'antd/es/upload';
+import { IconDefinition, faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuidv4 } from 'uuid';
 import 'react-quill/dist/quill.bubble.css';
 
@@ -50,45 +49,45 @@ const EditProfileForm = () => {
 
   const [tags, setTags] = useState(currentUserInfo?.tags);
 
-  const [contacts, setLinks] = useState(currentUserInfo.contacts || []);
+  const [contacts, setLinks] = useState(currentUserInfo.contacts ?? []);
 
   const [name, setName] = useState(currentUserInfo.name);
 
-  const [alias, setAlias] = useState(currentUserInfo.alias || '');
+  const [alias, setAlias] = useState(currentUserInfo.alias ?? '');
 
-  const [location, setLocation] = useState(currentUserInfo.location || '');
+  const [location, setLocation] = useState(currentUserInfo.location ?? '');
 
   const [avatar, setAvatar] = useState(getImageURL(currentUserInfo.user_image, 'avatar'));
-  const [fileAvatar, setFileAvatar] = useState<RcFile>();
+  const [fileAvatar, setFileAvatar] = useState<File>();
 
   const [cover, setCover] = useState(getImageURL(currentUserInfo.cover_image));
-  const [fileCover, setFileCover] = useState<RcFile>();
+  const [fileCover, setFileCover] = useState<File>();
 
-  const [about, setAbout] = useState(currentUserInfo.about || '');
+  const [about, setAbout] = useState(currentUserInfo.about ?? '');
 
-  const [experiences, setExperiences] = useState(currentUserInfo?.experiences || []);
+  const [experiences, setExperiences] = useState(currentUserInfo?.experiences ?? []);
 
-  const [repositories, setRepositories] = useState(currentUserInfo?.repositories || []);
+  const [repositories, setRepositories] = useState(currentUserInfo?.repositories ?? []);
 
-  // const initialAvatar = useMemo(() => {
-  //   return currentUserInfo.user_image || null;
-  // }, [currentUserInfo.user_image]);
+  const icons: Record<string, IconDefinition> = {
+    '0': faFacebookF,
+    '1': faGithub,
+    '2': faTwitter,
+    '3': faInstagram,
+    '4': faLinkedin
+  };
 
-  // const initialCover = useMemo(() => {
-  //   return currentUserInfo.cover_image || null;
-  // }, [currentUserInfo.cover_image]);
-
-  const handleChangeAvatar = useCallback((image: RcFile) => {
+  const handleChangeAvatar = useCallback((image: File) => {
     setAvatar(URL.createObjectURL(image));
     setFileAvatar(image);
   }, []);
 
-  const handleChangeCover = useCallback((image: RcFile) => {
+  const handleChangeCover = useCallback((image: File) => {
     setCover(URL.createObjectURL(image));
     setFileCover(image);
   }, []);
 
-  const handleUploadImage = async (file: RcFile) => {
+  const handleUploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
     const { data } = await imageService.uploadImage(formData);
@@ -158,10 +157,10 @@ const EditProfileForm = () => {
     dispatch(callBackSubmitDrawer(onSubmit));
   }, [tags, name, contacts, fileAvatar, fileCover, alias, location, about, experiences, repositories]);
 
-  const beforeUpload = (file: RcFile) => {
+  const beforeUpload = (file: File) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
     if (!isLt2M) {
-      messageApi.error('Image must smaller than 3MB!');
+      void messageApi.error('Image must smaller than 3MB!');
     }
     return isLt2M;
   };
@@ -280,7 +279,9 @@ const EditProfileForm = () => {
             <Space className='coverButton absolute bottom-8 right-5'>
               <Upload
                 className='btnChangeCover px-4 py-2'
-                customRequest={() => {}}
+                customRequest={({ onSuccess }) => {
+                  if (onSuccess) onSuccess('ok');
+                }}
                 maxCount={1}
                 accept='image/png, image/jpeg, image/jpg'
                 onChange={(file) => handleChangeCover(file.file.originFileObj!)}
@@ -326,7 +327,9 @@ const EditProfileForm = () => {
             </div>
             <Upload
               accept='image/png, image/jpeg, image/jpg'
-              customRequest={() => {}}
+              customRequest={({ onSuccess }) => {
+                if (onSuccess) onSuccess('ok');
+              }}
               maxCount={1}
               onChange={(file) => handleChangeAvatar(file?.file?.originFileObj!)}
               showUploadList={false}
@@ -337,69 +340,16 @@ const EditProfileForm = () => {
         </section>
         <section className='links mt-3 flex items-center'>
           {contacts.map((item, index) => {
-            switch (item.key) {
-              case '0':
-                return (
-                  <Avatar
-                    key={index}
-                    style={{ color: themeColorSet.colorText1 }}
-                    onClick={() => {
-                      openInNewTab(item.link);
-                    }}
-                    className='item'
-                    icon={<FontAwesomeIcon icon={faFacebookF} />}
-                  />
-                );
-              case '1':
-                return (
-                  <Avatar
-                    key={index}
-                    style={{ color: themeColorSet.colorText1 }}
-                    onClick={() => {
-                      openInNewTab(item.link);
-                    }}
-                    className='item'
-                    icon={<FontAwesomeIcon icon={faGithub} />}
-                  />
-                );
-              case '2':
-                return (
-                  <Avatar
-                    key={index}
-                    style={{ color: themeColorSet.colorText1 }}
-                    onClick={() => {
-                      openInNewTab(item.link);
-                    }}
-                    className='item'
-                    icon={<FontAwesomeIcon icon={faTwitter} />}
-                  />
-                );
-              case '3':
-                return (
-                  <Avatar
-                    key={index}
-                    style={{ color: themeColorSet.colorText1 }}
-                    onClick={() => {
-                      openInNewTab(item.link);
-                    }}
-                    className='item'
-                    icon={<FontAwesomeIcon icon={faInstagram} />}
-                  />
-                );
-              case '4':
-                return (
-                  <Avatar
-                    style={{ color: themeColorSet.colorText1 }}
-                    onClick={() => {
-                      openInNewTab(item.link);
-                    }}
-                    className='item'
-                    icon={<FontAwesomeIcon icon={faLinkedin} />}
-                  />
-                );
-              default:
-                return null;
-            }
+            const Icon = icons[item.key];
+            return Icon ? (
+              <Avatar
+                key={index}
+                style={{ color: themeColorSet.colorText1 }}
+                onClick={() => openInNewTab(item.link)}
+                className='item'
+                icon={<FontAwesomeIcon icon={Icon} />}
+              />
+            ) : null;
           })}
           <button
             className='addLinks px-4 py-1 cursor-pointer'
@@ -564,7 +514,7 @@ const EditProfileForm = () => {
                         <QuillEdit
                           key={uuidv4().replace(/-/g, '')}
                           placeholder='Write something about yourself...'
-                          content={about as string}
+                          content={about}
                           callbackFunction={handleChangeAbout}
                         />
                       ),

@@ -47,7 +47,7 @@ const Headers = () => {
   const handleClick = useCallback(() => {
     const { pathname } = window.location;
     if (pathname === '/') {
-      refetchAllNewsfeedPosts();
+      void refetchAllNewsfeedPosts();
     }
   }, [refetchAllNewsfeedPosts, window.location.pathname]);
 
@@ -60,16 +60,9 @@ const Headers = () => {
       key: '1',
       label: (
         <NavLink to={`/user/${currentUserInfo._id}`}>
-          <div
-            className='flex items-center py-1 px-1'
-            style={{
-              height: '12%'
-            }}>
-            <div className='avatar relative'>
-              <Avatar
-                key={currentUserInfo._id}
-                src={getImageURL(currentUserInfo.user_image, 'avatar_mini')}
-              />
+          <div className='flex items-center py-1 px-1'>
+            <div className='avatar relative h-9 w-9 overflow-hidden rounded-full'>
+              <img key={currentUserInfo._id} src={getImageURL(currentUserInfo.user_image, 'avatar_mini')} />
             </div>
             <div className='name_career'>
               <div
@@ -140,12 +133,7 @@ const Headers = () => {
   // };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          controlHeight: 38
-        }
-      }}>
+    <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
       <StyleProvider theme={themeColorSet}>
         {/* {contextHolder} */}
         <Header
@@ -192,8 +180,7 @@ const Headers = () => {
                       <Badge count={0}>
                         <Avatar
                           className='messageButton cursor-pointer'
-                          shape='circle'
-                          icon={<CommentOutlined className='text-xl' />}
+                          icon={<CommentOutlined className='text-xl messageButton cursor-pointer' />}
                         />
                       </Badge>
                     </NavLink>
@@ -213,8 +200,7 @@ const Headers = () => {
                       overlayStyle={{ paddingTop: '0.5rem' }}>
                       <Avatar
                         className='avatarButton cursor-pointer'
-                        icon={<UserOutlined />}
-                        size='default'
+                        icon={<UserOutlined className='text-xl' />}
                       />
                     </Dropdown>
                     <DayNightSwitch checked={switchTheme} onChange={onChange} />

@@ -9,11 +9,11 @@ import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMainLayout';
 
-interface PropsMainTemplate {
+interface IMainTemplate {
   Component: React.ReactNode;
 }
 
-const MainLayout = (props: PropsMainTemplate) => {
+const MainLayout = ({ Component }: IMainTemplate) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColor, themeColorSet } = getTheme();
@@ -23,8 +23,6 @@ const MainLayout = (props: PropsMainTemplate) => {
   if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   document.title = 'DevHub';
-
-  const { Component } = props;
 
   if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 

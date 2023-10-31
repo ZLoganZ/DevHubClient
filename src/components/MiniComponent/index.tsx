@@ -6,27 +6,29 @@ import StyleProvider from './cssMiniComponent';
 
 // ===========================================
 
-type ButtonNormalHoverProps = 'primary' | 'text' | 'default' | 'dashed';
+type ButtonNormalHoverType = 'primary' | 'text' | 'default' | 'dashed';
 
-type ButtonActiveHoverProps = {
+interface IButtonActiveHover {
   className?: string;
   children?: React.ReactNode;
+  disabled?: boolean;
   onClick?: React.MouseEventHandler;
   loading?: boolean;
   rounded?: boolean;
   block?: boolean;
-  type?: ButtonNormalHoverProps;
-};
+  type?: ButtonNormalHoverType;
+}
 
-export const ButtonActiveHover = ({
+export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   className,
   children,
   onClick,
   loading,
+  disabled,
   rounded,
   block,
   type
-}: ButtonActiveHoverProps) => {
+}) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
@@ -34,7 +36,7 @@ export const ButtonActiveHover = ({
     <StyleProvider theme={themeColorSet}>
       <Button
         type={type}
-        disabled={loading}
+        disabled={disabled ?? loading}
         className={`${!className ? 'ButtonActiveHover font-bold px-6 py-2' : className}`}
         onClick={onClick}
         loading={loading}
@@ -62,14 +64,19 @@ export const ButtonActiveNonHover = () => {
 
 // ===========================================
 
-type ButtonCancelHoverProps = {
+interface IButtonCancelHover {
   children?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
   className?: string;
-};
+}
 
-export const ButtonCancelHover = ({ className, children, onClick, disabled }: ButtonCancelHoverProps) => {
+export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
+  className,
+  children,
+  onClick,
+  disabled
+}) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
   return (

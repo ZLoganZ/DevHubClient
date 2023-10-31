@@ -9,7 +9,7 @@ import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { ExperienceType } from '@/types';
 
-interface EditProps {
+interface IEditExperience {
   experiences: ExperienceType[];
   setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
   itemCurrent: ExperienceType;
@@ -20,7 +20,7 @@ const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
 const dateFormat = 'MM/YYYY';
 
-const EditExperienceForm = (Props: EditProps) => {
+const EditExperienceForm:React.FC<IEditExperience> = ({experiences,indexCurrent,itemCurrent,setExperiences}) => {
   const dispatch = useAppDispatch();
   const searchRef = useRef<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -28,13 +28,13 @@ const EditExperienceForm = (Props: EditProps) => {
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
 
-  const [position_name, setPositionName] = useState(Props.itemCurrent.position_name);
-  const [company_name, setCompanyName] = useState(Props.itemCurrent.company_name);
-  const [start_date, setStartDate] = useState(Props.itemCurrent.start_date);
-  const [end_date, setEndDate] = useState(Props.itemCurrent.end_date);
+  const [position_name, setPositionName] = useState(itemCurrent.position_name);
+  const [company_name, setCompanyName] = useState(itemCurrent.company_name);
+  const [start_date, setStartDate] = useState(itemCurrent.start_date);
+  const [end_date, setEndDate] = useState(itemCurrent.end_date);
   const [pastDate, setPastDate] = useState('');
 
-  const checkUntilNow = Props.itemCurrent.end_date === 'Now';
+  const checkUntilNow = itemCurrent.end_date === 'Now';
   const [untilNow, setUntilNow] = useState(checkUntilNow);
 
   const checkDisablePicker: [boolean, boolean] = checkUntilNow ? [false, true] : [false, false];
@@ -42,7 +42,7 @@ const EditExperienceForm = (Props: EditProps) => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please fill in all fields'
     });
@@ -60,9 +60,9 @@ const EditExperienceForm = (Props: EditProps) => {
       error();
       return;
     } else {
-      const newExperiences = [...Props.experiences];
-      newExperiences[Props.indexCurrent] = experience;
-      Props.setExperiences(newExperiences);
+      const newExperiences = [...experiences];
+      newExperiences[indexCurrent] = experience;
+      setExperiences(newExperiences);
       dispatch(closeModal());
     }
   };

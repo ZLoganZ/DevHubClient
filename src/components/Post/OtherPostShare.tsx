@@ -13,14 +13,14 @@ import { useAppSelector } from '@/hooks/special';
 import { PostType, UserInfoType } from '@/types';
 import StyleProvider from './cssPost';
 import { useEffect, useState } from 'react';
-interface PostShareProps {
+interface IPostShare {
   postShared: PostType;
   postAuthor: UserInfoType;
   postSharer: UserInfoType;
   currentUser: UserInfoType;
 }
 
-const PostShare: React.FC<PostShareProps> = ({ postShared, postAuthor, postSharer, currentUser }) => {
+const PostShare: React.FC<IPostShare> = ({ postShared, postAuthor, postSharer, currentUser }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();

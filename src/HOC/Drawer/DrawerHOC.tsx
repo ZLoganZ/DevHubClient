@@ -23,10 +23,7 @@ const DrawerHOC = () => {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: themeColor
-      }}>
+    <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Drawer
           title={title}

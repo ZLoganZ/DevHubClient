@@ -1,6 +1,7 @@
 type option = 'post' | 'avatar' | 'avatar_mini' | 'default' | 'post_mini';
 
-const getImageURL = (src: string, option: option = 'default') => {
+const getImageURL = (src?: string, option: option = 'default') => {
+  if (!src) return;
   return ImageUrl(src, option);
 };
 

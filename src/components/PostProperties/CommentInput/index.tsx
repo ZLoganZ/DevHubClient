@@ -12,12 +12,12 @@ import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
-interface CommentInputProps {
+interface ICommentInput {
   currentUser: UserInfoType;
   postID: string;
 }
 
-const CommentInput: React.FC<CommentInputProps> = ({ currentUser, postID }) => {
+const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
   const { themeColorSet } = getTheme();
@@ -75,16 +75,16 @@ const CommentInput: React.FC<CommentInputProps> = ({ currentUser, postID }) => {
             allowClear
             onKeyUp={(e) => {
               const cursorPosition = e.currentTarget.selectionStart;
-              setCursor(cursorPosition || 0);
+              setCursor(cursorPosition ?? 0);
             }}
             onClick={(e) => {
               const cursor = e.currentTarget.selectionStart;
-              setCursor(cursor || 0);
+              setCursor(cursor ?? 0);
             }}
             onChange={(e) => {
               setCommentContent(e.currentTarget.value);
               const cursor = e.currentTarget.selectionStart;
-              setCursor(cursor || 0);
+              setCursor(cursor ?? 0);
             }}
             onPressEnter={handleSubmitComment}
             style={{

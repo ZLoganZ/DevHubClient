@@ -76,13 +76,7 @@ const LoadingChat = () => {
                       }}>
                       <Skeleton.Button active size='large' shape='circle' />
                     </div>
-                    <ConfigProvider
-                      theme={{
-                        token: {
-                          lineWidth: 0,
-                          controlHeight: 40
-                        }
-                      }}>
+                    <ConfigProvider theme={{ token: { lineWidth: 0, controlHeight: 40 } }}>
                       <Skeleton.Input active size='large' block />
                     </ConfigProvider>
                   </div>

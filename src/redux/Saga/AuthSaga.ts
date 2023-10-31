@@ -27,7 +27,7 @@ function* LoginSaga({ payload }: any) {
       const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
-      const from = state?.from?.pathname || '/';
+      const from = state?.from?.pathname ?? '/';
 
       window.location.replace(from);
     }
@@ -92,7 +92,7 @@ function* LoginWithGoogleSaga({ payload }: any) {
       const { location } = yield select((state) => state.hook);
 
       const state = location.state as { from: Location };
-      const from = state?.from.pathname || '/';
+      const from = state?.from.pathname ?? '/';
 
       window.location.replace(from);
     }

@@ -3,7 +3,7 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 const initialState = {
   change: true,
-  theme: localStorage.getItem('theme') || DARK_THEME
+  theme: localStorage.getItem('theme') ?? DARK_THEME
 };
 
 const themeSlice = createSlice({

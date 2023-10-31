@@ -11,7 +11,7 @@ import { TypeOfLink } from '@/types';
 import StyleProvider from './cssPostContent';
 import { useIntersectionObserver } from '@/hooks/special';
 
-interface ContentPostProps {
+interface IContentPost {
   postID: string;
   title: string;
   content: string;
@@ -19,7 +19,7 @@ interface ContentPostProps {
   link?: TypeOfLink;
 }
 
-const ContentPost: React.FC<ContentPostProps> = ({ postID, title, content, image, link }) => {
+const ContentPost: React.FC<IContentPost> = ({ postID, title, content, image, link }) => {
   const { themeColorSet } = getTheme();
 
   const [expanded, setExpanded] = useState(false);
