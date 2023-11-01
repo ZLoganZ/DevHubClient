@@ -45,7 +45,6 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const activeUser = members.find((member) => member._id === otherUser._id);
-  console.log('activeUser', activeUser)
 
   const [displayOption, setDisplayOption] = useState(false);
 

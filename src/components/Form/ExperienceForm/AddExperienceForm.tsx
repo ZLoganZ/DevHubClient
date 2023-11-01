@@ -52,10 +52,6 @@ const AddExperienceForm: React.FC<IEditExperience> = ({ experiences, setExperien
 
   const handleSetExperience = () => {
     if (position_name === '' || company_name === '' || start_date === '' || end_date === '') {
-      // console.log('position_name', position_name);
-      // console.log('company_name', company_name);
-      // console.log('start_date', start_date);
-      // console.log('end_date', end_date);
       error();
       return;
     } else {
