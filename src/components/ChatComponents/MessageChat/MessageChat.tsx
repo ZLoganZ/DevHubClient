@@ -1,4 +1,4 @@
-import { Col, Row, Space } from 'antd';
+import { Col, Row } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
@@ -45,8 +45,9 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const activeUser = members.find((member) => member._id === otherUser._id);
+  console.log('activeUser', activeUser)
 
-  const [isDisplayConversationOption, setIsDisplayConversationOption] = useState(false);
+  const [displayOption, setDisplayOption] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') {
@@ -63,7 +64,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     }
 
     const lastOnline =
-      activeUser?.first_online === 0 || !activeUser ? otherUser.last_online : activeUser.last_online;
+      !activeUser?.first_online || !activeUser ? otherUser.last_online : activeUser.last_online;
 
     return activeUser?.is_online ? 'Online' : getLastOnline(lastOnline);
   }, [currentConversation, activeUser, members]);
@@ -177,7 +178,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         <LoadingConversation />
       ) : (
         <Row className='h-full'>
-          <Col span={isDisplayConversationOption ? 16 : 24} className='h-full'>
+          <Col span={displayOption ? 16 : 24} className='h-full'>
             <div
               className='header flex justify-between items-center py-4 px-6'
               style={{
@@ -212,32 +213,27 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </div>
                 </div>
               </div>
-              <Space align='center' size={20} className='flex gap-3'>
-                <div className='audio-call' onClick={() => audioCall(conversationID)}>
-                  <FontAwesomeIcon
-                    className='icon text-lg cursor-pointer'
-                    icon={faPhone}
-                    style={{ color: commonColor.colorBlue1 }}
-                  />
-                </div>
-                <div className='video-call' onClick={() => videoChat(conversationID)}>
-                  <FontAwesomeIcon
-                    className='icon text-xl cursor-pointer'
-                    icon={faVideoCamera}
-                    style={{ color: commonColor.colorBlue1 }}
-                  />
-                </div>
-                <div className='display-share'>
-                  <FontAwesomeIcon
-                    className='icon text-xl cursor-pointer'
-                    icon={faCircleInfo}
-                    onClick={() => {
-                      setIsDisplayConversationOption(!isDisplayConversationOption);
-                    }}
-                    style={{ color: commonColor.colorBlue1 }}
-                  />
-                </div>
-              </Space>
+
+              <div className='flex items-center justify-center gap-5'>
+                <FontAwesomeIcon
+                  onClick={() => audioCall(conversationID)}
+                  className='audio-call text-lg cursor-pointer'
+                  icon={faPhone}
+                  style={{ color: commonColor.colorBlue1 }}
+                />
+                <FontAwesomeIcon
+                  onClick={() => videoChat(conversationID)}
+                  className='video-call text-xl cursor-pointer'
+                  icon={faVideoCamera}
+                  style={{ color: commonColor.colorBlue1 }}
+                />
+                <FontAwesomeIcon
+                  className='display-share text-xl cursor-pointer'
+                  icon={faCircleInfo}
+                  onClick={() => setDisplayOption(!displayOption)}
+                  style={{ color: commonColor.colorBlue1 }}
+                />
+              </div>
             </div>
             <div
               style={{
@@ -298,27 +294,30 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                     return (
                       <img
                         key={member._id}
-                        className={`rounded-full top-3 left-${
-                          index * 8 + typingUsers.length * 1
-                        } absolute h-6 w-6 overflow-hidden`}
+                        className='rounded-full top-3 absolute h-6 w-6 overflow-hidden'
                         src={getImageURL(member.user_image, 'avatar_mini')}
+                        style={{
+                          left: `${index * 30 + typingUsers.length * 10}px`,
+                          border: `2px solid ${themeColorSet.colorBg4}`
+                        }}
                       />
                     );
                   }
                   return null;
                 })}
                 <div
-                  className={`typing-indicator rounded-full left-${
-                    typingUsers.length * 8 + typingUsers.length * 2
-                  }`}
-                  style={{ backgroundColor: themeColorSet.colorBg4 }}>
+                  className='typing-indicator rounded-full'
+                  style={{
+                    backgroundColor: themeColorSet.colorBg4,
+                    left: `${typingUsers.length * 30 + typingUsers.length * 10}px`
+                  }}>
                   <div /> <div /> <div />
                 </div>
               </div>
               <ChatInput conversationID={conversationID} />
             </div>
           </Col>
-          {isDisplayConversationOption && (
+          {displayOption && (
             <Col span={8} className='h-full'>
               <ConversationOption conversationID={conversationID} />
             </Col>

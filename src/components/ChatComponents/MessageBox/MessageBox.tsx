@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import { Image, Tooltip } from 'antd';
 import { NavLink } from 'react-router-dom';
@@ -46,27 +47,33 @@ const MessageBox: React.FC<IMessageBox> = ({
     return seen.filter((user) => user._id !== message.sender._id).map((user) => user.user_image);
   }, [seen, message]);
 
-  const containerStyle = `flex gap-3 px-2 items-end
-  ${isNextMesGroup && isPrevMesGroup ? 'py-0.5' : ''}
-  ${isNextMesGroup && !isPrevMesGroup ? 'pt-2 pb-0.5' : ''}
-  ${!isNextMesGroup && isPrevMesGroup ? 'pt-0.5 pb-2' : ''}
-  ${!(isNextMesGroup || isPrevMesGroup) ? 'py-2' : ''}
-  ${isOwn ? 'justify-end' : ''}`;
+  const containerStyle = clsx(
+    'flex gap-3 px-2 items-end',
+    isNextMesGroup && isPrevMesGroup && 'py-0.5',
+    isNextMesGroup && !isPrevMesGroup && 'pt-2 pb-0.5',
+    !isNextMesGroup && isPrevMesGroup && 'pt-0.5 pb-2',
+    !(isNextMesGroup || isPrevMesGroup) && 'py-2',
+    isOwn && 'justify-end'
+  );
 
-  const avatarStyle = `${isOwn ? 'hidden' : ''}
-  ${isNextMesGroup || (!isPrevMesGroup && isNextMesGroup) ? 'invisible' : ''}`;
+  const avatarStyle = clsx(
+    isOwn && 'hidden',
+    (isNextMesGroup || (!isPrevMesGroup && isNextMesGroup)) && 'invisible'
+  );
 
-  const messageStyle = `text-sm w-fit overflow-hidden break-all
-  ${message.image ? 'p-0' : 'py-2 px-3'}
-  ${isOwn ? (message.image ? '' : 'bg-sky-500 text-white ml-7') : 'bg-gray-700 text-white mr-7'}
-  ${isOwn && isNextMesGroup ? 'rounded-s-2xl' : ''}
-  ${isOwn && isNextMesGroup && !isPrevMesGroup ? 'rounded-t-2xl rounded-bl-2xl' : ''}
-  ${isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tl-2xl' : ''}
-  ${isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}
-  ${!isOwn && isNextMesGroup ? 'rounded-e-2xl' : ''}
-  ${!isOwn && isNextMesGroup && !isPrevMesGroup ? 'rounded-t-2xl rounded-br-2xl' : ''}
-  ${!isOwn && !isNextMesGroup && isPrevMesGroup ? 'rounded-b-2xl rounded-tr-2xl' : ''}
-  ${!isOwn && !isNextMesGroup && !isPrevMesGroup ? 'rounded-2xl' : ''}`;
+  const messageStyle = clsx(
+    'text-sm w-fit overflow-hidden break-all',
+    message.image ? 'p-0' : 'py-2 px-3',
+    isOwn ? !message.image && 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7',
+    isOwn && isNextMesGroup && 'rounded-s-2xl',
+    isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-2xl rounded-bl-2xl',
+    isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-2xl rounded-tl-2xl',
+    isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-2xl',
+    !isOwn && isNextMesGroup && 'rounded-e-2xl',
+    !isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-2xl rounded-br-2xl',
+    !isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-2xl rounded-tr-2xl',
+    !isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-2xl'
+  );
 
   const handleFirstName = (name: string) => {
     // chỉ lấy 1 từ cuối cùng của tên
@@ -106,8 +113,8 @@ const MessageBox: React.FC<IMessageBox> = ({
               <Avatar key={message.sender._id} user={message.sender} />
             </NavLink>
           </Tooltip>
-          <div className={`flex flex-col ${isOwn && 'items-end'}`}>
-            <div className={`body-message flex flex-col ${isOwn && 'items-end'}`}>
+          <div className={clsx('flex flex-col', isOwn && 'items-end')}>
+            <div className={clsx('body-message flex flex-col', isOwn && 'items-end')}>
               {type === 'group' && !isOwn && !isPrevMesGroup && (
                 <div
                   className='text-sm flex items-center mb-1 ml-2'

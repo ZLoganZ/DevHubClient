@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
+import { clsx } from 'clsx';
 
 import { getTheme } from '@/util/theme';
 import { IS_TYPING, PRIVATE_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
@@ -100,13 +101,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
     return isLt2M;
   };
 
-  const checkEmpty = () => {
-    if (messageContent === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const checkEmpty = messageContent === '' && !file;
 
   const handleStopTyping = useCallback(
     debounce(() => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id }), 1000),
@@ -133,18 +128,20 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
             />
           }>
           <span className='emoji'>
-            <FontAwesomeIcon 
-            className='item mr-3 ml-3' 
-            size='lg' icon={faFaceSmile} 
-            style={{color: commonColor.colorBlue1}}
+            <FontAwesomeIcon
+              className='item mr-3 ml-3'
+              size='lg'
+              icon={faFaceSmile}
+              style={{ color: commonColor.colorBlue1 }}
             />
           </span>
         </Popover>
       </div>
       <div className='input' style={{ width: '100%' }}>
-        <ConfigProvider theme={{ token: { controlHeight: 32, lineWidth: 0 } }}>
+        <ConfigProvider theme={{ token: { controlHeight: 40, lineWidth: 0 } }}>
           <Input
             allowClear
+            className='rounded-full'
             placeholder='Write a message'
             value={messageContent}
             onKeyUp={(e) => {
@@ -168,11 +165,12 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
             onPressEnter={() => handleSubmit(messageContent)}
             suffix={
               <span
-                className={`cursor-pointer hover:text-blue-700 ${
-                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
-                }`}
+                className={clsx(
+                  'transition-all duration-300',
+                  checkEmpty ? 'text-gray-400 cursor-not-allowed' : 'text-blue-500 cursor-pointer'
+                )}
                 onClick={() => handleSubmit(messageContent)}>
-                <FontAwesomeIcon icon={faPaperPlane} style={{color: commonColor.colorBlue1}}/>
+                <FontAwesomeIcon icon={faPaperPlane} />
               </span>
             }
           />
@@ -188,10 +186,20 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
           listType='picture'
           beforeUpload={beforeUpload}
           onChange={(info) => setFile(info.file.originFileObj)}>
-          <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
+          <FontAwesomeIcon
+            className='item mr-3'
+            size='lg'
+            icon={faPaperclip}
+            style={{ color: commonColor.colorBlue1 }}
+          />
         </Upload>
         <div className='micro'>
-          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} style={{color: commonColor.colorBlue1}}/>
+          <FontAwesomeIcon
+            className='item ml-3'
+            size='lg'
+            icon={faMicrophone}
+            style={{ color: commonColor.colorBlue1 }}
+          />
         </div>
       </Space>
     </div>

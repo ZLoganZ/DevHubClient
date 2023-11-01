@@ -24,6 +24,7 @@
     "@tanstack/react-query-devtools": "^5.4.3",
     "antd": "^5.10.3",
     "axios": "^1.6.0",
+    "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "github-colors": "^2.2.20",
     "livekit-client": "^1.14.2",

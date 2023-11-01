@@ -24,39 +24,38 @@ const PresenceService = () => {
       const followers = currentUserInfo.followers.map((follower) => ({
         _id: follower._id,
         last_online: follower.last_online,
-        first_online: 0,
+        first_online: false,
         is_online: false
       }));
       const following = currentUserInfo.following.map((following) => ({
         _id: following._id,
         last_online: following.last_online,
-        first_online: 0,
+        first_online: false,
         is_online: false
       }));
 
       // Combine followers, following and remove duplicate
       const members = [...followers, ...following].filter((item, index, arr) => arr.indexOf(item) === index);
+      let activeMembers = [...members];
+      activeMembers.push({
+        _id: currentUserInfo._id,
+        last_online: new Date().toUTCString(),
+        first_online: true,
+        is_online: true
+      });
 
       presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
-        const activeMembers = members.map((member) => {
+        activeMembers = activeMembers.map((member) => {
           if (data.includes(member._id)) {
-            return { ...member, isActive: true, first_online: member.first_online + 1, is_online: true };
+            return { ...member, first_online: true, is_online: true };
           }
-          return { ...member, isActive: false, last_online: Date.now(), is_online: false };
-        });
-
-        activeMembers.push({
-          _id: currentUserInfo._id,
-          last_online: Date.now(),
-          first_online: 0,
-          is_online: true,
-          isActive: true
+          return { ...member, last_online: new Date().toUTCString(), is_online: false };
         });
 
         dispatch(setMembers(activeMembers));
       });
     }
-  }, [currentUserInfo]);
+  }, [currentUserInfo?._id]);
 
   return <></>;
 };

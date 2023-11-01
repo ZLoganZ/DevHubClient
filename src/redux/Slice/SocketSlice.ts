@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 interface member {
   _id: string;
   last_online: string;
-  first_online: number;
+  first_online: boolean;
   is_online: boolean;
 }
 interface State {

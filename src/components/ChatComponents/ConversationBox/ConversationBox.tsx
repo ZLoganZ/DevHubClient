@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Dropdown, MenuProps } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -43,7 +44,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
   const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
-  const { mutateReceiveMessage } = useReceiveMessage();
+  const { mutateReceiveMessage } = useReceiveMessage(selected);
   const { mutateLeaveGroup } = useLeaveGroup();
 
   const isSeen = conversation.seen.some((user) => user._id === currentUserInfo._id);
@@ -176,7 +177,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
                     </p>
                   )}
                 </div>
-                <p className={`truncate text-sm ${!isOwn && !hasSeen && `font-bold`}`}>
+                <p className={clsx('truncate text-sm', !isOwn && !hasSeen && 'font-bold')}>
                   <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
                 </p>
               </div>

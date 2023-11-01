@@ -550,7 +550,11 @@ export const useSendMessage = () => {
  * - `isSuccessReceiveMessage` is a boolean that indicates whether the message was successfully received.
  * - `message` is the message object.
  */
-export const useReceiveMessage = () => {
+export const useReceiveMessage = (selected?: boolean) => {
+  const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
+  const PopMessage = new Audio('/sounds/bubble-popping-short.mp4');
+  NotiMessage.volume = 0.3;
+
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
@@ -564,6 +568,11 @@ export const useReceiveMessage = () => {
         const index = newData.findIndex((item) => item._id === message.conversation_id);
 
         if (index !== -1) {
+          if (newData[index].lastMessage?._id !== message._id) {
+            if (!selected) void NotiMessage.play();
+            else void PopMessage.play();
+          }
+
           newData[index] = {
             ...newData[index],
             lastMessage: message,
@@ -648,6 +657,9 @@ export const useReceiveMessage = () => {
  * - `conversation` is the conversation object.
  */
 export const useReceiveConversation = () => {
+  const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
+  NotiMessage.volume = 0.3;
+
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
@@ -670,6 +682,7 @@ export const useReceiveConversation = () => {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           });
         } else {
+          void NotiMessage.play();
           newData.unshift(conversation);
         }
 
