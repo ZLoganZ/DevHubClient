@@ -1,5 +1,4 @@
-import { Col, ConfigProvider, Dropdown, Row, Space } from 'antd';
-import type { MenuProps } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
@@ -27,7 +26,7 @@ import StyleProvider from './cssChat';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet, themeColor } = getTheme();
 
   const { conversationID } = useParams();
@@ -88,10 +87,10 @@ const Chat = () => {
   const [optionIndex, setOptionIndex] = useState(0);
 
   const options = [
-    { name: 'message', icon: faComment, count: notSeenCount },
-    { name: 'contact', icon: faUser, count: contactCount },
-    { name: 'notification', icon: faBell, count: 99 },
-    { name: 'voice-call', icon: faPhone, count: 66 }
+    { name: 'new message', icon: faComment, count: notSeenCount },
+    { name: 'contacts', icon: faUser, count: contactCount },
+    { name: 'new notification', icon: faBell, count: 99 },
+    { name: 'missing call', icon: faPhone, count: 66 }
   ];
 
   const OptionRender = useMemo(() => {
@@ -135,19 +134,15 @@ const Chat = () => {
                     <Space size={35} direction='vertical' align='center'>
                       {options.map((option, index) => (
                         <div
-                          key={index}
                           className={`optionItem relative ${option.name}`}
                           onClick={() => setOptionIndex(index)}
                           style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
-                          <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
-                          <span
-                            className='absolute rounded-full
-                            bg-red-600
-                            top-4 -right-2
-                            h-5 w-5 flex items-center justify-center
-                            text-xs text-gray-50'>
-                            {option.count}
-                          </span>
+                          <Badge
+                            count={option.count}
+                            key={index}
+                            title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
+                            <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
+                          </Badge>
                         </div>
                       ))}
                     </Space>

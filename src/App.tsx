@@ -8,7 +8,7 @@ import ModalHOC from '@/HOC/Modal/ModalHOC';
 import DrawerHOC from '@/HOC/Drawer/DrawerHOC';
 
 import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
-import PresenceService from '@/components/ActionComponent/PresenceService';
+import { ChatService, PresenceService } from '@/components/ActionComponent/SocketService';
 import { VoiceCall, VideoCall } from '@/components/ChatComponents/MessageCall';
 
 import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
@@ -40,6 +40,7 @@ const App = () => {
       <ModalHOC />
       <DrawerHOC />
       <PresenceService />
+      <ChatService />
 
       <Routes>
         <Route element={<NotAuth />}>

@@ -20,10 +20,10 @@ const dateFormat = 'MM/YYYY';
 
 const AddExperienceForm: React.FC<IEditExperience> = ({ experiences, setExperiences }) => {
   const dispatch = useAppDispatch();
-  const searchRef = useRef<any>(null);
+  const searchRef = useRef<NodeJS.Timeout>();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [position_name, setPositionName] = useState('');

@@ -19,7 +19,7 @@ interface Option {
 
 const GroupChatModal: React.FC<IGroupChatModal> = ({ users, setName, setValue }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   return (
     <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorBg4 } }}>

@@ -14,7 +14,7 @@ import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
-import { MessageType } from '@/types';
+import { EmojisType, MessageType } from '@/types';
 import { commonColor } from '@/util/cssVariable';
 
 interface IChatInput {
@@ -23,7 +23,7 @@ interface IChatInput {
 
 const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -110,35 +110,34 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
   return (
     <div className='footer flex justify-between items-center' style={{ height: '8%' }}>
       {contextHolder}
-      <div className='iconEmoji text-center' style={{ width: '5%' }}>
-        <Popover
-          placement='top'
-          trigger='click'
-          content={
-            <Picker
-              data={async () => {
-                const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
+      <Popover
+        className='text-center cursor-pointer'
+        style={{ width: '5%' }}
+        placement='top'
+        trigger='click'
+        content={
+          <Picker
+            data={async () => {
+              const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
-                return response.json();
-              }}
-              onEmojiSelect={(emoji: any) => {
-                setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
-              }}
-              theme={themeColorSet.colorPicker}
-            />
-          }>
-          <span className='emoji'>
-            <FontAwesomeIcon
-              className='item mr-3 ml-3'
-              size='lg'
-              icon={faFaceSmile}
-              style={{ color: commonColor.colorBlue1 }}
-            />
-          </span>
-        </Popover>
-      </div>
+              return response.json();
+            }}
+            onEmojiSelect={(emoji: EmojisType) => {
+              setCursor(cursor + emoji.native.length);
+              setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
+            }}
+            theme={themeColorSet.colorPicker}
+          />
+        }>
+        <FontAwesomeIcon
+          className='item px-5'
+          size='lg'
+          icon={faFaceSmile}
+          style={{ color: commonColor.colorBlue1 }}
+        />
+      </Popover>
       <div className='input' style={{ width: '100%' }}>
-        <ConfigProvider theme={{ token: { controlHeight: 40, lineWidth: 0 } }}>
+        <ConfigProvider theme={{ token: { controlHeight: 35, lineWidth: 0 } }}>
           <Input
             allowClear
             className='rounded-full'
@@ -167,7 +166,9 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
               <span
                 className={clsx(
                   'transition-all duration-300',
-                  checkEmpty ? 'text-gray-400 cursor-not-allowed' : 'text-blue-500 cursor-pointer'
+                  checkEmpty
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'
                 )}
                 onClick={() => handleSubmit(messageContent)}>
                 <FontAwesomeIcon icon={faPaperPlane} />

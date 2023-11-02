@@ -20,12 +20,17 @@ const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
 const dateFormat = 'MM/YYYY';
 
-const EditExperienceForm:React.FC<IEditExperience> = ({experiences,indexCurrent,itemCurrent,setExperiences}) => {
+const EditExperienceForm: React.FC<IEditExperience> = ({
+  experiences,
+  indexCurrent,
+  itemCurrent,
+  setExperiences
+}) => {
   const dispatch = useAppDispatch();
-  const searchRef = useRef<any>(null);
+  const searchRef = useRef<NodeJS.Timeout>();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [position_name, setPositionName] = useState(itemCurrent.position_name);

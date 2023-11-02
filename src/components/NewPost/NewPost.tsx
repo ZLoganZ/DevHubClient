@@ -16,18 +16,12 @@ import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { EmojisType, UserInfoType } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
-
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-  [{ align: [] }],
-  ['link']
-];
 
 interface INewPost {
   currentUser: UserInfoType;
@@ -39,7 +33,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
@@ -50,12 +44,12 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
   const [content, setContent] = useState('');
 
-  const ReactQuillRef = useRef<any>();
+  const ReactQuillRef = useRef<ReactQuill | null>(null);
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor();
+    const quill = ReactQuillRef.current?.getEditor()!;
 
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
@@ -169,7 +163,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
             </div>
             <div className='AddContent mt-4'>
               <ReactQuill
-                ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+                ref={ReactQuillRef}
                 value={content}
                 preserveWhitespace
                 onChange={setContent}
@@ -194,11 +188,10 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
                       return response.json();
                     }}
-                    onEmojiSelect={(emoji: any) => {
-                      ReactQuillRef.current?.getEditor().focus();
+                    onEmojiSelect={(emoji: EmojisType) => {
                       ReactQuillRef.current
                         ?.getEditor()
-                        .insertText(ReactQuillRef.current?.getEditor().getSelection().index, emoji.native);
+                        .insertText(ReactQuillRef.current?.getEditor().getSelection(true).index, emoji.native);
                     }}
                   />
                 }>

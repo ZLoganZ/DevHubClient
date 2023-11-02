@@ -3,11 +3,9 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { setMembers } from '@/redux/Slice/SocketSlice';
+import { SETUP, SET_ACTIVE_MEM, SET_PRESENCE } from '@/util/constants/SettingSystem';
 
-const SET_PRESENCE = 'SET_PRESENCE';
-const SET_ACTIVE_MEM = 'SET_ACTIVE_MEM';
-
-const PresenceService = () => {
+export const PresenceService = () => {
   const { currentUserInfo } = useCurrentUserInfo();
   const dispatch = useAppDispatch();
 
@@ -60,4 +58,16 @@ const PresenceService = () => {
   return <></>;
 };
 
-export default PresenceService;
+export const ChatService = () => {
+  const { currentUserInfo } = useCurrentUserInfo();
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
+
+  useEffect(() => {
+    if (currentUserInfo) {
+      chatSocket.emit(SETUP, currentUserInfo._id);
+    }
+  }, [currentUserInfo?._id]);
+
+  return <></>;
+};

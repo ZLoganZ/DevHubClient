@@ -27,9 +27,9 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   disabled,
   rounded,
   block,
-  type
+  type='primary'
 }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (
@@ -77,7 +77,7 @@ export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
   onClick,
   disabled
 }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   return (
     <StyleProvider theme={themeColorSet}>

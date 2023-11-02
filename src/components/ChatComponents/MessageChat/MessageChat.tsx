@@ -5,8 +5,6 @@ import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-sv
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
 
-import { getTheme } from '@/util/theme';
-import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
@@ -20,9 +18,11 @@ import { MessageType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import audioCall from '@/util/audioCall';
 import videoChat from '@/util/videoChat';
-import { getLastOnline } from '@/util/formatDateTime';
-import StyleProvider from './cssMessageChat';
 import { commonColor } from '@/util/cssVariable';
+import { getLastOnline } from '@/util/formatDateTime';
+import { getTheme } from '@/util/theme';
+import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
+import StyleProvider from './cssMessageChat';
 
 interface IParams {
   conversationID: string;
@@ -30,7 +30,7 @@ interface IParams {
 
 const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   const { members, chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -65,7 +65,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     const lastOnline =
       !activeUser?.first_online || !activeUser ? otherUser.last_online : activeUser.last_online;
 
-    return activeUser?.is_online ? 'Online' : getLastOnline(lastOnline);
+    return activeUser?.is_online ? 'Online now' : getLastOnline(lastOnline);
   }, [currentConversation, activeUser, members]);
 
   const seenMessage = useCallback(() => {
@@ -212,7 +212,6 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   </div>
                 </div>
               </div>
-
               <div className='flex items-center justify-center gap-5'>
                 <FontAwesomeIcon
                   onClick={() => audioCall(conversationID)}
@@ -228,8 +227,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 />
                 <FontAwesomeIcon
                   className='display-share text-xl cursor-pointer'
-                  icon={faCircleInfo}
                   onClick={() => setDisplayOption(!displayOption)}
+                  icon={faCircleInfo}
                   style={{ color: commonColor.colorBlue1 }}
                 />
               </div>
@@ -250,9 +249,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   overflow: 'auto'
                 }}>
                 <div
-                  className=''
                   style={{
-                    // backgroundColor: 'rgba(0,0,0,0.5)',
                     backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
                   }}>
                   <div className='flex-1 overflow-y-hidden'>

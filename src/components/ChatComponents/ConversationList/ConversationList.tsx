@@ -23,7 +23,8 @@ interface IConversationList {
 
 const ConversationList: React.FC<IConversationList> = ({ conversations, selected }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
+  const { theme } = useAppSelector((state) => state.theme);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -50,10 +51,10 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
   }, [conversations]);
 
   useEffect(() => {
-    chatSocket.on(PRIVATE_CONVERSATION + userID, (conversation: ConversationType) => {
+    chatSocket.on(PRIVATE_CONVERSATION, (conversation: ConversationType) => {
       mutateReceiveConversation(conversation);
     });
-    chatSocket.on(LEAVE_GROUP + userID, (conversation: ConversationType) => {
+    chatSocket.on(LEAVE_GROUP, (conversation: ConversationType) => {
       mutateReceiveLeaveGroup(conversation);
     });
   }, [userID]);
@@ -144,11 +145,11 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
                 <ConfigProvider theme={{ token: { lineWidth: 0, controlHeight: 40 } }}>
                   <Input
                     allowClear
-                    placeholder='Search conversation'
-                    className='rounded-full mx-0'
+                    placeholder='Search'
+                    className='rounded-full '
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    prefix={<SearchOutlined className='text-2xl' />}
+                    prefix={<SearchOutlined className='text-xl' />}
                   />
                 </ConfigProvider>
               </div>
@@ -164,15 +165,16 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
               <div className='userChatContact'>
                 {searchConversation.length === 0 ? (
                   <Empty
-                    image='https://cdn.iconscout.com/icon/free/png-256/free-empty-folder-2702275-2244989.png'
+                    image='https://cdn.iconscout.com/icon/premium/png-512-thumb/no-message-4173048-3453755.png'
                     description={
-                      <p className='text-sm' style={{ color: themeColorSet.colorText3 }}>
+                      <p className='text-sm' style={{ color: themeColorSet.colorText2 }}>
                         No conversation found
                       </p>
                     }
                     imageStyle={{
                       display: 'flex',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      filter: theme === 'dark' ? 'invert(1)' : 'invert(0)'
                     }}
                   />
                 ) : (

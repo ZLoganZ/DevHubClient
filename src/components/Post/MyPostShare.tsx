@@ -1,8 +1,7 @@
 import { faUpRightFromSquare, faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dropdown } from 'antd';
-import type { MenuProps } from 'antd';
+import { Dropdown, MenuProps } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -23,7 +22,7 @@ interface IPostShare {
 
 const MyPostShare: React.FC<IPostShare> = ({ postShared, postAuthor, postSharer }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   // ----------------------- Post --------------------------

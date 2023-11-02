@@ -12,7 +12,7 @@ const StyleProvider = styled.div`
       :hover {
         background-color: ${(props) => props.theme.colorBg3};
         transform: scale(1.1);
-        transition: 0.5s;
+        transition: 0.3s;
       }
     }
   }

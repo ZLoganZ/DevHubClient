@@ -11,7 +11,7 @@ interface IChangeAvatarGroup {
 }
 
 const AvatarGroupModal: React.FC<IChangeAvatarGroup> = ({ avatar, setAvatar }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (

@@ -34,11 +34,11 @@ import { ContactType, ExperienceType } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssEditProfileForm';
 
-const EditProfileForm = () => {
+const EditProfileForm: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { mutateUpdateUser } = useUpdateUser();

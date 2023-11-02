@@ -19,7 +19,7 @@ const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
@@ -299,7 +299,7 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
@@ -577,7 +577,7 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {

@@ -1,13 +1,13 @@
-import Title from 'antd/es/typography/Title';
+import { Typography } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
 import { getTheme } from '@/util/theme';
-import StyleProvider from './cssLoadingLogo';
 import { useAppSelector } from '@/hooks/special';
+import StyleProvider from './cssLoadingLogo';
 
 const LoadingLogo = () => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (
@@ -22,7 +22,7 @@ const LoadingLogo = () => {
           icon={faSnowflake}
           style={{ color: themeColorSet.colorText1 }}
         />
-        <Title
+        <Typography.Title
           level={1}
           disabled
           className='title ml-2'
@@ -32,7 +32,7 @@ const LoadingLogo = () => {
             cursor: 'default'
           }}>
           DevHub
-        </Title>
+        </Typography.Title>
       </div>
     </StyleProvider>
   );

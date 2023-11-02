@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,13 +18,15 @@ interface IGroupModal {
 const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { mutateReceiveConversation } = useReceiveConversation();
 
   const navigate = useNavigate();
+
+  const [messageAPI, contextHolder] = message.useMessage();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +35,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
 
   const onSubmit = useCallback(() => {
     if (!name || !membersGroup || membersGroup.length < 2) {
+      void messageAPI.error('Please enter a group name and select at least 2 members');
       return;
     }
 
@@ -73,7 +77,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
     );
   }, [isLoading, name, membersGroup]);
 
-  return <></>;
+  return <>{contextHolder}</>;
 };
 
 export default OpenGroupModal;

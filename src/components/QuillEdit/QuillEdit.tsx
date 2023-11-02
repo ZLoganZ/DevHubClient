@@ -4,16 +4,10 @@ import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/theme';
 import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssQuillEdit';
-
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-  [{ align: [] }],
-  ['link']
-];
 
 interface IQuillEdit {
   placeholder: string;
@@ -24,15 +18,15 @@ interface IQuillEdit {
 const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, content }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const [value, setValue] = useState<any>(content);
+  const [value, setValue] = useState(content);
 
-  const ReactQuillRef = useRef<any>();
+  const ReactQuillRef = useRef<ReactQuill | null>(null);
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor();
+    const quill = ReactQuillRef.current?.getEditor()!;
 
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
@@ -62,7 +56,7 @@ const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, conten
   return (
     <StyleProvider theme={themeColorSet}>
       <ReactQuill
-        ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+        ref={ReactQuillRef}
         value={value}
         preserveWhitespace
         onChange={setValue}

@@ -266,3 +266,11 @@ export interface CreateMessageDataType {
 export interface ImageResponse {
   key: string;
 }
+export interface EmojisType {
+  id: string;
+  name: string;
+  native: string;
+  unified: string;
+  keywords: string[];
+  shortcodes: string;
+}

@@ -1,30 +1,20 @@
 type option = 'post' | 'avatar' | 'avatar_mini' | 'default' | 'post_mini';
 
-const getImageURL = (src?: string, option: option = 'default') => {
-  if (!src) return;
-  return ImageUrl(src, option);
+const imageOptions: Record<string, string> = {
+  post: '?tr=w-800,h-600',
+  avatar: '?tr=w-200,h-200',
+  avatar_mini: '?tr=w-100,h-100',
+  post_mini: '?tr=w-400,h-300'
 };
 
-const ImageUrl = (src: string, option: option) => {
-  let query = '';
-  switch (option) {
-    case 'post':
-      query = '?tr=w-800,h-600';
-      break;
-    case 'avatar':
-      query = '?tr=w-200,h-200';
-      break;
-    case 'avatar_mini':
-      query = '?tr=w-100,h-100';
-      break;
-    case 'post_mini':
-      query = '?tr=w-400,h-300';
-      break;
-    default:
-      query = '';
-      break;
-  }
+const ImageURL = (src: string, option: option) => {
+  const query = imageOptions[option] ?? '';
   return `https://ik.imagekit.io/admintck/${src}${query}`;
+};
+
+const getImageURL = (src?: string, option: option = 'default') => {
+  if (!src) return;
+  return ImageURL(src, option);
 };
 
 export default getImageURL;
