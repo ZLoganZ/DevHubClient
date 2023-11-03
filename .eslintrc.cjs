@@ -29,8 +29,8 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
-    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react-hooks/exhaustive-deps': 'off',
+    'react-hooks/rules-of-hooks': 'off',
     'prefer-const': 'warn'
   }
 };

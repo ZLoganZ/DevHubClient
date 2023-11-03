@@ -35,7 +35,7 @@ interface IConversationBox {
 }
 
 const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
 
@@ -118,11 +118,11 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [isOwn, conversation.lastMessage, conversation.type]);
 
   useEffect(() => {
-    chatSocket.on(PRIVATE_MSG + conversation._id, (message: MessageType) => {
+    chatSocket.on(PRIVATE_MSG, (message: MessageType) => {
       mutateReceiveMessage(message);
     });
 
-    chatSocket.on(SEEN_MSG + conversation._id, (conversation: ConversationType) => {
+    chatSocket.on(SEEN_MSG, (conversation: ConversationType) => {
       mutateReceiveSeenConversation(conversation);
     });
   }, []);

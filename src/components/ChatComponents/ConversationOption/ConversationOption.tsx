@@ -53,7 +53,7 @@ interface IConversationOption {
 }
 
 const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { visible } = useAppSelector((state) => state.modalHOC);

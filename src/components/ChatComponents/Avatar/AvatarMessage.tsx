@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { useAppSelector } from '@/hooks/special';
 import { UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
@@ -13,12 +15,7 @@ const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user }) => {
 
   return (
     <div className='relative'>
-      <div
-        className='relative rounded-full overflow-hidden flex'
-        style={{
-          width: size,
-          height: size
-        }}>
+      <div className='relative rounded-full overflow-hidden flex' style={{ width: size, height: size }}>
         <img
           src={getImageURL(user.user_image, 'avatar_mini')}
           alt='Avatar'
@@ -31,11 +28,11 @@ const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user }) => {
       </div>
       {isActive && (
         <span
-          className='absolute block rounded-full bg-green-500 ring-2 ring-white top-0 right-0'
-          style={{
-            width: size / 4,
-            height: size / 4
-          }}
+          className={clsx(
+            'absolute block rounded-full bg-green-500 ring-white top-0 right-0',
+            size / 4 < 10 ? 'ring-2' : 'ring-4'
+          )}
+          style={{ width: size / 4, height: size / 4 }}
         />
       )}
     </div>

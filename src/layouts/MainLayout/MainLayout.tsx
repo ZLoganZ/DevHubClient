@@ -1,4 +1,3 @@
-import { Content } from 'antd/es/layout/layout';
 import { ConfigProvider, FloatButton, Layout } from 'antd';
 
 import Headers from '@/components/Headers';
@@ -15,7 +14,7 @@ interface IMainTemplate {
 
 const MainLayout = ({ Component }: IMainTemplate) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColor, themeColorSet } = getTheme();
 
   const { isLoadingCurrentUserInfo } = useCurrentUserInfo();
@@ -35,18 +34,7 @@ const MainLayout = ({ Component }: IMainTemplate) => {
             <Menu />
             <Layout>
               <FloatButton.BackTop />
-              <Content
-                className='xs:ml-0 xs:mt-20 ml-20'
-                style={{
-                  paddingTop: '5rem'
-                  // backgroundImage: 'url(/images/TimeLinePage/cover.png)',
-                  // backgroundAttachment: 'fixed',
-                  // backgroundRepeat: 'no-repeat',
-                  // backgroundSize: 'cover',
-                  // backgroundPosition: 'center'
-                }}>
-                {Component}
-              </Content>
+              <Layout.Content className='xs:ml-0 ml-20'>{Component}</Layout.Content>
             </Layout>
           </Layout>
         </Layout>

@@ -13,7 +13,7 @@ interface IChangeAvatarGroup {
 const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   const [avatar, setAvatar] = useState(
     getImageURL(image, 'avatar') ?? '/images/DefaultAvatar/Empty_Group_Image.png'

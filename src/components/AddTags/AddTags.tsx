@@ -15,7 +15,7 @@ const AddTags: React.FC<IAddTags> = ({ tags, callback }) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const descArray = [...descArrays];

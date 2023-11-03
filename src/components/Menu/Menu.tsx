@@ -9,8 +9,7 @@ import {
   faBars
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu } from 'antd';
-import Sider from 'antd/es/layout/Sider';
+import { Menu, Layout } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
@@ -26,7 +25,7 @@ const MenuMain = () => {
   const location = useLocation();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -92,7 +91,7 @@ const MenuMain = () => {
         }}>
         <FontAwesomeIcon icon={faBars} />
       </div>
-      <Sider
+      <Layout.Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
@@ -249,7 +248,7 @@ const MenuMain = () => {
             }
           ]}
         />
-      </Sider>
+      </Layout.Sider>
     </StyleProvider>
   );
 };

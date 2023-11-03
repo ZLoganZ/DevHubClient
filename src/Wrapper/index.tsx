@@ -35,7 +35,7 @@ export const CommunityWrapper = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { communityID } = useParams();
@@ -73,7 +73,7 @@ export const PostWrapper = () => {
   const { postID } = useParams();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -134,7 +134,7 @@ export const PostWrapper = () => {
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();

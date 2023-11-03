@@ -1,7 +1,6 @@
 import { faUpRightFromSquare, faEllipsis, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown } from 'antd';
-import type { MenuProps } from 'antd';
+import { Divider, Dropdown, MenuProps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -29,7 +28,7 @@ const MyPost: React.FC<IPost> = ({ post, postAuthor }) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   //format date to get full date

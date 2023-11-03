@@ -15,7 +15,7 @@ const SelectInterest = () => {
   let navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const addArray: string[] = [];

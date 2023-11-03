@@ -6,7 +6,7 @@ import StyleProvider from './cssNotFound404';
 
 const NotFound404 = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   document.title = 'Not Found!';

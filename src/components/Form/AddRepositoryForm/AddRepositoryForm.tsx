@@ -21,7 +21,7 @@ interface IRepos {
 const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [access_token_github, setAccess_token_github] = useState(localStorage.getItem(GITHUB_TOKEN));

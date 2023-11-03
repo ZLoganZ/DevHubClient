@@ -2,7 +2,7 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 
 const EmptyChat = () => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   return (
     <div

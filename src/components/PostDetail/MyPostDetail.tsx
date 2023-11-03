@@ -20,7 +20,7 @@ interface IPost {
 
 const MyPostDetail: React.FC<IPost> = ({ post, postAuthor, isDetail }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();

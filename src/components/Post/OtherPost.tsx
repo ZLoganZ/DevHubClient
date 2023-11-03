@@ -1,7 +1,6 @@
 import { faUpRightFromSquare, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown } from 'antd';
-import type { MenuProps } from 'antd';
+import { Divider, Dropdown, MenuProps } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -26,7 +25,7 @@ const OtherPost: React.FC<IPost> = ({ post, postAuthor, currentUser }) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   //format date to get full date

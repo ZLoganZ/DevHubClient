@@ -11,7 +11,7 @@ import { useFollowUser } from '@/hooks/mutation';
 
 const RenderPeopleItem = ({ item }: any) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { mutateFollowUser } = useFollowUser();

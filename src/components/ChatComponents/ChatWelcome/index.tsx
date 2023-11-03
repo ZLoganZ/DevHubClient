@@ -17,7 +17,7 @@ interface IChatWelcome {
 }
 
 const ChatWelcome: React.FC<IChatWelcome> = ({ name, type, members, otherUser, image }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (

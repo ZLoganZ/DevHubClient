@@ -9,7 +9,7 @@ import StyleProvider from './cssModalHOC';
 const ModalHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 

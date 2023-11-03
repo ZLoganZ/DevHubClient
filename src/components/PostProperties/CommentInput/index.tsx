@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Avatar, Input, Popover } from 'antd';
+import { Avatar, Input, InputRef, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMediaQuery } from 'react-responsive';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { EmojisType, UserInfoType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
@@ -19,7 +19,7 @@ interface ICommentInput {
 
 const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { handleCommentInput } = useAppSelector((state) => state.comment);
@@ -30,7 +30,8 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   const [cursor, setCursor] = useState(0);
   const data = useAppSelector((state) => state.modalHOC.data);
 
-  const inputRef = useRef<any>();
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const inputRef = useRef<InputRef | null>(null);
 
   const checkEmpty = () => {
     if (commentContent === '') {
@@ -59,14 +60,13 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   };
 
   useEffect(() => {
-    if (data.isReply) inputRef.current.focus();
+    if (data.isReply) inputRef.current?.focus();
   }, [data]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider>
-      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
-        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
+      <div className='commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
+        <Avatar className='rounded-full' size={30} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
         <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
@@ -103,7 +103,7 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
 
                       return await response.json();
                     }}
-                    onEmojiSelect={(emoji: any) => {
+                    onEmojiSelect={(emoji: EmojisType) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(
                         commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor)

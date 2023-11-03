@@ -22,9 +22,19 @@ export const STATUS_CODE = {
   SERVER_ERROR: 500
 };
 
+export const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+  [{ align: [] }],
+  ['link']
+];
+
 export const DARK_THEME = 'dark';
 export const LIGHT_THEME = 'light';
 
+export const SET_PRESENCE = 'SET_PRESENCE';
+export const SET_ACTIVE_MEM = 'SET_ACTIVE_MEM';
+export const SETUP = 'SETUP';
 export const PRIVATE_MSG = 'PRIVATE_MSG';
 export const SEEN_MSG = 'SEEN_MSG';
 export const UNSEEN_MSG = 'UNSEEN_MSG';

@@ -22,7 +22,7 @@ interface IPostFooter {
 }
 
 const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, currentUser }) => {
-  const change = useAppSelector((state) => state.theme.change);
+  const changed = useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();
@@ -46,7 +46,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
     setLikeNumber(post.post_attributes.like_number);
     setIsLiked(post.is_liked);
     post.is_liked ? setLikeColor('red') : setLikeColor(themeColorSet.colorText1);
-  }, [post.post_attributes.like_number, post.is_liked, change]);
+  }, [post.post_attributes.like_number, post.is_liked, changed]);
 
   // ------------------------ Share ------------------------
 
@@ -58,7 +58,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
     setShareNumber(post.post_attributes.share_number);
     setIsShared(post.is_shared);
     post.is_shared ? setShareColor('blue') : setShareColor(themeColorSet.colorText1);
-  }, [post.post_attributes.share_number, post.is_shared, change]);
+  }, [post.post_attributes.share_number, post.is_shared, changed]);
 
   // ------------------------ Save ------------------------
 
@@ -68,7 +68,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
   useEffect(() => {
     setIsSaved(post.is_saved);
     post.is_saved ? setSaveColor('yellow') : setSaveColor(themeColorSet.colorText1);
-  }, [post.is_saved, change]);
+  }, [post.is_saved, changed]);
 
   return (
     <StyleProvider theme={themeColorSet}>

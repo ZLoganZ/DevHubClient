@@ -8,7 +8,7 @@ interface ISwitch {
 
 const DayNightSwitch: React.FC<ISwitch> = ({ checked, onChange }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   return (
     <div className='containerButton inline'>

@@ -1,4 +1,4 @@
-const textToHTMLWithAllSpecialCharacter = (text: string, tabSize: number = 4) => {
+const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => {
   const tab = ' '.repeat(tabSize);
 
   return (

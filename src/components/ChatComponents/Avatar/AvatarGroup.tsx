@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { UserInfoType } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
@@ -39,12 +41,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
   }
 
   return (
-    <div
-      className='relative'
-      style={{
-        width: size,
-        height: size
-      }}>
+    <div className='relative' style={{ width: size, height: size }}>
       {image ? (
         <div className='relative rounded-full overflow-hidden'>
           <img
@@ -61,11 +58,8 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
         slicedUsers.map((user, index) => (
           <div
             key={user._id}
-            className={`absolute inline-block rounded-full overflow-hidden ${positionMap[index]}`}
-            style={{
-              width: size / 2,
-              height: size / 2
-            }}>
+            className={clsx('absolute inline-block rounded-full overflow-hidden', positionMap[index])}
+            style={{ width: size / 2, height: size / 2 }}>
             {index < 3 ? (
               <img
                 src={getImageURL(user.user_image, 'avatar_mini')}
@@ -97,13 +91,11 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
       )}
       {isActive && (
         <span
-          className={`absolute block rounded-full bg-green-500 ring-2 ring-white ${
+          className={clsx(
+            'absolute block rounded-full bg-green-500 ring-2 ring-white',
             image ? 'top-0 right-0' : '-top-1 -right-1'
-          } `}
-          style={{
-            width: size / 4,
-            height: size / 4
-          }}
+          )}
+          style={{ width: size / 4, height: size / 4 }}
         />
       )}
     </div>
