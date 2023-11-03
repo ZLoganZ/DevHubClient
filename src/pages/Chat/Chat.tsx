@@ -24,6 +24,7 @@ import { getTheme } from '@/util/theme';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssChat';
+import CalledList from '@/components/ChatComponents/CalledList';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -103,7 +104,7 @@ const Chat = () => {
       case 2:
         return <></>;
       case 3:
-        return <></>;
+        return <CalledList conversations={conversations} />;
       default:
         return <></>;
     }

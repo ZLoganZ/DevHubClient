@@ -15,7 +15,7 @@ interface IContactsList {
   followers: UserInfoType[];
 }
 
-const ConversationList: React.FC<IContactsList> = ({ followers }) => {
+const ContactList: React.FC<IContactsList> = ({ followers }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.change);
 
@@ -121,4 +121,4 @@ const ConversationList: React.FC<IContactsList> = ({ followers }) => {
   );
 };
 
-export default ConversationList;
+export default ContactList;
