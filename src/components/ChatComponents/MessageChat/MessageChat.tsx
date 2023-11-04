@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
@@ -20,8 +21,16 @@ import { audioCall, videoChat } from '@/util/call';
 import { commonColor } from '@/util/cssVariable';
 import { getLastOnline } from '@/util/formatDateTime';
 import { getTheme } from '@/util/theme';
-import { IS_TYPING, SEEN_MSG, STOP_TYPING, VIDEO_CALL, VOICE_CALL } from '@/util/constants/SettingSystem';
+import {
+  IS_TYPING,
+  PRIVATE_MSG,
+  SEEN_MSG,
+  STOP_TYPING,
+  VIDEO_CALL,
+  VOICE_CALL
+} from '@/util/constants/SettingSystem';
 import StyleProvider from './cssMessageChat';
+import { useSendMessage } from '@/hooks/mutation';
 
 interface IParams {
   conversationID: string;
@@ -123,6 +132,8 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     if (messages.length - count === 1) scrollToBottom('auto');
     setCount(messages.length);
   }, [messages]);
+  const [id, setId] = useState(uuidv4().replace(/-/g, ''));
+  const { mutateSendMessage } = useSendMessage();
 
   useEffect(() => {
     chatSocket.on(VIDEO_CALL, (data: SocketCallType) => {
@@ -280,7 +291,35 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   style={{ color: commonColor.colorBlue1 }}
                 />
                 <FontAwesomeIcon
-                  onClick={() => videoChat(conversationID)}
+                  onClick={() => {
+                    const videoWindow = videoChat(conversationID);
+                    const popupInterval = setInterval(() => {
+                      if (videoWindow?.closed) {
+                        clearInterval(popupInterval);
+                        const message = {
+                          _id: id,
+                          conversation_id: conversationID,
+                          sender: {
+                            _id: currentUserInfo._id,
+                            user_image: currentUserInfo.user_image,
+                            name: currentUserInfo.name
+                          },
+                          isSending: true,
+                          content: 'Video call ended',
+                          type: 'video',
+                          createdAt: new Date()
+                        };
+
+                        chatSocket.emit(PRIVATE_MSG, {
+                          conversationID: message.conversation_id,
+                          message
+                        });
+                        console.log(message);
+                        setId(uuidv4().replace(/-/g, ''));
+                        mutateSendMessage(message as unknown as MessageType);
+                      }
+                    }, 500);
+                  }}
                   className='video-call text-xl cursor-pointer'
                   icon={faVideoCamera}
                   style={{ color: commonColor.colorBlue1 }}
