@@ -1,7 +1,7 @@
 import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge, App } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faSnowflake, faComment, faUser, faBell, faGear, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faMoon } from '@fortawesome/free-regular-svg-icons';
 import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
@@ -22,6 +22,7 @@ import { getTheme } from '@/util/theme';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssChat';
+import CalledList from '@/components/ChatComponents/CalledList';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -89,7 +90,7 @@ const Chat = () => {
     { name: 'new message', icon: faComment, count: notSeenCount },
     { name: 'contacts', icon: faUser, count: contactCount },
     { name: 'new notification', icon: faBell, count: 99 },
-    { name: 'missing call', icon: faPhone, count: 66 }
+    { name: 'missing call', icon: faVideo, count: 66 }
   ];
 
   const OptionRender = useMemo(() => {
@@ -101,7 +102,7 @@ const Chat = () => {
       case 2:
         return <></>;
       case 3:
-        return <></>;
+        return <CalledList />;
       default:
         return <></>;
     }

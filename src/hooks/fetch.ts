@@ -473,3 +473,32 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
     fetchMessageCall: refetch
   };
 };
+
+/**
+ * The `useGetCalled` function is a custom hook that fetches and returns data for a specific type of
+ * call.
+ * @param {string} type - The `type` parameter is a string that represents the type of call. It could
+ * be "video", "voice", or any other type of call.
+ * @returns The function `useGetCalled` returns an object with the following properties:
+ * - `isLoadingGetCalled` is a boolean that indicates whether the data is still loading.
+ * - `isErrorMessageCall` is a boolean that indicates whether there is an error.
+ * - `calledList` is an array of calls.
+ * - `isFetchingMessageCall` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useGetCalled = () => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['called'],
+    queryFn: async () => {
+      const { data } = await messageService.getCalled();
+      return data.metadata;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingGetCalled: isPending,
+    isErrorMessageCall: isError,
+    calledList: data!,
+    isFetchingMessageCall: isFetching
+  };
+};

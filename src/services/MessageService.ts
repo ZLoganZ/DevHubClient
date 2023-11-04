@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { BaseService } from './BaseService';
 import {
+  CalledType,
   ConversationType,
   CreateConversationDataType,
   CreateMessageDataType,
@@ -26,6 +27,10 @@ class MessageService extends BaseService {
 
   getConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
     return this.get(`/chat/conversations/find/${payload}`);
+  };
+
+  getCalled = (): Promise<AxiosResponse<ResponseType<CalledType[]>>> => {
+    return this.get(`/chat/conversations/called`);
   };
 
   getMessages = (

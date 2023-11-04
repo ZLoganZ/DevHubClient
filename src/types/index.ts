@@ -263,6 +263,15 @@ export interface CreateMessageDataType {
   image?: string;
 }
 
+export interface CalledType {
+  _id: string;
+  content: string;
+  conversation_id: string;
+  sender: UserInfoType;
+  type: TypeofMessage;
+  createdAt: string;
+}
+
 export interface ImageResponse {
   key: string;
 }
@@ -274,6 +283,7 @@ export interface EmojisType {
   keywords: string[];
   shortcodes: string;
 }
+
 
 export interface SocketCallType {
   name: string;
