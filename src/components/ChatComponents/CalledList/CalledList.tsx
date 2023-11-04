@@ -17,7 +17,7 @@ const CalledList = () => {
   const { themeColorSet } = getTheme();
 
   const { calledList, isLoadingGetCalled } = useGetCalled();
-  const [calledLists, setCalledLists] = useState<CalledType[]>(calledList);
+  const [calledLists, setCalledLists] = useState<CalledType[] | undefined>(calledList);
   useEffect(() => {
     setCalledLists(calledList);
   }, [calledList]);

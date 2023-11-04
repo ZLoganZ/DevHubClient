@@ -26,6 +26,7 @@ export const VideoCall = () => {
 
   const onDisconnected = () => {
     chatSocket.emit(LEAVE_VIDEO_CALL, { ...dataVideo, conversation_id: conversationID });
+
     window.close();
   };
 
