@@ -332,11 +332,13 @@ export const useConversationsData = () => {
 export const useCurrentConversationData = (conversationID: string | undefined) => {
   const queryClient = useQueryClient();
 
-  void queryClient.prefetchInfiniteQuery({ queryKey: ['messages', conversationID], initialPageParam: 1 });
-
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: ['messages', conversationID],
+        initialPageParam: 1
+      });
       const { data } = await messageService.getConversation(conversationID!);
       return data.metadata;
     },
