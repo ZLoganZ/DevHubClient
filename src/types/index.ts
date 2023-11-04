@@ -287,6 +287,7 @@ export interface EmojisType {
 
 export interface SocketCallType {
   name: string;
+  conversation_id: string;
   user_image: string;
   members: string[];
   token: string;
