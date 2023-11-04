@@ -14,14 +14,15 @@ import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
-import { EmojisType, MessageType } from '@/types';
+import { EmojisType, MessageType, UserInfoType } from '@/types';
 import { commonColor } from '@/util/cssVariable';
 
 interface IChatInput {
   conversationID: string;
+  members: UserInfoType[];
 }
 
-const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
+const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -64,7 +65,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
       message
     });
 
-    chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id });
+    chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 
     setId(uuidv4().replace(/-/g, ''));
     mutateSendMessage(message as unknown as MessageType);
@@ -104,7 +105,10 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
   const checkEmpty = messageContent === '' && !file;
 
   const handleStopTyping = useCallback(
-    debounce(() => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id }), 1000),
+    debounce(
+      () => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id, members }),
+      1000
+    ),
     []
   );
   return (
@@ -154,7 +158,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
               setCursor(cursorPosition ?? 0);
             }}
             onChange={(e) => {
-              chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id });
+              chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id, members });
               setMessage(e.currentTarget.value);
               handleStopTyping();
               // get cursor position

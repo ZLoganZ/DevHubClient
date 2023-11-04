@@ -244,7 +244,7 @@ export interface CreateConversationDataType {
   image?: string;
 }
 
-type TypeofMessage = 'text' | 'notification' | 'audio' | 'file';
+type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
 export interface MessageType {
   _id: string;
@@ -273,4 +273,12 @@ export interface EmojisType {
   unified: string;
   keywords: string[];
   shortcodes: string;
+}
+
+export interface SocketCallType {
+  name: string;
+  user_image: string;
+  members: string[];
+  token: string;
+  first_call: boolean;
 }

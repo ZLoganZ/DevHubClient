@@ -27,7 +27,7 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   disabled,
   rounded,
   block,
-  type='primary'
+  type = 'primary'
 }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -46,9 +46,10 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
             ? {
                 height: '100%',
                 borderRadius: rounded ? '1.5rem' : '0',
-                width: block ? '100%' : 'auto'
+                width: block ? '100%' : 'auto',
+                boxShadow: 'none'
               }
-            : {}
+            : { boxShadow: 'none' }
         }>
         {children}
       </Button>

@@ -26,8 +26,9 @@ const ModalHOC = () => {
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Modal
-          key={title}
           centered
+          destroyOnClose
+          key={title}
           title={title}
           width={type === 'post' ? 1080 : 720}
           onCancel={onClose}

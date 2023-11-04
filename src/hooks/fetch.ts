@@ -458,7 +458,7 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
   const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['messageCall', conversationID, type],
     queryFn: async () => {
-      const { data } = await messageService.callVideo(conversationID, type);
+      const { data } = await messageService.getToken(conversationID, type);
       return data.metadata;
     },
     staleTime: Infinity,
@@ -468,7 +468,7 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
   return {
     isLoadingMessageCall: isPending,
     isErrorMessageCall: isError,
-    tokenMessageCall: data!,
+    dataMessageCall: data!,
     isFetchingMessageCall: isFetching,
     fetchMessageCall: refetch
   };

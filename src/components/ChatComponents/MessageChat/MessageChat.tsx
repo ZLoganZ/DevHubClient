@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd';
+import { Col, Row, App, ModalFuncProps } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
@@ -14,14 +14,13 @@ import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
 import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
-import { MessageType } from '@/types';
+import { MessageType, SocketCallType } from '@/types';
 import getImageURL from '@/util/getImageURL';
-import audioCall from '@/util/audioCall';
-import videoChat from '@/util/videoChat';
+import { audioCall, videoChat } from '@/util/call';
 import { commonColor } from '@/util/cssVariable';
 import { getLastOnline } from '@/util/formatDateTime';
 import { getTheme } from '@/util/theme';
-import { IS_TYPING, SEEN_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
+import { IS_TYPING, SEEN_MSG, STOP_TYPING, VIDEO_CALL, VOICE_CALL } from '@/util/constants/SettingSystem';
 import StyleProvider from './cssMessageChat';
 
 interface IParams {
@@ -29,6 +28,7 @@ interface IParams {
 }
 
 const MessageChat: React.FC<IParams> = ({ conversationID }) => {
+  const { modal } = App.useApp();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -40,6 +40,19 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     useMessagesData(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
+
+  let modalVideo: {
+    destroy: () => void;
+    update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+  } & {
+    then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+  };
+  let modalVoice: {
+    destroy: () => void;
+    update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+  } & {
+    then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+  };
 
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -110,6 +123,53 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     if (messages.length - count === 1) scrollToBottom('auto');
     setCount(messages.length);
   }, [messages]);
+
+  useEffect(() => {
+    chatSocket.on(VIDEO_CALL, (data: SocketCallType) => {
+      modalVideo = modal.confirm({
+        title: 'Video Call',
+        icon: null,
+        content: (
+          <div className='flex flex-row items-center justify-center'>
+            <img
+              className='h-12 w-12 mr-3 rounded-full overflow-hidden'
+              src={getImageURL(data.user_image, 'avatar_mini')}
+            />
+            <div className='font-semibold text-lg'>{data.name} is calling you</div>
+          </div>
+        ),
+        okText: 'Answer',
+        cancelText: 'Decline',
+        onOk: () => {
+          videoChat(conversationID);
+        }
+      });
+    });
+    chatSocket.on(VOICE_CALL, (data: SocketCallType) => {
+      modalVoice = modal.confirm({
+        title: 'Voice Call',
+        icon: null,
+        content: (
+          <div className='flex flex-row items-center justify-center'>
+            <img
+              className='h-12 w-12 mr-3 rounded-full overflow-hidden'
+              src={getImageURL(data.user_image, 'avatar_mini')}
+            />
+            <div className='font-semibold text-lg'>{data.name} is calling you</div>
+          </div>
+        ),
+        okText: 'Answer',
+        cancelText: 'Decline',
+        onOk: () => {
+          audioCall(conversationID);
+        }
+      });
+    });
+    return () => {
+      chatSocket.off(VIDEO_CALL);
+      chatSocket.off(VOICE_CALL);
+    };
+  }, []);
 
   useEffect(() => {
     chatSocket.on(IS_TYPING + conversationID, (data: string) => {
@@ -310,7 +370,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                   <div /> <div /> <div />
                 </div>
               </div>
-              <ChatInput conversationID={conversationID} />
+              <ChatInput conversationID={conversationID} members={currentConversation.members} />
             </div>
           </Col>
           {displayOption && (

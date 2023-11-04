@@ -5,7 +5,8 @@ import {
   CreateConversationDataType,
   CreateMessageDataType,
   MessageType,
-  ResponseType
+  ResponseType,
+  SocketCallType
 } from '@/types';
 
 class MessageService extends BaseService {
@@ -43,7 +44,10 @@ class MessageService extends BaseService {
     return this.post(`/chat/messages`, payload);
   };
 
-  callVideo = (payload: string | undefined, type: string): Promise<AxiosResponse<ResponseType<string>>> => {
+  getToken = (
+    payload: string | undefined,
+    type: string
+  ): Promise<AxiosResponse<ResponseType<SocketCallType>>> => {
     return this.get(`/chat/token/?conversation_id=${payload}&type=${type}`);
   };
 

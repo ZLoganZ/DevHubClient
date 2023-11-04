@@ -26,6 +26,7 @@ const DrawerHOC = () => {
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Drawer
+          destroyOnClose
           title={title}
           width={720}
           onClose={onClose}

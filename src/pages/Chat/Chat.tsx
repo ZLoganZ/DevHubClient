@@ -1,11 +1,10 @@
-import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge, App } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faMoon } from '@fortawesome/free-regular-svg-icons';
 import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
-import { v4 as uuidv4 } from 'uuid';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ConversationList from '@/components/ChatComponents/ConversationList';
@@ -113,82 +112,85 @@ const Chat = () => {
   return (
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
-        {isLoadingCurrentUserInfo ? (
-          <LoadingLogo />
-        ) : isLoadingConversations ? (
-          <LoadingChat />
-        ) : (
-          <div className='chat overflow-hidden'>
-            <Row className='slider'>
-              <Col
-                span={1}
-                className='py-3 flex flex-col justify-between items-center'
-                style={{ backgroundColor: themeColorSet.colorBg2 }}>
-                <div>
-                  <div className='logo items-center'>
-                    <NavLink to='/' className='icon_logo'>
-                      <FontAwesomeIcon className='icon' icon={faSnowflake} />
-                    </NavLink>
-                  </div>
-                  <div className='option py-8 flex flex-col items-center'>
-                    <Space size={35} direction='vertical' align='center'>
-                      {options.map((option, index) => (
-                        <div
-                          className={`optionItem relative ${option.name}`}
-                          onClick={() => setOptionIndex(index)}
-                          style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
-                          <Badge
-                            count={option.count}
-                            key={index}
-                            title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
-                            <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
-                          </Badge>
-                        </div>
-                      ))}
-                    </Space>
-                  </div>
-                </div>
-                <div className='flex flex-col items-center'>
-                  <div className='mode optionItem py-6'>
-                    <FontAwesomeIcon
-                      className='icon text-2xl'
-                      icon={themeColorSet.colorPicker === 'light' ? faMoon : faCloudSun}
-                      onClick={() => {
-                        change(themeColorSet.colorPicker === 'light');
-                      }}
-                    />
-                  </div>
-                  <div className='mode'>
-                    <Dropdown menu={{ items: settingItem }} trigger={['click']}>
-                      <div className='Setting optionItem'>
-                        <FontAwesomeIcon className='icon text-3xl' icon={faGear} />
-                      </div>
-                    </Dropdown>
-                  </div>
-                </div>
-              </Col>
-              <Col span={5}>{OptionRender}</Col>
-              <Col span={18}>
-                <div
-                  className='chatBox h-screen ml-3'
-                  style={{
-                    borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
-                    backgroundColor: themeColorSet.colorBg1
-                  }}>
-                  {!conversationID ? (
-                    <EmptyChat key={uuidv4().replace(/-/g, '')} />
-                  ) : isLoadingCurrentConversation ? (
-                    <LoadingConversation />
-                  ) : (
-                    <div className='h-screen'>
-                      <MessageChat key={conversationID} conversationID={conversationID} />
+        <App>
+          {isLoadingCurrentUserInfo ? (
+            <LoadingLogo />
+          ) : isLoadingConversations ? (
+            <LoadingChat />
+          ) : (
+            <div className='chat overflow-hidden'>
+              <Row className='slider'>
+                <Col
+                  span={1}
+                  className='py-3 flex flex-col justify-between items-center'
+                  style={{ backgroundColor: themeColorSet.colorBg2 }}>
+                  <div>
+                    <div className='logo items-center'>
+                      <NavLink to='/' className='icon_logo'>
+                        <FontAwesomeIcon className='icon' icon={faSnowflake} />
+                      </NavLink>
                     </div>
-                  )}
-                </div>
-              </Col>
-            </Row>
-          </div>
-        )}
+                    <div className='option py-8 flex flex-col items-center'>
+                      <Space size={35} direction='vertical' align='center'>
+                        {options.map((option, index) => (
+                          <div
+                            key={index}
+                            className={`optionItem relative ${option.name}`}
+                            onClick={() => setOptionIndex(index)}
+                            style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
+                            <Badge
+                              count={option.count}
+                              key={index}
+                              title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
+                              <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
+                            </Badge>
+                          </div>
+                        ))}
+                      </Space>
+                    </div>
+                  </div>
+                  <div className='flex flex-col items-center'>
+                    <div className='mode optionItem py-6'>
+                      <FontAwesomeIcon
+                        className='icon text-2xl'
+                        icon={themeColorSet.colorPicker === 'light' ? faMoon : faCloudSun}
+                        onClick={() => {
+                          change(themeColorSet.colorPicker === 'light');
+                        }}
+                      />
+                    </div>
+                    <div className='mode'>
+                      <Dropdown menu={{ items: settingItem }} trigger={['click']}>
+                        <div className='Setting optionItem'>
+                          <FontAwesomeIcon className='icon text-3xl' icon={faGear} />
+                        </div>
+                      </Dropdown>
+                    </div>
+                  </div>
+                </Col>
+                <Col span={5}>{OptionRender}</Col>
+                <Col span={18}>
+                  <div
+                    className='chatBox h-screen ml-3'
+                    style={{
+                      borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
+                      backgroundColor: themeColorSet.colorBg1
+                    }}>
+                    {!conversationID ? (
+                      <EmptyChat />
+                    ) : isLoadingCurrentConversation ? (
+                      <LoadingConversation />
+                    ) : (
+                      <div className='h-screen'>
+                        <MessageChat key={conversationID} conversationID={conversationID} />
+                      </div>
+                    )}
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          )}
+        </App>
       </StyleProvider>
     </ConfigProvider>
   );

@@ -30,7 +30,6 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
   const { currentUserInfo } = useCurrentUserInfo();
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
-  const { userID } = useAppSelector((state) => state.auth);
   const { visible } = useAppSelector((state) => state.modalHOC);
 
   const { mutateReceiveConversation } = useReceiveConversation();
@@ -57,7 +56,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
     chatSocket.on(LEAVE_GROUP, (conversation: ConversationType) => {
       mutateReceiveLeaveGroup(conversation);
     });
-  }, [userID]);
+  }, [currentUserInfo._id]);
 
   useEffect(() => {
     if (search === '') {

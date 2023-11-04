@@ -59,15 +59,12 @@ export const PresenceService = () => {
 };
 
 export const ChatService = () => {
-  const { currentUserInfo } = useCurrentUserInfo();
-
   const { chatSocket } = useAppSelector((state) => state.socketIO);
+  const { userID } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (currentUserInfo) {
-      chatSocket.emit(SETUP, currentUserInfo._id);
-    }
-  }, [currentUserInfo?._id]);
+    chatSocket.emit(SETUP, userID);
+  }, [userID]);
 
   return <></>;
 };

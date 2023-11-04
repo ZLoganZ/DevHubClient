@@ -43,3 +43,7 @@ export const NEW_CONVERSATION = 'NEW_CONVERSATION';
 export const IS_TYPING = 'IS_TYPING';
 export const STOP_TYPING = 'STOP_TYPING';
 export const LEAVE_GROUP = 'LEAVE_GROUP';
+export const VIDEO_CALL = 'video';
+export const VOICE_CALL = 'audio';
+export const LEAVE_VIDEO_CALL = 'leave_video';
+export const LEAVE_VOICE_CALL = 'leave_audio';
