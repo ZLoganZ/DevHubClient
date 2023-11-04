@@ -5,8 +5,7 @@ import { Space } from 'antd';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
-import videoChat from '@/util/videoChat';
-import audioCall from '@/util/audioCall';
+import { videoChat, audioCall } from '@/util/call';
 import { capitalizeFirstLetter } from '@/util/convertText';
 
 import { getTheme } from '@/util/theme';
