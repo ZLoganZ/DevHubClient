@@ -3,7 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/theme';
-import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import {textToHTMLWithAllSpecialCharacter} from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';

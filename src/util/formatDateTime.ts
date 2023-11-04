@@ -84,3 +84,24 @@ export const getLastOnline = (date: string | number | Date) => {
 
   return 'Last seen at ' + format(commentDate, 'MMM dd, yyyy');
 };
+
+export const getDateMonth = (date: string | number | Date) => {
+  if (!date) {
+    return '';
+  }
+  const commentDate = new Date(date);
+
+  if (isToday(commentDate)) {
+    return 'Today';
+  }
+
+  if (isThisWeek(commentDate, { weekStartsOn: 1 })) {
+    return format(commentDate, 'EEEE');
+  }
+
+  if (isThisYear(commentDate)) {
+    return format(commentDate, 'MMM dd');
+  }
+
+  return format(commentDate, 'MMM dd, yyyy');
+};

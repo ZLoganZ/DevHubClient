@@ -1,7 +1,7 @@
 import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSnowflake, faComment, faUser, faBell, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faSnowflake, faComment, faUser, faBell, faGear, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { faMoon } from '@fortawesome/free-regular-svg-icons';
 import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
@@ -91,7 +91,7 @@ const Chat = () => {
     { name: 'new message', icon: faComment, count: notSeenCount },
     { name: 'contacts', icon: faUser, count: contactCount },
     { name: 'new notification', icon: faBell, count: 99 },
-    { name: 'missing call', icon: faPhone, count: 66 }
+    { name: 'missing call', icon: faVideo, count: 66 }
   ];
 
   const OptionRender = useMemo(() => {
@@ -103,7 +103,7 @@ const Chat = () => {
       case 2:
         return <></>;
       case 3:
-        return <CalledList conversations={conversations} />;
+        return <CalledList />;
       default:
         return <></>;
     }
@@ -135,12 +135,12 @@ const Chat = () => {
                     <Space size={35} direction='vertical' align='center'>
                       {options.map((option, index) => (
                         <div
+                          key={index}
                           className={`optionItem relative ${option.name}`}
                           onClick={() => setOptionIndex(index)}
                           style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
                           <Badge
                             count={option.count}
-                            key={index}
                             title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
                             <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
                           </Badge>

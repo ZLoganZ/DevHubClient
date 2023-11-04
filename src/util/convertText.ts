@@ -1,4 +1,4 @@
-const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => {
+export const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => {
   const tab = ' '.repeat(tabSize);
 
   return (
@@ -12,4 +12,6 @@ const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => {
   );
 };
 
-export default textToHTMLWithAllSpecialCharacter;
+export const capitalizeFirstLetter = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
