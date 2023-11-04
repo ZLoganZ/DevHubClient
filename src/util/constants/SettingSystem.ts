@@ -49,3 +49,5 @@ export const LEAVE_VIDEO_CALL = 'leave_video';
 export const LEAVE_VOICE_CALL = 'leave_audio';
 export const END_VIDEO_CALL = 'end_video';
 export const END_VOICE_CALL = 'end_audio';
+export const SEND_END_VIDEO_CALL = 'send_end_video';
+export const SEND_END_VOICE_CALL = 'send_end_audio';

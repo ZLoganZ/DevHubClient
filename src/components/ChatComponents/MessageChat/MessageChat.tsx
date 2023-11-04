@@ -23,8 +23,9 @@ import { getLastOnline } from '@/util/formatDateTime';
 import { getTheme } from '@/util/theme';
 import {
   IS_TYPING,
-  PRIVATE_MSG,
   SEEN_MSG,
+  SEND_END_VIDEO_CALL,
+  PRIVATE_MSG,
   STOP_TYPING,
   VIDEO_CALL,
   VOICE_CALL
@@ -50,18 +51,22 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   const otherUser = useOtherUser(currentConversation);
 
-  let modalVideo: {
-    destroy: () => void;
-    update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
-  } & {
-    then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
-  };
-  let modalVoice: {
-    destroy: () => void;
-    update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
-  } & {
-    then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
-  };
+  let modalVideo:
+    | ({
+        destroy: () => void;
+        update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+      } & {
+        then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+      })
+    | undefined;
+  let modalVoice:
+    | ({
+        destroy: () => void;
+        update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+      } & {
+        then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+      })
+    | undefined;
 
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -176,6 +181,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         }
       });
     });
+    chatSocket.on(SEND_END_VIDEO_CALL, () => {});
     return () => {
       chatSocket.off(VIDEO_CALL);
       chatSocket.off(VOICE_CALL);
