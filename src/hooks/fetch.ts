@@ -330,6 +330,10 @@ export const useConversationsData = () => {
  * - `isFetchingCurrentConversation` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCurrentConversationData = (conversationID: string | undefined) => {
+  const queryClient = useQueryClient();
+
+  void queryClient.prefetchInfiniteQuery({ queryKey: ['messages', conversationID], initialPageParam: 1 });
+
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {
@@ -337,6 +341,7 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
       return data.metadata;
     },
     staleTime: Infinity,
+
     enabled: !!conversationID
   });
 
@@ -498,7 +503,7 @@ export const useGetCalled = () => {
   return {
     isLoadingGetCalled: isPending,
     isErrorMessageCall: isError,
-    calledList: data!,
+    calledList: data,
     isFetchingMessageCall: isFetching
   };
 };

@@ -58,6 +58,10 @@ const CalledList = () => {
                   }}>
                   <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
                   <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
                 </div>
               </div>
             </Row>

@@ -266,7 +266,7 @@ export interface CreateMessageDataType {
 export interface CalledType {
   _id: string;
   content: string;
-  conversation_id: string;
+  conversation_id: ConversationType;
   sender: UserInfoType;
   type: TypeofMessage;
   createdAt: string;

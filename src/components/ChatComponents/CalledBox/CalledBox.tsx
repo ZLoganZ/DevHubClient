@@ -14,7 +14,6 @@ import { useAppSelector } from '@/hooks/special';
 import { CalledType } from '@/types';
 
 import StyleProvider from './cssCalledBox';
-import { useCurrentConversationData } from '@/hooks/fetch';
 
 interface IConversationBox {
   called: CalledType;
@@ -24,8 +23,7 @@ interface IConversationBox {
 const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
-  const { currentConversation } = useCurrentConversationData(called.conversation_id);
-  const otherUser = useOtherUser(currentConversation);
+  const otherUser = useOtherUser(called.conversation_id);
 
   const userID = useAppSelector((state) => state.auth.userID);
 
@@ -41,7 +39,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
       incoming: <FontAwesomeIcon icon={faVideo} />,
       outgoing: <FontAwesomeIcon icon={faVideo} />,
       missed: <FontAwesomeIcon icon={faVideo} />,
-      call: <FontAwesomeIcon onClick={() => videoChat(called.conversation_id)} icon={faVideo} />
+      call: <FontAwesomeIcon onClick={() => videoChat(called.conversation_id._id)} icon={faVideo} />
     },
     voice: {
       incoming: (
@@ -65,7 +63,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
           </g>
         </svg>
       ),
-      call: <FontAwesomeIcon onClick={() => audioCall(called.conversation_id)} icon={faPhone} />
+      call: <FontAwesomeIcon onClick={() => audioCall(called.conversation_id._id)} icon={faPhone} />
     }
   };
 
@@ -76,14 +74,14 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
         style={{
           backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
         }}>
-        {currentConversation.type === 'group' ? (
+        {called.conversation_id.type === 'group' ? (
           <AvatarGroup
-            key={currentConversation._id}
-            users={currentConversation.members}
-            image={currentConversation.image}
+            key={called.conversation_id._id}
+            users={called.conversation_id.members}
+            image={called.conversation_id.image}
           />
         ) : (
-          <Avatar key={currentConversation._id} user={otherUser} />
+          <Avatar key={called.conversation_id._id} user={otherUser} />
         )}
 
         <div className='min-w-0 flex-1'>
@@ -96,7 +94,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
                     color: themeColorSet.colorText1
                   }}>
                   <span style={{ color: themeColorSet.colorText1 }}>
-                    {currentConversation.name ?? otherUser.name}
+                    {called.conversation_id.name ?? otherUser.name}
                   </span>
                 </p>
                 <Space
