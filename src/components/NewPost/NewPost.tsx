@@ -15,7 +15,7 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
-import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import { textToHTMLWithAllSpecialCharacter } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
@@ -191,7 +191,10 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                     onEmojiSelect={(emoji: EmojisType) => {
                       ReactQuillRef.current
                         ?.getEditor()
-                        .insertText(ReactQuillRef.current?.getEditor().getSelection(true).index, emoji.native);
+                        .insertText(
+                          ReactQuillRef.current?.getEditor().getSelection(true).index,
+                          emoji.native
+                        );
                     }}
                   />
                 }>

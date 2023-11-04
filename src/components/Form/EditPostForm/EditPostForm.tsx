@@ -11,7 +11,7 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
-import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
+import {textToHTMLWithAllSpecialCharacter} from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';

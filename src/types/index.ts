@@ -244,7 +244,7 @@ export interface CreateConversationDataType {
   image?: string;
 }
 
-type TypeofMessage = 'text' | 'notification' | 'audio' | 'file';
+type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
 export interface MessageType {
   _id: string;
@@ -261,6 +261,15 @@ export interface CreateMessageDataType {
   conversation_id: string;
   content?: string;
   image?: string;
+}
+
+export interface CalledType {
+  _id: string;
+  content: string;
+  conversation_id: string;
+  sender: UserInfoType;
+  type: TypeofMessage;
+  createdAt: string;
 }
 
 export interface ImageResponse {
