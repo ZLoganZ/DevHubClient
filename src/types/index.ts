@@ -284,9 +284,9 @@ export interface EmojisType {
   shortcodes: string;
 }
 
-
 export interface SocketCallType {
   name: string;
+  author: string;
   conversation_id: string;
   user_image: string;
   members: string[];
