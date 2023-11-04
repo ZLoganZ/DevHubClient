@@ -141,7 +141,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         okText: 'Answer',
         cancelText: 'Decline',
         onOk: () => {
-          videoChat(conversationID);
+          videoChat(data.conversation_id);
         }
       });
     });
@@ -161,7 +161,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         okText: 'Answer',
         cancelText: 'Decline',
         onOk: () => {
-          audioCall(conversationID);
+          audioCall(data.conversation_id);
         }
       });
     });
