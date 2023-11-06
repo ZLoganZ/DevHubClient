@@ -6,15 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import { useMessageCall } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
-import {
-  END_VIDEO_CALL,
-  END_VOICE_CALL,
-  LEAVE_VIDEO_CALL,
-  LEAVE_VOICE_CALL,
-  VIDEO_CALL,
-  VOICE_CALL
-} from '@/util/constants/SettingSystem';
-import { SocketCallType } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
+import { ISocketCall } from '@/types';
 import { ParticipantTile } from './ParticipantTile';
 
 const serverUrl = import.meta.env.VITE_LK_SERVER_URL;
@@ -29,19 +22,19 @@ export const VideoCall = () => {
   useEffect(() => {
     if (isLoadingMessageCall || !dataVideo) return;
 
-    chatSocket.emit(VIDEO_CALL, { ...dataVideo });
-    chatSocket.on(END_VIDEO_CALL, (data: SocketCallType) => {
+    chatSocket.emit(Socket.VIDEO_CALL, { ...dataVideo });
+    chatSocket.on(Socket.END_VIDEO_CALL, (data: ISocketCall) => {
       if (data.conversation_id === conversationID && !window.closed) window.close();
     });
   }, [dataVideo, isLoadingMessageCall]);
 
   const onDisconnected = () => {
-    chatSocket.emit(LEAVE_VIDEO_CALL, { ...dataVideo });
+    chatSocket.emit(Socket.LEAVE_VIDEO_CALL, { ...dataVideo });
     window.close();
   };
 
   document.addEventListener('close', () => {
-    chatSocket.emit(LEAVE_VIDEO_CALL, { ...dataVideo });
+    chatSocket.emit(Socket.LEAVE_VIDEO_CALL, { ...dataVideo });
   });
 
   return (
@@ -72,19 +65,19 @@ export const VoiceCall = () => {
   useEffect(() => {
     if (isLoadingMessageCall || !dataAudio) return;
 
-    chatSocket.emit(VOICE_CALL, { ...dataAudio });
-    chatSocket.on(END_VOICE_CALL, (data: SocketCallType) => {
+    chatSocket.emit(Socket.VOICE_CALL, { ...dataAudio });
+    chatSocket.on(Socket.END_VOICE_CALL, (data: ISocketCall) => {
       if (data.conversation_id === conversationID && !window.closed) window.close();
     });
   }, [dataAudio, isLoadingMessageCall]);
 
   const onDisconnected = () => {
-    chatSocket.emit(LEAVE_VOICE_CALL, { ...dataAudio });
+    chatSocket.emit(Socket.LEAVE_VOICE_CALL, { ...dataAudio });
     window.close();
   };
 
   document.addEventListener('close', () => {
-    chatSocket.emit(LEAVE_VOICE_CALL, { ...dataAudio });
+    chatSocket.emit(Socket.LEAVE_VOICE_CALL, { ...dataAudio });
   });
 
   return (

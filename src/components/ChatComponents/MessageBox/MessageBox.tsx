@@ -5,20 +5,20 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 
-import StyleProvider from './cssMessageBox';
 import { getTheme } from '@/util/theme';
+import getImageURL from '@/util/getImageURL';
 import { getDateTime } from '@/util/formatDateTime';
+import { handleFirstName } from '@/util/convertText';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-
-import { MessageType, TypeofConversation, UserInfoType } from '@/types';
-import getImageURL from '@/util/getImageURL';
+import { IMessage, TypeofConversation, IUserInfo } from '@/types';
+import StyleProvider from './cssMessageBox';
 
 interface IMessageBox {
-  message: MessageType;
+  message: IMessage;
   type: TypeofConversation;
-  seen: UserInfoType[];
+  seen: IUserInfo[];
   isPrevMesGroup: boolean;
   isNextMesGroup: boolean;
   isLastMes: boolean;
@@ -41,8 +41,8 @@ const MessageBox: React.FC<IMessageBox> = ({
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
-
-  const isOwn = currentUserInfo?._id === message.sender._id;
+ 
+  const isOwn = currentUserInfo._id === message.sender._id;
   const seenList = useMemo(() => {
     return seen.filter((user) => user._id !== message.sender._id).map((user) => user.user_image);
   }, [seen, message]);
@@ -62,24 +62,18 @@ const MessageBox: React.FC<IMessageBox> = ({
   );
 
   const messageStyle = clsx(
-    'text-sm w-fit overflow-hidden break-all',
+    'text-sm max-w-[95%] overflow-hidden break-all',
     message.image ? 'p-0' : 'py-2 px-3',
     isOwn ? !message.image && 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7',
-    isOwn && isNextMesGroup && 'rounded-s-2xl',
-    isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-2xl rounded-bl-2xl',
-    isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-2xl rounded-tl-2xl',
-    isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-2xl',
-    !isOwn && isNextMesGroup && 'rounded-e-2xl',
-    !isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-2xl rounded-br-2xl',
-    !isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-2xl rounded-tr-2xl',
-    !isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-2xl'
+    isOwn && isNextMesGroup && 'rounded-s-[3rem]',
+    isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-[3rem] rounded-bl-[3rem]',
+    isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-[3rem] rounded-tl-[3rem]',
+    isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-[3rem]',
+    !isOwn && isNextMesGroup && 'rounded-e-[3rem]',
+    !isOwn && isNextMesGroup && !isPrevMesGroup && 'rounded-t-[3rem] rounded-br-[3rem]',
+    !isOwn && !isNextMesGroup && isPrevMesGroup && 'rounded-b-[3rem] rounded-tr-[3rem]',
+    !isOwn && !isNextMesGroup && !isPrevMesGroup && 'rounded-[3rem]'
   );
-
-  const handleFirstName = (name: string) => {
-    // chỉ lấy 1 từ cuối cùng của tên
-    const arr = name.split(' ');
-    return arr[arr.length - 1];
-  };
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -141,19 +135,12 @@ const MessageBox: React.FC<IMessageBox> = ({
                 <div className={messageStyle}>
                   {message.image ? (
                     <Image
+                      className='max-h-[288px] max-w-[512px]'
                       alt='Image'
                       src={getImageURL(message.image, 'post')}
-                      draggable={false}
-                      className='object-cover cursor-pointer'
-                      style={{
-                        borderRadius: '2rem',
-                        border: '0.2px solid',
-                        maxHeight: '288px',
-                        maxWidth: '512px'
-                      }}
                     />
                   ) : (
-                    <div>{message.content}</div>
+                    message.content
                   )}
                 </div>
               </Tooltip>
@@ -183,7 +170,6 @@ const MessageBox: React.FC<IMessageBox> = ({
                         <circle cx='10' cy='10' r='8' stroke='currentColor' fill='none' />
                       </svg>
                     )}
-
                     {isLastMes && seenList.length === 0 && !message.isSending && (
                       <svg
                         className='w-4 h-4 text-gray-400 mr-2'

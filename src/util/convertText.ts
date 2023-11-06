@@ -15,3 +15,8 @@ export const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => 
 export const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
+
+export const handleFirstName = (name: string) => {
+  const arr = name.split(' ');
+  return arr[arr.length - 1];
+};

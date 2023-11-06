@@ -30,7 +30,7 @@ import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { ContactType, ExperienceType } from '@/types';
+import { IContact, IExperience } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssEditProfileForm';
 
@@ -109,7 +109,7 @@ const EditProfileForm: React.FC = () => {
     setTags(tags);
   };
 
-  const handleChangeLinks = (contacts: ContactType[]) => {
+  const handleChangeLinks = (contacts: IContact[]) => {
     setLinks(contacts);
   };
 
@@ -192,7 +192,7 @@ const EditProfileForm: React.FC = () => {
     );
   };
 
-  const RenderExperience = (item: ExperienceType, index: number) => {
+  const RenderExperience = (item: IExperience, index: number) => {
     return (
       <div className='item mt-2 flex' key={index}>
         <div style={{ color: themeColorSet.colorText1 }}>

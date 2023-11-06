@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 
 interface IAvatarGroup {
-  users: UserInfoType[];
+  users: IUserInfo[];
   size?: number;
   image?: string;
 }

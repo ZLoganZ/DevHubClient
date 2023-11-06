@@ -7,12 +7,12 @@ import StyleProvider from './cssAddExperienceForm';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ExperienceType } from '@/types';
+import { IExperience } from '@/types';
 
 interface IEditExperience {
-  experiences: ExperienceType[];
-  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
-  itemCurrent: ExperienceType;
+  experiences: IExperience[];
+  setExperiences: React.Dispatch<React.SetStateAction<IExperience[]>>;
+  itemCurrent: IExperience;
   indexCurrent: number;
 }
 

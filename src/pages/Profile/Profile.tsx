@@ -35,7 +35,7 @@ import getImageURL from '@/util/getImageURL';
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
-import { ExperienceType } from '@/types';
+import { IExperience } from '@/types';
 import StyleProvider from './cssProfile';
 
 interface IProfile {
@@ -57,7 +57,7 @@ const Profile = ({ userID }: IProfile) => {
 
   const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
 
-  const [experiences, setExperiences] = useState<ExperienceType[]>([]);
+  const [experiences, setExperiences] = useState<IExperience[]>([]);
 
   const positionNames = experiences.map((experience) => experience.position_name);
 
@@ -201,15 +201,15 @@ const Profile = ({ userID }: IProfile) => {
             </Col>
             <div className='follow mt-5 xs:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.follower_number ?? 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.follower_number ?? 0}</span>&nbsp;
                 {otherUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className='following item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.following_number ?? 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.following_number ?? 0}</span>&nbsp;
                 {otherUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
               </span>
               <span className='post mr-2'>
-                <span className='mr-1'>{otherUserInfo?.post_number ?? 0}</span>{' '}
+                <span className='mr-1'>{otherUserInfo?.post_number ?? 0}</span>&nbsp;
                 {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>

@@ -11,11 +11,11 @@ import { getTheme } from '@/util/theme';
 import contactArrays from '@/util/Descriptions/Contacts';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ContactType } from '@/types';
+import { IContact } from '@/types';
 
 interface IAddContacts {
-  contacts: ContactType[];
-  callback: (contacts: ContactType[]) => void;
+  contacts: IContact[];
+  callback: (contacts: IContact[]) => void;
 }
 
 const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {

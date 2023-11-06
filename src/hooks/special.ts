@@ -4,7 +4,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, RootState } from '@/redux/configStore';
 import { useCurrentUserInfo } from './fetch';
-import { ConversationType } from '@/types';
+import { IConversation } from '@/types';
 
 /**
  * The useAppDispatch function returns the useDispatch function with the AppDispatch type.
@@ -84,13 +84,13 @@ export const useIntersectionObserver = (
 /**
  * The `useOtherUser` function returns the other user in a conversation based on the current user's
  * information and the conversation's members.
- * @param {ConversationType} conversation - The `conversation` parameter is of type `ConversationType`.
+ * @param {IConversation} conversation - The `conversation` parameter is of type `ConversationType`.
  * It represents a conversation object that contains information about the conversation, such as its
  * members.
  * @returns The function `useOtherUser` returns the other user in a conversation, excluding the current
  * user.
  */
-export const useOtherUser = (conversation: ConversationType) => {
+export const useOtherUser = (conversation: IConversation) => {
   const { currentUserInfo } = useCurrentUserInfo();
 
   return useMemo(() => {

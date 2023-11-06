@@ -17,6 +17,7 @@ interface IButtonActiveHover {
   rounded?: boolean;
   block?: boolean;
   type?: ButtonNormalHoverType;
+  style?: React.CSSProperties;
 }
 
 export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
@@ -27,6 +28,7 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   disabled,
   rounded,
   block,
+  style,
   type = 'primary'
 }) => {
   useAppSelector((state) => state.theme.changed);
@@ -42,14 +44,14 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
         loading={loading}
         htmlType='submit'
         style={
-          !className
+          !style
             ? {
                 height: '100%',
                 borderRadius: rounded ? '1.5rem' : '0',
                 width: block ? '100%' : 'auto',
                 boxShadow: 'none'
               }
-            : { boxShadow: 'none' }
+            : { ...style, boxShadow: 'none' }
         }>
         {children}
       </Button>

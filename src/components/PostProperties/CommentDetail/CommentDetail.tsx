@@ -11,17 +11,17 @@ import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
 import { setData } from '@/redux/Slice/ModalHOCSlice';
-import { CommentType } from '@/types';
+import { ICommentPost } from '@/types';
 import StyleProvider from './cssCommentDetail';
 
-interface IComment {
-  comment: CommentType;
+interface ICommentDetailProps {
+  comment: ICommentPost;
   postID: string;
   children?: React.ReactNode;
   isReply?: boolean;
 }
 
-const CommentDetail: React.FC<IComment> = ({ comment, children, postID }) => {
+const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
 

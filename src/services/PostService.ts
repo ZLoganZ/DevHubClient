@@ -1,14 +1,14 @@
 import { AxiosResponse } from 'axios';
 
 import {
-  CommentType,
-  CreateCommentDataType,
-  CreatePostDataType,
-  GetChildCommentsType,
-  LikeCommentType,
-  PostType,
-  ResponseType,
-  SharePostDataType
+  ICommentPost,
+  ICreateComment,
+  ICreatePost,
+  IGetChildComments,
+  ILikeComment,
+  IPost,
+  IResponse,
+  ISharePost
 } from '@/types';
 import { BaseService } from './BaseService';
 
@@ -17,55 +17,55 @@ class PostService extends BaseService {
     super();
   }
 
-  getAllPostByUserID = (id: string): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPostByUserID = (id: string): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/user/${id}`);
   };
-  getAllPost = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPost = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/all`);
   };
-  getAllPostNewsFeed = (): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPostNewsFeed = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/newsfeed`);
   };
-  getAllPopularPost = (sort: string): Promise<AxiosResponse<ResponseType<PostType[]>>> => {
+  getAllPopularPost = (sort: string): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/popular/?sortBy=${sort}`);
   };
-  createPost = (post: CreatePostDataType): Promise<AxiosResponse<ResponseType<PostType>>> => {
+  createPost = (post: ICreatePost): Promise<AxiosResponse<IResponse<IPost>>> => {
     return this.post(`/posts`, post);
   };
-  updatePost = (id: string, post: CreatePostDataType): Promise<AxiosResponse<ResponseType<PostType>>> => {
+  updatePost = (id: string, post: ICreatePost): Promise<AxiosResponse<IResponse<IPost>>> => {
     return this.put(`/posts/update/${id}`, post);
   };
   deletePost = (id: string) => {
     return this.delete(`/posts/delete/${id}`);
   };
-  likePost = (post: SharePostDataType) => {
+  likePost = (post: ISharePost) => {
     return this.put(`/users/likepost`, post);
   };
-  sharePost = (sharepost: SharePostDataType) => {
+  sharePost = (sharepost: ISharePost) => {
     return this.post(`/posts/share`, sharepost);
   };
   savePost = (id: string) => {
     return this.put(`/users/savepost/${id}`);
   };
-  getParentComments = (id: string): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
+  getParentComments = (id: string): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
     return this.get(`/comments/parents/${id}`);
   };
-  getChildComments = (comment: GetChildCommentsType): Promise<AxiosResponse<ResponseType<CommentType[]>>> => {
+  getChildComments = (comment: IGetChildComments): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
     return this.get(`/comments/children`, comment);
   };
-  createComment = (comment: CreateCommentDataType) => {
+  createComment = (comment: ICreateComment) => {
     return this.post(`/comments/create`, comment);
   };
-  getPostByID = (id: string): Promise<AxiosResponse<ResponseType<PostType>>> => {
+  getPostByID = (id: string): Promise<AxiosResponse<IResponse<IPost>>> => {
     return this.get(`/posts/find/${id}`);
   };
   viewPost = (id: string) => {
     return this.put(`/posts/view/${id}`);
   };
-  likeComment = (id: string, payload: LikeCommentType) => {
+  likeComment = (id: string, payload: ILikeComment) => {
     return this.put(`/comments/like/${id}`, payload);
   };
-  dislikeComment = (id: string, payload: LikeCommentType) => {
+  dislikeComment = (id: string, payload: ILikeComment) => {
     return this.put(`/comments/dislike/${id}`, payload);
   };
 }

@@ -7,7 +7,7 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import CalledBox from '@/components/ChatComponents/CalledBox';
 import { useGetCalled } from '@/hooks/fetch';
-import { CalledType } from '@/types';
+import { ICalled } from '@/types';
 import { useEffect, useState } from 'react';
 
 const CalledList = () => {
@@ -17,7 +17,7 @@ const CalledList = () => {
   const { themeColorSet } = getTheme();
 
   const { calledList, isLoadingGetCalled } = useGetCalled();
-  const [calledLists, setCalledLists] = useState<CalledType[]>(calledList);
+  const [calledLists, setCalledLists] = useState<ICalled[] | undefined>(calledList);
   useEffect(() => {
     setCalledLists(calledList);
   }, [calledList]);

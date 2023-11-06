@@ -11,11 +11,11 @@ import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useGetRepository } from '@/hooks/fetch';
-import { RepositoryType } from '@/types';
+import { IRepository } from '@/types';
 
 interface IRepos {
-  repositories: RepositoryType[];
-  setRepositories: React.Dispatch<React.SetStateAction<RepositoryType[]>>;
+  repositories: IRepository[];
+  setRepositories: React.Dispatch<React.SetStateAction<IRepository[]>>;
 }
 
 const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) => {
@@ -84,9 +84,9 @@ const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) 
     }
   }, [access_token_github, repository, isLoadingRepository]);
 
-  const [repos, setRepos] = useState<RepositoryType[]>([]);
+  const [repos, setRepos] = useState<IRepository[]>([]);
 
-  const renderItemRepos = (item: RepositoryType, index: number) => {
+  const renderItemRepos = (item: IRepository, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <div

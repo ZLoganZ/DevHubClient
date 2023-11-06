@@ -1,10 +1,10 @@
 import {
-  GoogleLoginDataType,
-  UserLoginDataType,
-  UserRegisterDataType,
-  VerifyCodeDataType,
-  ForgotPasswordDataType,
-  ResetPasswordDataType
+  IGoogleLogin,
+  IUserLogin,
+  IUserRegister,
+  IVerifyCode,
+  IForgotPassword,
+  IResetPassword
 } from '@/types';
 import { BaseService } from './BaseService';
 
@@ -12,13 +12,13 @@ class AuthService extends BaseService {
   constructor() {
     super();
   }
-  register = (userRegister: UserRegisterDataType) => {
+  register = (userRegister: IUserRegister) => {
     return this.post(`/auth/signup`, userRegister);
   };
-  login = (userLogin: UserLoginDataType) => {
+  login = (userLogin: IUserLogin) => {
     return this.post(`/auth/login`, userLogin);
   };
-  loginWithGoogle = (token: GoogleLoginDataType) => {
+  loginWithGoogle = (token: IGoogleLogin) => {
     return this.post(`/auth/googleV2`, token);
   };
   logout = () => {
@@ -27,16 +27,16 @@ class AuthService extends BaseService {
   forgotPassword = (email: string) => {
     return this.post(`/forgot`, email);
   };
-  verifyCode = (data: VerifyCodeDataType) => {
+  verifyCode = (data: IVerifyCode) => {
     return this.post(`/verify`, data);
   };
-  checkVerifyCode = (data: ForgotPasswordDataType) => {
+  checkVerifyCode = (data: IForgotPassword) => {
     return this.post(`/checkVerify`, data);
   };
-  resetPassword = (data: ResetPasswordDataType) => {
+  resetPassword = (data: IResetPassword) => {
     return this.post(`/reset`, data);
   };
-  checkResetPassword = (data: ForgotPasswordDataType) => {
+  checkResetPassword = (data: IForgotPassword) => {
     return this.post(`/checkReset`, data);
   };
 }

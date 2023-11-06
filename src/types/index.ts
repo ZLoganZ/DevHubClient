@@ -1,39 +1,37 @@
-export interface UserLoginDataType {
+export interface IUserLogin {
   email: string;
   password: string;
 }
 
-export interface GoogleLoginDataType {
+export interface IGoogleLogin {
   token: string;
 }
 
-export interface UserRegisterDataType {
-  email: string;
-  password: string;
+export interface IUserRegister extends IUserLogin {
   name: string;
   confirm: string;
 }
 
-export interface UserATokenType {
+export interface IUserAToken {
   accessToken: string;
 }
 
-export interface ForgotPasswordDataType {
+export interface IForgotPassword {
   email: string;
 }
 
-export interface VerifyCodeDataType {
+export interface IVerifyCode {
   email: string;
   code: string;
 }
 
-export interface ResetPasswordDataType {
+export interface IResetPassword {
   email: string;
   password: string;
   confirm?: string;
 }
 
-export interface UserUpdateDataType {
+export interface IUserUpdate {
   name?: string;
   phone_number?: string;
   user_image?: string;
@@ -41,13 +39,13 @@ export interface UserUpdateDataType {
   tags?: string[];
   alias?: string;
   about?: string;
-  experiences?: ExperienceType[];
-  repositories?: RepositoryType[];
-  contacts?: ContactType[];
+  experiences?: IExperience[];
+  repositories?: IRepository[];
+  contacts?: IContact[];
   location?: string;
 }
 
-export interface RepositoryType {
+export interface IRepository {
   id: string;
   name: string;
   private: boolean;
@@ -58,21 +56,21 @@ export interface RepositoryType {
   languages: string;
 }
 
-export interface ExperienceType {
+export interface IExperience {
   position_name: string;
   company_name: string;
   start_date: string;
   end_date: string;
 }
 
-export interface ContactType {
+export interface IContact {
   key: string;
   tooltip: string;
   link: string;
   state?: boolean;
 }
 
-export interface UserInfoType {
+export interface IUserInfo {
   _id: string;
   name: string;
   email: string;
@@ -84,20 +82,20 @@ export interface UserInfoType {
   tags: string[];
   alias: string;
   about: string;
-  posts: PostType[];
-  experiences: ExperienceType[];
-  repositories: RepositoryType[];
-  contacts: ContactType[];
+  posts: IPost[];
+  experiences: IExperience[];
+  repositories: IRepository[];
+  contacts: IContact[];
   location: string;
   createdAt: string;
   favorites: string[];
   communities: string[];
   notifications: string[];
-  followers: UserInfoType[];
-  following: UserInfoType[];
+  followers: IUserInfo[];
+  following: IUserInfo[];
   follower_number: number;
   following_number: number;
-  members: UserInfoType[];
+  members: IUserInfo[];
   post_number: number;
   is_followed: boolean;
 }
@@ -111,27 +109,27 @@ export interface TypeOfLink {
   image: string;
 }
 
-export interface CreatePostDataType {
+export interface ICreatePost {
   title: string;
   content: string;
   image?: string;
 }
 
-export interface UpdatePostDataType {
+export interface IUpdatePost {
   id: string;
-  postUpdate: CreatePostDataType;
+  postUpdate: ICreatePost;
 }
 
-export interface SharePostDataType {
+export interface ISharePost {
   post: string;
   owner_post: string;
 }
 
-export interface PostType {
+export interface IPost {
   _id: string;
   type: TypeofPost;
   post_attributes: {
-    user: UserInfoType;
+    user: IUserInfo;
 
     //if type is post
     title?: string;
@@ -140,8 +138,8 @@ export interface PostType {
     url?: TypeOfLink;
 
     //if type is share
-    post?: PostType;
-    owner_post?: UserInfoType;
+    post?: IPost;
+    owner_post?: IUserInfo;
 
     view_number: number;
     like_number: number;
@@ -154,68 +152,68 @@ export interface PostType {
   createdAt: string;
 }
 
-export interface LikeType {
+export interface ILikePost {
   _id: string;
-  user: UserInfoType;
-  post: PostType;
-  owner_post: UserInfoType;
+  user: IUserInfo;
+  post: IPost;
+  owner_post: IUserInfo;
 }
 
 type TypeofComment = 'parent' | 'child';
 
-export interface CreateCommentDataType {
+export interface ICreateComment {
   content: string;
   type: TypeofComment;
   post: string;
   parent?: string;
 }
 
-export interface CreateLikeCommentType {
+export interface ICreateLikeComment {
   id: string;
-  comment: LikeCommentType;
+  comment: ILikeComment;
 }
 
-export interface GetChildCommentsType {
+export interface IGetChildComments {
   post: string;
   parent: string;
 }
 
-export interface LikeCommentType {
+export interface ILikeComment {
   type: TypeofComment;
   post: string;
   owner_comment: string;
 }
 
-export interface CommentType {
+export interface ICommentPost {
   _id: string;
-  post: PostType;
-  user: UserInfoType;
+  post: IPost;
+  user: IUserInfo;
   content: string;
   type: TypeofComment;
 
   //if interface is child
-  parent?: CommentType;
+  parent?: ICommentPost;
 
   //if interface is parent
-  children?: CommentType[];
+  children?: ICommentPost[];
 
   is_liked: boolean;
   is_disliked: boolean;
-  likes: LikeType[];
-  dislikes: LikeType[];
+  likes: ILikePost[];
+  dislikes: ILikePost[];
   like_number: number;
   dislike_number: number;
   createdAt: string;
 }
 
-export interface SelectedCommentValues {
+export interface ISelectedComment {
   isReply: boolean;
   idComment: string | null;
   name: string | null;
   user_image: string | null;
 }
 
-export interface ResponseType<T> {
+export interface IResponse<T> {
   message: string;
   status: number;
   metadata: T;
@@ -223,21 +221,21 @@ export interface ResponseType<T> {
 
 export type TypeofConversation = 'private' | 'group';
 
-export interface ConversationType {
+export interface IConversation {
   _id: string;
   type: TypeofConversation;
-  members: UserInfoType[];
+  members: IUserInfo[];
   name: string;
-  lastMessage: MessageType;
-  seen: UserInfoType[];
-  admins?: UserInfoType[];
+  lastMessage: IMessage;
+  seen: IUserInfo[];
+  admins?: IUserInfo[];
   image?: string;
   cover_image?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateConversationDataType {
+export interface ICreateConversation {
   type: TypeofConversation;
   members: string[];
   name?: string;
@@ -246,28 +244,28 @@ export interface CreateConversationDataType {
 
 type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
-export interface MessageType {
+export interface IMessage {
   _id: string;
   conversation_id: string;
   type: TypeofMessage;
-  sender: UserInfoType;
+  sender: IUserInfo;
   content: string;
   isSending?: boolean;
   image?: string;
   createdAt: string;
 }
 
-export interface CreateMessageDataType {
+export interface ICreateMessage {
   conversation_id: string;
   content?: string;
   image?: string;
 }
 
-export interface CalledType {
+export interface ICalled {
   _id: string;
   content: string;
-  conversation_id: ConversationType;
-  sender: UserInfoType;
+  conversation_id: IConversation;
+  sender: IUserInfo;
   type: TypeofMessage;
   createdAt: string;
 }
@@ -275,7 +273,7 @@ export interface CalledType {
 export interface ImageResponse {
   key: string;
 }
-export interface EmojisType {
+export interface IEmoji {
   id: string;
   name: string;
   native: string;
@@ -284,7 +282,7 @@ export interface EmojisType {
   shortcodes: string;
 }
 
-export interface SocketCallType {
+export interface ISocketCall {
   name: string;
   author: string;
   conversation_id: string;

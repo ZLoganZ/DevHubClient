@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Dropdown, MenuProps } from 'antd';
+import { Dropdown, type MenuProps } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,13 +23,13 @@ import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { useLeaveGroup, useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
-import { ConversationType, MessageType } from '@/types';
-import { PRIVATE_MSG, SEEN_MSG, UNSEEN_MSG } from '@/util/constants/SettingSystem';
+import { IConversation, IMessage } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
 
 interface IConversationBox {
-  conversation: ConversationType;
+  conversation: IConversation;
   selected?: boolean;
 }
 
@@ -58,7 +58,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       key: '1',
       icon: <FontAwesomeIcon icon={isSeen ? faReSquareCheck : faSquareCheck} />,
       onClick: () => {
-        const emitType = isSeen ? UNSEEN_MSG : SEEN_MSG;
+        const emitType = isSeen ? Socket.UNSEEN_MSG : Socket.SEEN_MSG;
         chatSocket.emit(emitType, { conversationID: conversation._id, userID: currentUserInfo._id });
       }
     },
@@ -117,11 +117,11 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [isOwn, conversation.lastMessage, conversation.type]);
 
   useEffect(() => {
-    chatSocket.on(PRIVATE_MSG, (message: MessageType) => {
+    chatSocket.on(Socket.PRIVATE_MSG, (message: IMessage) => {
       mutateReceiveMessage(message);
     });
 
-    chatSocket.on(SEEN_MSG, (conversation: ConversationType) => {
+    chatSocket.on(Socket.SEEN_MSG, (conversation: IConversation) => {
       mutateReceiveSeenConversation(conversation);
     });
   }, []);
@@ -146,31 +146,24 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
         <NavLink to={`/message/${conversation._id}`}>
           <div
             className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-xl transition'
-            style={{
-              backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
-            }}>
+            style={{ backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1 }}>
             {conversation.type === 'group' ? (
               <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
             ) : (
               <Avatar key={conversation._id} user={otherUser} />
             )}
-
             <div className='min-w-0 flex-1'>
               <div className='focus:outline-none'>
                 <span className='absolute inset-0' aria-hidden='true' />
                 <div className='flex justify-between items-center mb-1'>
-                  <p
-                    className={`text-md font-medium`}
-                    style={{
-                      color: themeColorSet.colorText1
-                    }}>
+                  <p className='text-md font-medium' style={{ color: themeColorSet.colorText1 }}>
                     <span style={{ color: themeColorSet.colorText1 }}>
                       {conversation.name ?? otherUser.name}
                     </span>
                   </p>
                   {conversation.lastMessage?.createdAt && (
                     <p
-                      className=' text-xs  text-gray-400 font-light'
+                      className='text-xs text-gray-400 font-light'
                       style={{ color: themeColorSet.colorText3 }}>
                       {getDateTimeToNow(conversation.lastMessage.createdAt)}
                     </p>

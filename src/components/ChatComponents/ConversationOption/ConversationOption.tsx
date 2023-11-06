@@ -28,7 +28,7 @@ import {
   Skeleton,
   Col,
   Row,
-  MenuProps,
+  type MenuProps,
   Dropdown,
   Collapse,
   ConfigProvider,
@@ -45,7 +45,7 @@ import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
-import { ConversationType, MessageType } from '@/types';
+import { IConversation, IMessage } from '@/types';
 import StyleProvider from './cssConversationOption';
 
 interface IConversationOption {
@@ -229,7 +229,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     );
   };
 
-  const listImages = (items: MessageType[]) => {
+  const listImages = (items: IMessage[]) => {
     return listItems(items, faReImages, 'No images');
   };
 
@@ -245,7 +245,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     return listItems(items, faReFileAudio, 'No audio');
   };
 
-  const listMembers = (currentConversation: ConversationType) => {
+  const listMembers = (currentConversation: IConversation) => {
     return (
       <div className='pr-5 w-full'>
         <div className='listUser flex flex-col w-full pl-3' style={{ overflow: 'auto' }}>

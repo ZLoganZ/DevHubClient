@@ -1,4 +1,4 @@
-import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge, App } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space, type MenuProps, Badge, App } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake, faComment, faUser, faBell, faGear, faVideo } from '@fortawesome/free-solid-svg-icons';

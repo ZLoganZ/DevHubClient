@@ -1,7 +1,7 @@
-import { Col, Row, App, ModalFuncProps } from 'antd';
+import { Col, Row, App, type ModalFuncProps } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo, faPhone, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
 
@@ -14,27 +14,29 @@ import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
 import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
-import { MessageType, SocketCallType } from '@/types';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
+import { IMessage, ISocketCall } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { audioCall, videoChat } from '@/util/call';
 import { commonColor } from '@/util/cssVariable';
 import { getLastOnline } from '@/util/formatDateTime';
 import { getTheme } from '@/util/theme';
-import {
-  IS_TYPING,
-  SEEN_MSG,
-  SEND_END_VIDEO_CALL,
-  STOP_TYPING,
-  VIDEO_CALL,
-  VOICE_CALL
-} from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 import StyleProvider from './cssMessageChat';
 
-interface IParams {
+interface IMessageChat {
   conversationID: string;
 }
 
-const MessageChat: React.FC<IParams> = ({ conversationID }) => {
+type ModalType =
+  | {
+      destroy: () => void;
+      update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+      then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+    }
+  | undefined;
+
+const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   const { modal } = App.useApp();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -48,22 +50,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
 
   const otherUser = useOtherUser(currentConversation);
 
-  let modalVideo:
-    | ({
-        destroy: () => void;
-        update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
-      } & {
-        then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
-      })
-    | undefined;
-  let modalVoice:
-    | ({
-        destroy: () => void;
-        update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
-      } & {
-        then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
-      })
-    | undefined;
+  let modalVideo: ModalType, modalVoice: ModalType;
 
   const [count, setCount] = useState(0);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -98,7 +85,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
       messages[messages.length - 1].sender._id !== currentUserInfo._id &&
       !currentConversation.seen.some((user) => user._id === currentUserInfo._id)
     ) {
-      chatSocket.emit(SEEN_MSG, {
+      chatSocket.emit(Socket.SEEN_MSG, {
         conversationID,
         userID: currentUserInfo._id
       });
@@ -136,63 +123,170 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   }, [messages]);
 
   useEffect(() => {
-    chatSocket.on(VIDEO_CALL, (data: SocketCallType) => {
+    chatSocket.on(Socket.VIDEO_CALL, (data: ISocketCall) => {
       modalVideo = modal.confirm({
-        title: 'Video Call',
-        icon: null,
+        title: (
+          <div className='flex flex-row items-center'>
+            <FontAwesomeIcon className='text-xl mr-3' icon={faVideo} />
+            <div className='text-xl'>Video Call</div>
+          </div>
+        ),
+        icon: <div className='w-[17px]' />,
         content: (
-          <div className='flex flex-row items-center justify-center'>
+          <div className='flex flex-row items-center justify-center pt-4 pb-2'>
             <img
               className='h-12 w-12 mr-3 rounded-full overflow-hidden'
               src={getImageURL(data.user_image, 'avatar_mini')}
             />
-            <div className='font-semibold text-lg'>{data.name} is calling you</div>
+            <div className='font-semibold text-lg'>
+              {data.name} is calling&nbsp;
+              {currentConversation.type === 'group' ? `from ${currentConversation.name}` : 'you'}
+            </div>
           </div>
         ),
-        okText: 'Answer',
-        cancelText: 'Decline',
-        onOk: () => {
-          videoChat(data.conversation_id);
-        }
+        footer: (
+          <div className='mt-6 flex items-center justify-end gap-x-3'>
+            <ButtonCancelHover
+              onClick={() => {
+                chatSocket.emit(Socket.LEAVE_VIDEO_CALL, data);
+                modalVideo?.destroy();
+              }}>
+              Decline
+            </ButtonCancelHover>
+            <ButtonActiveHover
+              rounded
+              onClick={() => {
+                videoChat(data.conversation_id);
+                modalVideo?.destroy();
+              }}>
+              Accept
+            </ButtonActiveHover>
+          </div>
+        )
       });
     });
-    chatSocket.on(VOICE_CALL, (data: SocketCallType) => {
+
+    chatSocket.on(Socket.VOICE_CALL, (data: ISocketCall) => {
       modalVoice = modal.confirm({
-        title: 'Voice Call',
-        icon: null,
+        title: (
+          <div className='flex flex-row items-center'>
+            <FontAwesomeIcon className='text-xl mr-3' icon={faPhone} />
+            <div className='text-xl'>Voice Call</div>
+          </div>
+        ),
+        icon: <div className='w-[17px]' />,
         content: (
-          <div className='flex flex-row items-center justify-center'>
+          <div className='flex flex-row items-center justify-center pt-4 pb-2'>
             <img
               className='h-12 w-12 mr-3 rounded-full overflow-hidden'
               src={getImageURL(data.user_image, 'avatar_mini')}
             />
-            <div className='font-semibold text-lg'>{data.name} is calling you</div>
+            <div className='font-semibold text-lg'>
+              {data.name} is calling&nbsp;
+              {currentConversation.type === 'group' ? `from ${currentConversation.name}` : 'you'}
+            </div>
           </div>
         ),
-        okText: 'Answer',
-        cancelText: 'Decline',
-        onOk: () => {
-          audioCall(data.conversation_id);
-        }
+        footer: (
+          <div className='mt-6 flex items-center justify-end gap-x-3'>
+            <ButtonCancelHover
+              onClick={() => {
+                chatSocket.emit(Socket.LEAVE_VOICE_CALL, data);
+                modalVoice?.destroy();
+              }}>
+              Decline
+            </ButtonCancelHover>
+            <ButtonActiveHover
+              rounded
+              onClick={() => {
+                audioCall(data.conversation_id);
+                modalVoice?.destroy();
+              }}>
+              Accept
+            </ButtonActiveHover>
+          </div>
+        )
       });
     });
-    chatSocket.on(SEND_END_VIDEO_CALL, () => {
-      
+
+    chatSocket.on(Socket.END_VIDEO_CALL, (data: ISocketCall) => {
+      if (modalVideo)
+        modalVideo.update({
+          content: (
+            <div className='flex flex-row items-center justify-center pt-4 pb-2'>
+              <img
+                className='h-12 w-12 mr-3 rounded-full overflow-hidden'
+                src={getImageURL(data.user_image, 'avatar_mini')}
+              />
+              <div className='font-semibold text-lg'>
+                You missed a video call&nbsp;
+                {currentConversation.type === 'group'
+                  ? `from ${currentConversation.name}`
+                  : `from ${data.name}`}
+              </div>
+            </div>
+          ),
+          footer: (
+            <div className='mt-6 flex items-center justify-end gap-x-3'>
+              <ButtonActiveHover
+                rounded
+                onClick={() => {
+                  modalVideo?.destroy();
+                }}>
+                Close
+              </ButtonActiveHover>
+            </div>
+          )
+        });
     });
+    
+    chatSocket.on(Socket.END_VOICE_CALL, (data: ISocketCall) => {
+      if (modalVoice)
+        modalVoice.update({
+          content: (
+            <div className='flex flex-row items-center justify-center pt-4 pb-2'>
+              <img
+                className='h-12 w-12 mr-3 rounded-full overflow-hidden'
+                src={getImageURL(data.user_image, 'avatar_mini')}
+              />
+              <div className='font-semibold text-lg'>
+                You missed a voice call&nbsp;
+                {currentConversation.type === 'group'
+                  ? `from ${currentConversation.name}`
+                  : `from ${data.name}`}
+              </div>
+            </div>
+          ),
+          footer: (
+            <div className='mt-6 flex items-center justify-end gap-x-3'>
+              <ButtonActiveHover
+                rounded
+                onClick={() => {
+                  modalVoice?.destroy();
+                }}>
+                Close
+              </ButtonActiveHover>
+            </div>
+          )
+        });
+    });
+
     return () => {
-      chatSocket.off(VIDEO_CALL);
-      chatSocket.off(VOICE_CALL);
+      chatSocket.off(Socket.VIDEO_CALL);
+      chatSocket.off(Socket.VOICE_CALL);
+      chatSocket.off(Socket.END_VIDEO_CALL);
+      chatSocket.off(Socket.END_VOICE_CALL);
     };
   }, []);
 
   useEffect(() => {
-    chatSocket.on(IS_TYPING + conversationID, (data: string) => {
+    chatSocket.on(Socket.IS_TYPING + conversationID, (data: string) => {
       setTypingUsers((prev) =>
         prev.some((user) => user === data) || data === currentUserInfo._id ? prev : [...prev, data]
       );
       setIsTyping(true);
     });
-    chatSocket.on(STOP_TYPING + conversationID, (data: string) => {
+    chatSocket.on(Socket.STOP_TYPING + conversationID, (data: string) => {
       setIsTyping(typingUsers.length !== 1);
       setTyping(data);
     });
@@ -209,16 +303,16 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     }
 
     return () => {
-      chatSocket.off(IS_TYPING + conversationID);
-      chatSocket.off(STOP_TYPING + conversationID);
+      chatSocket.off(Socket.IS_TYPING + conversationID);
+      chatSocket.off(Socket.STOP_TYPING + conversationID);
     };
-  }, [typingUsers, currentUserInfo, isTyping]);
+  }, [typingUsers.length, currentUserInfo._id, isTyping]);
 
   const styleStatus = useMemo(() => {
     return activeUser?.is_online ? themeColorSet.colorText2 : themeColorSet.colorText3;
   }, [activeUser, themeColorSet]);
 
-  const isPrevMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+  const isPrevMesGroup = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === 0) return false;
     if (!messArr) return false;
 
@@ -228,7 +322,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() < 60000;
   }, []);
 
-  const isNextMesGroup = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+  const isNextMesGroup = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === messArr.length - 1) return false;
     if (!messArr) return false;
 
@@ -238,7 +332,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
     return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
   }, []);
 
-  const isMoreThan10Min = useCallback((message: MessageType, index: number, messArr: MessageType[]) => {
+  const isMoreThan10Min = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === 0) return true;
     if (!messArr) return false;
 

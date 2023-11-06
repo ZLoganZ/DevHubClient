@@ -6,18 +6,18 @@ import { useMediaQuery } from 'react-responsive';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
-import { EmojisType, UserInfoType } from '@/types';
+import { IEmoji, IUserInfo } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
-interface ICommentInput {
-  currentUser: UserInfoType;
+interface ICommentInputProps {
+  currentUser: IUserInfo;
   postID: string;
 }
 
-const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
+const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -103,7 +103,7 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
 
                       return await response.json();
                     }}
-                    onEmojiSelect={(emoji: EmojisType) => {
+                    onEmojiSelect={(emoji: IEmoji) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(
                         commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor)

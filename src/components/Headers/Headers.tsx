@@ -9,7 +9,7 @@ import {
   Empty,
   Row,
   Space,
-  MenuProps,
+  type MenuProps,
   Layout,
   Input,
   Affix

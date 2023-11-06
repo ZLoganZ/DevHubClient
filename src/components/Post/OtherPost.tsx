@@ -1,6 +1,6 @@
 import { faUpRightFromSquare, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown, MenuProps } from 'antd';
+import { Divider, Dropdown, type MenuProps } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -9,19 +9,19 @@ import PostFooter from '@/components/PostProperties/PostFooter';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPost';
 import { useEffect, useState } from 'react';
 
-interface IPost {
-  post: PostType;
-  postAuthor: UserInfoType;
-  currentUser: UserInfoType;
+interface IPostProps {
+  post: IPost;
+  postAuthor: IUserInfo;
+  currentUser: IUserInfo;
 }
 
 // -----------------------------------------------------
 
-const OtherPost: React.FC<IPost> = ({ post, postAuthor, currentUser }) => {
+const OtherPost: React.FC<IPostProps> = ({ post, postAuthor, currentUser }) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css

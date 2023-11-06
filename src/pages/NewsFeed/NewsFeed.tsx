@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Col, Dropdown, MenuProps, Row, Skeleton, Space, Affix } from 'antd';
+import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileLines, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faFileLines/* , faUserFriends  */} from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
 import { DownOutlined } from '@ant-design/icons';
 
@@ -242,11 +242,11 @@ const NewsFeed = () => {
                         </span>
                       </div>
                     ) : isFetchingAllPopularPosts || isLoadingAllPopularPosts ? (
-                      <Fragment>
+                      <>
                         <Skeleton active avatar paragraph={{ rows: 2 }} />
                         <Skeleton active avatar paragraph={{ rows: 2 }} />
                         <Skeleton active avatar paragraph={{ rows: 2 }} />
-                      </Fragment>
+                      </>
                     ) : (
                       popular.map((item, index) => (
                         <Fragment key={index}>
@@ -315,7 +315,7 @@ const NewsFeed = () => {
                       ))
                     )}
                   </div>
-                  <div
+                  {/* <div
                     className='top-community mt-3'
                     style={{
                       backgroundColor: themeColorSet.colorBg2,
@@ -394,7 +394,7 @@ const NewsFeed = () => {
                         }
                       })}
                     </div>
-                  </div>
+                  </div> */}
                 </Affix>
               </div>
             </div>

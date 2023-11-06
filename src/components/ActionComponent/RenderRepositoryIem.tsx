@@ -2,11 +2,11 @@ import GithubColors from 'github-colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
-import { RepositoryType } from '@/types';
+import { IRepository } from '@/types';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 
-const RenderRepositoryIem = (item: RepositoryType, index: number) => {
+const RenderRepositoryIem = (item: IRepository, index: number) => {
   const { themeColorSet } = getTheme();
 
   const colorLanguage = GithubColors.get(item.languages).color;

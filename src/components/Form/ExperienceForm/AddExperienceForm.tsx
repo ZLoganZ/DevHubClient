@@ -6,12 +6,12 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ExperienceType } from '@/types';
+import { IExperience } from '@/types';
 import StyleProvider from './cssAddExperienceForm';
 
 interface IEditExperience {
-  experiences: ExperienceType[];
-  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
+  experiences: IExperience[];
+  setExperiences: React.Dispatch<React.SetStateAction<IExperience[]>>;
 }
 
 const { RangePicker } = DatePicker;

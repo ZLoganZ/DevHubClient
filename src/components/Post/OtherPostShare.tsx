@@ -1,6 +1,6 @@
 import { faUpRightFromSquare, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dropdown, MenuProps } from 'antd';
+import { Dropdown, type MenuProps } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 
 import UserInfoPost from '@/components/PostProperties/PostUserInfo';
@@ -9,17 +9,17 @@ import PostFooter from '@/components/PostProperties/PostFooter';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPost';
 import { useEffect, useState } from 'react';
-interface IPostShare {
-  postShared: PostType;
-  postAuthor: UserInfoType;
-  postSharer: UserInfoType;
-  currentUser: UserInfoType;
+interface IPostShareProps {
+  postShared: IPost;
+  postAuthor: IUserInfo;
+  postSharer: IUserInfo;
+  currentUser: IUserInfo;
 }
 
-const PostShare: React.FC<IPostShare> = ({ postShared, postAuthor, postSharer, currentUser }) => {
+const PostShare: React.FC<IPostShareProps> = ({ postShared, postAuthor, postSharer, currentUser }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();

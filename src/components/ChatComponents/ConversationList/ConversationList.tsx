@@ -12,12 +12,12 @@ import ConversationBox from '@/components/ChatComponents/ConversationBox/Convers
 import CreateGroupChat from '@/components/ChatComponents/OpenModal/CreateGroupChat';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { ConversationType } from '@/types';
-import { LEAVE_GROUP, PRIVATE_CONVERSATION } from '@/util/constants/SettingSystem';
+import { IConversation } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
 import { useReceiveConversation, useReceiveLeaveGroup } from '@/hooks/mutation';
 
 interface IConversationList {
-  conversations: ConversationType[];
+  conversations: IConversation[];
   selected?: string;
 }
 
@@ -36,7 +36,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
 
   const [search, setSearch] = useState('');
-  const [searchConversation, setSearchConversation] = useState<ConversationType[]>(conversations);
+  const [searchConversation, setSearchConversation] = useState<IConversation[]>(conversations);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
@@ -50,13 +50,13 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
   }, [conversations]);
 
   useEffect(() => {
-    chatSocket.on(PRIVATE_CONVERSATION, (conversation: ConversationType) => {
+    chatSocket.on(Socket.PRIVATE_CONVERSATION, (conversation: IConversation) => {
       mutateReceiveConversation(conversation);
     });
-    chatSocket.on(LEAVE_GROUP, (conversation: ConversationType) => {
+    chatSocket.on(Socket.LEAVE_GROUP, (conversation: IConversation) => {
       mutateReceiveLeaveGroup(conversation);
     });
-  }, [currentUserInfo._id]);
+  }, []);
 
   useEffect(() => {
     if (search === '') {

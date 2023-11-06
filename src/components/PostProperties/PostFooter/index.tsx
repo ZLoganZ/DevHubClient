@@ -8,20 +8,20 @@ import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import CommentInput from '@/components/PostProperties/CommentInput';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useLikePost, useSavePost, useSharePost } from '@/hooks/mutation';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import StyleProvider from './cssPostFooter';
 
-interface IPostFooter {
-  post: PostType;
-  postAuthor: UserInfoType;
+interface IPostFooterProps {
+  post: IPost;
+  postAuthor: IUserInfo;
   isPostShare?: boolean;
-  currentUser: UserInfoType;
+  currentUser: IUserInfo;
 }
 
-const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, currentUser }) => {
+const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare, currentUser }) => {
   const changed = useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 

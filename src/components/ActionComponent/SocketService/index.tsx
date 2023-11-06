@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { setMembers } from '@/redux/Slice/SocketSlice';
-import { SETUP, SET_ACTIVE_MEM, SET_PRESENCE } from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 
 export const PresenceService = () => {
   const { currentUserInfo } = useCurrentUserInfo();
@@ -13,7 +13,7 @@ export const PresenceService = () => {
 
   useEffect(() => {
     if (currentUserInfo) {
-      presenceSocket.emit(SET_PRESENCE, currentUserInfo._id);
+      presenceSocket.emit(Socket.SET_PRESENCE, currentUserInfo._id);
 
       currentUserInfo.members = [...currentUserInfo.followers, ...currentUserInfo.following].filter(
         (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
@@ -42,7 +42,7 @@ export const PresenceService = () => {
         is_online: true
       });
 
-      presenceSocket.on(SET_ACTIVE_MEM, (data: string[]) => {
+      presenceSocket.on(Socket.SET_ACTIVE_MEM, (data: string[]) => {
         activeMembers = activeMembers.map((member) => {
           if (data.includes(member._id)) {
             return { ...member, first_online: true, is_online: true };
@@ -63,7 +63,7 @@ export const ChatService = () => {
   const { userID } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    chatSocket.emit(SETUP, userID);
+    chatSocket.emit(Socket.SETUP, userID);
   }, [userID]);
 
   return <></>;

@@ -5,20 +5,20 @@ import { closeDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { postService } from '@/services/PostService';
 import { userService } from '@/services/UserService';
 import {
-  ConversationType,
-  CreateCommentDataType,
-  CreateLikeCommentType,
-  CreatePostDataType,
-  MessageType,
-  PostType,
-  SharePostDataType,
-  UpdatePostDataType,
-  UserInfoType,
-  UserUpdateDataType
+  IConversation,
+  ICreateComment,
+  ICreateLikeComment,
+  ICreatePost,
+  IMessage,
+  IPost,
+  ISharePost,
+  IUpdatePost,
+  IUserInfo,
+  IUserUpdate
 } from '@/types';
 import { useAppDispatch, useAppSelector } from './special';
 import { messageService } from '@/services/MessageService';
-import { LEAVE_GROUP } from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 
 // ----------------------------- MUTATIONS -----------------------------
 
@@ -37,16 +37,16 @@ export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (newPost: CreatePostDataType) => {
+    mutationFn: async (newPost: ICreatePost) => {
       const { data } = await postService.createPost(newPost);
       return data;
     },
     onSuccess(newPost) {
-      queryClient.setQueryData<PostType[]>(['posts', uid], (oldData) => {
+      queryClient.setQueryData<IPost[]>(['posts', uid], (oldData) => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
-      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], (oldData) => {
+      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], (oldData) => {
         if (oldData) return [newPost.metadata, ...oldData];
         return oldData;
       });
@@ -98,7 +98,7 @@ export const useUpdatePost = () => {
   const dispatch = useAppDispatch();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (post: UpdatePostDataType) => {
+    mutationFn: async (post: IUpdatePost) => {
       const { data } = await postService.updatePost(post.id, post.postUpdate);
       return data;
     },
@@ -106,7 +106,7 @@ export const useUpdatePost = () => {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
 
-      const updatePostData = (oldData: PostType[] | undefined) => {
+      const updatePostData = (oldData: IPost[] | undefined) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -119,12 +119,12 @@ export const useUpdatePost = () => {
         });
       };
 
-      queryClient.setQueryData<PostType[]>(
+      queryClient.setQueryData<IPost[]>(
         ['posts', updatedPost.metadata.post_attributes.user._id],
         updatePostData
       );
 
-      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
 
       void queryClient.invalidateQueries({ queryKey: ['post', updatedPost.metadata._id] });
     }
@@ -156,7 +156,7 @@ export const useDeletePost = () => {
       await postService.deletePost(postID);
     },
     onSuccess(_, postID) {
-      const updatePostData = (oldData: PostType[] | undefined) => {
+      const updatePostData = (oldData: IPost[] | undefined) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -164,9 +164,9 @@ export const useDeletePost = () => {
         return newData.filter((post) => post._id !== postID);
       };
 
-      queryClient.setQueryData<PostType[]>(['posts', uid], updatePostData);
+      queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
 
-      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
     }
   });
   return {
@@ -190,7 +190,7 @@ export const useLikePost = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (post: SharePostDataType) => {
+    mutationFn: async (post: ISharePost) => {
       await postService.likePost(post);
     },
     onSuccess(_, postLike) {
@@ -218,7 +218,7 @@ export const useSharePost = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (post: SharePostDataType) => {
+    mutationFn: async (post: ISharePost) => {
       await postService.sharePost(post);
     },
     onSuccess(_, postShare) {
@@ -276,7 +276,7 @@ export const useCommentPost = () => {
   const uid = useAppSelector((state) => state.auth.userID);
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (commentData: CreateCommentDataType) => {
+    mutationFn: async (commentData: ICreateComment) => {
       const { data } = await postService.createComment(commentData);
       return data;
     },
@@ -285,7 +285,7 @@ export const useCommentPost = () => {
 
       void queryClient.invalidateQueries({ queryKey: ['post', newComment.post] });
 
-      const updatePostData = (oldData: PostType[] | undefined) => {
+      const updatePostData = (oldData: IPost[] | undefined) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -304,9 +304,9 @@ export const useCommentPost = () => {
         });
       };
 
-      queryClient.setQueryData<PostType[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
 
-      queryClient.setQueryData<PostType[]>(['posts', uid], updatePostData);
+      queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
     }
   });
   return {
@@ -330,7 +330,7 @@ export const useLikeComment = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (payload: CreateLikeCommentType) => {
+    mutationFn: async (payload: ICreateLikeComment) => {
       await postService.likeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
@@ -358,7 +358,7 @@ export const useDislikeComment = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (payload: CreateLikeCommentType) => {
+    mutationFn: async (payload: ICreateLikeComment) => {
       await postService.dislikeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
@@ -388,14 +388,14 @@ export const useUpdateUser = () => {
   const dispatch = useAppDispatch();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (user: UserUpdateDataType) => {
+    mutationFn: async (user: IUserUpdate) => {
       const { data } = await userService.updateUser(user);
       return data;
     },
     onSuccess(updatedUser) {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
-      queryClient.setQueryData<UserInfoType>(['currentUserInfo'], (oldData) => {
+      queryClient.setQueryData<IUserInfo>(['currentUserInfo'], (oldData) => {
         if (!oldData) return;
 
         return {
@@ -430,7 +430,7 @@ export const useFollowUser = () => {
       await userService.followUser(userID);
     },
     onSuccess(_, userID) {
-      queryClient.setQueryData<UserInfoType>(['currentUserInfo'], (oldData) => {
+      queryClient.setQueryData<IUserInfo>(['currentUserInfo'], (oldData) => {
         if (oldData) {
           const index = oldData.following.findIndex((item) => item._id === userID);
           return {
@@ -442,7 +442,7 @@ export const useFollowUser = () => {
         return oldData;
       });
 
-      queryClient.setQueryData<UserInfoType>(['otherUserInfo', userID], (oldData) => {
+      queryClient.setQueryData<IUserInfo>(['otherUserInfo', userID], (oldData) => {
         if (oldData) {
           return {
             ...oldData,
@@ -477,9 +477,9 @@ export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (message: MessageType) => await Promise.resolve(message),
+    mutationFn: async (message: IMessage) => await Promise.resolve(message),
     onSuccess(message) {
-      queryClient.setQueryData<InfiniteData<MessageType[], number>>(
+      queryClient.setQueryData<InfiniteData<IMessage[], number>>(
         ['messages', message.conversation_id],
         (oldData) => {
           if (!oldData) return;
@@ -498,7 +498,7 @@ export const useSendMessage = () => {
         }
       );
 
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -520,7 +520,7 @@ export const useSendMessage = () => {
         });
       });
 
-      queryClient.setQueryData<ConversationType>(['conversation', message.conversation_id], (oldData) => {
+      queryClient.setQueryData<IConversation>(['conversation', message.conversation_id], (oldData) => {
         if (!oldData) return;
 
         return {
@@ -558,9 +558,9 @@ export const useReceiveMessage = (selected?: boolean) => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (message: MessageType) => await Promise.resolve(message),
+    mutationFn: async (message: IMessage) => await Promise.resolve(message),
     onSuccess(message) {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -589,7 +589,7 @@ export const useReceiveMessage = (selected?: boolean) => {
         return newData;
       });
 
-      queryClient.setQueryData<ConversationType>(['conversation', message.conversation_id], (oldData) => {
+      queryClient.setQueryData<IConversation>(['conversation', message.conversation_id], (oldData) => {
         if (!oldData) return;
 
         return {
@@ -599,7 +599,7 @@ export const useReceiveMessage = (selected?: boolean) => {
         };
       });
 
-      queryClient.setQueryData<InfiniteData<MessageType[], number>>(
+      queryClient.setQueryData<InfiniteData<IMessage[], number>>(
         ['messages', message.conversation_id],
         (messages) => {
           if (!messages) return;
@@ -663,9 +663,9 @@ export const useReceiveConversation = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
+    mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -717,9 +717,9 @@ export const useReceiveSeenConversation = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
+    mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -736,7 +736,7 @@ export const useReceiveSeenConversation = () => {
         return newData;
       });
 
-      queryClient.setQueryData<ConversationType>(['conversation', conversation._id], (oldData) => {
+      queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
         if (!oldData) return;
 
         return {
@@ -764,7 +764,7 @@ export const useDeleteConversation = () => {
       await messageService.deleteConversation(conversationID);
     },
     onSuccess(_, conversationID) {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -795,7 +795,7 @@ export const useLeaveGroup = () => {
     },
     onSuccess(conversation, conversationID) {
       if (window.location.pathname.includes(conversationID)) navigate('/message');
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData].filter((item) => item._id !== conversationID);
@@ -803,7 +803,7 @@ export const useLeaveGroup = () => {
         return newData;
       });
 
-      chatSocket.emit(LEAVE_GROUP, conversation);
+      chatSocket.emit(Socket.LEAVE_GROUP, conversation);
     }
   });
 
@@ -819,9 +819,9 @@ export const useReceiveLeaveGroup = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
-    mutationFn: async (conversation: ConversationType) => await Promise.resolve(conversation),
+    mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
-      queryClient.setQueryData<ConversationType[]>(['conversations'], (oldData) => {
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
         const newData = [...oldData];
@@ -838,7 +838,7 @@ export const useReceiveLeaveGroup = () => {
         return newData;
       });
 
-      queryClient.setQueryData<ConversationType>(['conversation', conversation._id], (oldData) => {
+      queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
         if (!oldData) return;
 
         return {

@@ -19,12 +19,12 @@ import { textToHTMLWithAllSpecialCharacter } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
-import { EmojisType, UserInfoType } from '@/types';
+import { IEmoji, IUserInfo } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
 
 interface INewPost {
-  currentUser: UserInfoType;
+  currentUser: IUserInfo;
 }
 
 //===================================================
@@ -188,7 +188,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
                       return response.json();
                     }}
-                    onEmojiSelect={(emoji: EmojisType) => {
+                    onEmojiSelect={(emoji: IEmoji) => {
                       ReactQuillRef.current
                         ?.getEditor()
                         .insertText(

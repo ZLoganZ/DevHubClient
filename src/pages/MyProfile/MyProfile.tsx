@@ -195,15 +195,15 @@ const MyProfile = () => {
             </Col>
             <div className='follow mt-5 xs:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className='following item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
               </span>
               <span className='post mr-2'>
-                <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>

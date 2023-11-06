@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import getImageURL from '@/util/getImageURL';
 
 interface IAvatar {
-  user: UserInfoType;
+  user: IUserInfo;
   size?: number;
 }
 

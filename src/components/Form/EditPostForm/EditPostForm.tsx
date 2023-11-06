@@ -11,12 +11,12 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
-import {textToHTMLWithAllSpecialCharacter} from '@/util/convertText';
+import { textToHTMLWithAllSpecialCharacter } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { imageService } from '@/services/ImageService';
-import { EmojisType } from '@/types';
+import { IEmoji } from '@/types';
 import StyleProvider from './cssEditPostForm';
 
 interface IEditPost {
@@ -175,7 +175,7 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
 
                       return response.json();
                     }}
-                    onEmojiSelect={(emoji: EmojisType) => {
+                    onEmojiSelect={(emoji: IEmoji) => {
                       ReactQuillRef.current
                         ?.getEditor()
                         .insertText(

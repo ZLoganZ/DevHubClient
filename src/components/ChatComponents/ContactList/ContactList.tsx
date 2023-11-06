@@ -6,16 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
 import { getTheme } from '@/util/theme';
-import { NEW_CONVERSATION } from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useReceiveConversation } from '@/hooks/mutation';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import StyleProvider from './cssContactList';
 
 interface IContactsList {
-  followers: UserInfoType[];
+  followers: IUserInfo[];
 }
 
 const ContactList: React.FC<IContactsList> = ({ followers }) => {
@@ -30,7 +30,7 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
 
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [searchFollowers, setSearchFollowers] = useState<UserInfoType[]>(followers);
+  const [searchFollowers, setSearchFollowers] = useState<IUserInfo[]>(followers);
 
   const HandleOnClick = (userFollow: string) => {
     void messageService
@@ -39,7 +39,7 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
         members: [userFollow]
       })
       .then((res) => {
-        chatSocket.emit(NEW_CONVERSATION, res.data.metadata);
+        chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
         mutateReceiveConversation(res.data.metadata);
         navigate(`/message/${res.data.metadata._id}`);
       });
