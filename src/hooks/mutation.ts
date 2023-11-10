@@ -12,6 +12,7 @@ import {
   IMessage,
   IPost,
   ISharePost,
+  ISocketCall,
   IUpdatePost,
   IUserInfo,
   IUserUpdate
@@ -780,9 +781,9 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
-    mutationFn: async (data: SocketCallType) => await Promise.resolve(data),
+    mutationFn: async (data: ISocketCall) => await Promise.resolve(data),
     onSuccess(data) {
-      queryClient.setQueryData<SocketCallType>(['messageCall', conversation_id, type], (oldData) => {
+      queryClient.setQueryData<ISocketCall>(['messageCall', conversation_id, type], (oldData) => {
         if (!oldData) return;
 
         return {

@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 // import { VariableSizeList as List } from 'react-window'
 // import AutoSizer from 'react-virtualized-auto-sizer'
 // import { LoadingOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
@@ -149,13 +150,13 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
       createdAt: new Date()
     };
 
-    chatSocket.emit(PRIVATE_MSG, {
+    chatSocket.emit(Socket.PRIVATE_MSG, {
       conversationID: message.conversation_id,
       message
     });
     console.log(message);
     setId(uuidv4().replace(/-/g, ''));
-    mutateSendMessage(message as unknown as MessageType);
+    mutateSendMessage(message as unknown as IMessage);
   }, []);
 
   useEffect(() => {
@@ -383,10 +384,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   const isAdmin = useCallback(
     (message: IMessage) => {
-      return (
-        currentConversation.admins &&
-        currentConversation.admins.some((admin) => admin._id === message.sender._id)
-      );
+      return currentConversation.admins?.some((admin) => admin._id === message.sender._id);
     },
     [currentConversation.admins]
   );
