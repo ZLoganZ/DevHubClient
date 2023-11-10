@@ -9,6 +9,7 @@ import { useAppSelector } from '@/hooks/special';
 import { IEmoji, IUserInfo } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
@@ -33,18 +34,12 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
   const inputRef = useRef<InputRef | null>(null);
 
-  const checkEmpty = () => {
-    if (commentContent === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const checkEmpty = commentContent.trim() === '' || commentContent.trim().length === 0;
 
   const handleSubmitComment = () => {
     const { isReply, idComment } = data;
 
-    if (checkEmpty()) return;
+    if (checkEmpty) return;
 
     mutateCommentPost({
       content: commentContent,
@@ -122,9 +117,12 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
             }
             suffix={
               <span
-                className={`cursor-pointer hover:text-blue-700 ${
-                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
-                }`}
+                className={merge(
+                  'transition-all duration-300',
+                  checkEmpty
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'
+                )}
                 onClick={handleSubmitComment}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </span>

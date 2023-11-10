@@ -1,4 +1,4 @@
-export const textToHTMLWithAllSpecialCharacter = (text: string, tabSize = 4) => {
+export const textToHTML = (text: string, tabSize = 4) => {
   const tab = ' '.repeat(tabSize);
 
   return (

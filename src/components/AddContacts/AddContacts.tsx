@@ -8,6 +8,7 @@ import { DownOutlined } from '@ant-design/icons';
 import StyleProvider from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import contactArrays from '@/util/Descriptions/Contacts';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -175,7 +176,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
               />
               <Input
                 key={index + '2'}
-                className={`w-full ml-2 pl-2 inputlink ${addTooltips[index].state ? '' : 'hidden'}`}
+                className={merge('w-full ml-2 pl-2 inputlink', !addTooltips[index].state && 'hidden')}
                 inputMode='text'
                 value={addTooltips[index]?.tooltip}
                 onChange={(e) => {

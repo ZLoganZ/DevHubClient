@@ -12,7 +12,7 @@ import { NotAuth, Auth } from '@/components/ActionComponent/Authentication';
 import { ChatService, PresenceService } from '@/components/ActionComponent/SocketService';
 import ErrorHandler from '@/components/ErrorHandler';
 
-import { privateRoutes, publicRoutes } from './routes';
+import { privateRoutes, publicRoutes } from '@/routes';
 
 const App = () => {
   const dispatch = useAppDispatch();

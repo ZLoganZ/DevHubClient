@@ -97,7 +97,7 @@ const MyProfile = () => {
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center w-full min-h-80 max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center w-full min-h-fit max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
                 src={getImageURL(currentUserInfo.cover_image)}
                 alt='avt'
@@ -271,12 +271,7 @@ const MyProfile = () => {
                               }}>
                               About
                             </div>
-                            <ReactQuill
-                              preserveWhitespace
-                              value={currentUserInfo.about}
-                              readOnly
-                              theme='bubble'
-                            />
+                            <ReactQuill value={currentUserInfo.about} readOnly theme='bubble' />
                           </div>
                         )}
                         {currentUserInfo.repositories.length !== 0 && (

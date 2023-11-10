@@ -76,7 +76,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
         <div className='like_share flex justify-between w-1/5 xs:w-2/5'>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(likeNumber)} like{likeNumber > 1 ? 's' : ''}
+              {ConvertNumber(likeNumber)} like{likeNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -100,7 +100,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
           </Space>
           <Space className='like' direction='vertical' align='center' hidden={isPostShare}>
             <span>
-              {ConvertNumber(shareNumber)} share{shareNumber > 1 ? 's' : ''}
+              {ConvertNumber(shareNumber)} share{shareNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -126,7 +126,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
         <div className='comment_view flex justify-between w-1/3 xs:w-6/12'>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(commentNumber)} comment{commentNumber > 1 ? 's' : ''}
+              {ConvertNumber(commentNumber)} comment{commentNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -153,7 +153,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
           </Space>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(viewNumber)} view{viewNumber > 1 ? 's' : ''}
+              {ConvertNumber(viewNumber)} view{viewNumber > 1 && 's'}
             </span>
             <Space>
               <Avatar

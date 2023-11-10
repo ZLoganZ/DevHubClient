@@ -271,12 +271,7 @@ const Profile = ({ userID }: IProfile) => {
                               }}>
                               About
                             </div>
-                            <ReactQuill
-                              preserveWhitespace
-                              value={otherUserInfo.about}
-                              readOnly
-                              theme='bubble'
-                            />
+                            <ReactQuill value={otherUserInfo.about} readOnly theme='bubble' />
                           </div>
                         )}
                         {otherUserInfo.repositories.length !== 0 && (

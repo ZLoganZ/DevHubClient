@@ -343,7 +343,6 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
       return data.metadata;
     },
     staleTime: Infinity,
-
     enabled: !!conversationID
   });
 
@@ -415,7 +414,7 @@ export const useMessagesData = (conversationID: string) => {
       },
       initialPageParam: 1,
       getPreviousPageParam: (lastPage, _, lastPageParam) => {
-        if (lastPage.length === 0 || lastPage.length < 30) {
+        if (lastPage.length < 30) {
           return undefined;
         }
         return lastPageParam + 1;

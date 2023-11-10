@@ -534,7 +534,7 @@ const EditProfileForm: React.FC = () => {
           {about ? (
             // About có nội dung
             <div className='content__text'>
-              <ReactQuill preserveWhitespace value={about} readOnly theme='bubble' />
+              <ReactQuill value={about} readOnly theme='bubble' />
             </div>
           ) : (
             // About không có nội dung
@@ -570,7 +570,6 @@ const EditProfileForm: React.FC = () => {
               fontSize: '1.2rem'
             }}>
             Experiences
-            {/* Hiển thị nút thêm nếu như có từ 1 experience trở lên */}
             {experiences.length > 0 && (
               <span
                 onClick={() => {
@@ -665,7 +664,6 @@ const EditProfileForm: React.FC = () => {
               )
             }
           </div>
-          {/* Nếu không có repository nào */}
           {repositories.length === 0 ? (
             componentNoInfo(
               'Highlight your top Repositories',

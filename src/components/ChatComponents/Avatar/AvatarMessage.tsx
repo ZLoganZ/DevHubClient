@@ -1,7 +1,6 @@
-import clsx from 'clsx';
-
 import { useAppSelector } from '@/hooks/special';
 import { IUserInfo } from '@/types';
+import merge from '@/util/mergeClassName';
 import getImageURL from '@/util/getImageURL';
 
 interface IAvatar {
@@ -28,7 +27,7 @@ const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user }) => {
       </div>
       {isActive && (
         <span
-          className={clsx(
+          className={merge(
             'absolute block rounded-full bg-green-500 ring-white top-0 right-0',
             size / 4 < 10 ? 'ring-2' : 'ring-4'
           )}

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg1};
@@ -13,7 +13,6 @@ const StyleProvider = styled.div`
       margin-bottom: 1rem;
     }
     .popular-post-item {
-      border-radius: 5px;
       :hover {
         background-color: ${(props) => props.theme.colorBg3};
         color: ${(props) => props.theme.colorText1};

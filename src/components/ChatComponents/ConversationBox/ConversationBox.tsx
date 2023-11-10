@@ -1,6 +1,5 @@
-import clsx from 'clsx';
 import { Dropdown, type MenuProps } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,18 +18,19 @@ import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { audioCall, videoChat } from '@/util/call';
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useLeaveGroup, useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
-import { IConversation, IMessage } from '@/types';
+import { useLeaveGroup } from '@/hooks/mutation';
+import { IConversation } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
 
 interface IConversationBox {
   conversation: IConversation;
-  selected?: boolean;
+  selected: boolean;
 }
 
 const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected }) => {
@@ -42,8 +42,6 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
 
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
-  const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
-  const { mutateReceiveMessage } = useReceiveMessage(selected);
   const { mutateLeaveGroup } = useLeaveGroup();
 
   const isSeen = conversation.seen.some((user) => user._id === currentUserInfo._id);
@@ -116,16 +114,6 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
     return arr[arr.length - 1] + ': ';
   }, [isOwn, conversation.lastMessage, conversation.type]);
 
-  useEffect(() => {
-    chatSocket.on(Socket.PRIVATE_MSG, (message: IMessage) => {
-      mutateReceiveMessage(message);
-    });
-
-    chatSocket.on(Socket.SEEN_MSG, (conversation: IConversation) => {
-      mutateReceiveSeenConversation(conversation);
-    });
-  }, []);
-
   const hasSeen = useMemo(() => {
     if (!conversation.lastMessage) return false;
 
@@ -169,7 +157,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
                     </p>
                   )}
                 </div>
-                <p className={clsx('truncate text-sm', !isOwn && !hasSeen && 'font-bold')}>
+                <p className={merge('truncate text-sm', !isOwn && !hasSeen && 'font-bold')}>
                   <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
                 </p>
               </div>

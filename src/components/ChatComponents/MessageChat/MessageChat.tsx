@@ -4,8 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
+// import { VariableSizeList as List } from 'react-window'
+// import AutoSizer from 'react-virtualized-auto-sizer'
+// import { LoadingOutlined } from '@ant-design/icons';
 
-import { useOtherUser, useAppSelector, useIntersectionObserver } from '@/hooks/special';
+import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
@@ -22,6 +25,7 @@ import { commonColor } from '@/util/cssVariable';
 import { getLastOnline } from '@/util/formatDateTime';
 import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
+import { toggleDisplayOption } from '@/redux/Slice/MessageSlice';
 import StyleProvider from './cssMessageChat';
 
 interface IMessageChat {
@@ -36,12 +40,18 @@ type ModalType =
     }
   | undefined;
 
+const soundCall = new Audio('/sounds/sound-noti-call.wav');
+soundCall.loop = true;
+
 const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   const { modal } = App.useApp();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   const { members, chatSocket } = useAppSelector((state) => state.socketIO);
+  const { displayOption } = useAppSelector((state) => state.message);
+
+  const dispatch = useAppDispatch();
 
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
@@ -56,8 +66,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const activeUser = members.find((member) => member._id === otherUser._id);
-
-  const [displayOption, setDisplayOption] = useState(false);
 
   const statusText = useMemo(() => {
     if (currentConversation.type === 'group') {
@@ -93,8 +101,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   }, [currentConversation.seen, conversationID, messages]);
 
   const fetchPreMessages = useCallback(() => {
-    if (!isFetchingPreviousPage && messages && messages.length >= 20) void fetchPreviousMessages();
-  }, [isFetchingPreviousPage, messages]);
+    if (!isFetchingPreviousPage && messages && hasPreviousMessages) void fetchPreviousMessages();
+  }, [isFetchingPreviousPage, messages, hasPreviousMessages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -124,6 +132,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   useEffect(() => {
     chatSocket.on(Socket.VIDEO_CALL, (data: ISocketCall) => {
+      soundCall.currentTime = 0;
+      void soundCall.play();
       modalVideo = modal.confirm({
         title: (
           <div className='flex flex-row items-center'>
@@ -140,7 +150,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
             />
             <div className='font-semibold text-lg'>
               {data.name} is calling&nbsp;
-              {currentConversation.type === 'group' ? `from ${currentConversation.name}` : 'you'}
+              {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : 'you'}
             </div>
           </div>
         ),
@@ -157,6 +167,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               rounded
               onClick={() => {
                 videoChat(data.conversation_id);
+                void soundCall.pause();
                 modalVideo?.destroy();
               }}>
               Accept
@@ -167,6 +178,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     });
 
     chatSocket.on(Socket.VOICE_CALL, (data: ISocketCall) => {
+      soundCall.currentTime = 0;
+      void soundCall.play();
       modalVoice = modal.confirm({
         title: (
           <div className='flex flex-row items-center'>
@@ -183,7 +196,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
             />
             <div className='font-semibold text-lg'>
               {data.name} is calling&nbsp;
-              {currentConversation.type === 'group' ? `from ${currentConversation.name}` : 'you'}
+              {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : 'you'}
             </div>
           </div>
         ),
@@ -200,6 +213,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               rounded
               onClick={() => {
                 audioCall(data.conversation_id);
+                void soundCall.pause();
                 modalVoice?.destroy();
               }}>
               Accept
@@ -210,7 +224,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     });
 
     chatSocket.on(Socket.END_VIDEO_CALL, (data: ISocketCall) => {
-      if (modalVideo)
+      if (modalVideo) {
+        void soundCall.pause();
         modalVideo.update({
           content: (
             <div className='flex flex-row items-center justify-center pt-4 pb-2'>
@@ -220,9 +235,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               />
               <div className='font-semibold text-lg'>
                 You missed a video call&nbsp;
-                {currentConversation.type === 'group'
-                  ? `from ${currentConversation.name}`
-                  : `from ${data.name}`}
+                {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : `from ${data.name}`}
               </div>
             </div>
           ),
@@ -238,10 +251,12 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
             </div>
           )
         });
+      }
     });
-    
+
     chatSocket.on(Socket.END_VOICE_CALL, (data: ISocketCall) => {
-      if (modalVoice)
+      if (modalVoice) {
+        void soundCall.pause();
         modalVoice.update({
           content: (
             <div className='flex flex-row items-center justify-center pt-4 pb-2'>
@@ -251,9 +266,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               />
               <div className='font-semibold text-lg'>
                 You missed a voice call&nbsp;
-                {currentConversation.type === 'group'
-                  ? `from ${currentConversation.name}`
-                  : `from ${data.name}`}
+                {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : `from ${data.name}`}
               </div>
             </div>
           ),
@@ -269,6 +282,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
             </div>
           )
         });
+      }
     });
 
     return () => {
@@ -339,6 +353,16 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() > 600000;
   }, []);
 
+  const isAdmin = useCallback(
+    (message: IMessage) => {
+      return (
+        currentConversation.admins &&
+        currentConversation.admins.some((admin) => admin._id === message.sender._id)
+      );
+    },
+    [currentConversation.admins]
+  );
+
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
@@ -395,7 +419,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 />
                 <FontAwesomeIcon
                   className='display-share text-xl cursor-pointer'
-                  onClick={() => setDisplayOption(!displayOption)}
+                  onClick={() => dispatch(toggleDisplayOption())}
                   icon={faCircleInfo}
                   style={{ color: commonColor.colorBlue1 }}
                 />
@@ -410,46 +434,32 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <div
-                className='body'
-                style={{
-                  height: '92%',
-                  overflow: 'auto'
-                }}>
-                <div
-                  style={{
-                    backgroundColor: `rgba(${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, ${themeColorSet.colorBg1}, 0.5)`
-                  }}>
-                  <div className='flex-1 overflow-y-hidden'>
-                    {!hasPreviousMessages && (
-                      <ChatWelcome
-                        type={currentConversation.type}
-                        name={currentConversation.name}
-                        members={currentConversation.members}
-                        otherUser={otherUser}
-                        image={currentConversation.image}
-                      />
-                    )}
-                    <div className='pt-1' ref={topRef} />
-                    {messages.map((message, index, messArr) => (
-                      <MessageBox
-                        key={`${conversationID}-${message._id}`}
-                        type={currentConversation.type}
-                        isLastMes={index === messages.length - 1}
-                        message={message}
-                        seen={currentConversation.seen}
-                        isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
-                        isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                        isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
-                        isAdmin={
-                          currentConversation.admins &&
-                          currentConversation.admins.some((admin) => admin._id === message.sender._id)
-                        }
-                      />
-                    ))}
-                    <div className='pb-1' ref={bottomRef} />
-                  </div>
-                </div>
+              <div className='body flex-1 h-[92%] overflow-auto'>
+                {!hasPreviousMessages && (
+                  <ChatWelcome
+                    type={currentConversation.type}
+                    name={currentConversation.name}
+                    members={currentConversation.members}
+                    otherUser={otherUser}
+                    image={currentConversation.image}
+                  />
+                )}
+                <div className='pt-1' ref={topRef} />
+                {messages.map((message, index, messArr) => (
+                  <MessageBox
+                    key={conversationID + '|' + message._id}
+                    ref={index === 20 ? topRef : null}
+                    type={currentConversation.type}
+                    isLastMes={index === messArr.length - 1}
+                    message={message}
+                    seen={currentConversation.seen}
+                    isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                    isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                    isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
+                    isAdmin={isAdmin(message)}
+                  />
+                ))}
+                <div className='pb-1' ref={bottomRef} />
               </div>
               <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
                 {currentConversation.members.map((member) => {
@@ -483,7 +493,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           </Col>
           {displayOption && (
             <Col span={8} className='h-full'>
-              <ConversationOption conversationID={conversationID} />
+              <ConversationOption conversationID={conversationID} messages={messages} />
             </Col>
           )}
         </Row>

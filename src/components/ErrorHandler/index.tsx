@@ -11,7 +11,7 @@ const ErrorHandler = ({ error, resetErrorBoundary }: IErrorBoundary) => {
   // Lấy theme từ LocalStorage chuyển qua css
   const { themeColorSet } = getTheme();
 
-  document.title = 'Not Found!';
+  document.title = 'Error';
 
   return (
     <StyleProvider theme={themeColorSet}>

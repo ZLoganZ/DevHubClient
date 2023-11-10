@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssMiniComponent';
 
@@ -39,19 +40,19 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
       <Button
         type={type}
         disabled={disabled ?? loading}
-        className={`${!className ? 'ButtonActiveHover font-bold px-6 py-2' : className}`}
+        className={merge('ButtonActiveHover font-bold px-6 py-2', className)}
         onClick={onClick}
         loading={loading}
         htmlType='submit'
         style={
-          !style
-            ? {
+          style
+            ? { ...style, boxShadow: 'none' }
+            : {
                 height: '100%',
                 borderRadius: rounded ? '1.5rem' : '0',
                 width: block ? '100%' : 'auto',
                 boxShadow: 'none'
               }
-            : { ...style, boxShadow: 'none' }
         }>
         {children}
       </Button>
@@ -85,7 +86,7 @@ export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
   return (
     <StyleProvider theme={themeColorSet}>
       <Button
-        className={`ButtonCancelHover font-bold px-6 py-2 rounded-3xl ${className}`}
+        className={merge('ButtonCancelHover font-bold px-6 py-2 rounded-3xl', className)}
         onClick={onClick}
         style={{ height: '100%' }}
         htmlType='button'

@@ -11,6 +11,7 @@ import socketIO from './Slice/SocketSlice';
 import getStarted from './Slice/GetStartedSlice';
 import community from './Slice/CommunitySlide';
 import comment from './Slice/CommentSlice';
+import message from './Slice/MessageSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
@@ -25,7 +26,8 @@ export const store = configureStore({
     socketIO,
     getStarted,
     community,
-    comment
+    comment,
+    message
   },
   middleware
 });

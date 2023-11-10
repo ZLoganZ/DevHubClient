@@ -5,8 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
-import { clsx } from 'clsx';
 
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
@@ -102,7 +102,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
     return isLt2M;
   };
 
-  const checkEmpty = messageContent === '' && !file;
+  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !file;
 
   const handleStopTyping = useCallback(
     debounce(
@@ -172,7 +172,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
             onPressEnter={() => handleSubmit(messageContent)}
             suffix={
               <span
-                className={clsx(
+                className={merge(
                   'transition-all duration-300',
                   checkEmpty
                     ? 'text-gray-400 cursor-not-allowed'

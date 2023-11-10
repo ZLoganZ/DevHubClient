@@ -12,16 +12,21 @@ import ConversationBox from '@/components/ChatComponents/ConversationBox/Convers
 import CreateGroupChat from '@/components/ChatComponents/OpenModal/CreateGroupChat';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { IConversation } from '@/types';
+import { IConversation, IMessage } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';
-import { useReceiveConversation, useReceiveLeaveGroup } from '@/hooks/mutation';
+import {
+  useReceiveConversation,
+  useReceiveLeaveGroup,
+  useReceiveMessage,
+  useReceiveSeenConversation
+} from '@/hooks/mutation';
 
 interface IConversationList {
   conversations: IConversation[];
-  selected?: string;
+  selecting?: string;
 }
 
-const ConversationList: React.FC<IConversationList> = ({ conversations, selected }) => {
+const ConversationList: React.FC<IConversationList> = ({ conversations, selecting: selected }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { theme } = useAppSelector((state) => state.theme);
@@ -34,6 +39,8 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
 
   const { mutateReceiveConversation } = useReceiveConversation();
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
+  const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
+  const { mutateReceiveMessage } = useReceiveMessage(selected);
 
   const [search, setSearch] = useState('');
   const [searchConversation, setSearchConversation] = useState<IConversation[]>(conversations);
@@ -55,6 +62,12 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
     });
     chatSocket.on(Socket.LEAVE_GROUP, (conversation: IConversation) => {
       mutateReceiveLeaveGroup(conversation);
+    });
+    chatSocket.on(Socket.PRIVATE_MSG, (message: IMessage) => {
+      mutateReceiveMessage(message);
+    });
+    chatSocket.on(Socket.SEEN_MSG, (conversation: IConversation) => {
+      mutateReceiveSeenConversation(conversation);
     });
   }, []);
 

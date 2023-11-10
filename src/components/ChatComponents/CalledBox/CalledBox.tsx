@@ -89,7 +89,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
             <div className='flex justify-between items-center mb-1'>
               <div>
                 <p
-                  className={`text-md font-medium`}
+                  className='text-md font-medium'
                   style={{
                     color: themeColorSet.colorText1
                   }}>

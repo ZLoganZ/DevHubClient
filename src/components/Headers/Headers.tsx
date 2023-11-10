@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { BellOutlined, CommentOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 
@@ -32,6 +32,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
 const Headers = () => {
+  const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -55,6 +56,8 @@ const Headers = () => {
     const { pathname } = window.location;
     if (pathname === '/') {
       void refetchAllNewsfeedPosts();
+    } else {
+      navigate('/');
     }
   }, [refetchAllNewsfeedPosts, window.location.pathname]);
 
@@ -136,9 +139,8 @@ const Headers = () => {
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
-      <StyleProvider theme={themeColorSet}>
-        {/* {contextHolder} */}
-        <Affix>
+      <Affix>
+        <StyleProvider theme={themeColorSet}>
           <Layout.Header
             className='header xs:px-2'
             style={{
@@ -149,21 +151,21 @@ const Headers = () => {
               <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
                 <Row align='middle'>
                   <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
-                    <NavLink className='flex items-center' to='/' onClick={handleClick}>
+                    <div className='flex items-center cursor-pointer' onClick={handleClick}>
                       <FontAwesomeIcon
                         className='iconLogo text-3xl xs:hidden'
                         icon={faSnowflake}
                         style={{ color: themeColorSet.colorText1 }}
                       />
-                      <div className='animated-word text-3xl ml-2 font-semibold' onClick={handleClick}>
-                        <div className='letter'>D</div>
-                        <div className='letter'>e</div>
-                        <div className='letter'>v</div>
-                        <div className='letter'>H</div>
-                        <div className='letter'>u</div>
-                        <div className='letter'>b</div>
+                      <div className='animated-word text-3xl ml-2 font-semibold'>
+                        <p className='letter'>D</p>
+                        <p className='letter'>e</p>
+                        <p className='letter'>v</p>
+                        <p className='letter'>H</p>
+                        <p className='letter'>u</p>
+                        <p className='letter'>b</p>
                       </div>
-                    </NavLink>
+                    </div>
                   </Col>
                   <Col span={isXsScreen ? 9 : 15} className='px-4'>
                     <Input
@@ -209,8 +211,8 @@ const Headers = () => {
               </Col>
             </Row>
           </Layout.Header>
-        </Affix>
-      </StyleProvider>
+        </StyleProvider>
+      </Affix>
     </ConfigProvider>
   );
 };

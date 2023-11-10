@@ -50,7 +50,7 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
       <div className='title font-bold'>{title}</div>
       <div className='content mt-3'>
         <div className='content__text'>
-          <ReactQuill preserveWhitespace value={contentQuill} readOnly theme='bubble' />
+          <ReactQuill value={contentQuill} readOnly theme='bubble' />
           {isMoreThan500 && (
             <a className='clickMore' onClick={() => setExpanded(!expanded)}>
               {expanded ? 'Read less' : 'Read more'}
@@ -59,7 +59,12 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
         </div>
         {image && image?.length !== 0 ? (
           <div className='contentImage overflow-hidden h-full w-full object-cover my-3 flex items-center justify-center'>
-            <Image src={getImageURL(image[0], 'post')} alt='pic content' fallback={imageErrorFallback} />
+            <Image
+              src={getImageURL(image[0], 'post')}
+              alt='pic content'
+              fallback={imageErrorFallback}
+              preview={{ src: getImageURL(image[0]) }}
+            />
           </div>
         ) : (
           link && (

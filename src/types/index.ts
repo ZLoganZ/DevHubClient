@@ -100,8 +100,6 @@ export interface IUserInfo {
   is_followed: boolean;
 }
 
-type TypeofPost = 'Post' | 'Share';
-
 export interface TypeOfLink {
   address: string;
   title: string;
@@ -124,6 +122,8 @@ export interface ISharePost {
   post: string;
   owner_post: string;
 }
+
+type TypeofPost = 'Post' | 'Share';
 
 export interface IPost {
   _id: string;
@@ -286,8 +286,10 @@ export interface ISocketCall {
   name: string;
   author: string;
   conversation_id: string;
+  conversation_name: string;
   user_image: string;
   members: string[];
   token: string;
   first_call: boolean;
+  typeofConversation: TypeofConversation;
 }
