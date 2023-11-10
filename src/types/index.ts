@@ -292,4 +292,5 @@ export interface SocketCallType {
   members: string[];
   token: string;
   first_call: boolean;
+  type: string;
 }

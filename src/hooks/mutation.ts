@@ -12,6 +12,7 @@ import {
   MessageType,
   PostType,
   SharePostDataType,
+  SocketCallType,
   UpdatePostDataType,
   UserInfoType,
   UserUpdateDataType
@@ -855,5 +856,29 @@ export const useReceiveLeaveGroup = () => {
     isErrorReceiveLeaveGroup: isError,
     isSuccessReceiveLeaveGroup: isSuccess,
     conversation: variables
+  };
+};
+
+export const useMutateMessageCall = (conversation_id: string | undefined, type: string) => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (data: SocketCallType) => await Promise.resolve(data),
+    onSuccess(data) {
+      queryClient.setQueryData<SocketCallType>(['messageCall', conversation_id, type], (oldData) => {
+        if (!oldData) return;
+
+        return {
+          ...data
+        };
+      });
+    }
+  });
+
+  return {
+    mutateMessageCall: mutate,
+    isLoadingMessageCall: isPending,
+    isErrorMessageCall: isError,
+    isSuccessMessageCall: isSuccess
   };
 };

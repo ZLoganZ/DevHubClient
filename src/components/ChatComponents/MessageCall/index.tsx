@@ -16,6 +16,7 @@ import {
 } from '@/util/constants/SettingSystem';
 import { SocketCallType } from '@/types';
 import { ParticipantTile } from './ParticipantTile';
+import { useMutateMessageCall } from '@/hooks/mutation';
 
 const serverUrl = import.meta.env.VITE_LK_SERVER_URL;
 
@@ -23,6 +24,7 @@ export const VideoCall = () => {
   const conversationID = useParams<{ conversationID: string }>().conversationID;
 
   const { dataMessageCall: dataVideo, isLoadingMessageCall } = useMessageCall(conversationID, 'video');
+  const { mutateMessageCall } = useMutateMessageCall(conversationID, 'video');
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -31,6 +33,7 @@ export const VideoCall = () => {
 
     chatSocket.emit(VIDEO_CALL, { ...dataVideo });
     chatSocket.on(END_VIDEO_CALL, (data: SocketCallType) => {
+      mutateMessageCall(data);
       if (data.conversation_id === conversationID && !window.closed) window.close();
     });
   }, [dataVideo, isLoadingMessageCall]);
@@ -66,6 +69,7 @@ export const VoiceCall = () => {
   const conversationID = useParams<{ conversationID: string }>().conversationID;
 
   const { dataMessageCall: dataAudio, isLoadingMessageCall } = useMessageCall(conversationID, 'audio');
+  const { mutateMessageCall } = useMutateMessageCall(conversationID, 'audio');
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -74,6 +78,7 @@ export const VoiceCall = () => {
 
     chatSocket.emit(VOICE_CALL, { ...dataAudio });
     chatSocket.on(END_VOICE_CALL, (data: SocketCallType) => {
+      mutateMessageCall(data);
       if (data.conversation_id === conversationID && !window.closed) window.close();
     });
   }, [dataAudio, isLoadingMessageCall]);

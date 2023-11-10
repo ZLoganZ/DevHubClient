@@ -175,10 +175,12 @@ const Chat = () => {
                     </div>
                   </div>
                 </Col>
-                <Col span={5}>{OptionRender}</Col>
-                <Col span={18}>
+                <Col span={5} className='h-screen z-10'>
+                  {OptionRender}
+                </Col>
+                <Col span={18} className='pl-3 z-0'>
                   <div
-                    className='chatBox h-screen ml-3'
+                    className='chatBox h-screen'
                     style={{
                       borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
                       backgroundColor: themeColorSet.colorBg1

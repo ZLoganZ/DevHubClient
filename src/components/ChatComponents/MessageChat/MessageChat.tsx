@@ -28,10 +28,12 @@ import {
   PRIVATE_MSG,
   STOP_TYPING,
   VIDEO_CALL,
-  VOICE_CALL
+  VOICE_CALL,
+  SEND_END_VOICE_CALL
 } from '@/util/constants/SettingSystem';
 import StyleProvider from './cssMessageChat';
 import { useSendMessage } from '@/hooks/mutation';
+import { capitalizeFirstLetter } from '@/util/convertText';
 
 interface IParams {
   conversationID: string;
@@ -140,6 +142,30 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
   const [id, setId] = useState(uuidv4().replace(/-/g, ''));
   const { mutateSendMessage } = useSendMessage();
 
+  const handleSendEndCall = useCallback((conversation_id: string, type: string, status: string) => {
+    const message = {
+      _id: id,
+      conversation_id: conversation_id,
+      sender: {
+        _id: currentUserInfo._id,
+        user_image: currentUserInfo.user_image,
+        name: currentUserInfo.name
+      },
+      isSending: true,
+      content: `${capitalizeFirstLetter(type)} call ${status}`,
+      type: type,
+      createdAt: new Date()
+    };
+
+    chatSocket.emit(PRIVATE_MSG, {
+      conversationID: message.conversation_id,
+      message
+    });
+    console.log(message);
+    setId(uuidv4().replace(/-/g, ''));
+    mutateSendMessage(message as unknown as MessageType);
+  }, []);
+
   useEffect(() => {
     chatSocket.on(VIDEO_CALL, (data: SocketCallType) => {
       modalVideo = modal.confirm({
@@ -181,7 +207,16 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
         }
       });
     });
-    chatSocket.on(SEND_END_VIDEO_CALL, () => {});
+    chatSocket.on(SEND_END_VIDEO_CALL, (data: SocketCallType) => {
+      handleSendEndCall(conversationID, 'video', data.type);
+
+      // if (modalVideo) modalVideo.destroy();
+    });
+    chatSocket.on(SEND_END_VOICE_CALL, (data: SocketCallType) => {
+      handleSendEndCall(conversationID, 'voice', data.type);
+
+      // if (modalVoice) modalVoice.destroy();
+    });
     return () => {
       chatSocket.off(VIDEO_CALL);
       chatSocket.off(VOICE_CALL);
@@ -298,33 +333,7 @@ const MessageChat: React.FC<IParams> = ({ conversationID }) => {
                 />
                 <FontAwesomeIcon
                   onClick={() => {
-                    const videoWindow = videoChat(conversationID);
-                    const popupInterval = setInterval(() => {
-                      if (videoWindow?.closed) {
-                        clearInterval(popupInterval);
-                        const message = {
-                          _id: id,
-                          conversation_id: conversationID,
-                          sender: {
-                            _id: currentUserInfo._id,
-                            user_image: currentUserInfo.user_image,
-                            name: currentUserInfo.name
-                          },
-                          isSending: true,
-                          content: 'Video call ended',
-                          type: 'video',
-                          createdAt: new Date()
-                        };
-
-                        chatSocket.emit(PRIVATE_MSG, {
-                          conversationID: message.conversation_id,
-                          message
-                        });
-                        console.log(message);
-                        setId(uuidv4().replace(/-/g, ''));
-                        mutateSendMessage(message as unknown as MessageType);
-                      }
-                    }, 500);
+                    videoChat(conversationID);
                   }}
                   className='video-call text-xl cursor-pointer'
                   icon={faVideoCamera}
