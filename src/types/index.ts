@@ -242,6 +242,19 @@ export interface ICreateConversation {
   image?: string;
 }
 
+type TypeofUpdateConversation =
+  | 'name'
+  | 'image'
+  | 'cover_image'
+  | 'add_member'
+  | 'remove_member'
+  | 'commission_admin'
+  | 'remove_admin';
+
+export interface IUpdateConversation extends IConversation {
+  typeUpdate: TypeofUpdateConversation;
+}
+
 type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
 export interface IMessage {

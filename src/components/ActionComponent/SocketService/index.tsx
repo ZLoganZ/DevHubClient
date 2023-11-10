@@ -53,7 +53,7 @@ export const PresenceService = () => {
         dispatch(setMembers(activeMembers));
       });
     }
-  }, [currentUserInfo?._id]);
+  }, [currentUserInfo]);
 
   return <></>;
 };

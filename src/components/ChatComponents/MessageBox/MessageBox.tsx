@@ -79,7 +79,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
         {message.type === 'notification' ? (
           <div className='flex justify-center mb-2'>
             <div className='text-xs font-semibold' style={{ color: themeColorSet.colorText4 }}>
-              {message.sender.name} {message.content}
+              {isOwn ? 'You' : message.sender.name}&nbsp;{message.content}
             </div>
           </div>
         ) : (
@@ -145,7 +145,9 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                     isOwn &&
                     seenList.length > 0 &&
                     seenList.map((userImage, index) => (
-                      <div key={index} className='inline-block rounded-full overflow-hidden h-4 w-4 mr-2'>
+                      <div
+                        key={index}
+                        className='inline-block rounded-full overflow-hidden h-4 w-4 mr-2 mb-2'>
                         <img
                           className='h-4 w-4'
                           src={getImageURL(userImage, 'avatar_mini')}
@@ -170,7 +172,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                       )}
                       {isLastMes && seenList.length === 0 && !message.isSending && (
                         <svg
-                          className='w-4 h-4 text-gray-400 mr-2'
+                          className='w-4 h-4 text-gray-400 mr-2 mb-2'
                           fill='currentColor'
                           viewBox='0 0 20 20'
                           xmlns='http://www.w3.org/2000/svg'>

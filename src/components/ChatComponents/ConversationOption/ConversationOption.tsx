@@ -15,6 +15,7 @@ import {
   faUserShield,
   faUserSlash
 } from '@fortawesome/free-solid-svg-icons';
+import { v4 as uuidv4 } from 'uuid';
 import {
   faFileAudio as faReFileAudio,
   faFolderOpen as faReFolderOpen,
@@ -39,15 +40,18 @@ import type { CollapseProps } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useLeaveGroup, useMutateConversation, useReceiveConversation } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
+import { Socket } from '@/util/constants/SettingSystem';
+import getImageURL from '@/util/getImageURL';
 import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
+import { messageService } from '@/services/MessageService';
 import { IConversation, IMessage } from '@/types';
 import StyleProvider from './cssConversationOption';
-import getImageURL from '@/util/getImageURL';
 
 interface IConversationOption {
   conversationID: string;
@@ -59,11 +63,15 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
   const { themeColorSet } = getTheme();
 
   const { visible } = useAppSelector((state) => state.modalHOC);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const navigate = useNavigate();
 
   const { currentUserInfo } = useCurrentUserInfo();
+  const { mutateReceiveConversation } = useReceiveConversation();
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
+  const { mutateLeaveGroup } = useLeaveGroup();
+  const { mutateConversation } = useMutateConversation();
 
   const otherUser = useOtherUser(currentConversation);
 
@@ -86,7 +94,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
     }
   }, [visible]);
 
-  const memberOptions = (userID: string): MenuProps['items'] => {
+  const memberOptions = (userID: string, username: string): MenuProps['items'] => {
     return [
       {
         key: '1',
@@ -98,6 +106,28 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
             currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id)
               ? ''
               : 'none'
+        },
+        onClick: () => {
+          void messageService.commissionAdmin(currentConversation._id, userID).then((res) => {
+            chatSocket.emit(Socket.COMMISSION_ADMIN, res.data.metadata);
+            mutateConversation({ ...res.data.metadata, typeUpdate: 'commission_admin' });
+
+            const message = {
+              _id: uuidv4().replace(/-/g, ''),
+              conversation_id: conversationID,
+              sender: {
+                _id: currentUserInfo._id,
+                user_image: currentUserInfo.user_image,
+                name: currentUserInfo.name
+              },
+              isSending: true,
+              type: 'notification',
+              content: `promoted ${username} to administrator`,
+              createdAt: new Date()
+            };
+
+            chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+          });
         }
       },
       {
@@ -106,6 +136,18 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
         icon: <FontAwesomeIcon icon={faCommentDots} />,
         style: {
           display: userID === currentUserInfo._id ? 'none' : ''
+        },
+        onClick: () => {
+          void messageService
+            .createConversation({
+              type: 'private',
+              members: [userID]
+            })
+            .then((res) => {
+              chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
+              mutateReceiveConversation(res.data.metadata);
+              navigate(`/message/${res.data.metadata._id}`);
+            });
         }
       },
       {
@@ -120,8 +162,10 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
         type: 'divider',
         style: {
           display:
-            currentConversation.admins?.some((admin) => admin._id === userID) &&
-            userID !== currentUserInfo._id
+            (currentConversation.admins?.some((admin) => admin._id === userID) &&
+              userID !== currentUserInfo._id) ||
+            (!currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
+              userID !== currentUserInfo._id)
               ? 'none'
               : ''
         }
@@ -129,24 +173,67 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
       {
         key: '2',
         label:
-          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
           userID === currentUserInfo._id
             ? 'Leave group'
-            : 'Remove member',
+            : currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
+              'Remove member',
         danger: true,
         icon:
-          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
           userID === currentUserInfo._id ? (
             <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
           ) : (
-            <FontAwesomeIcon icon={faUserSlash} />
+            currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) && (
+              <FontAwesomeIcon icon={faUserSlash} />
+            )
           ),
         style: {
           display:
-            currentConversation.admins?.some((admin) => admin._id === userID) &&
-            userID !== currentUserInfo._id
+            (currentConversation.admins?.some((admin) => admin._id === userID) &&
+              userID !== currentUserInfo._id) ||
+            (!currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
+              userID !== currentUserInfo._id)
               ? 'none'
               : ''
+        },
+        onClick: () => {
+          if (userID === currentUserInfo._id) {
+            const message = {
+              _id: uuidv4().replace(/-/g, ''),
+              conversation_id: conversationID,
+              sender: {
+                _id: currentUserInfo._id,
+                user_image: currentUserInfo.user_image,
+                name: currentUserInfo.name
+              },
+              isSending: true,
+              type: 'notification',
+              content: 'left the group',
+              createdAt: new Date()
+            };
+
+            chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+            mutateLeaveGroup(conversationID);
+          } else {
+            void messageService.removeMember(currentConversation._id, userID).then((res) => {
+              chatSocket.emit(Socket.REMOVE_MEMBER, res.data.metadata);
+              mutateConversation({ ...res.data.metadata, typeUpdate: 'remove_member' });
+              const message = {
+                _id: uuidv4().replace(/-/g, ''),
+                conversation_id: conversationID,
+                sender: {
+                  _id: currentUserInfo._id,
+                  user_image: currentUserInfo.user_image,
+                  name: currentUserInfo.name
+                },
+                isSending: true,
+                type: 'notification',
+                content: `removed ${username}`,
+                createdAt: new Date()
+              };
+
+              chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+            });
+          }
         }
       }
     ];
@@ -302,7 +389,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
                   </div>
                 </div>
                 <div className='options rounded-full'>
-                  <Dropdown menu={{ items: memberOptions(member._id) }} trigger={['click']}>
+                  <Dropdown menu={{ items: memberOptions(member._id, member.name) }} trigger={['click']}>
                     <FontAwesomeIcon
                       className='text-lg cursor-pointer py-1 px-3 '
                       icon={faEllipsisVertical}
@@ -390,7 +477,9 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
     <ConfigProvider
       theme={{ components: { Collapse: { headerPadding: '8px 12px', contentPadding: '0px 12px' } } }}>
       <StyleProvider theme={themeColorSet}>
-        {openAvatar && <ChangeAvatarGroup image={currentConversation.image} />}
+        {openAvatar && (
+          <ChangeAvatarGroup image={currentConversation.image} conversationID={conversationID} />
+        )}
         {isLoadingCurrentConversation ? (
           <>
             <div
