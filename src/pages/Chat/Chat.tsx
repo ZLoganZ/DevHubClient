@@ -1,19 +1,27 @@
-import { Col, ConfigProvider, Dropdown, Row, Space, MenuProps, Badge, App } from 'antd';
+import { Col, ConfigProvider, Dropdown, Row, Space, type MenuProps, Badge, App } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSnowflake, faComment, faUser, faBell, faGear, faVideo } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSnowflake,
+  faComment,
+  faUser,
+  faBell,
+  faGear,
+  faVideo,
+  faCloudSun
+} from '@fortawesome/free-solid-svg-icons';
 import { faMoon } from '@fortawesome/free-regular-svg-icons';
-import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useParams } from 'react-router-dom';
 
-import ConversationList from '@/components/ChatComponents/ConversationList';
-import LoadingConversation from '@/components/Loading/LoadingConversation';
 import LoadingChat from '@/components/Loading/LoadingChat';
-import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import LoadingLogo from '@/components/Loading/LoadingLogo';
+import LoadingConversation from '@/components/Loading/LoadingConversation';
+import ConversationList from '@/components/ChatComponents/ConversationList';
+import EmptyChat from '@/components/ChatComponents/EmptyChat';
 import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
+import CalledList from '@/components/ChatComponents/CalledList';
 
 import {
   useConversationsData,
@@ -24,10 +32,10 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssChat';
-import CalledList from '@/components/ChatComponents/CalledList';
 
 const Chat = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -102,7 +110,7 @@ const Chat = () => {
   const OptionRender = useMemo(() => {
     switch (optionIndex) {
       case 0:
-        return <ConversationList conversations={conversations} selected={conversationID} />;
+        return <ConversationList conversations={conversations} selecting={conversationID} />;
       case 1:
         return <ContactList followers={followers ?? []} />;
       case 2:
@@ -142,7 +150,7 @@ const Chat = () => {
                         {options.map((option, index) => (
                           <div
                             key={index}
-                            className={`optionItem relative ${option.name}`}
+                            className={merge('optionItem relative', option.name)}
                             onClick={() => setOptionIndex(index)}
                             style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
                             <Badge

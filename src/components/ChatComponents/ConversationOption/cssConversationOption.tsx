@@ -30,6 +30,9 @@ const StyleProvider = styled.div`
       }
     }
   }
+  .name {
+    color: ${(props) => props.theme.colorText1};
+  }
 `;
 
 export default StyleProvider;

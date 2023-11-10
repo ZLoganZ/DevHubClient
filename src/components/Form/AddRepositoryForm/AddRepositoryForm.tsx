@@ -6,16 +6,21 @@ import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
 import StyleProvider from './cssAddRepositoryForm';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
-import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
+import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useGetRepository } from '@/hooks/fetch';
-import { RepositoryType } from '@/types';
+import { IRepository } from '@/types';
 
 interface IRepos {
-  repositories: RepositoryType[];
-  setRepositories: React.Dispatch<React.SetStateAction<RepositoryType[]>>;
+  repositories: IRepository[];
+  setRepositories: React.Dispatch<React.SetStateAction<IRepository[]>>;
+}
+
+interface IUserData {
+  accessTokenGitHub: string;
+  accessToken: string;
 }
 
 const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) => {
@@ -40,13 +45,14 @@ const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) 
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    let userData: any;
+    let userData: IUserData;
 
-    const handleMessage = (event: MessageEvent) => {
+    const handleMessage = (event: MessageEvent<IUserData>) => {
       if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
         userData = event.data;
         if (userData) {
           localStorage.setItem(GITHUB_TOKEN, userData.accessTokenGitHub);
+          localStorage.setItem(AUTHORIZATION, userData.accessToken);
           setAccess_token_github(userData.accessTokenGitHub);
         }
       }
@@ -84,9 +90,9 @@ const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) 
     }
   }, [access_token_github, repository, isLoadingRepository]);
 
-  const [repos, setRepos] = useState<RepositoryType[]>([]);
+  const [repos, setRepos] = useState<IRepository[]>([]);
 
-  const renderItemRepos = (item: RepositoryType, index: number) => {
+  const renderItemRepos = (item: IRepository, index: number) => {
     const colorLanguage = GithubColors.get(item.languages)?.color;
     return (
       <div

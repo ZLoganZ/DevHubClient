@@ -28,7 +28,7 @@ import {
   Skeleton,
   Col,
   Row,
-  MenuProps,
+  type MenuProps,
   Dropdown,
   Collapse,
   ConfigProvider,
@@ -36,7 +36,7 @@ import {
 } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import type { CollapseProps } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
@@ -45,14 +45,16 @@ import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
-import { ConversationType, MessageType } from '@/types';
+import { IConversation, IMessage } from '@/types';
 import StyleProvider from './cssConversationOption';
+import getImageURL from '@/util/getImageURL';
 
 interface IConversationOption {
   conversationID: string;
+  messages: IMessage[];
 }
 
-const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) => {
+const ConversationOption: React.FC<IConversationOption> = ({ conversationID, messages }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
@@ -65,8 +67,18 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
 
   const otherUser = useOtherUser(currentConversation);
 
-  const [images, setImages] = useState<any>([]);
   const [openAvatar, setOpenAvatar] = useState(false);
+  const [images, setImages] = useState<IMessage[]>([]);
+  const [audios, setAudios] = useState<IMessage[]>([]);
+  const [files, setFiles] = useState<IMessage[]>([]);
+  const [links, setLinks] = useState<IMessage[]>([]);
+
+  useEffect(() => {
+    setImages(messages.filter((message) => message.image));
+    setLinks([]);
+    setFiles([]);
+    setAudios([]);
+  }, [messages]);
 
   useEffect(() => {
     if (!visible && openAvatar) {
@@ -140,9 +152,10 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     ];
   };
 
-  const downloadImage = async (url: string) => {
+  const downloadImage = async (url?: string) => {
+    if (!url) return;
     const originalImage = url;
-    const image = await fetch(originalImage);
+    const image = await fetch(getImageURL(originalImage)!);
 
     //Split image name
     const nameSplit = originalImage.split('/');
@@ -159,7 +172,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     document.body.removeChild(link);
   };
 
-  const listItems = (items: any, icon: IconDefinition, description: string) => {
+  const listItems = (items: IMessage[], icon: IconDefinition, description: string) => {
     return (
       <div className='content'>
         {items.length === 0 ? (
@@ -173,19 +186,19 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           />
         ) : (
           <>
-            {items?.slice(0, 4).map((item: any, index: number) => (
+            {items.slice(0, 4).map((item, index) => (
               <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
                 <div className='left flex justify-between items-center'>
-                  <div className='image mr-2'>
+                  <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
                     <Image
-                      src={item.image}
+                      src={getImageURL(item.image, 'post')}
                       alt='image'
                       style={{
-                        height: '3.5rem',
-                        borderRadius: '10px',
-                        width: '3.5rem',
+                        width: '100%',
+                        height: '100%',
                         objectFit: 'cover'
                       }}
+                      preview={{ src: getImageURL(item.image) }}
                     />
                   </div>
                   <Space className='info' direction='vertical'>
@@ -214,22 +227,24 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                 </div>
               </div>
             ))}
-            <div
-              className='seeAll flex items-end justify-end'
-              style={{
-                color: themeColorSet.colorText2,
-                fontSize: '0.8rem',
-                textDecoration: 'underline'
-              }}>
-              <p className='cursor-pointer'>See all</p>
-            </div>
+            {items.length > 4 && (
+              <div
+                className='seeAll flex items-end justify-end'
+                style={{
+                  color: themeColorSet.colorText2,
+                  fontSize: '0.8rem',
+                  textDecoration: 'underline'
+                }}>
+                <p className='cursor-pointer'>See all</p>
+              </div>
+            )}
           </>
         )}
       </div>
     );
   };
 
-  const listImages = (items: MessageType[]) => {
+  const listImages = (items: IMessage[]) => {
     return listItems(items, faReImages, 'No images');
   };
 
@@ -245,7 +260,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     return listItems(items, faReFileAudio, 'No audio');
   };
 
-  const listMembers = (currentConversation: ConversationType) => {
+  const listMembers = (currentConversation: IConversation) => {
     return (
       <div className='pr-5 w-full'>
         <div className='listUser flex flex-col w-full pl-3' style={{ overflow: 'auto' }}>
@@ -333,17 +348,17 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     {
       key: '2',
       label: <span className='text-base font-semibold'>Files</span>,
-      children: listFiles(images)
+      children: listFiles(files)
     },
     {
       key: '3',
       label: <span className='text-base font-semibold'>Links</span>,
-      children: listLinks(images)
+      children: listLinks(links)
     },
     {
       key: '4',
       label: <span className='text-base font-semibold'>Audio</span>,
-      children: listAudio(images)
+      children: listAudio(audios)
     },
     {
       key: '5',
@@ -463,14 +478,16 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                         size={80}
                       />
                     ) : (
-                      <Avatar key={otherUser._id} user={otherUser} size={80} />
+                      <NavLink to={`/user/${otherUser._id}`}>
+                        <Avatar key={otherUser._id} user={otherUser} size={80} />
+                      </NavLink>
                     )}
                   </div>
-                  <div className='name'>
-                    <span className='font-semibold text-xl'>
-                      {currentConversation.name ?? otherUser.name}
-                    </span>
-                  </div>
+                  <span className='name font-semibold text-xl'>
+                    {currentConversation.name ?? (
+                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                    )}
+                  </span>
                 </Space>
               </Row>
               <Row className='mt-2' justify='center'>

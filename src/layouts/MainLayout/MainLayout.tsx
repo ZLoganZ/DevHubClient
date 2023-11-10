@@ -8,37 +8,35 @@ import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import StyleProvider from './cssMainLayout';
 
-interface IMainTemplate {
+interface IMainLayout {
   Component: React.ReactNode;
 }
 
-const MainLayout = ({ Component }: IMainTemplate) => {
+const MainLayout = ({ Component }: IMainLayout) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColor, themeColorSet } = getTheme();
 
   const { isLoadingCurrentUserInfo } = useCurrentUserInfo();
 
-  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
-
   document.title = 'DevHub';
-
-  if (isLoadingCurrentUserInfo) return <LoadingLogo />;
 
   return (
     <ConfigProvider theme={{ token: themeColor }}>
-      <StyleProvider className='abcdef' theme={themeColorSet}>
-        <Layout>
-          <Headers />
-          <Layout>
+      {isLoadingCurrentUserInfo ? (
+        <LoadingLogo />
+      ) : (
+        <StyleProvider theme={themeColorSet}>
+          <Layout hasSider>
             <Menu />
             <Layout>
+              <Headers />
               <FloatButton.BackTop />
               <Layout.Content className='xs:ml-0 ml-20'>{Component}</Layout.Content>
             </Layout>
           </Layout>
-        </Layout>
-      </StyleProvider>
+        </StyleProvider>
+      )}
     </ConfigProvider>
   );
 };

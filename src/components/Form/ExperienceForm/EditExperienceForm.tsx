@@ -5,14 +5,15 @@ import { DatePicker, message } from 'antd';
 
 import StyleProvider from './cssAddExperienceForm';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ExperienceType } from '@/types';
+import { IExperience } from '@/types';
 
 interface IEditExperience {
-  experiences: ExperienceType[];
-  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
-  itemCurrent: ExperienceType;
+  experiences: IExperience[];
+  setExperiences: React.Dispatch<React.SetStateAction<IExperience[]>>;
+  itemCurrent: IExperience;
   indexCurrent: number;
 }
 
@@ -153,7 +154,7 @@ const EditExperienceForm: React.FC<IEditExperience> = ({
             ]}
           />
           <button
-            className={'untilButton ml-8 px-4 py-2 rounded-md' + (untilNow ? ' untilActive' : '')}
+            className={merge('untilButton ml-8 px-4 py-2 rounded-md', untilNow && ' untilActive')}
             onClick={(e) => {
               if (!untilNow) {
                 e.currentTarget.classList.add('untilActive');

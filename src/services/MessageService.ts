@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { BaseService } from './BaseService';
 import {
-  CalledType,
-  ConversationType,
-  CreateConversationDataType,
-  CreateMessageDataType,
-  MessageType,
-  ResponseType,
-  SocketCallType
+  ICalled,
+  IConversation,
+  ICreateConversation,
+  ICreateMessage,
+  IMessage,
+  IResponse,
+  ISocketCall
 } from '@/types';
 
 class MessageService extends BaseService {
@@ -15,21 +15,19 @@ class MessageService extends BaseService {
     super();
   }
 
-  getConversations = (): Promise<AxiosResponse<ResponseType<ConversationType[]>>> => {
+  getConversations = (): Promise<AxiosResponse<IResponse<IConversation[]>>> => {
     return this.get(`/chat/conversations`);
   };
 
-  createConversation = (
-    payload: CreateConversationDataType
-  ): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+  createConversation = (payload: ICreateConversation): Promise<AxiosResponse<IResponse<IConversation>>> => {
     return this.post(`/chat/conversations/create`, payload);
   };
 
-  getConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+  getConversation = (payload: string): Promise<AxiosResponse<IResponse<IConversation>>> => {
     return this.get(`/chat/conversations/find/${payload}`);
   };
 
-  getCalled = (): Promise<AxiosResponse<ResponseType<CalledType[]>>> => {
+  getCalled = (): Promise<AxiosResponse<IResponse<ICalled[]>>> => {
     return this.get(`/chat/conversations/called`);
   };
 
@@ -37,7 +35,7 @@ class MessageService extends BaseService {
     payload: string,
     page: number,
     extend?: number
-  ): Promise<AxiosResponse<ResponseType<MessageType[]>>> => {
+  ): Promise<AxiosResponse<IResponse<IMessage[]>>> => {
     return this.get(`/chat/conversations/${payload}/messages?page=${page}&extend=${extend}`);
   };
 
@@ -45,22 +43,19 @@ class MessageService extends BaseService {
     return this.post(`/chat/conversations/${payload}/seen`, {});
   };
 
-  sendMessage = (payload: CreateMessageDataType) => {
+  sendMessage = (payload: ICreateMessage) => {
     return this.post(`/chat/messages`, payload);
   };
 
-  getToken = (
-    payload: string | undefined,
-    type: string
-  ): Promise<AxiosResponse<ResponseType<SocketCallType>>> => {
+  getToken = (payload: string | undefined, type: string): Promise<AxiosResponse<IResponse<ISocketCall>>> => {
     return this.get(`/chat/token/?conversation_id=${payload}&type=${type}`);
   };
 
-  deleteConversation = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+  deleteConversation = (payload: string): Promise<AxiosResponse<IResponse<IConversation>>> => {
     return this.delete(`/chat/conversations/${payload}`);
   };
 
-  leaveGroup = (payload: string): Promise<AxiosResponse<ResponseType<ConversationType>>> => {
+  leaveGroup = (payload: string): Promise<AxiosResponse<IResponse<IConversation>>> => {
     return this.put(`/chat/conversations/${payload}/leave`);
   };
 }

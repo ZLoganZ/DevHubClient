@@ -1,7 +1,7 @@
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 
-const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(obj: T): T => {
-  const defaultValues: UserInfoType | PostType = {
+const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
+  const defaultValues: IUserInfo | IPost = {
     _id: '',
     email: '',
     phone_number: '',

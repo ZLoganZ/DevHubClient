@@ -2,11 +2,11 @@ import { ConfigProvider, Input, Select } from 'antd';
 
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import StyleProvider from './cssGroupChatModal';
 
 interface IGroupChatModal {
-  users: UserInfoType[];
+  users: IUserInfo[];
   setValue: React.Dispatch<React.SetStateAction<string[]>>;
   setName: React.Dispatch<React.SetStateAction<string>>;
 }

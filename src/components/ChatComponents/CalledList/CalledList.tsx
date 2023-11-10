@@ -9,7 +9,8 @@ import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import CalledBox from '@/components/ChatComponents/CalledBox';
 import { useGetCalled } from '@/hooks/fetch';
-import { CalledType } from '@/types';
+import { ICalled } from '@/types';
+
 
 const CalledList = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -18,7 +19,7 @@ const CalledList = () => {
   const { themeColorSet } = getTheme();
 
   const { calledList, isLoadingGetCalled } = useGetCalled();
-  const [calledLists, setCalledLists] = useState<CalledType[] | undefined>(calledList);
+  const [calledLists, setCalledLists] = useState<ICalled[] | undefined>(calledList);
   useEffect(() => {
     setCalledLists(calledList);
   }, [calledList]);

@@ -8,20 +8,20 @@ import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import CommentInput from '@/components/PostProperties/CommentInput';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useLikePost, useSavePost, useSharePost } from '@/hooks/mutation';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import { openModal } from '@/redux/Slice/ModalHOCSlice';
 import StyleProvider from './cssPostFooter';
 
-interface IPostFooter {
-  post: PostType;
-  postAuthor: UserInfoType;
+interface IPostFooterProps {
+  post: IPost;
+  postAuthor: IUserInfo;
   isPostShare?: boolean;
-  currentUser: UserInfoType;
+  currentUser: IUserInfo;
 }
 
-const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, currentUser }) => {
+const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare, currentUser }) => {
   const changed = useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
@@ -76,7 +76,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
         <div className='like_share flex justify-between w-1/5 xs:w-2/5'>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(likeNumber)} like{likeNumber > 1 ? 's' : ''}
+              {ConvertNumber(likeNumber)} like{likeNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -100,7 +100,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
           </Space>
           <Space className='like' direction='vertical' align='center' hidden={isPostShare}>
             <span>
-              {ConvertNumber(shareNumber)} share{shareNumber > 1 ? 's' : ''}
+              {ConvertNumber(shareNumber)} share{shareNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -126,7 +126,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
         <div className='comment_view flex justify-between w-1/3 xs:w-6/12'>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(commentNumber)} comment{commentNumber > 1 ? 's' : ''}
+              {ConvertNumber(commentNumber)} comment{commentNumber > 1 && 's'}
             </span>
             <Avatar
               className='item'
@@ -153,7 +153,7 @@ const PostFooter: React.FC<IPostFooter> = ({ post, postAuthor, isPostShare, curr
           </Space>
           <Space className='like' direction='vertical' align='center'>
             <span>
-              {ConvertNumber(viewNumber)} view{viewNumber > 1 ? 's' : ''}
+              {ConvertNumber(viewNumber)} view{viewNumber > 1 && 's'}
             </span>
             <Space>
               <Avatar

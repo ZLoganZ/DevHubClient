@@ -3,7 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import { getTheme } from '@/util/theme';
-import {textToHTMLWithAllSpecialCharacter} from '@/util/convertText';
+import { textToHTML } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -33,10 +33,9 @@ const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, conten
       const text = event.clipboardData!.getData('text/plain');
 
       // Instead parse and insert HTML
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
+      const doc = new DOMParser().parseFromString(textToHTML(text), 'text/html');
 
-      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
+      document.getSelection()!.getRangeAt(0).insertNode(doc.body);
     });
   }, []);
 
@@ -58,11 +57,8 @@ const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, conten
       <ReactQuill
         ref={ReactQuillRef}
         value={value}
-        preserveWhitespace
         onChange={setValue}
-        modules={{
-          toolbar: toolbarOptions
-        }}
+        modules={{ toolbar: toolbarOptions }}
         placeholder={placeholder ?? 'Add a Content'}
         theme='snow'
       />

@@ -5,21 +5,21 @@ import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
-import { clsx } from 'clsx';
 
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
-import { IS_TYPING, PRIVATE_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
-import { EmojisType, MessageType, UserInfoType } from '@/types';
+import { IEmoji, IMessage, IUserInfo } from '@/types';
 import { commonColor } from '@/util/cssVariable';
 
 interface IChatInput {
   conversationID: string;
-  members: UserInfoType[];
+  members: IUserInfo[];
 }
 
 const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
@@ -60,15 +60,15 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
       createdAt: new Date()
     };
 
-    chatSocket.emit(PRIVATE_MSG, {
+    chatSocket.emit(Socket.PRIVATE_MSG, {
       conversationID: message.conversation_id,
       message
     });
 
-    chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
+    chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 
     setId(uuidv4().replace(/-/g, ''));
-    mutateSendMessage(message as unknown as MessageType);
+    mutateSendMessage(message as unknown as IMessage);
   };
 
   const handleUpload = async () => {
@@ -102,11 +102,11 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
     return isLt2M;
   };
 
-  const checkEmpty = messageContent === '' && !file;
+  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !file;
 
   const handleStopTyping = useCallback(
     debounce(
-      () => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id, members }),
+      () => chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members }),
       1000
     ),
     []
@@ -126,7 +126,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
 
               return response.json();
             }}
-            onEmojiSelect={(emoji: EmojisType) => {
+            onEmojiSelect={(emoji: IEmoji) => {
               setCursor(cursor + emoji.native.length);
               setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
             }}
@@ -158,7 +158,11 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
               setCursor(cursorPosition ?? 0);
             }}
             onChange={(e) => {
-              chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id, members });
+              chatSocket.emit(Socket.IS_TYPING, {
+                conversationID,
+                userID: currentUserInfo._id,
+                members
+              });
               setMessage(e.currentTarget.value);
               handleStopTyping();
               // get cursor position
@@ -168,7 +172,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
             onPressEnter={() => handleSubmit(messageContent)}
             suffix={
               <span
-                className={clsx(
+                className={merge(
                   'transition-all duration-300',
                   checkEmpty
                     ? 'text-gray-400 cursor-not-allowed'

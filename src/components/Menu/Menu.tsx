@@ -95,7 +95,7 @@ const MenuMain = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={240}
+        width={200}
         className={showMenu ? 'sider' : 'hidden'}
         style={{
           overflow: 'auto',
@@ -110,7 +110,6 @@ const MenuMain = () => {
         onMouseLeave={handleMouseLeave}>
         <Menu
           mode='inline'
-          defaultSelectedKeys={[key]}
           selectedKeys={[key]}
           style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg1 }}
           className='min-h-full max-h-fit'
@@ -175,8 +174,8 @@ const MenuMain = () => {
             {
               type: 'divider',
               style: {
-                backgroundColor: themeColorSet.colorBg3,
-                height: '2px'
+                backgroundColor: themeColorSet.colorBgReverse4,
+                height: '1px'
               }
             },
             {

@@ -226,7 +226,7 @@ export const CommunityAdmin = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -275,7 +275,7 @@ export const CommunityAdmin = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -504,7 +504,7 @@ export const CommunityMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -553,7 +553,7 @@ export const CommunityMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -782,7 +782,7 @@ export const CommunityNoMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -831,7 +831,7 @@ export const CommunityNoMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>

@@ -11,12 +11,12 @@ import { capitalizeFirstLetter } from '@/util/convertText';
 import { getTheme } from '@/util/theme';
 import { getDateMonth } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { CalledType } from '@/types';
+import { ICalled } from '@/types';
 
 import StyleProvider from './cssCalledBox';
 
 interface IConversationBox {
-  called: CalledType;
+  called: ICalled;
   selected?: boolean;
 }
 
@@ -89,7 +89,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
             <div className='flex justify-between items-center mb-1'>
               <div>
                 <p
-                  className={`text-md font-medium`}
+                  className='text-md font-medium'
                   style={{
                     color: themeColorSet.colorText1
                   }}>
@@ -103,10 +103,8 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
                   align='center'
                   style={{ color: themeColorSet.colorText3 }}>
                   <div className='icon'>{notification[called.type][stateCalled(called.sender._id)]}</div>
-                  <div className='state-called'>
-                    {capitalizeFirstLetter(stateCalled(called.sender._id))}
-                  </div>{' '}
-                  •<div className='time'>{getDateMonth(called.createdAt)}</div>
+                  <div className='state-called'>{capitalizeFirstLetter(stateCalled(called.sender._id))}</div>
+                  &nbsp; •<div className='time'>{getDateMonth(called.createdAt)}</div>
                 </Space>
               </div>
               <div className='call'>{notification[called.type].call}</div>

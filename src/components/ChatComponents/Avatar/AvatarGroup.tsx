@@ -1,13 +1,12 @@
-import clsx from 'clsx';
-
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 
 interface IAvatarGroup {
-  users: UserInfoType[];
+  users: IUserInfo[];
   size?: number;
   image?: string;
 }
@@ -58,7 +57,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
         slicedUsers.map((user, index) => (
           <div
             key={user._id}
-            className={clsx('absolute inline-block rounded-full overflow-hidden', positionMap[index])}
+            className={merge('absolute inline-block rounded-full overflow-hidden', positionMap[index])}
             style={{ width: size / 2, height: size / 2 }}>
             {index < 3 ? (
               <img
@@ -91,7 +90,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
       )}
       {isActive && (
         <span
-          className={clsx(
+          className={merge(
             'absolute block rounded-full bg-green-500 ring-2 ring-white',
             image ? 'top-0 right-0' : '-top-1 -right-1'
           )}

@@ -1,6 +1,6 @@
 import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { MessageType } from '@/types';
+import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
 import ApplyDefaults from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
@@ -343,7 +343,6 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
       return data.metadata;
     },
     staleTime: Infinity,
-
     enabled: !!conversationID
   });
 
@@ -398,10 +397,7 @@ export const useFollowersData = (userID: string) => {
  */
 export const useMessagesData = (conversationID: string) => {
   const queryClient = useQueryClient();
-  const messages = queryClient.getQueryData<InfiniteData<MessageType[], number>>([
-    'messages',
-    conversationID
-  ]);
+  const messages = queryClient.getQueryData<InfiniteData<IMessage[], number>>(['messages', conversationID]);
   let extend = 0;
   if (messages) {
     if (messages.pages[messages.pages.length - 1].length >= 30) {
@@ -418,7 +414,7 @@ export const useMessagesData = (conversationID: string) => {
       },
       initialPageParam: 1,
       getPreviousPageParam: (lastPage, _, lastPageParam) => {
-        if (lastPage.length === 0 || lastPage.length < 30) {
+        if (lastPage.length < 30) {
           return undefined;
         }
         return lastPageParam + 1;
@@ -482,10 +478,8 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
 };
 
 /**
- * The `useGetCalled` function is a custom hook that fetches and returns data for a specific type of
- * call.
- * @param {string} type - The `type` parameter is a string that represents the type of call. It could
- * be "video", "voice", or any other type of call.
+ * The function `useGetCalled` is a custom hook that fetches data from an API endpoint and returns the
+ * loading status, error status, fetched data, and fetching status.
  * @returns The function `useGetCalled` returns an object with the following properties:
  * - `isLoadingGetCalled` is a boolean that indicates whether the data is still loading.
  * - `isErrorMessageCall` is a boolean that indicates whether there is an error.

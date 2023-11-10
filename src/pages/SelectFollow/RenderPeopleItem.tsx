@@ -97,7 +97,7 @@ const RenderPeopleItem = ({ item }: any) => {
               setFollow(!follow);
               mutateFollowUser(item._id);
             }}>
-            {' '}
+            &nbsp;
             {!follow ? 'Follow' : 'Following'}
           </ButtonActiveHover>
         </div>

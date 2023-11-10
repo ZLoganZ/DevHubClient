@@ -1,17 +1,17 @@
 import { AxiosResponse } from 'axios';
 
-import { ImageResponse, ResponseType } from '@/types';
+import { ImageResponse, IResponse } from '@/types';
 import { BaseService } from './BaseService';
 
 class ImageService extends BaseService {
   constructor() {
     super();
   }
-  uploadImage = (data: FormData): Promise<AxiosResponse<ResponseType<ImageResponse>>> => {
+  uploadImage = (data: FormData): Promise<AxiosResponse<IResponse<ImageResponse>>> => {
     return this.post(`/images/upload-one`, data);
   };
 
-  uploadImages = (data: FormData): Promise<AxiosResponse<ResponseType<ImageResponse[]>>> => {
+  uploadImages = (data: FormData): Promise<AxiosResponse<IResponse<ImageResponse[]>>> => {
     return this.post(`/images/upload-multiple`, data);
   };
 }

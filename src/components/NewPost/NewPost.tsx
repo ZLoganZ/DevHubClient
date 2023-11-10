@@ -15,16 +15,16 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
-import { textToHTMLWithAllSpecialCharacter } from '@/util/convertText';
+import { textToHTML } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
-import { EmojisType, UserInfoType } from '@/types';
+import { IEmoji, IUserInfo } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
 
 interface INewPost {
-  currentUser: UserInfoType;
+  currentUser: IUserInfo;
 }
 
 //===================================================
@@ -56,10 +56,9 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
       const text = event.clipboardData!.getData('text/plain');
 
       // Instead parse and insert HTML
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
+      const doc = new DOMParser().parseFromString(textToHTML(text), 'text/html');
 
-      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
+      document.getSelection()!.getRangeAt(0).insertNode(doc.body);
     });
   }, []);
 
@@ -165,11 +164,8 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
               <ReactQuill
                 ref={ReactQuillRef}
                 value={content}
-                preserveWhitespace
                 onChange={setContent}
-                modules={{
-                  toolbar: toolbarOptions
-                }}
+                modules={{ toolbar: toolbarOptions }}
                 placeholder='Add a Content'
                 theme='snow'
               />
@@ -188,7 +184,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
                       return response.json();
                     }}
-                    onEmojiSelect={(emoji: EmojisType) => {
+                    onEmojiSelect={(emoji: IEmoji) => {
                       ReactQuillRef.current
                         ?.getEditor()
                         .insertText(

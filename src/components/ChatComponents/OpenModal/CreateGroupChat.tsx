@@ -7,12 +7,12 @@ import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
-import { NEW_CONVERSATION } from '@/util/constants/SettingSystem';
+import { IUserInfo } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
 import { useReceiveConversation } from '@/hooks/mutation';
 
 interface IGroupModal {
-  users: UserInfoType[];
+  users: IUserInfo[];
 }
 
 const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
@@ -46,7 +46,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
       .then((res) => {
         setIsLoading(false);
 
-        chatSocket.emit(NEW_CONVERSATION, res.data.metadata);
+        chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
 
         mutateReceiveConversation(res.data.metadata);
 

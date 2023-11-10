@@ -9,16 +9,16 @@ import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
 import { setHandleInput } from '@/redux/Slice/CommentSlice';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPostDetail';
 import { useMediaQuery } from 'react-responsive';
-interface IPost {
-  post: PostType;
-  postAuthor: UserInfoType;
+interface IPostDetailProps {
+  post: IPost;
+  postAuthor: IUserInfo;
   isDetail?: boolean;
 }
 
-const MyPostDetail: React.FC<IPost> = ({ post, postAuthor, isDetail }) => {
+const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();

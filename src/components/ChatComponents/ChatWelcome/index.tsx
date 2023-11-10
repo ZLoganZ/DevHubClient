@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import { getTheme } from '@/util/theme';
 import StyleProvider from './cssChatWelcome';
 
@@ -11,8 +11,8 @@ type TypeofConversation = 'private' | 'group';
 interface IChatWelcome {
   type: TypeofConversation;
   name: string;
-  otherUser: UserInfoType;
-  members: UserInfoType[];
+  otherUser: IUserInfo;
+  members: IUserInfo[];
   image?: string;
 }
 
