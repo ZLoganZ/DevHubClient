@@ -3,7 +3,7 @@ import { faPhone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import { Space } from 'antd';
 
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { videoChat, audioCall } from '@/util/call';
 import { capitalizeFirstLetter } from '@/util/convertText';
@@ -81,7 +81,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
             image={called.conversation_id.image}
           />
         ) : (
-          <Avatar key={called.conversation_id._id} user={otherUser} />
+          <AvatarMessage key={called.conversation_id._id} user={otherUser} />
         )}
 
         <div className='min-w-0 flex-1'>

@@ -9,8 +9,8 @@ import { debounce } from 'lodash';
 // import { LoadingOutlined } from '@ant-design/icons';
 
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
-import { useCurrentConversationData, useCurrentUserInfo, useMessagesData } from '@/hooks/fetch';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/hooks/fetch';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
 import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
@@ -56,7 +56,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   const { currentUserInfo } = useCurrentUserInfo();
   const { currentConversation } = useCurrentConversationData(conversationID);
   const { messages, isLoadingMessages, fetchPreviousMessages, isFetchingPreviousPage, hasPreviousMessages } =
-    useMessagesData(conversationID);
+    useMessages(conversationID);
 
   const otherUser = useOtherUser(currentConversation);
 
@@ -330,37 +330,49 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     if (index === 0) return false;
     if (!messArr) return false;
 
-    const isSameSender = message.sender._id === messArr[index - 1].sender._id;
+    const preMessage = messArr[index - 1];
+    if (preMessage.type === 'notification') return false;
+
+    const isSameSender = message.sender._id === preMessage.sender._id;
     if (!isSameSender) return false;
 
-    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() < 60000;
+    return new Date(message.createdAt).getTime() - new Date(preMessage.createdAt).getTime() < 60000;
   }, []);
 
   const isNextMesGroup = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === messArr.length - 1) return false;
     if (!messArr) return false;
 
-    const isSameSender = message.sender._id === messArr[index + 1].sender._id;
+    const nextMessage = messArr[index + 1];
+    if (nextMessage.type === 'notification') return false;
+
+    const isSameSender = message.sender._id === nextMessage.sender._id;
     if (!isSameSender) return false;
 
-    return new Date(messArr[index + 1].createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
+    return new Date(nextMessage.createdAt).getTime() - new Date(message.createdAt).getTime() < 60000;
   }, []);
 
   const isMoreThan10Min = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === 0) return true;
     if (!messArr) return false;
 
-    return new Date(message.createdAt).getTime() - new Date(messArr[index - 1].createdAt).getTime() > 600000;
+    const preMessage = messArr[index - 1];
+
+    return new Date(message.createdAt).getTime() - new Date(preMessage.createdAt).getTime() > 600000;
   }, []);
 
   const isAdmin = useCallback(
-    (message: IMessage) => {
-      return (
-        currentConversation.admins &&
-        currentConversation.admins.some((admin) => admin._id === message.sender._id)
-      );
+    (userID: string) => {
+      return currentConversation.admins.some((admin) => admin._id === userID);
     },
-    [currentConversation.admins]
+    [currentConversation]
+  );
+
+  const isCreator = useCallback(
+    (userID: string) => {
+      return currentConversation.creator === userID;
+    },
+    [currentConversation]
   );
 
   return (
@@ -385,7 +397,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   />
                 ) : (
                   <NavLink to={`/user/${otherUser._id}`}>
-                    <Avatar key={otherUser._id} user={otherUser} />
+                    <AvatarMessage key={otherUser._id} user={otherUser} />
                   </NavLink>
                 )}
                 <div className='flex flex-col'>
@@ -453,10 +465,11 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                     isLastMes={index === messArr.length - 1}
                     message={message}
                     seen={currentConversation.seen}
+                    isAdmin={isAdmin(message.sender._id)}
+                    isCreator={isCreator(message.sender._id)}
                     isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
                     isNextMesGroup={isNextMesGroup(message, index, messArr)}
                     isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
-                    isAdmin={isAdmin(message)}
                   />
                 ))}
                 <div className='pb-1' ref={bottomRef} />
@@ -493,7 +506,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           </Col>
           {displayOption && (
             <Col span={8} className='h-full'>
-              <ConversationOption conversationID={conversationID} messages={messages} />
+              <ConversationOption conversationID={conversationID} />
             </Col>
           )}
         </Row>

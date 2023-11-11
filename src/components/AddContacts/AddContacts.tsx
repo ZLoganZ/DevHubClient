@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Dropdown, Button, Input, Avatar, ConfigProvider } from 'antd';
 import { MenuInfo } from 'rc-menu/es/interface';
-import { faTrashCan, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
 
@@ -203,7 +203,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
                 onClick={() => {
                   handleDelete(index);
                 }}>
-                <FontAwesomeIcon icon={faTrashCan} size='lg' />
+                <FontAwesomeIcon icon={faTrash} size='lg' />
               </Button>
             </div>
           ))}

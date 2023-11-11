@@ -7,7 +7,7 @@ import { SearchOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import CreateGroupChat from '@/components/ChatComponents/OpenModal/CreateGroupChat';
 import { useAppSelector } from '@/hooks/special';
@@ -138,7 +138,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
               <div className='flex justify-between items-center'>
                 <NavLink to={`/user/${currentUserInfo._id}`}>
                   <div className='avatar mr-3'>
-                    <Avatar key={currentUserInfo._id} user={currentUserInfo} />
+                    <AvatarMessage key={currentUserInfo._id} user={currentUserInfo} />
                   </div>
                 </NavLink>
                 <div className='name_career'>
@@ -184,7 +184,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
                     className='rounded-full '
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    prefix={<SearchOutlined className='text-xl' />}
+                    prefix={<SearchOutlined className='text-xl mr-1' />}
                   />
                 </ConfigProvider>
               </div>

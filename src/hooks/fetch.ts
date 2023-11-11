@@ -1,4 +1,4 @@
-import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
@@ -395,7 +395,7 @@ export const useFollowersData = (userID: string) => {
  * - `isFetchingMessages` is a boolean that indicates whether the query is currently fetching.
  * - `refetchMessages` is a function that refetches the messages data.
  */
-export const useMessagesData = (conversationID: string) => {
+export const useMessages = (conversationID: string) => {
   const queryClient = useQueryClient();
   const messages = queryClient.getQueryData<InfiniteData<IMessage[], number>>(['messages', conversationID]);
   let extend = 0;
@@ -439,6 +439,56 @@ export const useMessagesData = (conversationID: string) => {
     hasPreviousMessages: hasPreviousPage,
     fetchPreviousMessages: fetchPreviousPage,
     isFetchingPreviousPage: isFetchingPreviousPage
+  };
+};
+
+export const useMessagesImage = (conversationID: string) => {
+  const queryClient = useQueryClient();
+  const messages = queryClient.getQueryData<InfiniteData<IMessage[], number>>([
+    'messagesImage',
+    conversationID
+  ]);
+  let extend = 0;
+  if (messages) {
+    if (messages.pages[messages.pages.length - 1].length >= 30) {
+      extend = messages.pages[messages.pages.length - 1].length - 30;
+    }
+  }
+
+  const { data, isPending, isError, isFetching, hasPreviousPage, fetchPreviousPage, isFetchingPreviousPage } =
+    useInfiniteQuery({
+      queryKey: ['messagesImage', conversationID],
+      queryFn: async ({ pageParam }) => {
+        const { data } = await messageService.getMessagesWithImage(conversationID, pageParam, extend);
+        return data.metadata;
+      },
+      initialPageParam: 1,
+      getPreviousPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length < 30) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+      getNextPageParam: (_, __, firstPageParam) => {
+        if (firstPageParam <= 1) {
+          return undefined;
+        }
+        return firstPageParam - 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity
+    });
+
+  return {
+    isLoadingMessagesImage: isPending,
+    isErrorMessagesImage: isError,
+    messagesImage: data!,
+    isFetchingMessagesImage: isFetching,
+    hasPreviousMessagesImage: hasPreviousPage,
+    fetchPreviousMessagesImage: fetchPreviousPage,
+    isFetchingPreviousPageImage: isFetchingPreviousPage
   };
 };
 

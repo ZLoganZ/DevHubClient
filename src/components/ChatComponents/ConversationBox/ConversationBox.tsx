@@ -7,14 +7,14 @@ import {
   faPhone,
   faRightFromBracket,
   faSquareCheck,
-  faTrashCan,
+  faTrash,
   faUser,
   faVideoCamera
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquareCheck as faReSquareCheck } from '@fortawesome/free-regular-svg-icons';
 
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { audioCall, videoChat } from '@/util/call';
@@ -91,7 +91,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       danger: true,
       key: '3',
       onClick: () => mutateLeaveGroup(conversation._id),
-      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrashCan} />
+      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrash} />
     }
   ];
 
@@ -141,7 +141,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
             {conversation.type === 'group' ? (
               <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
             ) : (
-              <Avatar key={conversation._id} user={otherUser} />
+              <AvatarMessage key={conversation._id} user={otherUser} />
             )}
             <div className='min-w-0 flex-1'>
               <div className='focus:outline-none'>
