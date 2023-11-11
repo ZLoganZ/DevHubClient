@@ -91,8 +91,9 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
       {isActive && (
         <span
           className={merge(
-            'absolute block rounded-full bg-green-500 ring-2 ring-white',
-            image ? 'top-0 right-0' : '-top-1 -right-1'
+            'absolute block rounded-full bg-green-500 ring-white',
+            image ? 'top-0 right-0' : '-top-1 -right-1',
+            size / 4 < 20 ? 'ring-2' : 'ring-4'
           )}
           style={{ width: size / 4, height: size / 4 }}
         />

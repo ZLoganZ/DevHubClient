@@ -1,21 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { Input } from 'antd';
 
-import getImageURL from '@/util/getImageURL';
 import { Socket } from '@/util/constants/SettingSystem';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
-import AvatarGroupModal from '@/components/ChatComponents/Modal/AvatarGroup';
 import { messageService } from '@/services/MessageService';
+import { getTheme } from '@/util/theme';
 
-interface IChangeAvatarGroup {
+interface IChangeGroupName {
   conversationID: string;
-  image?: string;
+  name?: string;
 }
 
-const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID }) => {
+const ChangeGroupName: React.FC<IChangeGroupName> = ({ name, conversationID }) => {
+  const { themeColorSet } = getTheme();
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -23,26 +24,23 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const [avatar, setAvatar] = useState(
-    getImageURL(image, 'avatar') ?? '/images/DefaultAvatar/Empty_Group_Image.png'
-  );
-  const [fileAvatar, setFileAvatar] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const isChanged = useMemo(() => {
-    return !fileAvatar;
-  }, [fileAvatar]);
+  const [nameGroup, setNameGroup] = useState(name);
 
-  const handleChangeAvatar = (file: File) => {
-    setFileAvatar(file);
-    setAvatar(URL.createObjectURL(file));
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setNameGroup(e.target.value);
   };
+
+  const isChanged = useMemo(() => {
+    return nameGroup === name;
+  }, [nameGroup]);
 
   const onSubmit = () => {
     setIsLoading(true);
 
     messageService
-      .changeConversationImage(conversationID, fileAvatar!)
+      .changeConversationName(conversationID, nameGroup!)
       .then((res) => {
         setIsLoading(false);
         const message = {
@@ -55,7 +53,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
           },
           isSending: true,
           type: 'notification',
-          content: 'changed the group photo',
+          content: 'changed the group name',
           createdAt: new Date()
         };
 
@@ -63,7 +61,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
 
         chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
 
-        chatSocket.emit(Socket.CHANGE_CONVERSATION_IMAGE, res.data.metadata);
+        chatSocket.emit(Socket.CHANGE_CONVERSATION_NAME, res.data.metadata);
       })
       .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
@@ -72,8 +70,28 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
   useEffect(() => {
     dispatch(
       openModal({
-        title: 'Change group image',
-        component: <AvatarGroupModal avatar={avatar} setAvatar={handleChangeAvatar} />,
+        title: 'Change group name',
+        component: (
+          <div className='relative'>
+            <Input
+              className='pt-6 z-0'
+              id='name'
+              showCount
+              maxLength={30}
+              onChange={onChange}
+              size='large'
+              defaultValue={name}
+            />
+            <label
+              htmlFor='name'
+              className='absolute top-1 left-3 z-10 text-xs font-semibold'
+              style={{
+                color: themeColorSet.colorText2
+              }}>
+              Type group name
+            </label>
+          </div>
+        ),
         footer: (
           <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
@@ -86,9 +104,9 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
         )
       })
     );
-  }, [avatar, fileAvatar, isLoading]);
+  }, [name, isLoading, nameGroup]);
 
   return <></>;
 };
 
-export default ChangeAvatarGroup;
+export default ChangeGroupName;

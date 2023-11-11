@@ -3,7 +3,7 @@ import { ConfigProvider, Upload } from 'antd';
 import { useAppSelector } from '@/hooks/special';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
-import StyleProvider from './cssAvatarGroupModal';
+import StyleProvider from './cssAvatarGroup';
 
 interface IChangeAvatarGroup {
   avatar?: string;

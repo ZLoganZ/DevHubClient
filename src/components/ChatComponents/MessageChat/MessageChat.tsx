@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 // import { VariableSizeList as List } from 'react-window'
 // import AutoSizer from 'react-virtualized-auto-sizer'
 // import { LoadingOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/hooks/fetch';
@@ -27,6 +28,8 @@ import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
 import { toggleDisplayOption } from '@/redux/Slice/MessageSlice';
 import StyleProvider from './cssMessageChat';
+import { useSendMessage } from '@/hooks/mutation';
+import { capitalizeFirstLetter } from '@/util/convertText';
 
 interface IMessageChat {
   conversationID: string;
@@ -129,6 +132,32 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     if (messages.length - count === 1) scrollToBottom('auto');
     setCount(messages.length);
   }, [messages]);
+  const [id, setId] = useState(uuidv4().replace(/-/g, ''));
+  const { mutateSendMessage } = useSendMessage();
+
+  const handleSendEndCall = useCallback((conversation_id: string, type: string, status: string) => {
+    const message = {
+      _id: id,
+      conversation_id: conversation_id,
+      sender: {
+        _id: currentUserInfo._id,
+        user_image: currentUserInfo.user_image,
+        name: currentUserInfo.name
+      },
+      isSending: true,
+      content: `${capitalizeFirstLetter(type)} call ${status}`,
+      type: type,
+      createdAt: new Date()
+    };
+
+    chatSocket.emit(Socket.PRIVATE_MSG, {
+      conversationID: message.conversation_id,
+      message
+    });
+    console.log(message);
+    setId(uuidv4().replace(/-/g, ''));
+    mutateSendMessage(message as unknown as IMessage);
+  }, []);
 
   useEffect(() => {
     chatSocket.on(Socket.VIDEO_CALL, (data: ISocketCall) => {
@@ -424,7 +453,9 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   style={{ color: commonColor.colorBlue1 }}
                 />
                 <FontAwesomeIcon
-                  onClick={() => videoChat(conversationID)}
+                  onClick={() => {
+                    videoChat(conversationID);
+                  }}
                   className='video-call text-xl cursor-pointer'
                   icon={faVideoCamera}
                   style={{ color: commonColor.colorBlue1 }}

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
-import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
+import GroupChatModal from '@/components/ChatComponents/Modal/GroupChat';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { IUserInfo } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';

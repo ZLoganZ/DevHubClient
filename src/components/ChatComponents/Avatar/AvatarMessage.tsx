@@ -29,7 +29,7 @@ const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user }) => {
         <span
           className={merge(
             'absolute block rounded-full bg-green-500 ring-white top-0 right-0',
-            size / 4 < 10 ? 'ring-2' : 'ring-4'
+            size / 4 < 20  ? 'ring-2' : 'ring-4'
           )}
           style={{ width: size / 4, height: size / 4 }}
         />

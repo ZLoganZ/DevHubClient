@@ -23,7 +23,12 @@ import MessageChat from '@/components/ChatComponents/MessageChat';
 import ContactList from '@/components/ChatComponents/ContactList';
 import CalledList from '@/components/ChatComponents/CalledList';
 
-import { useConversationsData, useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
+import {
+  useConversationsData,
+  useCurrentConversationData,
+  useCurrentUserInfo,
+  useGetCalled
+} from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { getTheme } from '@/util/theme';
@@ -42,6 +47,7 @@ const Chat = () => {
   const { isLoadingCurrentUserInfo, currentUserInfo } = useCurrentUserInfo();
   const { conversations, isLoadingConversations } = useConversationsData();
   const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
+  const { calledList } = useGetCalled();
 
   const followers = useMemo(() => {
     return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
@@ -98,7 +104,7 @@ const Chat = () => {
     { name: 'new message', icon: faComment, count: notSeenCount },
     { name: 'contacts', icon: faUser, count: contactCount },
     { name: 'new notification', icon: faBell, count: 99 },
-    { name: 'missing call', icon: faVideo, count: 66 }
+    { name: 'missing call', icon: faVideo, count: calledList?.length ?? 0 }
   ];
 
   const OptionRender = useMemo(() => {
@@ -114,7 +120,7 @@ const Chat = () => {
       default:
         return <></>;
     }
-  }, [conversations, followers, conversationID, optionIndex]);
+  }, [conversations, followers, conversationID, optionIndex, calledList]);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -177,10 +183,12 @@ const Chat = () => {
                     </div>
                   </div>
                 </Col>
-                <Col span={5}>{OptionRender}</Col>
-                <Col span={18}>
+                <Col span={5} className='h-screen z-10'>
+                  {OptionRender}
+                </Col>
+                <Col span={18} className='pl-3 z-0'>
                   <div
-                    className='chatBox h-screen ml-3'
+                    className='chatBox h-screen'
                     style={{
                       borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
                       backgroundColor: themeColorSet.colorBg1

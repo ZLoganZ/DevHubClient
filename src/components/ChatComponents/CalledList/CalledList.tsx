@@ -1,6 +1,8 @@
 import { Col, Row, Skeleton, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useRef, useState } from 'react';
+import { Scrollbar } from 'react-scrollbars-custom';
 
 import StyleProvider from './cssCalledList';
 import { getTheme } from '@/util/theme';
@@ -8,7 +10,7 @@ import { useAppSelector } from '@/hooks/special';
 import CalledBox from '@/components/ChatComponents/CalledBox';
 import { useGetCalled } from '@/hooks/fetch';
 import { ICalled } from '@/types';
-import { useEffect, useState } from 'react';
+import { max } from 'lodash';
 
 const CalledList = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -22,8 +24,16 @@ const CalledList = () => {
     setCalledLists(calledList);
   }, [calledList]);
 
+  const listConRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    if (listConRef.current) {
+      setHeight(listConRef.current.clientHeight);
+    }
+  }, [calledLists]);
+
   return (
-    <StyleProvider theme={themeColorSet}>
+    <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingGetCalled ? (
         <Row className='contacts'>
           <Col span={24}>
@@ -68,11 +78,11 @@ const CalledList = () => {
           </Col>
         </Row>
       ) : (
-        <Row className='contacts'>
-          <Col span={24}>
+        <Row className='called h-full'>
+          <Col span={24} className='h-full'>
             <Row>
               <Space
-                className='myInfo flex justify-between items-center py-4 px-3 w-full'
+                className='flex justify-between items-center py-5 px-3 w-full'
                 style={{
                   borderColor: themeColorSet.colorBg4
                 }}>
@@ -92,17 +102,11 @@ const CalledList = () => {
                 </div>
               </Space>
             </Row>
-            <Row>
-              <div className='userActive px-3 w-full'>
-                <div
-                  className='listUser flex flex-col'
-                  style={{
-                    overflow: 'auto'
-                  }}>
-                  {calledLists?.map((called) => (
-                    <CalledBox key={called._id} called={called} />
-                  ))}
-                </div>
+            <Row className='h-[89%] ml-3'>
+              <div className='listConversation w-full h-full flex flex-col overflow-y-auto' ref={listConRef}>
+                {calledLists?.map((called) => (
+                  <CalledBox key={called._id} called={called} />
+                ))}
               </div>
             </Row>
           </Col>

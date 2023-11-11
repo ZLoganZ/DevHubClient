@@ -90,9 +90,9 @@ class MessageService extends BaseService {
 
   addMember = (
     conversationID: string,
-    memberID: string
+    members: string[]
   ): Promise<AxiosResponse<IResponse<IConversation>>> => {
-    return this.put(`/chat/conversations/${conversationID}/members`, [memberID]);
+    return this.put(`/chat/conversations/${conversationID}/members`, members);
   };
 
   removeMember = (

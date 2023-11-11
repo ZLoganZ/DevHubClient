@@ -9,6 +9,7 @@ import { useAppSelector } from '@/hooks/special';
 import { Socket } from '@/util/constants/SettingSystem';
 import { ISocketCall } from '@/types';
 import { ParticipantTile } from './ParticipantTile';
+import { useMutateMessageCall } from '@/hooks/mutation';
 
 const serverUrl = import.meta.env.VITE_LK_SERVER_URL;
 
@@ -16,6 +17,7 @@ export const VideoCall = () => {
   const conversationID = useParams<{ conversationID: string }>().conversationID;
 
   const { dataMessageCall: dataVideo, isLoadingMessageCall } = useMessageCall(conversationID, 'video');
+  const { mutateMessageCall } = useMutateMessageCall(conversationID, 'video');
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -59,6 +61,7 @@ export const VoiceCall = () => {
   const conversationID = useParams<{ conversationID: string }>().conversationID;
 
   const { dataMessageCall: dataAudio, isLoadingMessageCall } = useMessageCall(conversationID, 'audio');
+  const { mutateMessageCall } = useMutateMessageCall(conversationID, 'audio');
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
