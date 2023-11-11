@@ -15,6 +15,7 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { IConversation, IMessage } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';
 import {
+  useMutateConversation,
   useReceiveConversation,
   useReceiveLeaveGroup,
   useReceiveMessage,
@@ -41,6 +42,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
   const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
   const { mutateReceiveMessage } = useReceiveMessage(selected);
+  const { mutateConversation } = useMutateConversation();
 
   const [search, setSearch] = useState('');
   const [searchConversation, setSearchConversation] = useState<IConversation[]>(conversations);
@@ -68,6 +70,27 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
     });
     chatSocket.on(Socket.SEEN_MSG, (conversation: IConversation) => {
       mutateReceiveSeenConversation(conversation);
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_IMAGE, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'image' });
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_COVER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'cover_image' });
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_NAME, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'name' });
+    });
+    chatSocket.on(Socket.ADD_MEMBER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'add_member' });
+    });
+    chatSocket.on(Socket.REMOVE_MEMBER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'remove_member' });
+    });
+    chatSocket.on(Socket.COMMISSION_ADMIN, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'commission_admin' });
+    });
+    chatSocket.on(Socket.DECOMMISSION_ADMIN, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'remove_admin' });
     });
   }, []);
 

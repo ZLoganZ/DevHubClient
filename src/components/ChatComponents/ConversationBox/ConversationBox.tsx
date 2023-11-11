@@ -100,7 +100,10 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [conversation.lastMessage]);
 
   const senderName = useMemo(() => {
-    if (isOwn) return 'You: ';
+    if (isOwn) {
+      if (conversation.lastMessage.type === 'notification') return 'You ';
+      else return 'You: ';
+    }
 
     const lastMessageSenderName = conversation.lastMessage?.sender?.name;
     if (!lastMessageSenderName) return '';

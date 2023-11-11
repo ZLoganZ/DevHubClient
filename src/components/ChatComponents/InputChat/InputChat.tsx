@@ -60,10 +60,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
       createdAt: new Date()
     };
 
-    chatSocket.emit(Socket.PRIVATE_MSG, {
-      conversationID: message.conversation_id,
-      message
-    });
+    chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
 
     chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 

@@ -13,6 +13,7 @@ import {
   IPost,
   ISharePost,
   ISocketCall,
+  IUpdateConversation,
   IUpdatePost,
   IUserInfo,
   IUserUpdate
@@ -490,7 +491,7 @@ export const useReceiveMessage = (conversationID?: string) => {
         const index = newData.findIndex((item) => item._id === message.conversation_id);
 
         if (index !== -1) {
-          if (newData[index].lastMessage?._id !== message._id) {
+          if (newData[index].lastMessage?.sender._id !== message.sender._id) {
             if (conversationID === message.conversation_id) void PopMessage.play();
             else void NotiMessage.play();
           }
@@ -798,5 +799,215 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
     isLoadingMessageCall: isPending,
     isErrorMessageCall: isError,
     isSuccessMessageCall: isSuccess
+  };
+};
+
+export const useMutateConversation = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (payload: IUpdateConversation) => await Promise.resolve(payload),
+    onSuccess(conversation) {
+      switch (conversation.typeUpdate) {
+        case 'name':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                name: conversation.name
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              name: conversation.name
+            };
+          });
+          break;
+        case 'image':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                image: conversation.image
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              image: conversation.image
+            };
+          });
+          break;
+        case 'cover_image':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                cover_image: conversation.cover_image
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              cover_image: conversation.cover_image
+            };
+          });
+          break;
+        case 'add_member':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                members: conversation.members
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              members: conversation.members
+            };
+          });
+          break;
+        case 'remove_member':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                members: conversation.members
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              members: conversation.members
+            };
+          });
+          break;
+        case 'commission_admin':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                admins: conversation.admins
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              admins: conversation.admins
+            };
+          });
+          break;
+        case 'remove_admin':
+          queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+            if (!oldData) return;
+
+            const newData = [...oldData];
+
+            const index = newData.findIndex((item) => item._id === conversation._id);
+
+            if (index !== -1) {
+              newData[index] = {
+                ...newData[index],
+                admins: conversation.admins
+              };
+            }
+
+            return newData;
+          });
+
+          queryClient.setQueryData<IConversation>(['conversation', conversation._id], (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              admins: conversation.admins
+            };
+          });
+          break;
+        default:
+          break;
+      }
+    }
+  });
+
+  return {
+    mutateConversation: mutate,
+    isLoadingConversation: isPending,
+    isErrorConversation: isError,
+    isSuccessConversation: isSuccess
   };
 };

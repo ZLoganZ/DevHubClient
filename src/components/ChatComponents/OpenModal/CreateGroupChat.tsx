@@ -54,7 +54,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
 
         navigate(`/message/${res.data.metadata._id}`);
       })
-      .catch(() => console.log('error'))
+      .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
   }, [name, membersGroup]);
 

@@ -32,8 +32,8 @@ class BaseService {
     return this.request('get', url, model);
   }
 
-  delete(url: string) {
-    return this.request('delete', url);
+  delete(url: string, model?: object | string) {
+    return this.request('delete', url, model);
   }
 
   getGithub(url: string) {
