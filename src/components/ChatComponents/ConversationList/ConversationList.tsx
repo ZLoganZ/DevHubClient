@@ -41,8 +41,8 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
   const { mutateReceiveConversation } = useReceiveConversation();
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
   const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
-  const { mutateReceiveMessage } = useReceiveMessage(selected);
-  const { mutateConversation } = useMutateConversation();
+  const { mutateReceiveMessage } = useReceiveMessage(currentUserInfo._id, selected);
+  const { mutateConversation } = useMutateConversation(currentUserInfo._id);
 
   const [search, setSearch] = useState('');
   const [searchConversation, setSearchConversation] = useState<IConversation[]>(conversations);

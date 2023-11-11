@@ -42,7 +42,7 @@ import type { CollapseProps } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesImage } from '@/hooks/fetch';
-import { useLeaveGroup, useMutateConversation, useReceiveConversation } from '@/hooks/mutation';
+import { useLeaveGroup, useReceiveConversation, useSendMessage } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { Socket } from '@/util/constants/SettingSystem';
@@ -75,7 +75,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
   const { mutateReceiveConversation } = useReceiveConversation();
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
   const { mutateLeaveGroup } = useLeaveGroup();
-  const { mutateConversation } = useMutateConversation();
+  const { mutateSendMessage } = useSendMessage();
 
   const otherUser = useOtherUser(currentConversation);
   const followers = useMemo(() => {
@@ -95,7 +95,6 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
   const [openChangeName, setOpenChangeName] = useState(false);
   const [openAddMember, setOpenAddMember] = useState(false);
 
-  const [images, setImages] = useState<IMessage[]>([]);
   const [audios, setAudios] = useState<IMessage[]>([]);
   const [files, setFiles] = useState<IMessage[]>([]);
   const [links, setLinks] = useState<IMessage[]>([]);
@@ -137,7 +136,6 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           onClick: () => {
             void messageService.commissionAdmin(currentConversation._id, user._id).then((res) => {
               chatSocket.emit(Socket.COMMISSION_ADMIN, res.data.metadata);
-              mutateConversation({ ...res.data.metadata, typeUpdate: 'commission_admin' });
 
               const message = {
                 _id: uuidv4().replace(/-/g, ''),
@@ -153,6 +151,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                 createdAt: new Date()
               };
 
+              mutateSendMessage(message as unknown as IMessage);
               chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
             });
           }
@@ -167,7 +166,6 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           onClick: () => {
             void messageService.removeAdmin(currentConversation._id, user._id).then((res) => {
               chatSocket.emit(Socket.DECOMMISSION_ADMIN, res.data.metadata);
-              mutateConversation({ ...res.data.metadata, typeUpdate: 'commission_admin' });
 
               const message = {
                 _id: uuidv4().replace(/-/g, ''),
@@ -183,6 +181,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                 createdAt: new Date()
               };
 
+              mutateSendMessage(message as unknown as IMessage);
               chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
             });
           }
@@ -226,7 +225,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           }
         },
         {
-          key: '2',
+          key: '5',
           label: isCurrentUser ? 'Leave group' : isCurrentUserCreator && 'Remove member',
           danger: true,
           icon: isCurrentUser ? (
@@ -243,6 +242,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           },
           onClick: () => {
             if (user._id === currentUserInfo._id) {
+              mutateLeaveGroup(conversationID);
               const message = {
                 _id: uuidv4().replace(/-/g, ''),
                 conversation_id: conversationID,
@@ -257,12 +257,12 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                 createdAt: new Date()
               };
 
+              mutateSendMessage(message as unknown as IMessage);
               chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
-              mutateLeaveGroup(conversationID);
             } else {
               void messageService.removeMember(currentConversation._id, user._id).then((res) => {
-                chatSocket.emit(Socket.REMOVE_MEMBER, res.data.metadata);
-                mutateConversation({ ...res.data.metadata, typeUpdate: 'remove_member' });
+                chatSocket.emit(Socket.REMOVE_MEMBER, { ...res.data.metadata, remove_userID: user._id });
+
                 const message = {
                   _id: uuidv4().replace(/-/g, ''),
                   conversation_id: conversationID,
@@ -277,6 +277,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                   createdAt: new Date()
                 };
 
+                mutateSendMessage(message as unknown as IMessage);
                 chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
               });
             }
@@ -324,8 +325,8 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             />
           ) : (
             <>
-              {items.slice(0, 4).map((item, index) => (
-                <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
+              {items.slice(0, 4).map((item) => (
+                <div className='fileContent flex justify-between items-center mb-2 ml-2' key={item._id}>
                   <div className='left flex justify-between items-center'>
                     <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
                       <Image
@@ -461,14 +462,13 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                       ))}
                   </div>
                 </div>
-                <div className='options rounded-full'>
-                  <Dropdown menu={{ items: memberOptions(member) }} trigger={['click']}>
-                    <FontAwesomeIcon
-                      className='text-lg cursor-pointer py-1 px-3 '
-                      icon={faEllipsisVertical}
-                    />
-                  </Dropdown>
-                </div>
+
+                <Dropdown
+                  className='options h-5 w-5 p-1 rounded-full cursor-pointer'
+                  menu={{ items: memberOptions(member) }}
+                  trigger={['click']}>
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </Dropdown>
               </div>
             );
           })}

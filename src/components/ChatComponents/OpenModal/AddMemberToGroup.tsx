@@ -4,11 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { IUserInfo } from '@/types';
+import MemberToGroup from '@/components/ChatComponents/Modal/MemberToGroup';
+import { IMessage, IUserInfo } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';
-import MemberToGroup from '../Modal/MemberToGroup';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import { useSendMessage } from '@/hooks/mutation';
 
 interface IAddMemberModal {
   users: IUserInfo[];
@@ -23,18 +24,15 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { currentUserInfo } = useCurrentUserInfo();
+  const { mutateSendMessage } = useSendMessage();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [membersGroup, SetMembersGroup] = useState<IUserInfo[]>([]);
+  const [membersToAdd, SetMembersToAdd] = useState<IUserInfo[]>([]);
 
   const isChanged = useMemo(() => {
-    return membersGroup.length === 0;
-  }, [membersGroup]);
-
-  useEffect(() => {
-    console.log("member",membersGroup)
-  }, [membersGroup]);
+    return membersToAdd.length === 0;
+  }, [membersToAdd]);
 
   const onSubmit = useCallback(() => {
     setIsLoading(true);
@@ -42,10 +40,10 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
     messageService
       .addMember(
         conversationID,
-        membersGroup.map((user) => user._id)
+        membersToAdd.map((member) => member._id)
       )
       .then((res) => {
-        membersGroup.forEach((user) => {
+        membersToAdd.forEach((member) => {
           const message = {
             _id: uuidv4().replace(/-/g, ''),
             conversation_id: conversationID,
@@ -56,9 +54,11 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
             },
             isSending: true,
             type: 'notification',
-            content: `added ${user.name} to the group`,
+            content: `added ${member.name} to the group`,
             createdAt: new Date()
           };
+
+          mutateSendMessage(message as unknown as IMessage);
           chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
         });
         dispatch(closeModal());
@@ -67,13 +67,13 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
       })
       .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
-  }, [name, membersGroup]);
+  }, [membersToAdd]);
 
   useEffect(() => {
     dispatch(
       openModal({
         title: 'Select members to add to the group',
-        component: <MemberToGroup users={users} setUsers={SetMembersGroup} />,
+        component: <MemberToGroup users={users} setMembers={SetMembersToAdd} />,
         footer: (
           <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
@@ -86,7 +86,7 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
         )
       })
     );
-  }, [isLoading, name, membersGroup]);
+  }, [isLoading, isChanged, membersToAdd]);
 
   return <></>;
 };

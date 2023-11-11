@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/hooks/fetch';
+import { useSendMessage } from '@/hooks/mutation';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import MessageBox from '@/components/ChatComponents/MessageBox';
@@ -24,12 +25,11 @@ import getImageURL from '@/util/getImageURL';
 import { audioCall, videoChat } from '@/util/call';
 import { commonColor } from '@/util/cssVariable';
 import { getLastOnline } from '@/util/formatDateTime';
+import { capitalizeFirstLetter } from '@/util/convertText';
 import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
 import { toggleDisplayOption } from '@/redux/Slice/MessageSlice';
 import StyleProvider from './cssMessageChat';
-import { useSendMessage } from '@/hooks/mutation';
-import { capitalizeFirstLetter } from '@/util/convertText';
 
 interface IMessageChat {
   conversationID: string;

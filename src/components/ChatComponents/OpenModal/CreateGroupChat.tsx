@@ -6,10 +6,10 @@ import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import GroupChatModal from '@/components/ChatComponents/Modal/GroupChat';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { IUserInfo } from '@/types';
-import { Socket } from '@/util/constants/SettingSystem';
 import { useReceiveConversation } from '@/hooks/mutation';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { Socket } from '@/util/constants/SettingSystem';
+import { IUserInfo } from '@/types';
 
 interface IGroupModal {
   users: IUserInfo[];
