@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   IconDefinition,
   faCaretRight,
@@ -52,6 +52,8 @@ import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvata
 import { messageService } from '@/services/MessageService';
 import { IConversation, IMessage } from '@/types';
 import StyleProvider from './cssConversationOption';
+import ChangeGroupName from '../OpenModal/ChangeGroupName';
+import AddMemberToGroup from '../OpenModal/AddMemberToGroup';
 
 interface IConversationOption {
   conversationID: string;
@@ -74,8 +76,23 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
   const { mutateConversation } = useMutateConversation();
 
   const otherUser = useOtherUser(currentConversation);
+  const followers = useMemo(() => {
+    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
+      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
+    );
+  }, [currentUserInfo]);
+
+  // filter members in followers but not in conversation
+  const members = useMemo(() => {
+    return followers.filter((follower) => {
+      return !currentConversation.members.some((member) => member._id === follower._id);
+    });
+  }, [followers, currentConversation.members]);
 
   const [openAvatar, setOpenAvatar] = useState(false);
+  const [openChangeName, setOpenChangeName] = useState(false);
+  const [openAddMember, setOpenAddMember] = useState(false);
+
   const [images, setImages] = useState<IMessage[]>([]);
   const [audios, setAudios] = useState<IMessage[]>([]);
   const [files, setFiles] = useState<IMessage[]>([]);
@@ -91,6 +108,12 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
   useEffect(() => {
     if (!visible && openAvatar) {
       setOpenAvatar(false);
+    }
+    if (!visible && openChangeName) {
+      setOpenChangeName(false);
+    }
+    if (!visible && openAddMember) {
+      setOpenAddMember(false);
     }
   }, [visible]);
 
@@ -400,7 +423,9 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
             );
           })}
         </div>
-        <div className='add-member mt-3 w-full flex flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'>
+        <div
+          className='add-member mt-3 w-full flex flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
+          onClick={() => setOpenAddMember(!openAddMember)}>
           <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
           <div className='name flex items-center text-sm font-medium text-left ml-2'>Add members</div>
         </div>
@@ -414,7 +439,9 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
       label: <span className='text-base font-semibold'>Conversation setting</span>,
       children: (
         <>
-          <div className='rename w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
+          <div
+            className='rename w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'
+            onClick={() => setOpenChangeName(!openChangeName)}>
             <FontAwesomeIcon className='text-lg mr-2' icon={faPen} />
             Change name
           </div>
@@ -480,6 +507,10 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID, mes
         {openAvatar && (
           <ChangeAvatarGroup image={currentConversation.image} conversationID={conversationID} />
         )}
+        {openChangeName && (
+          <ChangeGroupName name={currentConversation.name} conversationID={conversationID} />
+        )}
+        {openAddMember && <AddMemberToGroup conversationID={conversationID} users={members} />}
         {isLoadingCurrentConversation ? (
           <>
             <div

@@ -3,7 +3,7 @@ import { ConfigProvider, Input, Select } from 'antd';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
 import { IUserInfo } from '@/types';
-import StyleProvider from './cssGroupChatModal';
+import StyleProvider from './cssGroupChat';
 
 interface IGroupChatModal {
   users: IUserInfo[];

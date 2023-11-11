@@ -10,7 +10,7 @@ import { useAppSelector } from '@/hooks/special';
 import CalledBox from '@/components/ChatComponents/CalledBox';
 import { useGetCalled } from '@/hooks/fetch';
 import { ICalled } from '@/types';
-
+import { max } from 'lodash';
 
 const CalledList = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -103,29 +103,11 @@ const CalledList = () => {
               </Space>
             </Row>
             <Row className='h-[89%] ml-3'>
-              {/* <div className='list-called   overflow-y-auto'> */}
-              <Scrollbar
-                className=''
-                trackYProps={{
-                  style: {
-                    right: '-12px'
-                  }
-                }}
-                scrollerProps={{
-                  style: {
-                    right: '-12px'
-                  }
-                }}>
-                <div className='listConversation flex flex-col overflow-y-hidden' ref={listConRef}>
-                  {calledLists?.map((called) => (
-                    <CalledBox key={called._id} called={called} />
-                  ))}
-                </div>
-                {/* <div className='called absolute w-3 h-[92%] top-0 -right-3 overflow-y-auto'>
-                  <div className='w-3' style={{ height: `${height}px` }}></div>
-                </div> */}
-              </Scrollbar>
-              {/* </div> */}
+              <div className='listConversation w-full h-full flex flex-col overflow-y-auto' ref={listConRef}>
+                {calledLists?.map((called) => (
+                  <CalledBox key={called._id} called={called} />
+                ))}
+              </div>
             </Row>
           </Col>
         </Row>
