@@ -549,7 +549,7 @@ export const useGetCalled = () => {
   return {
     isLoadingGetCalled: isPending,
     isErrorMessageCall: isError,
-    calledList: data,
+    calledList: data!,
     isFetchingMessageCall: isFetching
   };
 };

@@ -102,7 +102,7 @@ const Chat = () => {
 
   const options = [
     { name: 'new message', icon: faComment, count: notSeenCount },
-    { name: 'contacts', icon: faUser, count: contactCount },
+    { name: 'contact', icon: faUser, count: contactCount },
     { name: 'new notification', icon: faBell, count: 99 },
     { name: 'missing call', icon: faVideo, count: calledList?.length ?? 0 }
   ];
