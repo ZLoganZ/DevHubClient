@@ -182,7 +182,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover
               onClick={() => {
-                chatSocket.emit(Socket.LEAVE_VIDEO_CALL, data);
+                chatSocket.emit(Socket.LEAVE_VIDEO_CALL, { ...data, type: 'missed' });
+                void soundCall.pause();
                 modalVideo?.destroy();
               }}>
               Decline
@@ -228,7 +229,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover
               onClick={() => {
-                chatSocket.emit(Socket.LEAVE_VOICE_CALL, data);
+                chatSocket.emit(Socket.LEAVE_VOICE_CALL, { ...data, type: 'missed' });
+                void soundCall.pause();
                 modalVoice?.destroy();
               }}>
               Decline

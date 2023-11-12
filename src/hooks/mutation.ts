@@ -675,7 +675,8 @@ export const useDissolveGroup = () => {
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (conversationID: string) => {
-      await messageService.dissolveGroup(conversationID);
+      const { data } = await messageService.dissolveGroup(conversationID);
+      return data.metadata;
     },
     onSuccess(conversation, conversationID) {
       if (window.location.pathname.includes(conversationID)) navigate('/message', { replace: true });
