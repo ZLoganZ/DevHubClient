@@ -92,7 +92,7 @@ export const getDateMonth = (date: string | number | Date) => {
   const commentDate = new Date(date);
 
   if (isToday(commentDate)) {
-    return 'Today';
+    return format(commentDate, 'h:mm a');
   }
 
   if (isThisWeek(commentDate, { weekStartsOn: 1 })) {
