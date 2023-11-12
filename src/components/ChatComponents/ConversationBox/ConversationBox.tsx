@@ -168,7 +168,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
                       {conversation.name ?? otherUser.name}
                     </span>
                   </p>
-                  {conversation.lastMessage.createdAt && (
+                  {conversation?.lastMessage?.createdAt && (
                     <p
                       className=' text-xs  text-gray-400 font-light'
                       style={{ color: themeColorSet.colorText3 }}>
