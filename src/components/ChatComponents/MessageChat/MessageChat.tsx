@@ -352,7 +352,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
         typingDiv.current.style.transform = 'translateY(0)';
       } else {
         typingDiv.current.style.opacity = '1';
-        typingDiv.current.style.transform = 'translateY(-2rem)';
+        typingDiv.current.style.transform = 'translateY(calc(-2rem + 18px))';
       }
     }
 
@@ -523,7 +523,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                     return (
                       <img
                         key={member._id}
-                        className='rounded-full top-3 absolute h-6 w-6 overflow-hidden'
+                        className='rounded-full -top-2 absolute h-6 w-6 overflow-hidden'
                         src={getImageURL(member.user_image, 'avatar_mini')}
                         style={{
                           left: `${index * 30 + typingUsers.length * 10}px`,

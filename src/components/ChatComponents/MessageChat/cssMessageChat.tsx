@@ -22,7 +22,7 @@ const StyleProvider = styled.div`
     position: absolute;
     width: 52px;
     height: 30px;
-    top: 9px;
+    top: -9px;
   }
   .typing-indicator div {
     position: absolute;
