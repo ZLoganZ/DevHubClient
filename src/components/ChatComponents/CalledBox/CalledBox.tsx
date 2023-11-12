@@ -39,7 +39,13 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
       incoming: <FontAwesomeIcon icon={faVideo} />,
       outgoing: <FontAwesomeIcon icon={faVideo} />,
       missed: <FontAwesomeIcon icon={faVideo} />,
-      call: <FontAwesomeIcon onClick={() => videoChat(called.conversation_id._id)} icon={faVideo} />
+      call: (
+        <FontAwesomeIcon
+          className='cursor-pointer'
+          onClick={() => videoChat(called.conversation_id._id)}
+          icon={faVideo}
+        />
+      )
     },
     voice: {
       incoming: (
@@ -63,7 +69,13 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
           </g>
         </svg>
       ),
-      call: <FontAwesomeIcon onClick={() => audioCall(called.conversation_id._id)} icon={faPhone} />
+      call: (
+        <FontAwesomeIcon
+          className='cursor-pointer'
+          onClick={() => audioCall(called.conversation_id._id)}
+          icon={faPhone}
+        />
+      )
     }
   };
 
