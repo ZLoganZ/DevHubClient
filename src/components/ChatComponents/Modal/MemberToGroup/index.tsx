@@ -1,22 +1,22 @@
+import { useEffect, useState } from 'react';
 import { Checkbox, Col, ConfigProvider, Input, Row } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
-import { useAppSelector } from '@/hooks/special';
-import { getTheme } from '@/util/theme';
-import StyleProvider from './cssMemberToGroup';
-import { IUserInfo } from '@/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import AvatarMessage from '../../Avatar/AvatarMessage';
+
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
+import { useAppSelector } from '@/hooks/special';
+import { getTheme } from '@/util/theme';
 import { handleFirstName } from '@/util/convertText';
-import { useEffect, useState } from 'react';
+import { IUserInfo } from '@/types';
+import StyleProvider from './cssMemberToGroup';
 
 interface IMemberToGroup {
   users: IUserInfo[];
-  setUsers: React.Dispatch<React.SetStateAction<IUserInfo[]>>;
+  setMembers: React.Dispatch<React.SetStateAction<IUserInfo[]>>;
 }
 
-const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setUsers }) => {
+const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setMembers }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
@@ -32,7 +32,7 @@ const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setUsers }) => {
   };
 
   useEffect(() => {
-    setUsers(checkedUsers);
+    setMembers(checkedUsers);
   }, [checkedUsers]);
 
   const handleUncheck = (userID: string) => {
@@ -61,7 +61,7 @@ const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setUsers }) => {
             )}
             <div className='list-users-checked w-full flex overflow-x-auto px-3'>
               {checkedUsers.map((user) => (
-                <div className='flex items-center justify-between gap-8 mt-4'>
+                <div key={user._id} className='flex items-center justify-between gap-8 mt-4'>
                   <div className='flex flex-col items-center'>
                     <div className='avatar relative'>
                       <AvatarMessage key={user._id} user={user} size={52} />

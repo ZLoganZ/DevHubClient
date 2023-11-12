@@ -8,12 +8,11 @@ const StyleProvider = styled.div`
     .info,
     .fileShared,
     .conversation-setting {
-      color: ${(props) => props.theme.colorText3};
+      color: ${(props) => props.theme.colorText2};
       .add-member,
       .options,
       .rename,
       .change-image {
-        color: ${(props) => props.theme.colorText3};
         :hover {
           background-color: ${commonColor.colorBlue1};
           color: ${commonColor.colorWhite1};
@@ -22,9 +21,9 @@ const StyleProvider = styled.div`
       }
     }
     .leave-group {
-      color: ${(props) => props.theme.colorText3};
+      color: ${(props) => props.theme.colorText2};
       :hover {
-        color: ${commonColor.colorWhite1};
+        color: ${(props) => props.theme.colorTextReverse1};
         background-color: #f42f2f;
         transition: all 0.3s;
       }

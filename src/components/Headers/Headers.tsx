@@ -172,7 +172,7 @@ const Headers = () => {
                       allowClear
                       placeholder='Search'
                       className='rounded-full'
-                      prefix={<SearchOutlined className='text-xl' />}
+                      prefix={<SearchOutlined className='text-xl mr-1' />}
                     />
                   </Col>
                   <Col span={5} className='pl-3 xs:pl-0'>

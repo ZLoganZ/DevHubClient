@@ -7,14 +7,15 @@ import {
   faPhone,
   faRightFromBracket,
   faSquareCheck,
-  faTrashCan,
+  faTrash,
   faUser,
   faVideoCamera
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquareCheck as faReSquareCheck } from '@fortawesome/free-regular-svg-icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { audioCall, videoChat } from '@/util/call';
@@ -22,8 +23,8 @@ import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useLeaveGroup } from '@/hooks/mutation';
-import { IConversation } from '@/types';
+import { useLeaveGroup, useSendMessage } from '@/hooks/mutation';
+import { IConversation, IMessage } from '@/types';
 import { Socket } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
@@ -43,6 +44,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
   const { mutateLeaveGroup } = useLeaveGroup();
+  const { mutateSendMessage } = useSendMessage();
 
   const isSeen = conversation.seen.some((user) => user._id === currentUserInfo._id);
   const isGroup = conversation.type === 'group';
@@ -90,8 +92,26 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       label: isGroup ? 'Leave group' : 'Delete chat',
       danger: true,
       key: '3',
-      onClick: () => mutateLeaveGroup(conversation._id),
-      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrashCan} />
+      onClick: () => {
+        mutateLeaveGroup(conversation._id);
+        const message = {
+          _id: uuidv4().replace(/-/g, ''),
+          conversation_id: conversation._id,
+          sender: {
+            _id: currentUserInfo._id,
+            user_image: currentUserInfo.user_image,
+            name: currentUserInfo.name
+          },
+          isSending: true,
+          type: 'notification',
+          content: 'left the group',
+          createdAt: new Date()
+        };
+        
+        mutateSendMessage(message as unknown as IMessage);
+        chatSocket.emit(Socket.PRIVATE_MSG, { conversationID: conversation._id, message });
+      },
+      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrash} />
     }
   ];
 
@@ -141,7 +161,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
             {conversation.type === 'group' ? (
               <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
             ) : (
-              <Avatar key={conversation._id} user={otherUser} />
+              <AvatarMessage key={conversation._id} user={otherUser} />
             )}
             <div className='min-w-0 flex-1'>
               <div className='focus:outline-none'>

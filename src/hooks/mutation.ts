@@ -467,13 +467,12 @@ export const useSendMessage = () => {
 
 /**
  * The `useReceiveMessage` function is a custom hook in TypeScript that handles receiving and updating
- * messages in a conversation, including playing notification sounds and updating query data.
- * @param {boolean} [selected] - The `selected` parameter is a boolean value that indicates
- * whether the conversation is currently selected or not. It is used to determine whether to play the
- * `PopMessage` sound or the `NotiMessage` sound when a new message is received. If `selected` is
- * `true`, the `PopMessage` sound will play. Otherwise, the `NotiMessage` sound will play.
+ * messages in a conversation.
+ * @param {string} [conversationID] - The `conversationID` parameter is an optional string that
+ * represents the ID of the conversation for which the message is being received. If provided, it is
+ * used to determine whether to play a sound notification or not.
  */
-export const useReceiveMessage = (conversationID?: string) => {
+export const useReceiveMessage = (currentUserID: string, conversationID?: string) => {
   const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
   const PopMessage = new Audio('/sounds/bubble-popping-short.mp4');
   NotiMessage.volume = 0.3;
@@ -491,7 +490,7 @@ export const useReceiveMessage = (conversationID?: string) => {
         const index = newData.findIndex((item) => item._id === message.conversation_id);
 
         if (index !== -1) {
-          if (newData[index].lastMessage?.sender._id !== message.sender._id) {
+          if (currentUserID !== message.sender._id) {
             if (conversationID === message.conversation_id) void PopMessage.play();
             else void NotiMessage.play();
           }
@@ -802,7 +801,11 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
   };
 };
 
-export const useMutateConversation = () => {
+/**
+ * The `useMutateConversation` function is a custom hook in TypeScript that handles mutations for
+ * updating conversation data and updating the query cache.
+ */
+export const useMutateConversation = (currentUserID: string) => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
@@ -903,6 +906,8 @@ export const useMutateConversation = () => {
                 ...newData[index],
                 members: conversation.members
               };
+            } else {
+              newData.unshift(conversation);
             }
 
             return newData;
@@ -926,10 +931,16 @@ export const useMutateConversation = () => {
             const index = newData.findIndex((item) => item._id === conversation._id);
 
             if (index !== -1) {
-              newData[index] = {
-                ...newData[index],
-                members: conversation.members
-              };
+              const isHavingMe = newData[index].members.some((item) => item._id === currentUserID);
+              const isHavingUser = conversation.members.some((item) => item._id === currentUserID);
+              if (isHavingMe && !isHavingUser) {
+                newData.splice(index, 1);
+              } else {
+                newData[index] = {
+                  ...newData[index],
+                  members: conversation.members
+                };
+              }
             }
 
             return newData;

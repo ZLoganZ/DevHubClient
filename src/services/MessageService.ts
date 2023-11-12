@@ -41,6 +41,14 @@ class MessageService extends BaseService {
     return this.get(`/chat/conversations/${conversationID}/messages?page=${page}&extend=${extend}`);
   };
 
+  getMessagesWithImage = (
+    conversationID: string,
+    page: number,
+    extend?: number
+  ): Promise<AxiosResponse<IResponse<IMessage[]>>> => {
+    return this.get(`/chat/conversations/${conversationID}/images?page=${page}&extend=${extend}`);
+  };
+
   seenMessage = (conversationID: string) => {
     return this.post(`/chat/conversations/${conversationID}/seen`, {});
   };

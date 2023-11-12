@@ -228,7 +228,8 @@ export interface IConversation {
   name: string;
   lastMessage: IMessage;
   seen: IUserInfo[];
-  admins?: IUserInfo[];
+  creator: string;
+  admins: IUserInfo[];
   image?: string;
   cover_image?: string;
   createdAt: string;

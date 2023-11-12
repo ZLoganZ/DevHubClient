@@ -61,7 +61,6 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
     };
 
     chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
-
     chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 
     setId(uuidv4().replace(/-/g, ''));

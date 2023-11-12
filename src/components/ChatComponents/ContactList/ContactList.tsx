@@ -8,7 +8,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useReceiveConversation } from '@/hooks/mutation';
 import { IUserInfo } from '@/types';
@@ -110,7 +110,7 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
                     allowClear
                     placeholder='Search'
                     className='rounded-full '
-                    prefix={<SearchOutlined className='text-xl' />}
+                    prefix={<SearchOutlined className='text-xl mr-1' />}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </ConfigProvider>
@@ -118,7 +118,7 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
             </div>
           </Row>
           <Row>
-            <div className='userActive px-3 w-full'>
+            <div className='userActive px-2 w-full'>
               <div
                 className='listUser flex flex-col'
                 style={{
@@ -142,11 +142,11 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
                   searchFollowers.map((item) => {
                     return (
                       <div
-                        className='user flex items-center cursor-pointer mt-5'
+                        className='user flex items-center cursor-pointer p-4 rounded-xl'
                         key={item._id}
                         onClick={() => HandleOnClick(item._id)}>
                         <div className='avatar relative'>
-                          <Avatar key={item._id} user={item} />
+                          <AvatarMessage key={item._id} user={item} />
                         </div>
                         <div
                           className='name text-center ml-2'

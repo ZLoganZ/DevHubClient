@@ -5,10 +5,12 @@ import getImageURL from '@/util/getImageURL';
 import { Socket } from '@/util/constants/SettingSystem';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
+import { useSendMessage } from '@/hooks/mutation';
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import AvatarGroupModal from '@/components/ChatComponents/Modal/AvatarGroup';
 import { messageService } from '@/services/MessageService';
+import { IMessage } from '@/types';
 
 interface IChangeAvatarGroup {
   conversationID: string;
@@ -22,6 +24,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { currentUserInfo } = useCurrentUserInfo();
+  const { mutateSendMessage } = useSendMessage();
 
   const [avatar, setAvatar] = useState(
     getImageURL(image, 'avatar') ?? '/images/DefaultAvatar/Empty_Group_Image.png'
@@ -60,7 +63,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
         };
 
         dispatch(closeModal());
-
+        mutateSendMessage(message as unknown as IMessage);
         chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
 
         chatSocket.emit(Socket.CHANGE_CONVERSATION_IMAGE, res.data.metadata);
