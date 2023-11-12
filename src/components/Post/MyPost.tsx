@@ -1,7 +1,6 @@
 import { faUpRightFromSquare, faEllipsis, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Divider, Dropdown } from 'antd';
-import type { MenuProps } from 'antd';
+import { Divider, Dropdown, type MenuProps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -14,22 +13,22 @@ import DeleteModal from '@/components/PostProperties/DeletePostModal';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPost';
 
-interface IPost {
-  post: PostType;
-  postAuthor: UserInfoType;
+interface IPostProps {
+  post: IPost;
+  postAuthor: IUserInfo;
 }
 
 // -----------------------------------------------------
 
-const MyPost: React.FC<IPost> = ({ post, postAuthor }) => {
+const MyPost: React.FC<IPostProps> = ({ post, postAuthor }) => {
   const link = post.post_attributes.url;
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   //format date to get full date

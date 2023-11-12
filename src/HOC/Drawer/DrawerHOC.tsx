@@ -9,7 +9,7 @@ import StyleProvider from './cssDrawerHOC';
 const DrawerHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -26,6 +26,7 @@ const DrawerHOC = () => {
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Drawer
+          destroyOnClose
           title={title}
           width={720}
           onClose={onClose}

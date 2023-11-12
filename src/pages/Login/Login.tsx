@@ -12,7 +12,7 @@ import { GetGitHubUrl } from '@/util/getGithubUrl';
 import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { darkThemeSet } from '@/util/cssVariable';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { UserLoginDataType } from '@/types';
+import { IUserLogin } from '@/types';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import StyleProvider from './cssLogin';
@@ -25,7 +25,7 @@ const Login = () => {
   const location = useLocation();
 
   const handleSignInWithGoogle = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: (tokenResponse) => {
       dispatch(
         LOGIN_WITH_GOOGLE_SAGA({
           token: tokenResponse.access_token
@@ -81,7 +81,7 @@ const Login = () => {
     }
   });
 
-  const onSubmit = async (values: UserLoginDataType) => {
+  const onSubmit = (values: IUserLogin) => {
     dispatch(setLoading(true));
     dispatch(LOGIN_SAGA(values));
   };
@@ -106,7 +106,6 @@ const Login = () => {
               </div>
               <h2 className='title'>Welcome back!</h2>
             </div>
-
             <Form
               name='login'
               className='w-full'
@@ -151,8 +150,9 @@ const Login = () => {
               </Form.Item>
               <ButtonActiveHover
                 loading={loading}
+                block
                 type='primary'
-                className='btn w-full h-9 mb-4 mt-3 font-bold'>
+                className='btn h-9 mb-4 mt-3 font-bold'>
                 Login
               </ButtonActiveHover>
               <NavLink to='/forgot'>

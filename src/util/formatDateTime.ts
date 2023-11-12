@@ -1,6 +1,6 @@
 import { format, isToday, isThisWeek, isThisYear } from 'date-fns';
 
-export const getDateTimeToNow = (date: string) => {
+export const getDateTimeToNow = (date: string | number | Date) => {
   if (!date) {
     return '';
   }
@@ -34,7 +34,7 @@ export const getDateTimeToNow = (date: string) => {
   return format(commentDate, 'MMM dd, yyyy');
 };
 
-export const getDateTime = (date: string) => {
+export const getDateTime = (date: string | number | Date) => {
   if (!date) {
     return '';
   }
@@ -44,7 +44,7 @@ export const getDateTime = (date: string) => {
     return format(commentDate, 'h:mm a');
   }
 
-  if (isThisWeek(commentDate, { weekStartsOn: 0 })) {
+  if (isThisWeek(commentDate, { weekStartsOn: 1 })) {
     return format(commentDate, 'EEEE • h:mm a');
   }
 
@@ -55,7 +55,7 @@ export const getDateTime = (date: string) => {
   return format(commentDate, 'MMM dd, yyyy • h:mm a');
 };
 
-export const getLastOnline = (date: string) => {
+export const getLastOnline = (date: string | number | Date) => {
   if (!date) {
     return '';
   }
@@ -67,8 +67,8 @@ export const getLastOnline = (date: string) => {
 
   if (diffDays === 1) {
     const diffHours = Math.ceil(diff / (1000 * 3600));
-    if (diffHours === 1) {
-      const diffMinutes = Math.ceil(diff / (1000 * 60));
+    const diffMinutes = Math.ceil(diff / (1000 * 60));
+    if (diffHours === 1 || diffMinutes < 60) {
       return `Online ${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
     }
     return `Online ${diffHours - 1} hour${diffHours - 1 === 1 ? '' : 's'} ago`;
@@ -83,4 +83,25 @@ export const getLastOnline = (date: string) => {
   }
 
   return 'Last seen at ' + format(commentDate, 'MMM dd, yyyy');
+};
+
+export const getDateMonth = (date: string | number | Date) => {
+  if (!date) {
+    return '';
+  }
+  const commentDate = new Date(date);
+
+  if (isToday(commentDate)) {
+    return 'Today';
+  }
+
+  if (isThisWeek(commentDate, { weekStartsOn: 1 })) {
+    return format(commentDate, 'EEEE');
+  }
+
+  if (isThisYear(commentDate)) {
+    return format(commentDate, 'MMM dd');
+  }
+
+  return format(commentDate, 'MMM dd, yyyy');
 };

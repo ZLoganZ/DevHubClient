@@ -1,21 +1,28 @@
 import { useCallback } from 'react';
-import { Avatar, Badge, Button, Col, ConfigProvider, Dropdown, Empty, Row, Space } from 'antd';
-import type { MenuProps } from 'antd';
-// import { format } from 'date-fns';
-import { Header } from 'antd/es/layout/layout';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Col,
+  ConfigProvider,
+  Dropdown,
+  Empty,
+  Row,
+  Space,
+  type MenuProps,
+  Layout,
+  Input,
+  Affix
+} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
-import Title from 'antd/es/typography/Title';
-import { NavLink } from 'react-router-dom';
-import Search from 'antd/es/transfer/search';
-import { BellOutlined, CommentOutlined, UserOutlined } from '@ant-design/icons';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { BellOutlined, CommentOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { LOGOUT_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
-// import AvatarGroup from '@/components/Avatar/AvatarGroup';
 import DayNightSwitch from '@/components/Day&NightSwitch';
-// import AvatarMessage from '@/components/Avatar/AvatarMessage';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
@@ -25,8 +32,9 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
 const Headers = () => {
+  const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
@@ -48,6 +56,8 @@ const Headers = () => {
     const { pathname } = window.location;
     if (pathname === '/') {
       void refetchAllNewsfeedPosts();
+    } else {
+      navigate('/');
     }
   }, [refetchAllNewsfeedPosts, window.location.pathname]);
 
@@ -103,11 +113,6 @@ const Headers = () => {
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
-  // const [api, contextHolder] = notification.useNotification();
-  // const navigate = useNavigate();
-
-  // const playNotiMessage = new Audio('/sounds/sound-noti-message.wav');
-
   // const popupNotification = (message: any, conversation: any) => {
   //   api.open({
   //     message: message.sender.name + ' ' + format(new Date(message.createdAt), 'p'),
@@ -134,83 +139,80 @@ const Headers = () => {
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
-      <StyleProvider theme={themeColorSet}>
-        {/* {contextHolder} */}
-        <Header
-          className='header xs:px-2'
-          style={{
-            backgroundColor: themeColorSet.colorBg2,
-            position: 'fixed',
-            zIndex: 999,
-            width: '100%',
-            height: '5rem'
-          }}>
-          <Row align='middle'>
-            <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
-              <Row align='middle'>
-                <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
-                  <NavLink to='/' onClick={handleClick}>
-                    <FontAwesomeIcon
-                      className='iconLogo text-3xl xs:hidden'
-                      icon={faSnowflake}
-                      style={{ color: themeColorSet.colorText1 }}
-                    />
-                    <Title
-                      onClick={handleClick}
-                      level={2}
-                      className='title inline-block ml-2 xs:hidden'
-                      style={{ color: themeColorSet.colorText1 }}>
-                      <div className='animated-word'>
-                        <div className='letter'>D</div>
-                        <div className='letter'>e</div>
-                        <div className='letter'>v</div>
-                        <div className='letter'>H</div>
-                        <div className='letter'>u</div>
-                        <div className='letter'>b</div>
-                      </div>
-                    </Title>
-                  </NavLink>
-                </Col>
-                <Col span={isXsScreen ? 9 : 15} className='px-4'>
-                  <Search placeholder='Search' />
-                </Col>
-                <Col span={5} className='pl-3 xs:pl-0'>
-                  <Space size={isXsScreen ? 8 : 25}>
-                    <NavLink to='/message'>
-                      <Badge count={0}>
-                        <Avatar
-                          className='messageButton cursor-pointer'
-                          icon={<CommentOutlined className='text-xl messageButton cursor-pointer' />}
-                        />
-                      </Badge>
-                    </NavLink>
-                    <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
-                      <Badge count={0}>
-                        <Avatar
-                          className='notiButton cursor-pointer'
-                          icon={<BellOutlined className='text-xl' />}
-                        />
-                      </Badge>
-                    </Dropdown>
-                    <Dropdown
-                      arrow
-                      menu={{ items }}
-                      trigger={['click']}
-                      placement='bottom'
-                      overlayStyle={{ paddingTop: '0.5rem' }}>
-                      <Avatar
-                        className='avatarButton cursor-pointer'
-                        icon={<UserOutlined className='text-xl' />}
+      <Affix>
+        <StyleProvider theme={themeColorSet}>
+          <Layout.Header
+            className='header xs:px-2'
+            style={{
+              backgroundColor: themeColorSet.colorBg2,
+              height: '5rem'
+            }}>
+            <Row align='middle'>
+              <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
+                <Row align='middle'>
+                  <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
+                    <div className='flex items-center cursor-pointer' onClick={handleClick}>
+                      <FontAwesomeIcon
+                        className='iconLogo text-3xl xs:hidden'
+                        icon={faSnowflake}
+                        style={{ color: themeColorSet.colorText1 }}
                       />
-                    </Dropdown>
-                    <DayNightSwitch checked={switchTheme} onChange={onChange} />
-                  </Space>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Header>
-      </StyleProvider>
+                      <div className='animated-word text-3xl ml-2 font-semibold'>
+                        <p className='letter'>D</p>
+                        <p className='letter'>e</p>
+                        <p className='letter'>v</p>
+                        <p className='letter'>H</p>
+                        <p className='letter'>u</p>
+                        <p className='letter'>b</p>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={isXsScreen ? 9 : 15} className='px-4'>
+                    <Input
+                      allowClear
+                      placeholder='Search'
+                      className='rounded-full'
+                      prefix={<SearchOutlined className='text-xl mr-1' />}
+                    />
+                  </Col>
+                  <Col span={5} className='pl-3 xs:pl-0'>
+                    <Space size={isXsScreen ? 8 : 25}>
+                      <NavLink to='/message'>
+                        <Badge count={0}>
+                          <Avatar
+                            className='messageButton cursor-pointer'
+                            icon={<CommentOutlined className='text-xl messageButton cursor-pointer' />}
+                          />
+                        </Badge>
+                      </NavLink>
+                      <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
+                        <Badge count={0}>
+                          <Avatar
+                            className='notiButton cursor-pointer'
+                            icon={<BellOutlined className='text-xl' />}
+                          />
+                        </Badge>
+                      </Dropdown>
+                      <Dropdown
+                        arrow
+                        menu={{ items }}
+                        trigger={['click']}
+                        placement='bottom'
+                        overlayStyle={{ paddingTop: '0.5rem' }}>
+                        <Avatar
+                          className='avatarButton cursor-pointer'
+                          icon={<UserOutlined className='text-xl' />}
+                        />
+                      </Dropdown>
+                      <DayNightSwitch checked={switchTheme} onChange={onChange} />
+                    </Space>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Layout.Header>
+        </StyleProvider>
+      </Affix>
     </ConfigProvider>
   );
 };

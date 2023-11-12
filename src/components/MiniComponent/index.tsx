@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssMiniComponent';
 
@@ -17,6 +18,7 @@ interface IButtonActiveHover {
   rounded?: boolean;
   block?: boolean;
   type?: ButtonNormalHoverType;
+  style?: React.CSSProperties;
 }
 
 export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
@@ -27,9 +29,10 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   disabled,
   rounded,
   block,
-  type
+  style,
+  type = 'primary'
 }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (
@@ -37,18 +40,19 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
       <Button
         type={type}
         disabled={disabled ?? loading}
-        className={`${!className ? 'ButtonActiveHover font-bold px-6 py-2' : className}`}
+        className={merge('ButtonActiveHover font-bold px-6 py-2', className)}
         onClick={onClick}
         loading={loading}
         htmlType='submit'
         style={
-          !className
-            ? {
+          style
+            ? { ...style, boxShadow: 'none' }
+            : {
                 height: '100%',
                 borderRadius: rounded ? '1.5rem' : '0',
-                width: block ? '100%' : 'auto'
+                width: block ? '100%' : 'auto',
+                boxShadow: 'none'
               }
-            : {}
         }>
         {children}
       </Button>
@@ -77,12 +81,12 @@ export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
   onClick,
   disabled
 }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
   return (
     <StyleProvider theme={themeColorSet}>
       <Button
-        className={`ButtonCancelHover font-bold px-6 py-2 rounded-3xl ${className}`}
+        className={merge('ButtonCancelHover font-bold px-6 py-2 rounded-3xl', className)}
         onClick={onClick}
         style={{ height: '100%' }}
         htmlType='button'

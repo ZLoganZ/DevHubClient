@@ -6,23 +6,25 @@ import Picker from '@emoji-mart/react';
 import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
 
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
-import { IS_TYPING, PRIVATE_MSG, STOP_TYPING } from '@/util/constants/SettingSystem';
+import { Socket } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
-import { MessageType } from '@/types';
+import { IEmoji, IMessage, IUserInfo } from '@/types';
 import { commonColor } from '@/util/cssVariable';
 
 interface IChatInput {
   conversationID: string;
+  members: IUserInfo[];
 }
 
-const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
+const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -58,15 +60,11 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
       createdAt: new Date()
     };
 
-    chatSocket.emit(PRIVATE_MSG, {
-      conversationID: message.conversation_id,
-      message
-    });
-
-    chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id });
+    chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+    chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 
     setId(uuidv4().replace(/-/g, ''));
-    mutateSendMessage(message as unknown as MessageType);
+    mutateSendMessage(message as unknown as IMessage);
   };
 
   const handleUpload = async () => {
@@ -100,51 +98,49 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
     return isLt2M;
   };
 
-  const checkEmpty = () => {
-    if (messageContent === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !file;
 
   const handleStopTyping = useCallback(
-    debounce(() => chatSocket.emit(STOP_TYPING, { conversationID, userID: currentUserInfo._id }), 1000),
+    debounce(
+      () => chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members }),
+      1000
+    ),
     []
   );
   return (
     <div className='footer flex justify-between items-center' style={{ height: '8%' }}>
       {contextHolder}
-      <div className='iconEmoji text-center' style={{ width: '5%' }}>
-        <Popover
-          placement='top'
-          trigger='click'
-          content={
-            <Picker
-              data={async () => {
-                const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
+      <Popover
+        className='text-center cursor-pointer'
+        style={{ width: '5%' }}
+        placement='top'
+        trigger='click'
+        content={
+          <Picker
+            data={async () => {
+              const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data');
 
-                return response.json();
-              }}
-              onEmojiSelect={(emoji: any) => {
-                setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
-              }}
-              theme={themeColorSet.colorPicker}
-            />
-          }>
-          <span className='emoji'>
-            <FontAwesomeIcon 
-            className='item mr-3 ml-3' 
-            size='lg' icon={faFaceSmile} 
-            style={{color: commonColor.colorBlue1}}
-            />
-          </span>
-        </Popover>
-      </div>
+              return response.json();
+            }}
+            onEmojiSelect={(emoji: IEmoji) => {
+              setCursor(cursor + emoji.native.length);
+              setMessage(messageContent.slice(0, cursor) + emoji.native + messageContent.slice(cursor));
+            }}
+            theme={themeColorSet.colorPicker}
+          />
+        }>
+        <FontAwesomeIcon
+          className='item px-5'
+          size='lg'
+          icon={faFaceSmile}
+          style={{ color: commonColor.colorBlue1 }}
+        />
+      </Popover>
       <div className='input' style={{ width: '100%' }}>
-        <ConfigProvider theme={{ token: { controlHeight: 32, lineWidth: 0 } }}>
+        <ConfigProvider theme={{ token: { controlHeight: 35, lineWidth: 0 } }}>
           <Input
             allowClear
+            className='rounded-full'
             placeholder='Write a message'
             value={messageContent}
             onKeyUp={(e) => {
@@ -158,7 +154,11 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
               setCursor(cursorPosition ?? 0);
             }}
             onChange={(e) => {
-              chatSocket.emit(IS_TYPING, { conversationID, userID: currentUserInfo._id });
+              chatSocket.emit(Socket.IS_TYPING, {
+                conversationID,
+                userID: currentUserInfo._id,
+                members
+              });
               setMessage(e.currentTarget.value);
               handleStopTyping();
               // get cursor position
@@ -168,11 +168,14 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
             onPressEnter={() => handleSubmit(messageContent)}
             suffix={
               <span
-                className={`cursor-pointer hover:text-blue-700 ${
-                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
-                }`}
+                className={merge(
+                  'transition-all duration-300',
+                  checkEmpty
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'
+                )}
                 onClick={() => handleSubmit(messageContent)}>
-                <FontAwesomeIcon icon={faPaperPlane} style={{color: commonColor.colorBlue1}}/>
+                <FontAwesomeIcon icon={faPaperPlane} />
               </span>
             }
           />
@@ -188,10 +191,20 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID }) => {
           listType='picture'
           beforeUpload={beforeUpload}
           onChange={(info) => setFile(info.file.originFileObj)}>
-          <FontAwesomeIcon className='item mr-3' size='lg' icon={faPaperclip} style={{color: commonColor.colorBlue1}}/>
+          <FontAwesomeIcon
+            className='item mr-3'
+            size='lg'
+            icon={faPaperclip}
+            style={{ color: commonColor.colorBlue1 }}
+          />
         </Upload>
         <div className='micro'>
-          <FontAwesomeIcon className='item ml-3' size='lg' icon={faMicrophone} style={{color: commonColor.colorBlue1}}/>
+          <FontAwesomeIcon
+            className='item ml-3'
+            size='lg'
+            icon={faMicrophone}
+            style={{ color: commonColor.colorBlue1 }}
+          />
         </div>
       </Space>
     </div>

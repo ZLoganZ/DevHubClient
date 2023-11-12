@@ -1,39 +1,40 @@
 import { useEffect, useState } from 'react';
 import { Dropdown, Button, Input, Avatar, ConfigProvider } from 'antd';
-import { faTrashCan, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { MenuInfo } from 'rc-menu/es/interface';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DownOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssAddContacts';
 import { closeModal } from '@/redux/Slice/ModalHOCSlice';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import contactArrays from '@/util/Descriptions/Contacts';
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ContactType } from '@/types';
+import { IContact } from '@/types';
 
 interface IAddContacts {
-  contacts: ContactType[];
-  callback: (contacts: ContactType[]) => void;
+  contacts: IContact[];
+  callback: (contacts: IContact[]) => void;
 }
 
 const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   const dispatch = useAppDispatch();
   const [addLinkArr, setAddLinkArr] = useState([...contacts]);
   const [addTooltips, setAddTooltips] = useState([...contacts]);
   const [save, setSave] = useState(false);
 
-  const contactArray = [...contactArrays];
   const { themeColorSet } = getTheme();
 
   const handleSubmit = () => {
     callback(addLinkArr);
   };
 
-  const handleDropClick = (e: any, index: number) => {
-    const selectedLabel = contactArray[parseInt(e.key)].label;
+  const handleDropClick = (e: MenuInfo, index: number) => {
+    const selectedLabel = contactArrays[parseInt(e.key)].label;
     const newAddTooltips = [...addTooltips];
     const newAddLinkArr = [...addLinkArr];
 
@@ -78,8 +79,8 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
   const handleAddLink = (link: string, key: string) => {
     if (!link) return false;
     if (
-      link.startsWith(contactArray[parseInt(key)].linkDefault) &&
-      link.length > contactArray[parseInt(key)].linkDefault.length
+      link.startsWith(contactArrays[parseInt(key)].linkDefault) &&
+      link.length > contactArrays[parseInt(key)].linkDefault.length
     ) {
       return true;
     }
@@ -132,7 +133,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
             <div key={index} className='flex flex-row items-center mb-4'>
               <Dropdown
                 menu={{
-                  items: contactArray,
+                  items: contactArrays,
                   onClick: (e) => {
                     handleDropClick(e, index);
                   }
@@ -147,7 +148,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
                     <Avatar
                       style={{ color: themeColorSet.colorText1 }}
                       className='item'
-                      icon={contactArray[parseInt(item.key)].icon}
+                      icon={contactArrays[parseInt(item.key)].icon}
                       size={'small'}
                     />
                     <DownOutlined style={{ fontSize: '0.8rem' }} />
@@ -158,7 +159,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
               <Input
                 key={index + '1'}
                 className='w-full pl-2 inputlink'
-                placeholder={contactArray[parseInt(item.key)].linkDefault}
+                placeholder={contactArrays[parseInt(item.key)].linkDefault}
                 defaultValue={addLinkArr[index]?.link}
                 inputMode='url'
                 onChange={(e) => {
@@ -175,7 +176,7 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
               />
               <Input
                 key={index + '2'}
-                className={`w-full ml-2 pl-2 inputlink ${addTooltips[index].state ? '' : 'hidden'}`}
+                className={merge('w-full ml-2 pl-2 inputlink', !addTooltips[index].state && 'hidden')}
                 inputMode='text'
                 value={addTooltips[index]?.tooltip}
                 onChange={(e) => {
@@ -196,28 +197,13 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
                   borderRadius: 8
                 }}
               />
-
-              {/* <Button
-                className='icon-edit-tooltip ml-3'
-                shape='circle'
-                style={{
-                  border: 'none',
-                  backgroundColor: themeColorSet.colorBg3
-                }}
-                onClick={() => {
-                  handleShowTooltip(index);
-                }}
-                size='small'>
-                <FontAwesomeIcon icon={faInfo} style={{ color: commonColor.colorBlue2, fontSize: '1rem' }} />
-              </Button> */}
-
               <Button
                 className='icon-trash'
                 style={{ border: 'none' }}
                 onClick={() => {
                   handleDelete(index);
                 }}>
-                <FontAwesomeIcon icon={faTrashCan} size='lg' />
+                <FontAwesomeIcon icon={faTrash} size='lg' />
               </Button>
             </div>
           ))}

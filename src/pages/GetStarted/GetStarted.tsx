@@ -17,7 +17,7 @@ const GetStarted = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [radio1, setRadio1] = useState(false);

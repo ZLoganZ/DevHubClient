@@ -10,19 +10,14 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
-import textToHTMLWithAllSpecialCharacter from '@/util/textToHTML';
 import getImageURL from '@/util/getImageURL';
+import { textToHTML } from '@/util/convertText';
+import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { imageService } from '@/services/ImageService';
+import { IEmoji } from '@/types';
 import StyleProvider from './cssEditPostForm';
-
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-  [{ align: [] }],
-  ['link']
-];
 
 interface IEditPost {
   id: string;
@@ -31,12 +26,12 @@ interface IEditPost {
   image?: string[];
 }
 
-const EditPostForm = ({ id, title, content, image }: IEditPost) => {
+const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { mutateUpdatePost } = useUpdatePost();
@@ -48,7 +43,7 @@ const EditPostForm = ({ id, title, content, image }: IEditPost) => {
     setContentQuill(contentQuill);
   }, []);
 
-  const ReactQuillRef = useRef<any>();
+  const ReactQuillRef = useRef<ReactQuill | null>(null);
 
   const handleUploadImage = async (file: File) => {
     const formData = new FormData();
@@ -99,16 +94,15 @@ const EditPostForm = ({ id, title, content, image }: IEditPost) => {
   };
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor();
+    const quill = ReactQuillRef.current?.getEditor()!;
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
       const text = event.clipboardData!.getData('text/plain');
 
       // Instead parse and insert HTML
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(textToHTMLWithAllSpecialCharacter(text), 'text/html');
+      const doc = new DOMParser().parseFromString(textToHTML(text), 'text/html');
 
-      document.getSelection()?.getRangeAt(0).insertNode(doc.body);
+      document.getSelection()!.getRangeAt(0).insertNode(doc.body);
     });
   }, []);
 
@@ -155,13 +149,10 @@ const EditPostForm = ({ id, title, content, image }: IEditPost) => {
             </div>
             <div className='AddContent mt-4'>
               <ReactQuill
-                ref={ReactQuillRef as React.LegacyRef<ReactQuill>}
+                ref={ReactQuillRef}
                 value={contentQuill}
-                preserveWhitespace
                 onChange={setContentQuill}
-                modules={{
-                  toolbar: toolbarOptions
-                }}
+                modules={{ toolbar: toolbarOptions }}
                 placeholder='Add a Content'
                 theme='snow'
               />
@@ -180,11 +171,13 @@ const EditPostForm = ({ id, title, content, image }: IEditPost) => {
 
                       return response.json();
                     }}
-                    onEmojiSelect={(emoji: any) => {
-                      ReactQuillRef.current?.getEditor().focus();
+                    onEmojiSelect={(emoji: IEmoji) => {
                       ReactQuillRef.current
                         ?.getEditor()
-                        .insertText(ReactQuillRef.current?.getEditor().getSelection().index, emoji.native);
+                        .insertText(
+                          ReactQuillRef.current?.getEditor().getSelection(true).index,
+                          emoji.native
+                        );
                     }}
                   />
                 }>

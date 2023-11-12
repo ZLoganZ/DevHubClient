@@ -22,14 +22,42 @@ export const STATUS_CODE = {
   SERVER_ERROR: 500
 };
 
+export const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+  [{ align: [] }],
+  ['link']
+];
+
 export const DARK_THEME = 'dark';
 export const LIGHT_THEME = 'light';
 
-export const PRIVATE_MSG = 'PRIVATE_MSG';
-export const SEEN_MSG = 'SEEN_MSG';
-export const UNSEEN_MSG = 'UNSEEN_MSG';
-export const PRIVATE_CONVERSATION = 'PRIVATE_CONVERSATION';
-export const NEW_CONVERSATION = 'NEW_CONVERSATION';
-export const IS_TYPING = 'IS_TYPING';
-export const STOP_TYPING = 'STOP_TYPING';
-export const LEAVE_GROUP = 'LEAVE_GROUP';
+export const Socket = {
+  SET_PRESENCE: 'SET_PRESENCE',
+  SET_ACTIVE_MEM: 'SET_ACTIVE_MEM',
+  SETUP: 'SETUP',
+  PRIVATE_MSG: 'PRIVATE_MSG',
+  SEEN_MSG: 'SEEN_MSG',
+  UNSEEN_MSG: 'UNSEEN_MSG',
+  PRIVATE_CONVERSATION: 'PRIVATE_CONVERSATION',
+  NEW_CONVERSATION: 'NEW_CONVERSATION',
+  IS_TYPING: 'IS_TYPING',
+  STOP_TYPING: 'STOP_TYPING',
+  LEAVE_GROUP: 'LEAVE_GROUP',
+  DISSOLVE_GROUP: 'DISSOLVE_GROUP',
+  CHANGE_CONVERSATION_NAME: 'CHANGE_CONVERSATION_NAME',
+  CHANGE_CONVERSATION_IMAGE: 'CHANGE_CONVERSATION_IMAGE',
+  CHANGE_CONVERSATION_COVER: 'CHANGE_CONVERSATION_COVER',
+  ADD_MEMBER: 'ADD_MEMBER',
+  REMOVE_MEMBER: 'REMOVE_MEMBER',
+  COMMISSION_ADMIN: 'COMMISSION_ADMIN',
+  DECOMMISSION_ADMIN: 'DECOMMISSION_ADMIN',
+  VIDEO_CALL: 'video',
+  VOICE_CALL: 'audio',
+  LEAVE_VIDEO_CALL: 'leave_video',
+  LEAVE_VOICE_CALL: 'leave_audio',
+  END_VIDEO_CALL: 'end_video',
+  END_VOICE_CALL: 'end_audio',
+  SEND_END_VIDEO_CALL: 'send_end_video',
+  SEND_END_VOICE_CALL: 'send_end_audio'
+};

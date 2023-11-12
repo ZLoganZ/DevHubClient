@@ -14,7 +14,7 @@ import StyleProvider from './cssForgotPassword';
 
 export const ForgotPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();
@@ -49,7 +49,7 @@ export const ForgotPassword = () => {
 
 export const ResetPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();
@@ -120,7 +120,7 @@ export const ResetPassword = () => {
 
 export const VerifyCode = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();

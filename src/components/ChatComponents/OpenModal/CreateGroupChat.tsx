@@ -1,29 +1,32 @@
+import { message } from 'antd';
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
 import { messageService } from '@/services/MessageService';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
-import GroupChatModal from '@/components/ChatComponents/GroupChatModal';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
-import { NEW_CONVERSATION } from '@/util/constants/SettingSystem';
+import GroupChatModal from '@/components/ChatComponents/Modal/GroupChat';
 import { useReceiveConversation } from '@/hooks/mutation';
+import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { Socket } from '@/util/constants/SettingSystem';
+import { IUserInfo } from '@/types';
 
 interface IGroupModal {
-  users: UserInfoType[];
+  users: IUserInfo[];
 }
 
 const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { mutateReceiveConversation } = useReceiveConversation();
 
   const navigate = useNavigate();
+
+  const [messageAPI, contextHolder] = message.useMessage();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +35,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
 
   const onSubmit = useCallback(() => {
     if (!name || !membersGroup || membersGroup.length < 2) {
+      void messageAPI.error('Please enter a group name and select at least 2 members');
       return;
     }
 
@@ -42,7 +46,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
       .then((res) => {
         setIsLoading(false);
 
-        chatSocket.emit(NEW_CONVERSATION, res.data.metadata);
+        chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
 
         mutateReceiveConversation(res.data.metadata);
 
@@ -50,7 +54,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
 
         navigate(`/message/${res.data.metadata._id}`);
       })
-      .catch(() => console.log('error'))
+      .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
   }, [name, membersGroup]);
 
@@ -73,7 +77,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
     );
   }, [isLoading, name, membersGroup]);
 
-  return <></>;
+  return <>{contextHolder}</>;
 };
 
 export default OpenGroupModal;

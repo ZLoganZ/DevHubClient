@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -16,9 +17,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <StrictMode>
+            <App />
+          </StrictMode>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools buttonPosition='bottom-left' initialIsOpen={false} />
       </QueryClientProvider>
     </GoogleOAuthProvider>
   </Provider>

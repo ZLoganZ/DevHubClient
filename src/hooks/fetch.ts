@@ -1,6 +1,6 @@
-import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { MessageType } from '@/types';
+import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
 import ApplyDefaults from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
@@ -330,9 +330,15 @@ export const useConversationsData = () => {
  * - `isFetchingCurrentConversation` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCurrentConversationData = (conversationID: string | undefined) => {
+  const queryClient = useQueryClient();
+
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['conversation', conversationID],
     queryFn: async () => {
+      await queryClient.prefetchInfiniteQuery({
+        queryKey: ['messages', conversationID],
+        initialPageParam: 1
+      });
       const { data } = await messageService.getConversation(conversationID!);
       return data.metadata;
     },
@@ -389,12 +395,9 @@ export const useFollowersData = (userID: string) => {
  * - `isFetchingMessages` is a boolean that indicates whether the query is currently fetching.
  * - `refetchMessages` is a function that refetches the messages data.
  */
-export const useMessagesData = (conversationID: string) => {
+export const useMessages = (conversationID: string) => {
   const queryClient = useQueryClient();
-  const messages = queryClient.getQueryData<InfiniteData<MessageType[], number>>([
-    'messages',
-    conversationID
-  ]);
+  const messages = queryClient.getQueryData<InfiniteData<IMessage[], number>>(['messages', conversationID]);
   let extend = 0;
   if (messages) {
     if (messages.pages[messages.pages.length - 1].length >= 30) {
@@ -411,7 +414,7 @@ export const useMessagesData = (conversationID: string) => {
       },
       initialPageParam: 1,
       getPreviousPageParam: (lastPage, _, lastPageParam) => {
-        if (lastPage.length === 0 || lastPage.length < 30) {
+        if (lastPage.length < 30) {
           return undefined;
         }
         return lastPageParam + 1;
@@ -439,6 +442,56 @@ export const useMessagesData = (conversationID: string) => {
   };
 };
 
+export const useMessagesImage = (conversationID: string) => {
+  const queryClient = useQueryClient();
+  const messages = queryClient.getQueryData<InfiniteData<IMessage[], number>>([
+    'messagesImage',
+    conversationID
+  ]);
+  let extend = 0;
+  if (messages) {
+    if (messages.pages[messages.pages.length - 1].length >= 30) {
+      extend = messages.pages[messages.pages.length - 1].length - 30;
+    }
+  }
+
+  const { data, isPending, isError, isFetching, hasPreviousPage, fetchPreviousPage, isFetchingPreviousPage } =
+    useInfiniteQuery({
+      queryKey: ['messagesImage', conversationID],
+      queryFn: async ({ pageParam }) => {
+        const { data } = await messageService.getMessagesWithImage(conversationID, pageParam, extend);
+        return data.metadata;
+      },
+      initialPageParam: 1,
+      getPreviousPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length < 30) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+      getNextPageParam: (_, __, firstPageParam) => {
+        if (firstPageParam <= 1) {
+          return undefined;
+        }
+        return firstPageParam - 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity
+    });
+
+  return {
+    isLoadingMessagesImage: isPending,
+    isErrorMessagesImage: isError,
+    messagesImage: data!,
+    isFetchingMessagesImage: isFetching,
+    hasPreviousMessagesImage: hasPreviousPage,
+    fetchPreviousMessagesImage: fetchPreviousPage,
+    isFetchingPreviousPageImage: isFetchingPreviousPage
+  };
+};
+
 /**
  * The `useMessageCall` function is a custom hook that fetches video call data for a specific
  * conversation ID and type.
@@ -458,7 +511,7 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
   const { data, isPending, isError, isFetching, refetch } = useQuery({
     queryKey: ['messageCall', conversationID, type],
     queryFn: async () => {
-      const { data } = await messageService.callVideo(conversationID, type);
+      const { data } = await messageService.getToken(conversationID, type);
       return data.metadata;
     },
     staleTime: Infinity,
@@ -468,8 +521,35 @@ export const useMessageCall = (conversationID: string | undefined, type: string)
   return {
     isLoadingMessageCall: isPending,
     isErrorMessageCall: isError,
-    tokenMessageCall: data!,
+    dataMessageCall: data!,
     isFetchingMessageCall: isFetching,
     fetchMessageCall: refetch
+  };
+};
+
+/**
+ * The function `useGetCalled` is a custom hook that fetches data from an API endpoint and returns the
+ * loading status, error status, fetched data, and fetching status.
+ * @returns The function `useGetCalled` returns an object with the following properties:
+ * - `isLoadingGetCalled` is a boolean that indicates whether the data is still loading.
+ * - `isErrorMessageCall` is a boolean that indicates whether there is an error.
+ * - `calledList` is an array of calls.
+ * - `isFetchingMessageCall` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useGetCalled = () => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['called'],
+    queryFn: async () => {
+      const { data } = await messageService.getCalled();
+      return data.metadata;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingGetCalled: isPending,
+    isErrorMessageCall: isError,
+    calledList: data!,
+    isFetchingMessageCall: isFetching
   };
 };

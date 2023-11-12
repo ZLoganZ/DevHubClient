@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   IconDefinition,
   faCaretRight,
@@ -11,10 +11,13 @@ import {
   faPlusCircle,
   faRightFromBracket,
   faShieldHalved,
+  faTrash,
   faUser,
   faUserShield,
-  faUserSlash
+  faUserSlash,
+  faUsersSlash
 } from '@fortawesome/free-solid-svg-icons';
+import { v4 as uuidv4 } from 'uuid';
 import {
   faFileAudio as faReFileAudio,
   faFolderOpen as faReFolderOpen,
@@ -28,121 +31,268 @@ import {
   Skeleton,
   Col,
   Row,
-  MenuProps,
+  type MenuProps,
   Dropdown,
   Collapse,
   ConfigProvider,
   Tooltip
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, CrownFilled } from '@ant-design/icons';
 import type { CollapseProps } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
-import { useCurrentConversationData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useCurrentConversationData, useCurrentUserInfo, useMessagesImage } from '@/hooks/fetch';
+import { useDissolveGroup, useLeaveGroup, useReceiveConversation, useSendMessage } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
+import { Socket } from '@/util/constants/SettingSystem';
+import getImageURL from '@/util/getImageURL';
 import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
-import { ConversationType, MessageType } from '@/types';
+import { messageService } from '@/services/MessageService';
+import { IMessage, IUserInfo } from '@/types';
 import StyleProvider from './cssConversationOption';
+import ChangeGroupName from '../OpenModal/ChangeGroupName';
+import AddMemberToGroup from '../OpenModal/AddMemberToGroup';
 
 interface IConversationOption {
   conversationID: string;
 }
 
 const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { visible } = useAppSelector((state) => state.modalHOC);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const navigate = useNavigate();
 
   const { currentUserInfo } = useCurrentUserInfo();
+  const { messagesImage, isLoadingMessagesImage } = useMessagesImage(conversationID);
+  const { mutateReceiveConversation } = useReceiveConversation();
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
+  const { mutateLeaveGroup } = useLeaveGroup();
+  const { mutateDissolveGroup } = useDissolveGroup();
+  const { mutateSendMessage } = useSendMessage();
 
   const otherUser = useOtherUser(currentConversation);
+  const followers = useMemo(() => {
+    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
+      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
+    );
+  }, [currentUserInfo]);
 
-  const [images, setImages] = useState<any>([]);
+  // filter members in followers but not in conversation
+  const members = useMemo(() => {
+    return followers.filter((follower) => {
+      return !currentConversation.members.some((member) => member._id === follower._id);
+    });
+  }, [followers, currentConversation.members]);
+
   const [openAvatar, setOpenAvatar] = useState(false);
+  const [openChangeName, setOpenChangeName] = useState(false);
+  const [openAddMember, setOpenAddMember] = useState(false);
+
+  const [audios, setAudios] = useState<IMessage[]>([]);
+  const [files, setFiles] = useState<IMessage[]>([]);
+  const [links, setLinks] = useState<IMessage[]>([]);
+
+  useEffect(() => {
+    setLinks([]);
+    setFiles([]);
+    setAudios([]);
+  }, []);
 
   useEffect(() => {
     if (!visible && openAvatar) {
       setOpenAvatar(false);
     }
+    if (!visible && openChangeName) {
+      setOpenChangeName(false);
+    }
+    if (!visible && openAddMember) {
+      setOpenAddMember(false);
+    }
   }, [visible]);
 
-  const memberOptions = (userID: string): MenuProps['items'] => {
-    return [
-      {
-        key: '1',
-        label: 'Commission as administrator',
-        icon: <FontAwesomeIcon icon={faUserShield} />,
-        style: {
-          display:
-            !currentConversation.admins?.some((admin) => admin._id === userID) &&
-            currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id)
-              ? ''
-              : 'none'
-        }
-      },
-      {
-        key: '3',
-        label: 'Message',
-        icon: <FontAwesomeIcon icon={faCommentDots} />,
-        style: {
-          display: userID === currentUserInfo._id ? 'none' : ''
-        }
-      },
-      {
-        label: 'View profile',
-        key: '4',
-        icon: <FontAwesomeIcon icon={faUser} />,
-        onClick: () => {
-          navigate(`/user/${otherUser._id}`);
-        }
-      },
-      {
-        type: 'divider',
-        style: {
-          display:
-            currentConversation.admins?.some((admin) => admin._id === userID) &&
-            userID !== currentUserInfo._id
-              ? 'none'
-              : ''
-        }
-      },
-      {
-        key: '2',
-        label:
-          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
-          userID === currentUserInfo._id
-            ? 'Leave group'
-            : 'Remove member',
-        danger: true,
-        icon:
-          currentConversation.admins?.some((admin) => admin._id === currentUserInfo._id) &&
-          userID === currentUserInfo._id ? (
+  const memberOptions = useCallback(
+    (user: IUserInfo): MenuProps['items'] => {
+      const isCurrentUser = user._id === currentUserInfo._id;
+      const isAdmin = currentConversation.admins.some((admin) => admin._id === user._id);
+      const isCurrentUserAdmin = currentConversation.admins.some(
+        (admin) => admin._id === currentUserInfo._id
+      );
+      const isCurrentUserCreator = currentConversation.creator === currentUserInfo._id;
+      return [
+        {
+          key: '1',
+          label: 'Commission as administrator',
+          icon: <FontAwesomeIcon icon={faUserShield} />,
+          style: {
+            display: !isAdmin && isCurrentUserAdmin ? '' : 'none'
+          },
+          onClick: () => {
+            void messageService.commissionAdmin(currentConversation._id, user._id).then((res) => {
+              chatSocket.emit(Socket.COMMISSION_ADMIN, res.data.metadata);
+
+              const message = {
+                _id: uuidv4().replace(/-/g, ''),
+                conversation_id: conversationID,
+                sender: {
+                  _id: currentUserInfo._id,
+                  user_image: currentUserInfo.user_image,
+                  name: currentUserInfo.name
+                },
+                isSending: true,
+                type: 'notification',
+                content: `promoted ${user.name} to administrator`,
+                createdAt: new Date()
+              };
+
+              mutateSendMessage(message as unknown as IMessage);
+              chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+            });
+          }
+        },
+        {
+          key: '2',
+          label: 'Revoke administrator',
+          icon: <FontAwesomeIcon icon={faUserSlash} />,
+          style: {
+            display: isCurrentUserCreator && isAdmin && !isCurrentUser ? '' : 'none'
+          },
+          onClick: () => {
+            void messageService.removeAdmin(currentConversation._id, user._id).then((res) => {
+              chatSocket.emit(Socket.DECOMMISSION_ADMIN, res.data.metadata);
+
+              const message = {
+                _id: uuidv4().replace(/-/g, ''),
+                conversation_id: conversationID,
+                sender: {
+                  _id: currentUserInfo._id,
+                  user_image: currentUserInfo.user_image,
+                  name: currentUserInfo.name
+                },
+                isSending: true,
+                type: 'notification',
+                content: `revoked ${user.name} as administrator`,
+                createdAt: new Date()
+              };
+
+              mutateSendMessage(message as unknown as IMessage);
+              chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+            });
+          }
+        },
+        {
+          key: '3',
+          label: 'Message',
+          icon: <FontAwesomeIcon icon={faCommentDots} />,
+          style: {
+            display: user._id === currentUserInfo._id ? 'none' : ''
+          },
+          onClick: () => {
+            void messageService
+              .createConversation({
+                type: 'private',
+                members: [user._id]
+              })
+              .then((res) => {
+                chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
+                mutateReceiveConversation(res.data.metadata);
+                navigate(`/message/${res.data.metadata._id}`);
+              });
+          }
+        },
+        {
+          label: 'View profile',
+          key: '4',
+          icon: <FontAwesomeIcon icon={faUser} />,
+          onClick: () => {
+            navigate(`/user/${user._id}`);
+          }
+        },
+        {
+          type: 'divider',
+          style: {
+            display:
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
+              (!isCurrentUserCreator && !isCurrentUser)
+                ? 'none'
+                : ''
+          }
+        },
+        {
+          key: '5',
+          label: isCurrentUser ? 'Leave group' : isCurrentUserCreator && 'Remove member',
+          danger: true,
+          icon: isCurrentUser ? (
             <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
           ) : (
-            <FontAwesomeIcon icon={faUserSlash} />
+            isCurrentUserCreator && <FontAwesomeIcon icon={faUserSlash} />
           ),
-        style: {
-          display:
-            currentConversation.admins?.some((admin) => admin._id === userID) &&
-            userID !== currentUserInfo._id
-              ? 'none'
-              : ''
-        }
-      }
-    ];
-  };
+          style: {
+            display:
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
+              (!isCurrentUserCreator && !isCurrentUser)
+                ? 'none'
+                : ''
+          },
+          onClick: () => {
+            if (user._id === currentUserInfo._id) {
+              mutateLeaveGroup(conversationID);
+              const message = {
+                _id: uuidv4().replace(/-/g, ''),
+                conversation_id: conversationID,
+                sender: {
+                  _id: currentUserInfo._id,
+                  user_image: currentUserInfo.user_image,
+                  name: currentUserInfo.name
+                },
+                isSending: true,
+                type: 'notification',
+                content: 'left the group',
+                createdAt: new Date()
+              };
 
-  const downloadImage = async (url: string) => {
+              mutateSendMessage(message as unknown as IMessage);
+              chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+            } else {
+              void messageService.removeMember(currentConversation._id, user._id).then((res) => {
+                chatSocket.emit(Socket.REMOVE_MEMBER, { ...res.data.metadata, remove_userID: user._id });
+
+                const message = {
+                  _id: uuidv4().replace(/-/g, ''),
+                  conversation_id: conversationID,
+                  sender: {
+                    _id: currentUserInfo._id,
+                    user_image: currentUserInfo.user_image,
+                    name: currentUserInfo.name
+                  },
+                  isSending: true,
+                  type: 'notification',
+                  content: `removed ${user.name}`,
+                  createdAt: new Date()
+                };
+
+                mutateSendMessage(message as unknown as IMessage);
+                chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+              });
+            }
+          }
+        }
+      ];
+    },
+    [currentConversation.admins, currentUserInfo]
+  );
+
+  const downloadImage = async (url?: string) => {
+    if (!url) return;
     const originalImage = url;
-    const image = await fetch(originalImage);
+    const image = await fetch(getImageURL(originalImage)!);
 
     //Split image name
     const nameSplit = originalImage.split('/');
@@ -159,97 +309,106 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     document.body.removeChild(link);
   };
 
-  const listItems = (items: any, icon: IconDefinition, description: string) => {
-    return (
-      <div className='content'>
-        {items.length === 0 ? (
-          <Empty
-            image={<FontAwesomeIcon icon={icon} />}
-            description={
-              <p className='text-sm' style={{ color: themeColorSet.colorText3 }}>
-                {description}
-              </p>
-            }
-          />
-        ) : (
-          <>
-            {items?.slice(0, 4).map((item: any, index: number) => (
-              <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
-                <div className='left flex justify-between items-center'>
-                  <div className='image mr-2'>
-                    <Image
-                      src={item.image}
-                      alt='image'
-                      style={{
-                        height: '3.5rem',
-                        borderRadius: '10px',
-                        width: '3.5rem',
-                        objectFit: 'cover'
-                      }}
-                    />
-                  </div>
-                  <Space className='info' direction='vertical'>
-                    <div
-                      className='name'
-                      style={{
-                        color: themeColorSet.colorText1,
-                        fontWeight: '600'
-                      }}>
-                      {item.sender.name}
+  const listItems = useCallback(
+    (items: IMessage[], icon: IconDefinition, description: string, isLoading: boolean) => {
+      return (
+        <div className='content'>
+          {isLoading ? (
+            <>Loading...</>
+          ) : items.length === 0 ? (
+            <Empty
+              image={<FontAwesomeIcon icon={icon} />}
+              description={
+                <p className='text-sm' style={{ color: themeColorSet.colorText3 }}>
+                  {description}
+                </p>
+              }
+            />
+          ) : (
+            <>
+              {items.slice(0, 4).map((item) => (
+                <div className='fileContent flex justify-between items-center mb-2 ml-2' key={item._id}>
+                  <div className='left flex justify-between items-center'>
+                    <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
+                      <Image
+                        src={getImageURL(item.image, 'post')}
+                        alt='image'
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover'
+                        }}
+                        preview={{ src: getImageURL(item.image) }}
+                      />
                     </div>
-                    <Space
-                      style={{
-                        color: themeColorSet.colorText3
-                      }}>
-                      <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
+                    <Space className='info' direction='vertical'>
+                      <div
+                        className='name'
+                        style={{
+                          color: themeColorSet.colorText1,
+                          fontWeight: '600'
+                        }}>
+                        {item.sender.name}
+                      </div>
+                      <Space
+                        style={{
+                          color: themeColorSet.colorText3
+                        }}>
+                        <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
+                      </Space>
                     </Space>
-                  </Space>
+                  </div>
+                  <div
+                    className='right cursor-pointer'
+                    onClick={() => {
+                      void downloadImage(item.image);
+                    }}>
+                    <FontAwesomeIcon icon={faDownload} />
+                  </div>
                 </div>
+              ))}
+              {items.length > 4 && (
                 <div
-                  className='right cursor-pointer'
-                  onClick={() => {
-                    void downloadImage(item.image);
+                  className='seeAll flex items-end justify-end'
+                  style={{
+                    color: themeColorSet.colorText2,
+                    fontSize: '0.8rem',
+                    textDecoration: 'underline'
                   }}>
-                  <FontAwesomeIcon icon={faDownload} />
+                  <p className='cursor-pointer'>See all</p>
                 </div>
-              </div>
-            ))}
-            <div
-              className='seeAll flex items-end justify-end'
-              style={{
-                color: themeColorSet.colorText2,
-                fontSize: '0.8rem',
-                textDecoration: 'underline'
-              }}>
-              <p className='cursor-pointer'>See all</p>
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
+              )}
+            </>
+          )}
+        </div>
+      );
+    },
+    [themeColorSet]
+  );
 
-  const listImages = (items: MessageType[]) => {
-    return listItems(items, faReImages, 'No images');
+  const listImages = (items: IMessage[]) => {
+    return listItems(items, faReImages, 'No images', isLoadingMessagesImage);
   };
 
   const listFiles = (items: any) => {
-    return listItems(items, faReFolderOpen, 'No files');
+    return listItems(items, faReFolderOpen, 'No files', false);
   };
 
   const listLinks = (items: any) => {
-    return listItems(items, faLink, 'No links');
+    return listItems(items, faLink, 'No links', false);
   };
 
   const listAudio = (items: any) => {
-    return listItems(items, faReFileAudio, 'No audio');
+    return listItems(items, faReFileAudio, 'No audio', false);
   };
 
-  const listMembers = (currentConversation: ConversationType) => {
+  const listMembers = useCallback(() => {
     return (
       <div className='pr-5 w-full'>
         <div className='listUser flex flex-col w-full pl-3' style={{ overflow: 'auto' }}>
           {currentConversation.members.map((member) => {
+            const isAdmin = currentConversation.admins.some((admin) => admin._id === member._id);
+            const isCreator = currentConversation.creator === member._id;
             return (
               <div key={member._id} className='mt-3 w-full flex flex-row justify-between items-center'>
                 <div className='user flex items-center' key={member._id}>
@@ -264,8 +423,21 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                     }}
                     mouseEnterDelay={0.2}
                     autoAdjustOverflow>
-                    <div className='avatar-member relative cursor-pointer'>
-                      <Avatar key={member._id} user={member} />
+                    <div
+                      className='avatar-member relative cursor-pointer'
+                      onClick={() => {
+                        void messageService
+                          .createConversation({
+                            type: 'private',
+                            members: [member._id]
+                          })
+                          .then((res) => {
+                            chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
+                            mutateReceiveConversation(res.data.metadata);
+                            navigate(`/message/${res.data.metadata._id}`);
+                          });
+                      }}>
+                      <AvatarMessage key={member._id} user={member} />
                     </div>
                   </Tooltip>
                   <div
@@ -276,35 +448,41 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                     }}>
                     <div>
                       {member.name}
-                      {currentConversation.admins?.some((admin) => admin._id === member._id) && (
-                        <FontAwesomeIcon className='ml-1' icon={faShieldHalved} />
-                      )}
+                      {isAdmin &&
+                        (isCreator ? (
+                          <CrownFilled className='ml-1 text-base' />
+                        ) : (
+                          <FontAwesomeIcon className='ml-1' icon={faShieldHalved} />
+                        ))}
                     </div>
-
-                    {currentConversation.admins?.some((admin) => admin._id === member._id) && (
-                      <div className='text-xs'>Admin</div>
-                    )}
+                    {isAdmin &&
+                      (isCreator ? (
+                        <p className='text-xs'>Group creator</p>
+                      ) : (
+                        <p className='text-xs'>Administrator</p>
+                      ))}
                   </div>
                 </div>
-                <div className='options rounded-full'>
-                  <Dropdown menu={{ items: memberOptions(member._id) }} trigger={['click']}>
-                    <FontAwesomeIcon
-                      className='text-lg cursor-pointer py-1 px-3 '
-                      icon={faEllipsisVertical}
-                    />
-                  </Dropdown>
-                </div>
+
+                <Dropdown
+                  className='options h-5 w-5 p-1 rounded-full cursor-pointer'
+                  menu={{ items: memberOptions(member) }}
+                  trigger={['click']}>
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </Dropdown>
               </div>
             );
           })}
         </div>
-        <div className='add-member mt-3 w-full flex flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'>
+        <div
+          className='add-member mt-3 w-full flex items-center flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
+          onClick={() => setOpenAddMember(!openAddMember)}>
           <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
-          <div className='name flex items-center text-sm font-medium text-left ml-2'>Add members</div>
+          <span className='text-sm font-medium text-left ml-2'>Add members</span>
         </div>
       </div>
     );
-  };
+  }, [themeColorSet, currentConversation.admins, currentConversation.members, memberOptions]);
 
   const listOptions: CollapseProps['items'] = [
     {
@@ -312,7 +490,9 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
       label: <span className='text-base font-semibold'>Conversation setting</span>,
       children: (
         <>
-          <div className='rename w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
+          <div
+            className='rename w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'
+            onClick={() => setOpenChangeName(!openChangeName)}>
             <FontAwesomeIcon className='text-lg mr-2' icon={faPen} />
             Change name
           </div>
@@ -328,54 +508,96 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     {
       key: '1',
       label: <span className='text-base font-semibold'>Images</span>,
-      children: listImages(images)
+      children: listImages(messagesImage ?? [])
     },
     {
       key: '2',
       label: <span className='text-base font-semibold'>Files</span>,
-      children: listFiles(images)
+      children: listFiles(files)
     },
     {
       key: '3',
       label: <span className='text-base font-semibold'>Links</span>,
-      children: listLinks(images)
+      children: listLinks(links)
     },
     {
       key: '4',
       label: <span className='text-base font-semibold'>Audio</span>,
-      children: listAudio(images)
+      children: listAudio(audios)
     },
     {
       key: '5',
       label: <span className='text-base font-semibold'>Members</span>,
-      children: listMembers(currentConversation)
+      children: listMembers()
     },
     {
       key: '6',
       label: <span className='text-base font-semibold'>Private & Supports</span>,
-      children: (
-        <div className='leave-group w-full flex flex-row items-center cursor-pointer px-3 py-2 rounded-full'>
-          <FontAwesomeIcon className='text-lg mr-2' icon={faRightFromBracket} />
-          Leave group
-        </div>
-      )
+      children:
+        currentConversation.type === 'group' ? (
+          <div className='flex flex-col gap-1'>
+            <div
+              className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
+              onClick={() => {
+                mutateDissolveGroup(conversationID);
+              }}>
+              <FontAwesomeIcon icon={faUsersSlash} />
+              Dissolve group
+            </div>
+            <div
+              className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
+              onClick={() => {
+                mutateLeaveGroup(conversationID);
+                const message = {
+                  _id: uuidv4().replace(/-/g, ''),
+                  conversation_id: conversationID,
+                  sender: {
+                    _id: currentUserInfo._id,
+                    user_image: currentUserInfo.user_image,
+                    name: currentUserInfo.name
+                  },
+                  isSending: true,
+                  type: 'notification',
+                  content: 'left the group',
+                  createdAt: new Date()
+                };
+
+                mutateSendMessage(message as unknown as IMessage);
+                chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+              }}>
+              <FontAwesomeIcon className='text-lg' icon={faRightFromBracket} />
+              Leave group
+            </div>
+            <div className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'>
+              <FontAwesomeIcon className='text-lg mr-[2px]' icon={faTrash} />
+              Delete conversation
+            </div>
+          </div>
+        ) : (
+          <div className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'>
+            <FontAwesomeIcon className='text-lg mr-[2px]' icon={faTrash} />
+            Delete conversation
+          </div>
+        )
     }
   ];
 
   if (currentConversation.type !== 'group') {
-    listOptions.splice(
-      listOptions.findIndex((item) => {
-        return item.key === '5';
-      }),
-      1
-    );
+    listOptions.splice(5, 1);
+    listOptions.splice(0, 1);
   }
 
   return (
     <ConfigProvider
       theme={{ components: { Collapse: { headerPadding: '8px 12px', contentPadding: '0px 12px' } } }}>
       <StyleProvider theme={themeColorSet}>
-        {openAvatar && <ChangeAvatarGroup image={currentConversation.image} />}
+        {openAvatar && (
+          <ChangeAvatarGroup image={currentConversation.image} conversationID={conversationID} />
+        )}
+        {openChangeName && (
+          <ChangeGroupName name={currentConversation.name} conversationID={conversationID} />
+        )}
+        {openAddMember && <AddMemberToGroup conversationID={conversationID} users={members} />}
         {isLoadingCurrentConversation ? (
           <>
             <div
@@ -463,14 +685,16 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                         size={80}
                       />
                     ) : (
-                      <Avatar key={otherUser._id} user={otherUser} size={80} />
+                      <NavLink to={`/user/${otherUser._id}`}>
+                        <AvatarMessage key={otherUser._id} user={otherUser} size={80} />
+                      </NavLink>
                     )}
                   </div>
-                  <div className='name'>
-                    <span className='font-semibold text-xl'>
-                      {currentConversation.name ?? otherUser.name}
-                    </span>
-                  </div>
+                  <span className='name font-semibold text-xl'>
+                    {currentConversation.name ?? (
+                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                    )}
+                  </span>
                 </Space>
               </Row>
               <Row className='mt-2' justify='center'>

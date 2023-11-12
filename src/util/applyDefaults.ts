@@ -1,7 +1,7 @@
-import { PostType, UserInfoType } from '@/types';
+import { IPost, IUserInfo } from '@/types';
 
-const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(obj: T): T => {
-  const defaultValues: UserInfoType | PostType = {
+const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
+  const defaultValues: IUserInfo | IPost = {
     _id: '',
     email: '',
     phone_number: '',
@@ -36,6 +36,8 @@ const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(obj: T): 
         phone_number: '',
         user_image: '',
         cover_image: '',
+        last_online: '',
+        members: [],
         tags: [],
         alias: '',
         about: '',
@@ -58,7 +60,7 @@ const ApplyDefaults = <T extends UserInfoType | PostType | PostType[]>(obj: T): 
       },
       title: undefined,
       content: undefined,
-      img: undefined,
+      images: undefined,
       url: undefined,
       post: undefined,
       owner_post: undefined,

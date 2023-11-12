@@ -19,7 +19,7 @@ const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export const CommunityAdmin = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -275,7 +275,7 @@ export const CommunityAdmin = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -299,7 +299,7 @@ export const CommunityAdmin = () => {
 
 export const CommunityMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
@@ -504,7 +504,7 @@ export const CommunityMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -553,7 +553,7 @@ export const CommunityMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -577,7 +577,7 @@ export const CommunityMember = () => {
 
 export const CommunityNoMember = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   useEffect(() => {
@@ -782,7 +782,7 @@ export const CommunityNoMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>
@@ -831,7 +831,7 @@ export const CommunityNoMember = () => {
                                   fontWeight: 600,
                                   color: themeColorSet.colorText1
                                 }}>
-                                {' '}
+                                &nbsp;
                                 {item.name}
                               </span>
                               <span style={{ color: themeColorSet.colorText3 }}>

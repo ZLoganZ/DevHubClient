@@ -9,8 +9,7 @@ import {
   faBars
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu } from 'antd';
-import Sider from 'antd/es/layout/Sider';
+import { Menu, Layout } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
@@ -26,7 +25,7 @@ const MenuMain = () => {
   const location = useLocation();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -92,11 +91,11 @@ const MenuMain = () => {
         }}>
         <FontAwesomeIcon icon={faBars} />
       </div>
-      <Sider
+      <Layout.Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={240}
+        width={200}
         className={showMenu ? 'sider' : 'hidden'}
         style={{
           overflow: 'auto',
@@ -111,7 +110,6 @@ const MenuMain = () => {
         onMouseLeave={handleMouseLeave}>
         <Menu
           mode='inline'
-          defaultSelectedKeys={[key]}
           selectedKeys={[key]}
           style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg1 }}
           className='min-h-full max-h-fit'
@@ -176,8 +174,8 @@ const MenuMain = () => {
             {
               type: 'divider',
               style: {
-                backgroundColor: themeColorSet.colorBg3,
-                height: '2px'
+                backgroundColor: themeColorSet.colorBgReverse4,
+                height: '1px'
               }
             },
             {
@@ -249,7 +247,7 @@ const MenuMain = () => {
             }
           ]}
         />
-      </Sider>
+      </Layout.Sider>
     </StyleProvider>
   );
 };

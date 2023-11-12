@@ -8,7 +8,7 @@ import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { setLoading } from '@/redux/Slice/AuthSlice';
-import { UserRegisterDataType } from '@/types';
+import { IUserRegister } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
@@ -28,7 +28,7 @@ const Register = () => {
     }
   });
 
-  const onSubmit = (values: UserRegisterDataType) => {
+  const onSubmit = (values: IUserRegister) => {
     dispatch(setLoading(true));
     dispatch(REGISTER_SAGA(values));
   };

@@ -7,40 +7,45 @@ import { SearchOutlined } from '@ant-design/icons';
 
 import StyleProvider from './cssConversationList';
 import { getTheme } from '@/util/theme';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ConversationBox from '@/components/ChatComponents/ConversationBox/ConversationBox';
 import CreateGroupChat from '@/components/ChatComponents/OpenModal/CreateGroupChat';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { ConversationType } from '@/types';
+import { IConversation, IMessage } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
 import {
-  LEAVE_GROUP,
-  PRIVATE_CONVERSATION
-} from '@/util/constants/SettingSystem';
-import { useReceiveConversation, useReceiveLeaveGroup } from '@/hooks/mutation';
+  useMutateConversation,
+  useReceiveConversation,
+  useReceiveLeaveGroup,
+  useReceiveMessage,
+  useReceiveSeenConversation
+} from '@/hooks/mutation';
 
 interface IConversationList {
-  conversations: ConversationType[];
-  selected?: string;
+  conversations: IConversation[];
+  selecting?: string;
 }
 
-const ConversationList: React.FC<IConversationList> = ({ conversations, selected }) => {
+const ConversationList: React.FC<IConversationList> = ({ conversations, selecting: selected }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector(state => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
+  const { theme } = useAppSelector((state) => state.theme);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const { chatSocket } = useAppSelector(state => state.socketIO);
-  const { userID } = useAppSelector(state => state.auth);
-  const { visible } = useAppSelector(state => state.modalHOC);
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
+  const { visible } = useAppSelector((state) => state.modalHOC);
 
   const { mutateReceiveConversation } = useReceiveConversation();
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
+  const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
+  const { mutateReceiveMessage } = useReceiveMessage(currentUserInfo._id, selected);
+  const { mutateConversation } = useMutateConversation(currentUserInfo._id);
 
   const [search, setSearch] = useState('');
-  const [searchConversation, setSearchConversation] =
-    useState<ConversationType[]>(conversations);
+  const [searchConversation, setSearchConversation] = useState<IConversation[]>(conversations);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
@@ -54,16 +59,40 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
   }, [conversations]);
 
   useEffect(() => {
-    chatSocket.on(
-      PRIVATE_CONVERSATION + userID,
-      (conversation: ConversationType) => {
-        mutateReceiveConversation(conversation);
-      }
-    );
-    chatSocket.on(LEAVE_GROUP + userID, (conversation: ConversationType) => {
+    chatSocket.on(Socket.PRIVATE_CONVERSATION, (conversation: IConversation) => {
+      mutateReceiveConversation(conversation);
+    });
+    chatSocket.on(Socket.LEAVE_GROUP, (conversation: IConversation) => {
       mutateReceiveLeaveGroup(conversation);
     });
-  }, [userID]);
+    chatSocket.on(Socket.PRIVATE_MSG, (message: IMessage) => {
+      mutateReceiveMessage(message);
+    });
+    chatSocket.on(Socket.SEEN_MSG, (conversation: IConversation) => {
+      mutateReceiveSeenConversation(conversation);
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_IMAGE, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'image' });
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_COVER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'cover_image' });
+    });
+    chatSocket.on(Socket.CHANGE_CONVERSATION_NAME, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'name' });
+    });
+    chatSocket.on(Socket.ADD_MEMBER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'add_member' });
+    });
+    chatSocket.on(Socket.REMOVE_MEMBER, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'remove_member' });
+    });
+    chatSocket.on(Socket.COMMISSION_ADMIN, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'commission_admin' });
+    });
+    chatSocket.on(Socket.DECOMMISSION_ADMIN, (conversation: IConversation) => {
+      mutateConversation({ ...conversation, typeUpdate: 'remove_admin' });
+    });
+  }, []);
 
   useEffect(() => {
     if (search === '') {
@@ -72,14 +101,12 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
       const searchTerm = removeAccents(search).toLowerCase();
 
       setSearchConversation(
-        conversations.filter(conversation => {
+        conversations.filter((conversation) => {
           if (conversation.type === 'group') {
             const name = removeAccents(conversation.name);
             return name.toLowerCase().includes(searchTerm);
           } else {
-            const otherUser = conversation.members.filter(
-              member => member._id !== currentUserInfo._id
-            )[0];
+            const otherUser = conversation.members.filter((member) => member._id !== currentUserInfo._id)[0];
 
             const name = removeAccents(otherUser.name);
             return name.toLowerCase().includes(searchTerm);
@@ -111,7 +138,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
               <div className='flex justify-between items-center'>
                 <NavLink to={`/user/${currentUserInfo._id}`}>
                   <div className='avatar mr-3'>
-                    <Avatar key={currentUserInfo._id} user={currentUserInfo} />
+                    <AvatarMessage key={currentUserInfo._id} user={currentUserInfo} />
                   </div>
                 </NavLink>
                 <div className='name_career'>
@@ -139,11 +166,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
                 onClick={() => {
                   setIsOpenModal(!isOpenModal);
                 }}>
-                <FontAwesomeIcon
-                  className='text-xl'
-                  icon={faUsersLine}
-                  color={themeColorSet.colorText1}
-                />
+                <FontAwesomeIcon className='text-xl' icon={faUsersLine} color={themeColorSet.colorText1} />
               </div>
             </Space>
           </Row>
@@ -157,11 +180,11 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
                 <ConfigProvider theme={{ token: { lineWidth: 0, controlHeight: 40 } }}>
                   <Input
                     allowClear
-                    placeholder='Search conversation'
-                    className='rounded-full mx-0'
+                    placeholder='Search'
+                    className='rounded-full '
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    prefix={<SearchOutlined className='text-2xl' />}
+                    onChange={(e) => setSearch(e.target.value)}
+                    prefix={<SearchOutlined className='text-xl mr-1' />}
                   />
                 </ConfigProvider>
               </div>
@@ -177,22 +200,21 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selected
               <div className='userChatContact'>
                 {searchConversation.length === 0 ? (
                   <Empty
-                    image='https://cdn.iconscout.com/icon/free/png-256/free-empty-folder-2702275-2244989.png'
+                    image='https://cdn.iconscout.com/icon/premium/png-512-thumb/no-message-4173048-3453755.png'
                     description={
-                      <p
-                        className='text-sm'
-                        style={{ color: themeColorSet.colorText3 }}>
+                      <p className='text-sm' style={{ color: themeColorSet.colorText2 }}>
                         No conversation found
                       </p>
                     }
                     imageStyle={{
                       display: 'flex',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      filter: theme === 'dark' ? 'invert(1)' : 'invert(0)'
                     }}
                   />
                 ) : (
                   <div className='ps-2'>
-                    {searchConversation.map(conversation => (
+                    {searchConversation.map((conversation) => (
                       <ConversationBox
                         key={conversation._id}
                         conversation={conversation}

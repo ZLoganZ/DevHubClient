@@ -6,16 +6,16 @@ import PopupInfoUser from '@/components/PopupInfoUser';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import StyleProvider from './cssPostUserInfo';
 
-interface IUserInfoPost {
-  userInfo: UserInfoType;
+interface IUserInfoPostProps {
+  userInfo: IUserInfo;
   postID: string;
   date: string;
 }
 
-const UserInfoPost: React.FC<IUserInfoPost> = ({ userInfo, postID, date }) => {
+const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date }) => {
   const { themeColorSet } = getTheme();
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import StyleProvider from './cssAddTags';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import descArrays from '@/util/Descriptions/Tags';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -15,7 +16,7 @@ const AddTags: React.FC<IAddTags> = ({ tags, callback }) => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const descArray = [...descArrays];
@@ -39,18 +40,15 @@ const AddTags: React.FC<IAddTags> = ({ tags, callback }) => {
         {descArray.map((item, index) => (
           <span
             key={index}
-            className={
-              addTagArr.indexOf(item.title) !== -1
-                ? 'itemAddTag mx-2 my-2 px-4 py-2 active'
-                : 'itemAddTag mx-2 my-2 px-4 py-2'
-            }
+            className={merge(
+              'itemAddTag mx-2 my-2 px-4 py-2',
+              addTagArr.indexOf(item.title) !== -1 && 'active'
+            )}
             onClick={() => {
               if (addTagArr.includes(item.title)) {
-                //   addTagArr.splice(addTagArr.indexOf(item.title), 1);
                 setAddTagArr(addTagArrTemp.filter((i) => i !== item.title));
                 return;
               } else {
-                //   addTagArr.push(item.title);
                 setAddTagArr([...addTagArr, item.title]);
                 addTagArrTemp = [...addTagArr, item.title];
                 return;

@@ -6,7 +6,7 @@ import { useAppSelector } from '@/hooks/special';
 
 const LoadingDetailPost: React.FC = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (

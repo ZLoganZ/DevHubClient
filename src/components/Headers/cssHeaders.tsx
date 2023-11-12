@@ -16,6 +16,7 @@ const StyleProvider = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    color: ${(props) => props.theme.colorText1};
   }
 
   .letter {
@@ -34,18 +35,6 @@ const StyleProvider = styled.div`
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-
-  .ant-notification-notice-icon {
-  }
-
-  .ant-notification-notice-message {
-  }
-
-  .ant-notification-notice-description {
-  }
-
-  .ant-notification-notice-btn {
   }
 `;
 

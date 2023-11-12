@@ -4,8 +4,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { GET_COMMUNITY_BY_ID_SAGA } from '@/redux/ActionSaga/CommunityActionSaga';
 import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
-import MyPostDetail from '@/components/PostDetail/MyPostDetail';
-import OtherPostDetail from '@/components/PostDetail/OtherPostDetail';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { usePostData, useCurrentUserInfo } from '@/hooks/fetch';
 import { getTheme } from '@/util/theme';
@@ -31,11 +29,14 @@ const CommunityNoMember = lazy(() =>
 const MyProfile = lazy(() => import('@/pages/MyProfile'));
 const Profile = lazy(() => import('@/pages/Profile'));
 
+const MyPostDetail = lazy(() => import('@/components/PostDetail/MyPostDetail'));
+const OtherPostDetail = lazy(() => import('@/components/PostDetail/OtherPostDetail'));
+
 export const CommunityWrapper = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { communityID } = useParams();
@@ -73,7 +74,7 @@ export const PostWrapper = () => {
   const { postID } = useParams();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { currentUserInfo } = useCurrentUserInfo();
@@ -134,7 +135,7 @@ export const PostWrapper = () => {
 
 export const ProfileWrapper = () => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { userID } = useParams();
@@ -143,11 +144,10 @@ export const ProfileWrapper = () => {
 
   const userIDFromStore = useAppSelector((state) => state.auth.userID);
 
-  const path = location.pathname;
-
   useEffect(() => {
+    const path = location.pathname;
     if (path === '/me' || path === '/user/me') navigate(`/user/${userIDFromStore}`);
-  }, [userIDFromStore]);
+  }, [userIDFromStore, location.pathname]);
 
   return (
     <div style={{ backgroundColor: themeColorSet.colorBg1 }}>

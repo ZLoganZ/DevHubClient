@@ -14,7 +14,7 @@ const SelectFollow = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   // Lấy danh sách người theo dõi
@@ -22,23 +22,19 @@ const SelectFollow = () => {
     dispatch(GET_SHOULD_FOLLOWERS_SAGA());
   }, []);
 
-  const peopleArray = useAppSelector(
-    (state) => state.getStarted.arrayShouldFollowers
-  );
+  const peopleArray = useAppSelector((state) => state.getStarted.arrayShouldFollowers);
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <div className="flex justify-center w-full h-full selectInterest">
-        <div className="content w-1/2 pt-10 h-full relative">
+      <div className='flex justify-center w-full h-full selectInterest'>
+        <div className='content w-1/2 pt-10 h-full relative'>
           <div>
-            <span className="mr-3" style={{ color: themeColorSet.colorText2 }}>
+            <span className='mr-3' style={{ color: themeColorSet.colorText2 }}>
               Step 05:
             </span>
-            <span style={{ color: themeColorSet.colorText3 }}>
-              Follow people
-            </span>
+            <span style={{ color: themeColorSet.colorText3 }}>Follow people</span>
           </div>
-          <div className="slide w-full flex justify-between mt-2">
+          <div className='slide w-full flex justify-between mt-2'>
             <span
               style={{
                 width: '19.4%',
@@ -76,7 +72,7 @@ const SelectFollow = () => {
               }}></span>
           </div>
           <div
-            className="textMax mt-4"
+            className='textMax mt-4'
             style={{
               fontSize: '1.8rem',
               fontWeight: '600',
@@ -84,13 +80,13 @@ const SelectFollow = () => {
             }}>
             Here are some people with similar interests
           </div>
-          <div className="people mt-10">
+          <div className='people mt-10'>
             {peopleArray.map((item: any, index: any) => (
               <RenderPeopleItem item={item} key={index} />
             ))}
           </div>
-          <div className="button mt-16 mb-10 text-right">
-            <NavLink to="/">
+          <div className='button mt-16 mb-10 text-right'>
+            <NavLink to='/'>
               <ButtonActiveHover rounded>Done</ButtonActiveHover>
             </NavLink>
           </div>

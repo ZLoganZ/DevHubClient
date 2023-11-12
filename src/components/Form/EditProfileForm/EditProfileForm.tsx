@@ -30,15 +30,15 @@ import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useUpdateUser } from '@/hooks/mutation';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import { ContactType, ExperienceType } from '@/types';
+import { IContact, IExperience } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssEditProfileForm';
 
-const EditProfileForm = () => {
+const EditProfileForm: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { mutateUpdateUser } = useUpdateUser();
@@ -109,7 +109,7 @@ const EditProfileForm = () => {
     setTags(tags);
   };
 
-  const handleChangeLinks = (contacts: ContactType[]) => {
+  const handleChangeLinks = (contacts: IContact[]) => {
     setLinks(contacts);
   };
 
@@ -192,7 +192,7 @@ const EditProfileForm = () => {
     );
   };
 
-  const RenderExperience = (item: ExperienceType, index: number) => {
+  const RenderExperience = (item: IExperience, index: number) => {
     return (
       <div className='item mt-2 flex' key={index}>
         <div style={{ color: themeColorSet.colorText1 }}>
@@ -534,7 +534,7 @@ const EditProfileForm = () => {
           {about ? (
             // About có nội dung
             <div className='content__text'>
-              <ReactQuill preserveWhitespace value={about} readOnly theme='bubble' />
+              <ReactQuill value={about} readOnly theme='bubble' />
             </div>
           ) : (
             // About không có nội dung
@@ -570,7 +570,6 @@ const EditProfileForm = () => {
               fontSize: '1.2rem'
             }}>
             Experiences
-            {/* Hiển thị nút thêm nếu như có từ 1 experience trở lên */}
             {experiences.length > 0 && (
               <span
                 onClick={() => {
@@ -665,7 +664,6 @@ const EditProfileForm = () => {
               )
             }
           </div>
-          {/* Nếu không có repository nào */}
           {repositories.length === 0 ? (
             componentNoInfo(
               'Highlight your top Repositories',

@@ -1,5 +1,5 @@
-import { Dropdown, MenuProps } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { Dropdown, type MenuProps } from 'antd';
+import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,34 +7,35 @@ import {
   faPhone,
   faRightFromBracket,
   faSquareCheck,
-  faTrashCan,
+  faTrash,
   faUser,
   faVideoCamera
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquareCheck as faReSquareCheck } from '@fortawesome/free-regular-svg-icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useOtherUser } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
-import videoChat from '@/util/videoChat';
-import audioCall from '@/util/audioCall';
+import { audioCall, videoChat } from '@/util/call';
+import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
-import { useLeaveGroup, useReceiveMessage, useReceiveSeenConversation } from '@/hooks/mutation';
-import { ConversationType, MessageType } from '@/types';
-import { PRIVATE_MSG, SEEN_MSG, UNSEEN_MSG } from '@/util/constants/SettingSystem';
+import { useLeaveGroup, useSendMessage } from '@/hooks/mutation';
+import { IConversation, IMessage } from '@/types';
+import { Socket } from '@/util/constants/SettingSystem';
 
 import StyleProvider from './cssConversationBox';
 
 interface IConversationBox {
-  conversation: ConversationType;
-  selected?: boolean;
+  conversation: IConversation;
+  selected: boolean;
 }
 
 const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
 
@@ -42,9 +43,8 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
 
   const otherUser = useOtherUser(conversation);
   const { currentUserInfo } = useCurrentUserInfo();
-  const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
-  const { mutateReceiveMessage } = useReceiveMessage();
   const { mutateLeaveGroup } = useLeaveGroup();
+  const { mutateSendMessage } = useSendMessage();
 
   const isSeen = conversation.seen.some((user) => user._id === currentUserInfo._id);
   const isGroup = conversation.type === 'group';
@@ -58,7 +58,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       key: '1',
       icon: <FontAwesomeIcon icon={isSeen ? faReSquareCheck : faSquareCheck} />,
       onClick: () => {
-        const emitType = isSeen ? UNSEEN_MSG : SEEN_MSG;
+        const emitType = isSeen ? Socket.UNSEEN_MSG : Socket.SEEN_MSG;
         chatSocket.emit(emitType, { conversationID: conversation._id, userID: currentUserInfo._id });
       }
     },
@@ -92,8 +92,26 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       label: isGroup ? 'Leave group' : 'Delete chat',
       danger: true,
       key: '3',
-      onClick: () => mutateLeaveGroup(conversation._id),
-      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrashCan} />
+      onClick: () => {
+        mutateLeaveGroup(conversation._id);
+        const message = {
+          _id: uuidv4().replace(/-/g, ''),
+          conversation_id: conversation._id,
+          sender: {
+            _id: currentUserInfo._id,
+            user_image: currentUserInfo.user_image,
+            name: currentUserInfo.name
+          },
+          isSending: true,
+          type: 'notification',
+          content: 'left the group',
+          createdAt: new Date()
+        };
+        
+        mutateSendMessage(message as unknown as IMessage);
+        chatSocket.emit(Socket.PRIVATE_MSG, { conversationID: conversation._id, message });
+      },
+      icon: <FontAwesomeIcon icon={isGroup ? faRightFromBracket : faTrash} />
     }
   ];
 
@@ -102,7 +120,10 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [conversation.lastMessage]);
 
   const senderName = useMemo(() => {
-    if (isOwn) return 'You: ';
+    if (isOwn) {
+      if (conversation.lastMessage.type === 'notification') return 'You ';
+      else return 'You: ';
+    }
 
     const lastMessageSenderName = conversation.lastMessage?.sender?.name;
     if (!lastMessageSenderName) return '';
@@ -115,16 +136,6 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
 
     return arr[arr.length - 1] + ': ';
   }, [isOwn, conversation.lastMessage, conversation.type]);
-
-  useEffect(() => {
-    chatSocket.on(PRIVATE_MSG + conversation._id, (message: MessageType) => {
-      mutateReceiveMessage(message);
-    });
-
-    chatSocket.on(SEEN_MSG + conversation._id, (conversation: ConversationType) => {
-      mutateReceiveSeenConversation(conversation);
-    });
-  }, []);
 
   const hasSeen = useMemo(() => {
     if (!conversation.lastMessage) return false;
@@ -146,37 +157,30 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
         <NavLink to={`/message/${conversation._id}`}>
           <div
             className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-xl transition'
-            style={{
-              backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
-            }}>
+            style={{ backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1 }}>
             {conversation.type === 'group' ? (
               <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />
             ) : (
-              <Avatar key={conversation._id} user={otherUser} />
+              <AvatarMessage key={conversation._id} user={otherUser} />
             )}
-
             <div className='min-w-0 flex-1'>
               <div className='focus:outline-none'>
                 <span className='absolute inset-0' aria-hidden='true' />
                 <div className='flex justify-between items-center mb-1'>
-                  <p
-                    className={`text-md font-medium`}
-                    style={{
-                      color: themeColorSet.colorText1
-                    }}>
+                  <p className='text-md font-medium' style={{ color: themeColorSet.colorText1 }}>
                     <span style={{ color: themeColorSet.colorText1 }}>
                       {conversation.name ?? otherUser.name}
                     </span>
                   </p>
-                  {conversation?.lastMessage?.createdAt && (
+                  {conversation.lastMessage?.createdAt && (
                     <p
-                      className=' text-xs  text-gray-400 font-light'
+                      className='text-xs text-gray-400 font-light'
                       style={{ color: themeColorSet.colorText3 }}>
                       {getDateTimeToNow(conversation.lastMessage.createdAt)}
                     </p>
                   )}
                 </div>
-                <p className={`truncate text-sm ${!isOwn && !hasSeen && `font-bold`}`}>
+                <p className={merge('truncate text-sm', !isOwn && !hasSeen && 'font-bold')}>
                   <span style={{ color: themeColorSet.colorText1 }}>{senderName + lastMessageText}</span>
                 </p>
               </div>

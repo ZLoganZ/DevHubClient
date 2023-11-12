@@ -1,25 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
-import { Avatar, Input, Popover } from 'antd';
+import { Avatar, Input, InputRef, Popover } from 'antd';
 import { faFaceSmile, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMediaQuery } from 'react-responsive';
 import Picker from '@emoji-mart/react';
 
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IEmoji, IUserInfo } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { getTheme } from '@/util/theme';
+import merge from '@/util/mergeClassName';
 import { useCommentPost } from '@/hooks/mutation';
 import StyleProvider from './cssCommentInput';
 
-interface ICommentInput {
-  currentUser: UserInfoType;
+interface ICommentInputProps {
+  currentUser: IUserInfo;
   postID: string;
 }
 
-const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
+const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const { handleCommentInput } = useAppSelector((state) => state.comment);
@@ -30,20 +31,15 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   const [cursor, setCursor] = useState(0);
   const data = useAppSelector((state) => state.modalHOC.data);
 
-  const inputRef = useRef<any>();
+  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const inputRef = useRef<InputRef | null>(null);
 
-  const checkEmpty = () => {
-    if (commentContent === '') {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const checkEmpty = commentContent.trim() === '' || commentContent.trim().length === 0;
 
   const handleSubmitComment = () => {
     const { isReply, idComment } = data;
 
-    if (checkEmpty()) return;
+    if (checkEmpty) return;
 
     mutateCommentPost({
       content: commentContent,
@@ -59,14 +55,13 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
   };
 
   useEffect(() => {
-    if (data.isReply) inputRef.current.focus();
+    if (data.isReply) inputRef.current?.focus();
   }, [data]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider>
-      <div className=' commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
-        <Avatar className='rounded-full' size={40} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
+      <div className='commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
+        <Avatar className='rounded-full' size={30} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
         <div className='input w-full ml-2'>
           <Input
             ref={inputRef}
@@ -103,7 +98,7 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
 
                       return await response.json();
                     }}
-                    onEmojiSelect={(emoji: any) => {
+                    onEmojiSelect={(emoji: IEmoji) => {
                       setCursor(cursor + emoji.native.length);
                       setCommentContent(
                         commentContent.slice(0, cursor) + emoji.native + commentContent.slice(cursor)
@@ -122,9 +117,12 @@ const CommentInput: React.FC<ICommentInput> = ({ currentUser, postID }) => {
             }
             suffix={
               <span
-                className={`cursor-pointer hover:text-blue-700 ${
-                  checkEmpty() ? 'text-gray-400 cursor-not-allowed' : 'transition-all duration-300'
-                }`}
+                className={merge(
+                  'transition-all duration-300',
+                  checkEmpty
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'
+                )}
                 onClick={handleSubmitComment}>
                 <FontAwesomeIcon icon={faPaperPlane} />
               </span>

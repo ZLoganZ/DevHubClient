@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   .header {
@@ -8,10 +7,12 @@ const StyleProvider = styled.div`
     .video-call {
       padding: 0.5rem;
       border-radius: 50%;
+      height: 20px;
+      width: 20px;
       :hover {
-        background-color: ${props => props.theme.colorBg2};
+        background-color: ${(props) => props.theme.colorBg3};
         transform: scale(1.1);
-        transition: .5s
+        transition: 0.3s;
       }
     }
   }
@@ -29,7 +30,7 @@ const StyleProvider = styled.div`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: ${props => props.theme.colorText3};
+    background: ${(props) => props.theme.colorText3};
     animation: typing-indicator-animate 0.8s infinite linear;
   }
   .typing-indicator div:nth-child(1) {

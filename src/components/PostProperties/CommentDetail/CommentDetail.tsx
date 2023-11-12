@@ -1,3 +1,4 @@
+import { CustomIconComponentProps } from '@ant-design/compatible/lib/icon';
 import { useEffect, useState } from 'react';
 import { Comment } from '@ant-design/compatible';
 import { Avatar, Tooltip } from 'antd';
@@ -10,19 +11,19 @@ import getImageURL from '@/util/getImageURL';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
 import { setData } from '@/redux/Slice/ModalHOCSlice';
-import { CommentType } from '@/types';
+import { ICommentPost } from '@/types';
 import StyleProvider from './cssCommentDetail';
 
-interface IComment {
-  comment: CommentType;
+interface ICommentDetailProps {
+  comment: ICommentPost;
   postID: string;
   children?: React.ReactNode;
   isReply?: boolean;
 }
 
-const CommentDetail: React.FC<IComment> = ({ comment, children, postID }) => {
+const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
 
   const dispatch = useAppDispatch();
 
@@ -104,8 +105,8 @@ const CommentDetail: React.FC<IComment> = ({ comment, children, postID }) => {
           type='like'
           component={
             action === 'liked'
-              ? (LikeFilled as React.ForwardRefExoticComponent<any>)
-              : (LikeOutlined as React.ForwardRefExoticComponent<any>)
+              ? (LikeFilled as React.ForwardRefExoticComponent<CustomIconComponentProps>)
+              : (LikeOutlined as React.ForwardRefExoticComponent<CustomIconComponentProps>)
           }
           onClick={like}
           style={{
@@ -121,8 +122,8 @@ const CommentDetail: React.FC<IComment> = ({ comment, children, postID }) => {
           type='dislike'
           component={
             action === 'disliked'
-              ? (DislikeFilled as React.ForwardRefExoticComponent<any>)
-              : (DislikeOutlined as React.ForwardRefExoticComponent<any>)
+              ? (DislikeFilled as React.ForwardRefExoticComponent<CustomIconComponentProps>)
+              : (DislikeOutlined as React.ForwardRefExoticComponent<CustomIconComponentProps>)
           }
           onClick={dislike}
           style={{

@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom';
 
-import Avatar from '@/components/ChatComponents/Avatar/AvatarMessage';
+import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import { useAppSelector } from '@/hooks/special';
-import { UserInfoType } from '@/types';
+import { IUserInfo } from '@/types';
 import { getTheme } from '@/util/theme';
 import StyleProvider from './cssChatWelcome';
 
@@ -11,13 +11,13 @@ type TypeofConversation = 'private' | 'group';
 interface IChatWelcome {
   type: TypeofConversation;
   name: string;
-  otherUser: UserInfoType;
-  members: UserInfoType[];
+  otherUser: IUserInfo;
+  members: IUserInfo[];
   image?: string;
 }
 
 const ChatWelcome: React.FC<IChatWelcome> = ({ name, type, members, otherUser, image }) => {
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   return (
@@ -28,7 +28,7 @@ const ChatWelcome: React.FC<IChatWelcome> = ({ name, type, members, otherUser, i
             <div className='chatWelcome__container__header__avatar'>
               {type === 'private' ? (
                 <NavLink to={`/user/${otherUser._id}`}>
-                  <Avatar user={otherUser} size={80} />
+                  <AvatarMessage user={otherUser} size={80} />
                 </NavLink>
               ) : (
                 <AvatarGroup users={members} image={image} size={80} />

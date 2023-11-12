@@ -9,7 +9,7 @@ import StyleProvider from './cssModalHOC';
 const ModalHOC = () => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColor } = getTheme();
   const { themeColorSet } = getTheme();
 
@@ -26,8 +26,9 @@ const ModalHOC = () => {
     <ConfigProvider theme={{ token: themeColor }}>
       <StyleProvider theme={themeColorSet}>
         <Modal
-          key={title}
           centered
+          destroyOnClose
+          key={title}
           title={title}
           width={type === 'post' ? 1080 : 720}
           onCancel={onClose}

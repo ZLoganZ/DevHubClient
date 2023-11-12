@@ -6,12 +6,12 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import { ExperienceType } from '@/types';
+import { IExperience } from '@/types';
 import StyleProvider from './cssAddExperienceForm';
 
 interface IEditExperience {
-  experiences: ExperienceType[];
-  setExperiences: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
+  experiences: IExperience[];
+  setExperiences: React.Dispatch<React.SetStateAction<IExperience[]>>;
 }
 
 const { RangePicker } = DatePicker;
@@ -20,10 +20,10 @@ const dateFormat = 'MM/YYYY';
 
 const AddExperienceForm: React.FC<IEditExperience> = ({ experiences, setExperiences }) => {
   const dispatch = useAppDispatch();
-  const searchRef = useRef<any>(null);
+  const searchRef = useRef<NodeJS.Timeout>();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const [position_name, setPositionName] = useState('');
@@ -52,10 +52,6 @@ const AddExperienceForm: React.FC<IEditExperience> = ({ experiences, setExperien
 
   const handleSetExperience = () => {
     if (position_name === '' || company_name === '' || start_date === '' || end_date === '') {
-      // console.log('position_name', position_name);
-      // console.log('company_name', company_name);
-      // console.log('start_date', start_date);
-      // console.log('end_date', end_date);
       error();
       return;
     } else {

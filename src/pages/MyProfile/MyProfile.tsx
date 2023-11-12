@@ -47,7 +47,7 @@ const MyProfile = () => {
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.change);
+  useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
   const openInNewTab = (url: string) => {
@@ -97,7 +97,7 @@ const MyProfile = () => {
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center w-full min-h-80 max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center w-full min-h-fit max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
                 src={getImageURL(currentUserInfo.cover_image)}
                 alt='avt'
@@ -195,15 +195,15 @@ const MyProfile = () => {
             </Col>
             <div className='follow mt-5 xs:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
               </span>
               <span className='following item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
               </span>
               <span className='post mr-2'>
-                <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>{' '}
+                <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>
@@ -271,12 +271,7 @@ const MyProfile = () => {
                               }}>
                               About
                             </div>
-                            <ReactQuill
-                              preserveWhitespace
-                              value={currentUserInfo.about}
-                              readOnly
-                              theme='bubble'
-                            />
+                            <ReactQuill value={currentUserInfo.about} readOnly theme='bubble' />
                           </div>
                         )}
                         {currentUserInfo.repositories.length !== 0 && (
