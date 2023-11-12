@@ -64,7 +64,7 @@ class MessageService extends BaseService {
     return this.get(`/chat/token/?conversation_id=${conversationID}&type=${type}`);
   };
 
-  deleteConversation = (conversationID: string): Promise<AxiosResponse<IResponse<IConversation>>> => {
+  dissolveGroup = (conversationID: string): Promise<AxiosResponse<IResponse<IConversation>>> => {
     return this.delete(`/chat/conversations/${conversationID}`);
   };
 

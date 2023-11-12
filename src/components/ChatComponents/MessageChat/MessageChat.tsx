@@ -132,17 +132,17 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     if (messages.length - count === 1) scrollToBottom('auto');
     setCount(messages.length);
   }, [messages]);
-  const [id, setId] = useState(uuidv4().replace(/-/g, ''));
+
   const { mutateSendMessage } = useSendMessage();
 
-  const handleSendEndCall = useCallback((conversation_id: string, type: string, status: string) => {
+  const handleSendEndCall = useCallback((data: ISocketCall, type: string, status: string) => {
     const message = {
-      _id: id,
-      conversation_id: conversation_id,
+      _id: uuidv4().replace(/-/g, ''),
+      conversation_id: data.conversation_id,
       sender: {
-        _id: currentUserInfo._id,
-        user_image: currentUserInfo.user_image,
-        name: currentUserInfo.name
+        _id: data.author._id,
+        user_image: data.author.user_image,
+        name: data.author.name
       },
       isSending: true,
       content: `${capitalizeFirstLetter(type)} call ${status}`,
@@ -150,13 +150,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
       createdAt: new Date()
     };
 
-    chatSocket.emit(Socket.PRIVATE_MSG, {
-      conversationID: message.conversation_id,
-      message
-    });
-    console.log(message);
-    setId(uuidv4().replace(/-/g, ''));
     mutateSendMessage(message as unknown as IMessage);
+    chatSocket.emit(Socket.PRIVATE_MSG, { conversationID: data.conversation_id, message });
   }, []);
 
   useEffect(() => {
@@ -178,7 +173,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               src={getImageURL(data.user_image, 'avatar_mini')}
             />
             <div className='font-semibold text-lg'>
-              {data.name} is calling&nbsp;
+              {data.author.name} is calling&nbsp;
               {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : 'you'}
             </div>
           </div>
@@ -224,7 +219,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               src={getImageURL(data.user_image, 'avatar_mini')}
             />
             <div className='font-semibold text-lg'>
-              {data.name} is calling&nbsp;
+              {data.author.name} is calling&nbsp;
               {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : 'you'}
             </div>
           </div>
@@ -264,7 +259,9 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               />
               <div className='font-semibold text-lg'>
                 You missed a video call&nbsp;
-                {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : `from ${data.name}`}
+                {data.typeofConversation === 'group'
+                  ? `from ${data.conversation_name}`
+                  : `from ${data.author.name}`}
               </div>
             </div>
           ),
@@ -295,7 +292,9 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               />
               <div className='font-semibold text-lg'>
                 You missed a voice call&nbsp;
-                {data.typeofConversation === 'group' ? `from ${data.conversation_name}` : `from ${data.name}`}
+                {data.typeofConversation === 'group'
+                  ? `from ${data.conversation_name}`
+                  : `from ${data.author.name}`}
               </div>
             </div>
           ),
@@ -314,11 +313,21 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
       }
     });
 
+    chatSocket.on(Socket.SEND_END_VIDEO_CALL, (data: ISocketCall) => {
+      handleSendEndCall(data, 'video', data.type);
+    });
+
+    chatSocket.on(Socket.SEND_END_VOICE_CALL, (data: ISocketCall) => {
+      handleSendEndCall(data, 'voice', data.type);
+    });
+
     return () => {
       chatSocket.off(Socket.VIDEO_CALL);
       chatSocket.off(Socket.VOICE_CALL);
       chatSocket.off(Socket.END_VIDEO_CALL);
       chatSocket.off(Socket.END_VOICE_CALL);
+      chatSocket.off(Socket.SEND_END_VIDEO_CALL);
+      chatSocket.off(Socket.SEND_END_VOICE_CALL);
     };
   }, []);
 

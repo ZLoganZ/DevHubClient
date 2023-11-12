@@ -297,13 +297,15 @@ export interface IEmoji {
 }
 
 export interface ISocketCall {
-  name: string;
-  author: string;
-  conversation_id: string;
-  conversation_name: string;
+  author: IUserInfo;
+  user_id: string;
+  user_name: string;
   user_image: string;
   members: string[];
   token: string;
   first_call: boolean;
+  type: 'missed' | 'ended';
   typeofConversation: TypeofConversation;
+  conversation_id: string;
+  conversation_name: string;
 }

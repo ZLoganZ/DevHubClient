@@ -474,7 +474,7 @@ export const useSendMessage = () => {
  */
 export const useReceiveMessage = (currentUserID: string, conversationID?: string) => {
   const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
-  const PopMessage = new Audio('/sounds/bubble-popping-short.mp4');
+  const PopMessage = new Audio('/sounds/bubble-popping-short.mp3');
   NotiMessage.volume = 0.3;
 
   const queryClient = useQueryClient();
@@ -664,17 +664,21 @@ export const useReceiveSeenConversation = () => {
 };
 
 /**
- * The `useDeleteConversation` function is a custom hook that handles the deletion of a conversation
- * and updates the query data accordingly.
+ * The `useDissolveGroup` function is a custom hook that handles the mutation for dissolving a group
+ * conversation and updates the query data accordingly.
  */
-export const useDeleteConversation = () => {
+export const useDissolveGroup = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (conversationID: string) => {
-      await messageService.deleteConversation(conversationID);
+      await messageService.dissolveGroup(conversationID);
     },
-    onSuccess(_, conversationID) {
+    onSuccess(conversation, conversationID) {
+      if (window.location.pathname.includes(conversationID)) navigate('/message', { replace: true });
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
@@ -682,14 +686,50 @@ export const useDeleteConversation = () => {
 
         return newData.filter((item) => item._id !== conversationID);
       });
+      queryClient.setQueryData<IConversation>(['conversation', conversationID], undefined);
+
+      chatSocket.emit(Socket.DISSOLVE_GROUP, conversation);
     }
   });
 
   return {
-    mutateDeleteConversation: mutate,
-    isLoadingDeleteConversation: isPending,
-    isErrorDeleteConversation: isError,
-    isSuccessDeleteConversation: isSuccess
+    mutateDissolveGroup: mutate,
+    isLoadingDissolveGroup: isPending,
+    isErrorDissolveGroup: isError,
+    isSuccessDissolveGroup: isSuccess
+  };
+};
+
+/**
+ * The `useReceiveDissolveGroup` function is a custom hook that handles the mutation for updating
+ * conversation data when a group is dissolved.
+ */
+export const useReceiveDissolveGroup = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+    mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
+    onSuccess(conversation) {
+      if (window.location.pathname.includes(conversation._id)) navigate('/message', { replace: true });
+      queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
+        if (!oldData) return;
+
+        const newData = [...oldData];
+
+        return newData.filter((item) => item._id !== conversation._id);
+      });
+
+      queryClient.setQueryData<IConversation>(['conversation', conversation._id], undefined);
+    }
+  });
+
+  return {
+    mutateReceiveDissolveGroup: mutate,
+    isLoadingReceiveDissolveGroup: isPending,
+    isErrorReceiveDissolveGroup: isError,
+    isSuccessReceiveDissolveGroup: isSuccess,
+    conversation: variables
   };
 };
 
@@ -709,7 +749,7 @@ export const useLeaveGroup = () => {
       return data.metadata;
     },
     onSuccess(conversation, conversationID) {
-      if (window.location.pathname.includes(conversationID)) navigate('/message');
+      if (window.location.pathname.includes(conversationID)) navigate('/message', { replace: true });
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
         if (!oldData) return;
 
@@ -717,6 +757,7 @@ export const useLeaveGroup = () => {
 
         return newData;
       });
+      queryClient.setQueryData<IConversation>(['conversation', conversationID], undefined);
 
       chatSocket.emit(Socket.LEAVE_GROUP, conversation);
     }
@@ -777,6 +818,15 @@ export const useReceiveLeaveGroup = () => {
   };
 };
 
+/**
+ * The `useMutateMessageCall` function is a custom hook in TypeScript that handles mutation for a
+ * message call in a conversation.
+ * @param {string | undefined} conversation_id - The conversation_id parameter is a string that
+ * represents the ID of a conversation. It is used to identify the specific conversation for which the
+ * message call is being made.
+ * @param {string} type - The `type` parameter is a string that represents the type of message call. It
+ * could be any value that you want to use to differentiate between different types of message calls.
+ */
 export const useMutateMessageCall = (conversation_id: string | undefined, type: string) => {
   const queryClient = useQueryClient();
 
@@ -786,9 +836,7 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
       queryClient.setQueryData<ISocketCall>(['messageCall', conversation_id, type], (oldData) => {
         if (!oldData) return;
 
-        return {
-          ...data
-        };
+        return { ...data };
       });
     }
   });
@@ -807,6 +855,7 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
  */
 export const useMutateConversation = (currentUserID: string) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: IUpdateConversation) => await Promise.resolve(payload),
@@ -934,6 +983,8 @@ export const useMutateConversation = (currentUserID: string) => {
               const isHavingMe = newData[index].members.some((item) => item._id === currentUserID);
               const isHavingUser = conversation.members.some((item) => item._id === currentUserID);
               if (isHavingMe && !isHavingUser) {
+                if (window.location.pathname.includes(conversation._id))
+                  navigate('/message', { replace: true });
                 newData.splice(index, 1);
               } else {
                 newData[index] = {

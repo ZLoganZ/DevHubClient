@@ -1,8 +1,7 @@
 import { Col, Row, Skeleton, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useRef, useState } from 'react';
-import { Scrollbar } from 'react-scrollbars-custom';
+import { useEffect, useState } from 'react';
 
 import StyleProvider from './cssCalledList';
 import { getTheme } from '@/util/theme';
@@ -10,7 +9,6 @@ import { useAppSelector } from '@/hooks/special';
 import CalledBox from '@/components/ChatComponents/CalledBox';
 import { useGetCalled } from '@/hooks/fetch';
 import { ICalled } from '@/types';
-import { max } from 'lodash';
 
 const CalledList = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -19,18 +17,10 @@ const CalledList = () => {
   const { themeColorSet } = getTheme();
 
   const { calledList, isLoadingGetCalled } = useGetCalled();
-  const [calledLists, setCalledLists] = useState<ICalled[] | undefined>(calledList);
+  const [calledLists, setCalledLists] = useState<ICalled[]>([]);
   useEffect(() => {
     setCalledLists(calledList);
   }, [calledList]);
-
-  const listConRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
-  useEffect(() => {
-    if (listConRef.current) {
-      setHeight(listConRef.current.clientHeight);
-    }
-  }, [calledLists]);
 
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
@@ -103,8 +93,8 @@ const CalledList = () => {
               </Space>
             </Row>
             <Row className='h-[89%] ml-3'>
-              <div className='listConversation w-full h-full flex flex-col overflow-y-auto' ref={listConRef}>
-                {calledLists?.map((called) => (
+              <div className='listConversation w-full h-full flex flex-col overflow-y-auto'>
+                {calledLists.map((called) => (
                   <CalledBox key={called._id} called={called} />
                 ))}
               </div>

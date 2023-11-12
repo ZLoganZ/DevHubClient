@@ -42,7 +42,7 @@ import type { CollapseProps } from 'antd';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useCurrentConversationData, useCurrentUserInfo, useMessagesImage } from '@/hooks/fetch';
-import { useLeaveGroup, useReceiveConversation, useSendMessage } from '@/hooks/mutation';
+import { useDissolveGroup, useLeaveGroup, useReceiveConversation, useSendMessage } from '@/hooks/mutation';
 import { getTheme } from '@/util/theme';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 import { Socket } from '@/util/constants/SettingSystem';
@@ -75,6 +75,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
   const { mutateReceiveConversation } = useReceiveConversation();
   const { isLoadingCurrentConversation, currentConversation } = useCurrentConversationData(conversationID);
   const { mutateLeaveGroup } = useLeaveGroup();
+  const { mutateDissolveGroup } = useDissolveGroup();
   const { mutateSendMessage } = useSendMessage();
 
   const otherUser = useOtherUser(currentConversation);
@@ -211,7 +212,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           key: '4',
           icon: <FontAwesomeIcon icon={faUser} />,
           onClick: () => {
-            navigate(`/user/${otherUser._id}`);
+            navigate(`/user/${user._id}`);
           }
         },
         {
@@ -507,7 +508,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     {
       key: '1',
       label: <span className='text-base font-semibold'>Images</span>,
-      children: listImages(messagesImage)
+      children: listImages(messagesImage ?? [])
     },
     {
       key: '2',
@@ -535,11 +536,35 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
       children:
         currentConversation.type === 'group' ? (
           <div className='flex flex-col gap-1'>
-            <div className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'>
+            <div
+              className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
+              onClick={() => {
+                mutateDissolveGroup(conversationID);
+              }}>
               <FontAwesomeIcon icon={faUsersSlash} />
               Dissolve group
             </div>
-            <div className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'>
+            <div
+              className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
+              onClick={() => {
+                mutateLeaveGroup(conversationID);
+                const message = {
+                  _id: uuidv4().replace(/-/g, ''),
+                  conversation_id: conversationID,
+                  sender: {
+                    _id: currentUserInfo._id,
+                    user_image: currentUserInfo.user_image,
+                    name: currentUserInfo.name
+                  },
+                  isSending: true,
+                  type: 'notification',
+                  content: 'left the group',
+                  createdAt: new Date()
+                };
+
+                mutateSendMessage(message as unknown as IMessage);
+                chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+              }}>
               <FontAwesomeIcon className='text-lg' icon={faRightFromBracket} />
               Leave group
             </div>
