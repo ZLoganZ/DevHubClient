@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from 'antd';
 
@@ -31,15 +31,11 @@ const ChangeGroupName: React.FC<IChangeGroupName> = ({ name, conversationID }) =
 
   const [groupName, setGroupName] = useState(name);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setGroupName(e.target.value);
-  };
-
   const isChanged = useMemo(() => {
     return groupName === name;
   }, [groupName]);
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     setIsLoading(true);
 
     messageService
@@ -68,7 +64,7 @@ const ChangeGroupName: React.FC<IChangeGroupName> = ({ name, conversationID }) =
       })
       .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
-  };
+  }, [groupName]);
 
   useEffect(() => {
     dispatch(
@@ -81,7 +77,7 @@ const ChangeGroupName: React.FC<IChangeGroupName> = ({ name, conversationID }) =
               id='name'
               showCount
               maxLength={30}
-              onChange={onChange}
+              onChange={(e) => setGroupName(e.currentTarget.value)}
               size='large'
               defaultValue={name}
             />
@@ -100,7 +96,7 @@ const ChangeGroupName: React.FC<IChangeGroupName> = ({ name, conversationID }) =
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
-            <ButtonActiveHover rounded loading={isLoading} disabled={isChanged} onClick={onSubmit}>
+            <ButtonActiveHover loading={isLoading} disabled={isChanged} onClick={onSubmit}>
               Change
             </ButtonActiveHover>
           </div>

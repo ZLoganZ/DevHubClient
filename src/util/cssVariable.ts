@@ -112,8 +112,6 @@ export const custom_scrollBar = css`
     border-radius: 8px;
     background-color: ${(props) => props.theme.colorBg4};
   }
-
-  // make scrollbar display on the right side 12px
 `;
 
 export const custom_scrollBar_modal = css`

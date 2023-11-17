@@ -37,7 +37,7 @@ const GetStarted = () => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please choose one of the options'
     });
@@ -177,7 +177,6 @@ const GetStarted = () => {
 
           <span className='btnNext absolute'>
             <ButtonActiveHover
-              rounded
               onClick={() => {
                 if (value === 0) {
                   error();

@@ -10,7 +10,7 @@ const StyleProvider = styled.div`
     &.active {
       background-color: ${(props) => props.theme.colorBg4};
     }
-    :hover {
+    &:hover {
       background-color: ${(props) => props.theme.colorBg4};
       cursor: pointer;
       transition: all 0.5s;

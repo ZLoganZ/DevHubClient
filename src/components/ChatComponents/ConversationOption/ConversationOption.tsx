@@ -19,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  faEye,
   faFileAudio as faReFileAudio,
   faFolderOpen as faReFolderOpen,
   faImages as faReImages
@@ -51,11 +52,11 @@ import { useAppSelector, useOtherUser } from '@/hooks/special';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import ChangeAvatarGroup from '@/components/ChatComponents/OpenModal/ChangeAvatarGroup';
+import ChangeGroupName from '@/components/ChatComponents/OpenModal/ChangeGroupName';
+import AddMemberToGroup from '@/components/ChatComponents/OpenModal/AddMemberToGroup';
 import { messageService } from '@/services/MessageService';
 import { IMessage, IUserInfo } from '@/types';
 import StyleProvider from './cssConversationOption';
-import ChangeGroupName from '../OpenModal/ChangeGroupName';
-import AddMemberToGroup from '../OpenModal/AddMemberToGroup';
 
 interface IConversationOption {
   conversationID: string;
@@ -80,10 +81,8 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
 
   const otherUser = useOtherUser(currentConversation);
   const followers = useMemo(() => {
-    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
-      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
-    );
-  }, [currentUserInfo]);
+    return currentUserInfo.members;
+  }, [currentUserInfo.members]);
 
   // filter members in followers but not in conversation
   const members = useMemo(() => {
@@ -338,7 +337,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                           height: '100%',
                           objectFit: 'cover'
                         }}
-                        preview={{ src: getImageURL(item.image) }}
+                        preview={{ src: getImageURL(item.image), mask: <FontAwesomeIcon icon={faEye} /> }}
                       />
                     </div>
                     <Space className='info' direction='vertical'>
@@ -536,14 +535,16 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
       children:
         currentConversation.type === 'group' ? (
           <div className='flex flex-col gap-1'>
-            <div
-              className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
-              onClick={() => {
-                mutateDissolveGroup(conversationID);
-              }}>
-              <FontAwesomeIcon icon={faUsersSlash} />
-              Dissolve group
-            </div>
+            {currentConversation.creator === currentUserInfo._id && (
+              <div
+                className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
+                onClick={() => {
+                  mutateDissolveGroup(conversationID);
+                }}>
+                <FontAwesomeIcon icon={faUsersSlash} />
+                Dissolve group
+              </div>
+            )}
             <div
               className='leave-group w-full flex flex-row items-center cursor-pointer gap-2 px-3 py-2 rounded-full'
               onClick={() => {
@@ -599,73 +600,71 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
         )}
         {openAddMember && <AddMemberToGroup conversationID={conversationID} users={members} />}
         {isLoadingCurrentConversation ? (
-          <>
+          <div
+            className='shared'
+            style={{
+              width: '25%',
+              height: '91%',
+              position: 'fixed',
+              backgroundColor: themeColorSet.colorBg1
+            }}>
             <div
-              className='shared'
+              className='extension px-3 flex items-center'
               style={{
-                width: '25%',
-                height: '91%',
-                position: 'fixed',
-                backgroundColor: themeColorSet.colorBg1
+                height: '13%'
               }}>
-              <div
-                className='extension px-3 flex items-center'
-                style={{
-                  height: '13%'
-                }}>
-                <div className='flex justify-center items-center w-full'>
-                  <div
-                    className='setting text-center'
-                    style={{
-                      width: '25%'
-                    }}>
-                    <Skeleton.Button active size='large' shape='circle' />
-                  </div>
-                  <div
-                    className='notification text-center'
-                    style={{
-                      width: '25%'
-                    }}>
-                    <Skeleton.Button active size='large' shape='circle' />
-                  </div>
-                  <div
-                    className='warning text-center'
-                    style={{
-                      width: '25%'
-                    }}>
-                    <Skeleton.Button active size='large' shape='circle' />
-                  </div>
-                  <div
-                    className='logout text-center'
-                    style={{
-                      width: '25%'
-                    }}>
-                    <Skeleton.Button active size='large' shape='circle' />
-                  </div>
+              <div className='flex justify-center items-center w-full'>
+                <div
+                  className='setting text-center'
+                  style={{
+                    width: '25%'
+                  }}>
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
-              </div>
-              <div className='fileShare px-3 py-4'>
-                <div className='sharedMedia'>
-                  <Space className='content' size={20}>
-                    <Skeleton.Image active />
-                    <Skeleton.Image active />
-                    <Skeleton.Image active />
-                  </Space>
+                <div
+                  className='notification text-center'
+                  style={{
+                    width: '25%'
+                  }}>
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
-                <div className='sharedFile mt-5'>
-                  <div className='flex justify-between items-center mb-3'></div>
-                  <div className='content'>
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                    <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  </div>
+                <div
+                  className='warning text-center'
+                  style={{
+                    width: '25%'
+                  }}>
+                  <Skeleton.Button active size='large' shape='circle' />
+                </div>
+                <div
+                  className='logout text-center'
+                  style={{
+                    width: '25%'
+                  }}>
+                  <Skeleton.Button active size='large' shape='circle' />
                 </div>
               </div>
             </div>
-          </>
+            <div className='fileShare px-3 py-4'>
+              <div className='sharedMedia'>
+                <Space className='content' size={20}>
+                  <Skeleton.Image active />
+                  <Skeleton.Image active />
+                  <Skeleton.Image active />
+                </Space>
+              </div>
+              <div className='sharedFile mt-5'>
+                <div className='flex justify-between items-center mb-3'></div>
+                <div className='content'>
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
           <div
             className='shared h-full overflow-auto'
@@ -682,12 +681,11 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                         key={currentConversation._id}
                         users={currentConversation.members}
                         image={currentConversation.image}
-                        size={80}
+                        preview
+                        size={120}
                       />
                     ) : (
-                      <NavLink to={`/user/${otherUser._id}`}>
-                        <AvatarMessage key={otherUser._id} user={otherUser} size={80} />
-                      </NavLink>
+                      <AvatarMessage key={otherUser._id} user={otherUser} size={120} preview />
                     )}
                   </div>
                   <span className='name font-semibold text-xl'>

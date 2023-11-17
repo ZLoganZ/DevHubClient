@@ -573,9 +573,6 @@ export const useReceiveMessage = (currentUserID: string, conversationID?: string
  * object and updates the query data for conversations.
  */
 export const useReceiveConversation = () => {
-  const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
-  NotiMessage.volume = 0.3;
-
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
@@ -598,7 +595,6 @@ export const useReceiveConversation = () => {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           });
         } else {
-          void NotiMessage.play();
           newData.unshift(conversation);
         }
 

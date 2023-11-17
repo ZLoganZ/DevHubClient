@@ -11,7 +11,7 @@ const StyleProvider = styled.div`
   .body-message {
     transition: 0.4s;
     transform: translateX(0);
-    :hover {
+    &:hover {
       transform: translateY(-1rem);
       -webkit-background-clip: text;
       background-clip: text;

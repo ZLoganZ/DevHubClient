@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-import {
-  flex_center_column,
-  flex_center_row,
-  darkThemeSet,
-  commonColor
-} from '@/util/cssVariable';
+import { flex_center_column, flex_center_row, darkThemeSet, commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   background-color: ${darkThemeSet.colorBg1};
@@ -42,10 +37,7 @@ const StyleProvider = styled.div`
           margin-bottom: 1rem;
           border: double 4px transparent;
           border-radius: 50%;
-          background-image: linear-gradient(
-              ${darkThemeSet.colorBg1},
-              ${darkThemeSet.colorBg1}
-            ),
+          background-image: linear-gradient(${darkThemeSet.colorBg1}, ${darkThemeSet.colorBg1}),
             radial-gradient(circle at right top, #2979ff, #07a787);
           background-origin: border-box;
           background-clip: padding-box, border-box;
@@ -61,18 +53,10 @@ const StyleProvider = styled.div`
 
       /* form */
       .btn {
-        background-image: linear-gradient(
-          to right,
-          ${commonColor.colorBlue1},
-          ${commonColor.colorGreen1}
-        );
+        background-image: linear-gradient(to right, ${commonColor.colorBlue1}, ${commonColor.colorGreen1});
         color: ${darkThemeSet.colorText1};
         &:hover {
-          background-image: linear-gradient(
-            to right,
-            ${commonColor.colorBlue2},
-            #0abe9a
-          );
+          background-image: linear-gradient(to right, ${commonColor.colorBlue2}, #0abe9a);
           transition: all 0.5s;
         }
       }

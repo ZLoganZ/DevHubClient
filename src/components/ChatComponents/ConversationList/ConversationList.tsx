@@ -131,7 +131,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isOpenModal && <CreateGroupChat users={currentUserInfo.members} />}
+      {isOpenModal && <CreateGroupChat users={currentUserInfo.members ?? []} />}
       <Row className='searchChat'>
         <Col span={24}>
           <Row>

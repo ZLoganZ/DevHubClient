@@ -10,7 +10,7 @@ const StyleProvider = styled.div`
     background-color: ${commonColor.colorBlue2}!important;
     font-weight: 600;
     border-radius: 20rem;
-    :hover {
+    &:hover {
       background-color: ${commonColor.colorBlue3}!important;
       transition: all 0.5s;
     }

@@ -110,7 +110,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
   return (
     <StyleProvider theme={themeColorSet}>
       <div
-        className='conversation-box w-full flex items-center space-x-3 my-1 p-3 rounded-xl transition'
+        className='conversation-box w-full cursor-pointer flex items-center space-x-3 my-1 p-3 rounded-xl'
         style={{
           backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
         }}>

@@ -81,56 +81,52 @@ export const PostWrapper = () => {
 
   const { post, isLoadingPost } = usePostData(postID!);
 
-  if (isLoadingPost || !currentUserInfo || !post) {
-    return (
-      <div style={{ backgroundColor: themeColorSet.colorBg1 }}>
-        <Row className='py-10'>
-          <Col offset={3} span={18}>
-            <Skeleton avatar paragraph={{ rows: 1 }} active />
-            <div className='mt-10'>
-              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
-              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
-              <Skeleton className='mb-8' active paragraph={{ rows: 3 }} />
-            </div>
-            <div className='w-8/12 mt-5'>
-              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
-              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
-              <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
-            </div>
-          </Col>
-        </Row>
-      </div>
-    );
-  } else {
-    if (post.post_attributes.user._id === currentUserInfo._id) {
-      return (
+  const LoadingPost = () => (
+    <div style={{ backgroundColor: themeColorSet.colorBg1, minHeight: 'calc(100vh - 5rem)' }}>
+      <Row className='py-10'>
+        <Col offset={3} span={18}>
+          <Skeleton avatar paragraph={{ rows: 1 }} active />
+          <div className='mt-10'>
+            <Skeleton className='mb-8' active paragraph={{ rows: 2 }} />
+            <Skeleton className='mb-8' active paragraph={{ rows: 2 }} />
+            <Skeleton className='mb-8' active paragraph={{ rows: 2 }} />
+          </div>
+          <div className='w-8/12 mt-5'>
+            <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+            <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+            <Skeleton className='mb-3' avatar paragraph={{ rows: 1 }} active />
+          </div>
+        </Col>
+      </Row>
+    </div>
+  );
+
+  return (
+    <Suspense fallback={<LoadingPost />}>
+      {isLoadingPost || !currentUserInfo || !post ? (
+        <LoadingPost />
+      ) : (
         <div
           className='py-4 px-80'
           style={{
             backgroundColor: themeColorSet.colorBg1,
             minHeight: 'calc(100vh - 5rem)'
           }}>
-          <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} isDetail />
+          {post.post_attributes.user._id === currentUserInfo._id ? (
+            <MyPostDetail key={post._id} post={post} postAuthor={currentUserInfo} isDetail />
+          ) : (
+            <OtherPostDetail
+              key={post._id}
+              post={post}
+              postAuthor={post.post_attributes.user}
+              currentUser={currentUserInfo}
+              isDetail
+            />
+          )}
         </div>
-      );
-    } else
-      return (
-        <div
-          className='py-4 px-80'
-          style={{
-            backgroundColor: themeColorSet.colorBg1,
-            minHeight: 'calc(100vh - 5rem)'
-          }}>
-          <OtherPostDetail
-            key={post._id}
-            post={post}
-            postAuthor={post.post_attributes.user}
-            currentUser={currentUserInfo}
-            isDetail
-          />
-        </div>
-      );
-  }
+      )}
+    </Suspense>
+  );
 };
 
 export const ProfileWrapper = () => {

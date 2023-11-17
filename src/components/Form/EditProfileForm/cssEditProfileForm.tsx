@@ -70,7 +70,7 @@ const StyleProvider = styled.div`
   .editProfileForm {
     .componentNoInfo {
       .btnContent {
-        :hover {
+        &:hover {
           background-color: ${commonColor.colorBlue3}!important;
           transition: all 0.5s;
         }
@@ -81,7 +81,7 @@ const StyleProvider = styled.div`
         background-color: ${commonColor.colorBlue2}!important;
         font-weight: 600;
         border-radius: 20rem;
-        :hover {
+        &:hover {
           background-color: ${commonColor.colorBlue3}!important;
           transition: all 0.5s;
         }
@@ -90,7 +90,7 @@ const StyleProvider = styled.div`
         background-color: ${commonColor.colorRed1}!important;
         font-weight: 600;
         border-radius: 20rem;
-        :hover {
+        &:hover {
           background-color: ${commonColor.colorRed2}!important;
           transition: all 0.5s;
         }
@@ -101,7 +101,7 @@ const StyleProvider = styled.div`
         background-color: ${commonColor.colorBlue2}!important;
         font-weight: 600;
         border-radius: 20rem;
-        :hover {
+        &:hover {
           background-color: ${commonColor.colorBlue3}!important;
           transition: all 0.5s;
         }
@@ -110,7 +110,7 @@ const StyleProvider = styled.div`
     .links {
       .addLinks {
         border-radius: 2rem;
-        :hover {
+        &:hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;
         }
@@ -118,7 +118,7 @@ const StyleProvider = styled.div`
       .item {
         background-color: ${(props) => props.theme.colorBg3};
         margin-right: 8px;
-        :hover {
+        &:hover {
           background-color: ${(props) => props.theme.colorBg4};
           cursor: pointer;
           transition: all 0.3s;
@@ -129,11 +129,11 @@ const StyleProvider = styled.div`
       .addTags {
         color: ${(props) => props.theme.colorText3};
         border-radius: 2rem;
-        :hover {
+        &:hover {
           color: ${(props) => props.theme.colorText2};
           transition: all 0.5s;
         }
-        :hover {
+        &:hover {
           background-color: ${(props) => props.theme.colorBg4};
           transition: all 0.5s;
         }
@@ -142,7 +142,7 @@ const StyleProvider = styled.div`
     .experiences {
       .buttonAddExperience {
         color: ${(props) => props.theme.colorText3};
-        :hover {
+        &:hover {
           color: ${(props) => props.theme.colorText2};
           transition: all 0.5s;
         }
@@ -151,7 +151,7 @@ const StyleProvider = styled.div`
     .repositories {
       .renderRepositoryIem {
         cursor: pointer;
-        :hover {
+        &:hover {
           .top {
             .name {
               text-decoration: underline;
@@ -172,7 +172,7 @@ const StyleProvider = styled.div`
       border-radius: 0.8rem;
       font-size: 0.8rem;
       font-weight: 500;
-      :hover {
+      &:hover {
         cursor: pointer;
         transition: all 0.3s;
       }

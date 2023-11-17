@@ -6,7 +6,7 @@ const StyleProvider = styled.div`
     color: ${commonColor.colorWhite1};
     background-color: ${commonColor.colorBlue1};
     border: none;
-    :hover {
+    &:hover {
       color: ${commonColor.colorWhite1};
       background-color: ${commonColor.colorBlue3};
       transition: all 0.5s;
@@ -17,7 +17,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText1};
     background-color: ${(props) => props.theme.colorBg2};
     border: 1px solid ${(props) => props.theme.colorText3};
-    :hover {
+    &:hover {
       color: ${(props) => props.theme.colorText1};
       border-color: ${(props) => props.theme.colorText1};
       transition: all 0.5s;

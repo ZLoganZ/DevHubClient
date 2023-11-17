@@ -219,7 +219,6 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
             </div>
             <div className='newPostFooter__right'>
               <ButtonActiveHover
-                rounded
                 onClick={() => form.handleSubmit(onSubmit)}
                 loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhite1 }}>

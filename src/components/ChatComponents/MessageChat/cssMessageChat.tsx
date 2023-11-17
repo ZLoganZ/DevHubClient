@@ -9,7 +9,7 @@ const StyleProvider = styled.div`
       border-radius: 50%;
       height: 20px;
       width: 20px;
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg3};
         transform: scale(1.1);
         transition: 0.3s;

@@ -3,7 +3,8 @@ import { Image, Tooltip } from 'antd';
 import { CrownFilled } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faShieldHalved, faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 
 import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
@@ -244,7 +245,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                         alt='Image'
                         placeholder={true}
                         src={getImageURL(message.image, 'post')}
-                        preview={{ src: getImageURL(message.image) }}
+                        preview={{ src: getImageURL(message.image), mask: <FontAwesomeIcon icon={faEye} /> }}
                       />
                     ) : (
                       messageContent(message)

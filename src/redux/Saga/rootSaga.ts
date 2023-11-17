@@ -13,7 +13,6 @@ export function* rootSaga() {
     authSaga.theoDoiVerifyCodeSaga(),
     authSaga.theoDoiResetPasswordSaga(),
     authSaga.theoDoiCheckVerifyCodeSaga(),
-    authSaga.theoDoiCheckResetPasswordSaga(),
     authSaga.theoDoiRegisterSaga(),
 
     // // userSaga

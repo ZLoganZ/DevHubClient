@@ -87,7 +87,7 @@ const SelectFollow = () => {
           </div>
           <div className='button mt-16 mb-10 text-right'>
             <NavLink to='/'>
-              <ButtonActiveHover rounded>Done</ButtonActiveHover>
+              <ButtonActiveHover>Done</ButtonActiveHover>
             </NavLink>
           </div>
         </div>

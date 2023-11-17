@@ -17,6 +17,7 @@ import {
   faInstagram,
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
@@ -97,28 +98,22 @@ const MyProfile = () => {
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center w-full min-h-fit max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center items-center w-full h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
-                src={getImageURL(currentUserInfo.cover_image)}
+                src={getImageURL(currentUserInfo.cover_image) ?? '/images/ProfilePage/cover.jpg'}
+                preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
               />
             </div>
-            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
+            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-[30%] left-[15%] xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
               <Image
                 src={getImageURL(currentUserInfo.user_image, 'avatar')}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
                 preview={{
-                  src: getImageURL(currentUserInfo.user_image)
+                  src: getImageURL(currentUserInfo.user_image),
+                  mask: <FontAwesomeIcon icon={faEye} />
                 }}
               />
             </div>
@@ -162,10 +157,10 @@ const MyProfile = () => {
               </Col>
             </Row>
             <div className='id_address_join xs:pl-3'>
-              <span className='id item mr-2'>@{currentUserInfo.alias ?? 'user'}</span>
+              <span className='id item mr-2'>@{currentUserInfo.alias || 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                {currentUserInfo.location ?? 'Global'}
+                {currentUserInfo.location || 'Global'}
               </span>
               <span className='join'>
                 <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />

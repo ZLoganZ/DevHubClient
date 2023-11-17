@@ -1,3 +1,5 @@
+import type { ModalFuncProps } from 'antd';
+
 export interface IUserLogin {
   email: string;
   password: string;
@@ -309,3 +311,11 @@ export interface ISocketCall {
   conversation_id: string;
   conversation_name: string;
 }
+
+export type ModalType =
+  | {
+      destroy: () => void;
+      update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+      then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+    }
+  | undefined;

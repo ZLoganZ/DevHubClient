@@ -1,4 +1,4 @@
-import { Col, Row, App, type ModalFuncProps } from 'antd';
+import { Col, Row, App } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
@@ -20,7 +20,7 @@ import ConversationOption from '@/components/ChatComponents/ConversationOption';
 import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
-import { IMessage, ISocketCall } from '@/types';
+import { IMessage, ISocketCall, ModalType } from '@/types';
 import getImageURL from '@/util/getImageURL';
 import { audioCall, videoChat } from '@/util/call';
 import { commonColor } from '@/util/cssVariable';
@@ -35,14 +35,6 @@ interface IMessageChat {
   conversationID: string;
 }
 
-type ModalType =
-  | {
-      destroy: () => void;
-      update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
-      then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
-    }
-  | undefined;
-
 const soundCall = new Audio('/sounds/sound-noti-call.wav');
 soundCall.loop = true;
 
@@ -51,7 +43,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
-  const { members, chatSocket } = useAppSelector((state) => state.socketIO);
+  const { activeMembers: members, chatSocket } = useAppSelector((state) => state.socketIO);
   const { displayOption } = useAppSelector((state) => state.message);
 
   const dispatch = useAppDispatch();
@@ -109,6 +101,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
+  const messageRef = useRef<HTMLDivElement>(null);
   const typingDiv = useRef<HTMLDivElement>(null);
 
   useIntersectionObserver(bottomRef, seenMessage);
@@ -189,7 +182,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               Decline
             </ButtonCancelHover>
             <ButtonActiveHover
-              rounded
               onClick={() => {
                 videoChat(data.conversation_id);
                 void soundCall.pause();
@@ -236,7 +228,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               Decline
             </ButtonCancelHover>
             <ButtonActiveHover
-              rounded
               onClick={() => {
                 audioCall(data.conversation_id);
                 void soundCall.pause();
@@ -270,7 +261,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           footer: (
             <div className='mt-6 flex items-center justify-end gap-x-3'>
               <ButtonActiveHover
-                rounded
                 onClick={() => {
                   modalVideo?.destroy();
                 }}>
@@ -303,7 +293,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
           footer: (
             <div className='mt-6 flex items-center justify-end gap-x-3'>
               <ButtonActiveHover
-                rounded
                 onClick={() => {
                   modalVoice?.destroy();
                 }}>
@@ -488,7 +477,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <div className='body flex-1 h-[92%] overflow-auto'>
+              <div ref={messageRef} className='body flex-1 h-[92%] overflow-auto'>
                 {!hasPreviousMessages && (
                   <ChatWelcome
                     type={currentConversation.type}
@@ -502,7 +491,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 {messages.map((message, index, messArr) => (
                   <MessageBox
                     key={conversationID + '|' + message._id}
-                    ref={index === 20 ? topRef : null}
                     type={currentConversation.type}
                     isLastMes={index === messArr.length - 1}
                     message={message}

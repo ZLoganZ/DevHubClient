@@ -13,7 +13,7 @@ const StyleProvider = styled.div`
       .options,
       .rename,
       .change-image {
-        :hover {
+        &:hover {
           background-color: ${commonColor.colorBlue1};
           color: ${commonColor.colorWhite1};
           transition: all 0.3s;
@@ -22,7 +22,7 @@ const StyleProvider = styled.div`
     }
     .leave-group {
       color: ${(props) => props.theme.colorText2};
-      :hover {
+      &:hover {
         color: ${(props) => props.theme.colorTextReverse1};
         background-color: #f42f2f;
         transition: all 0.3s;

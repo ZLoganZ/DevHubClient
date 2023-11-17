@@ -1,9 +1,5 @@
 import styled from 'styled-components';
-import {
-  flex_center_column,
-  darkThemeSet,
-  commonColor
-} from '@/util/cssVariable';
+import { flex_center_column, darkThemeSet, commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   background-color: ${darkThemeSet.colorBg1};
@@ -28,12 +24,7 @@ const StyleProvider = styled.div`
       width: 100%;
       height: 100%;
       color: ${darkThemeSet.colorText2};
-      background-image: linear-gradient(
-        to right,
-        #161618d5,
-        #1e1d2bb5,
-        rgba(0, 0, 0, 0.21)
-      );
+      background-image: linear-gradient(to right, #161618d5, #1e1d2bb5, rgba(0, 0, 0, 0.21));
       .content {
         width: 40%;
         .lineTop {

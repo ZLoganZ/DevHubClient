@@ -10,6 +10,7 @@ import {
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition, faBriefcase, faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { v4 as uuidv4 } from 'uuid';
 import 'react-quill/dist/quill.bubble.css';
 
@@ -60,7 +61,9 @@ const EditProfileForm: React.FC = () => {
   const [avatar, setAvatar] = useState(getImageURL(currentUserInfo.user_image, 'avatar'));
   const [fileAvatar, setFileAvatar] = useState<File>();
 
-  const [cover, setCover] = useState(getImageURL(currentUserInfo.cover_image));
+  const [cover, setCover] = useState(
+    getImageURL(currentUserInfo.cover_image) ?? '/images/ProfilePage/cover.jpg'
+  );
   const [fileCover, setFileCover] = useState<File>();
 
   const [about, setAbout] = useState(currentUserInfo.about ?? '');
@@ -270,6 +273,7 @@ const EditProfileForm: React.FC = () => {
             <Image
               className='coverImage rounded-xl'
               src={cover}
+              preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
               style={{
                 objectFit: 'cover',
                 maxHeight: '18rem',
@@ -311,7 +315,8 @@ const EditProfileForm: React.FC = () => {
                 objectFit: 'cover'
               }}
               preview={{
-                src: getImageURL(currentUserInfo.user_image)
+                src: getImageURL(currentUserInfo.user_image),
+                mask: <FontAwesomeIcon icon={faEye} />
               }}
             />
           </div>
@@ -352,7 +357,7 @@ const EditProfileForm: React.FC = () => {
             ) : null;
           })}
           <button
-            className='addLinks px-4 py-1 cursor-pointer'
+            className='addLinks px-3 py-1.5 cursor-pointer'
             onClick={() => {
               dispatch(
                 openModal({
@@ -373,8 +378,8 @@ const EditProfileForm: React.FC = () => {
               border: '1px solid',
               borderColor: themeColorSet.colorBg4
             }}>
-            <FontAwesomeIcon icon={faPlus} className='mr-2' />
-            {contacts.length === 0 ? 'Add Contacts' : 'Edit Contacts'}
+            <FontAwesomeIcon icon={faPlus} />
+            &nbsp;{contacts.length === 0 ? 'Add Contacts' : 'Edit Contacts'}
           </button>
         </section>
         <section className='inputInformation mt-5'>
@@ -387,8 +392,8 @@ const EditProfileForm: React.FC = () => {
             }}>
             Information
           </div>
-          <div className='line1 flex justify-between items-center mb-5'>
-            <div className='LastName form__group field' style={{ width: '48%' }}>
+          <div className='line1 flex items-center mb-5'>
+            <div className='LastName form__group field' style={{ width: '100%' }}>
               <input
                 defaultValue={currentUserInfo.name}
                 pattern='[A-Za-z ]*'
@@ -473,7 +478,7 @@ const EditProfileForm: React.FC = () => {
               return null;
             })}
             <button
-              className='addTags px-4 py-1 cursor-pointer'
+              className='addTags px-3 py-1 cursor-pointer'
               style={{
                 border: '1px solid',
                 borderColor: themeColorSet.colorBg4
@@ -489,8 +494,8 @@ const EditProfileForm: React.FC = () => {
                   })
                 );
               }}>
-              <FontAwesomeIcon icon={faPlus} className='mr-2' />
-              {tags.length === 0 ? 'Add Tags' : 'Edit Tags'}
+              <FontAwesomeIcon icon={faPlus} />
+              &nbsp;{tags.length === 0 ? 'Add Tags' : 'Edit Tags'}
             </button>
           </div>
         </section>

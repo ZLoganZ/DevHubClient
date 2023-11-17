@@ -48,7 +48,7 @@ const ModalHOC = () => {
                   onClick={() => {
                     handleSubmit();
                   }}
-                  rounded>
+                  >
                   Save
                 </ButtonActiveHover>
               </div>
