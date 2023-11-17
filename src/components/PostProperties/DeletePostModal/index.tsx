@@ -72,7 +72,7 @@ const DeletePostModal: React.FC<IDeleteModalProps> = ({ postID, isOpen, setIsOpe
               onClick={() => {
                 handleOk();
               }}
-              rounded>
+              >
               Delete
             </ButtonActiveHover>
           </div>

@@ -42,7 +42,7 @@ const DrawerHOC = () => {
                     callBackSubmit();
                   }}
                   loading={loading}
-                  rounded>
+                  >
                   Submit
                 </ButtonActiveHover>
               </Space>

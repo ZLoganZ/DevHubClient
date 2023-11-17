@@ -25,7 +25,7 @@ const StyleProvider = styled.div`
       .recentlyJoin {
         .content {
           .item {
-            :hover {
+            &:hover {
               background-color: ${(props) => props.theme.colorBg1};
               cursor: pointer;
               transition: all 0.5s;
@@ -36,7 +36,7 @@ const StyleProvider = styled.div`
       .tags {
         .tagItem {
           background-color: ${(props) => props.theme.colorBg1};
-          :hover {
+          &:hover {
             background-color: ${(props) => props.theme.colorBg4};
             cursor: pointer;
             transition: all 0.5s;

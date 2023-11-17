@@ -15,8 +15,6 @@ interface IButtonActiveHover {
   disabled?: boolean;
   onClick?: React.MouseEventHandler;
   loading?: boolean;
-  rounded?: boolean;
-  block?: boolean;
   type?: ButtonNormalHoverType;
   style?: React.CSSProperties;
 }
@@ -27,8 +25,6 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
   onClick,
   loading,
   disabled,
-  rounded,
-  block,
   style,
   type = 'primary'
 }) => {
@@ -40,20 +36,11 @@ export const ButtonActiveHover: React.FC<IButtonActiveHover> = ({
       <Button
         type={type}
         disabled={disabled ?? loading}
-        className={merge('ButtonActiveHover font-bold px-6 py-2', className)}
+        className={merge('ButtonActiveHover h-full w-full font-bold px-6 py-2 rounded-full', className)}
         onClick={onClick}
         loading={loading}
         htmlType='submit'
-        style={
-          style
-            ? { ...style, boxShadow: 'none' }
-            : {
-                height: '100%',
-                borderRadius: rounded ? '1.5rem' : '0',
-                width: block ? '100%' : 'auto',
-                boxShadow: 'none'
-              }
-        }>
+        style={{ ...style, boxShadow: 'none' }}>
         {children}
       </Button>
     </StyleProvider>

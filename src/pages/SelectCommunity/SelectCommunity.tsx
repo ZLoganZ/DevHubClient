@@ -257,7 +257,7 @@ const SelectCommunity = () => {
                             style={{
                               width: '10%'
                             }}>
-                            <ButtonActiveHover rounded>Joined</ButtonActiveHover>
+                            <ButtonActiveHover >Joined</ButtonActiveHover>
                           </div>
                         </div>
                       );
@@ -269,7 +269,7 @@ const SelectCommunity = () => {
           </div>
           <div className='button mt-16 mr-4 mb-10 text-right'>
             <NavLink to='/select-follow'>
-              <ButtonActiveHover rounded>Next</ButtonActiveHover>
+              <ButtonActiveHover >Next</ButtonActiveHover>
             </NavLink>
           </div>
         </div>

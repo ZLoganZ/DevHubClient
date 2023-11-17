@@ -49,12 +49,6 @@ const Chat = () => {
   const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
   const { calledList } = useGetCalled();
 
-  const followers = useMemo(() => {
-    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
-      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
-    );
-  }, [currentUserInfo]);
-
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
     if (checked) {
@@ -63,6 +57,10 @@ const Chat = () => {
       dispatch(setTheme({ theme: LIGHT_THEME }));
     }
   };
+
+  const followers = useMemo(() => {
+    return currentUserInfo?.members ?? [];
+  }, [currentUserInfo?.members]);
 
   useEffect(() => {
     document.title = 'DevHub Chat';

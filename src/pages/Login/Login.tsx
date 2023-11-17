@@ -125,6 +125,7 @@ const Login = () => {
                   }
                 ]}>
                 <Input
+                  className='rounded-md'
                   placeholder='Email'
                   allowClear
                   prefix={<MailOutlined />}
@@ -142,17 +143,14 @@ const Login = () => {
                   }
                 ]}>
                 <Input.Password
+                  className='rounded-md'
                   placeholder='Password'
                   onChange={(e) => {
                     form.setValue('password', e.target.value);
                   }}
                 />
               </Form.Item>
-              <ButtonActiveHover
-                loading={loading}
-                block
-                type='primary'
-                className='btn h-9 mb-4 mt-3 font-bold'>
+              <ButtonActiveHover loading={loading} type='primary' className='btn h-9 mb-4 mt-3 font-bold'>
                 Login
               </ButtonActiveHover>
               <NavLink to='/forgot'>
@@ -166,14 +164,14 @@ const Login = () => {
                 </span>
                 <hr />
               </div>
-              <div className='loginTool mt-10 w-full'>
-                <div className='google h-10' onClick={() => handleSignInWithGoogle()}>
+              <div className='loginTool mt-10 w-full flex flex-col gap-3'>
+                <div className='google h-10 rounded-md' onClick={() => handleSignInWithGoogle()}>
                   <span className='icon mr-2'>
                     <img src='/SVG/google.svg' alt='google' />
                   </span>
                   <span>Continue with Gmail</span>
                 </div>
-                <div className='github mt-4 h-10' onClick={() => openPopup()}>
+                <div className='github h-10 rounded-md' onClick={() => openPopup()}>
                   <span className='icon mr-2'>
                     <img src='/SVG/github.svg' alt='github' />
                   </span>
@@ -181,7 +179,6 @@ const Login = () => {
                 </div>
               </div>
             </div>
-
             <div className='noAccount text-center mt-8'>
               <span>Don't you have an account yet? </span>
               <span className='signUp ml-1'>

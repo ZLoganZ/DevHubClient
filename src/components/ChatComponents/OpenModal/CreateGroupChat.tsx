@@ -15,7 +15,7 @@ interface IGroupModal {
   users: IUserInfo[];
 }
 
-const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
+const CreateGroupChat: React.FC<IGroupModal> = ({ users }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -68,7 +68,7 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
-            <ButtonActiveHover rounded loading={isLoading} onClick={onSubmit}>
+            <ButtonActiveHover loading={isLoading} onClick={onSubmit}>
               Create
             </ButtonActiveHover>
           </div>
@@ -80,4 +80,4 @@ const OpenGroupModal: React.FC<IGroupModal> = ({ users }) => {
   return <>{contextHolder}</>;
 };
 
-export default OpenGroupModal;
+export default CreateGroupChat;

@@ -67,7 +67,7 @@ const Register = () => {
                 <Form
                   name='register'
                   className='mt-5 formAccount'
-                  onFinish={() => form.handleSubmit(onSubmit)}
+                  onFinish={form.handleSubmit(onSubmit)}
                   autoComplete='off'>
                   <Form.Item
                     name='firstname'
@@ -150,7 +150,7 @@ const Register = () => {
                       }}
                     />
                   </Form.Item>
-                  <ButtonActiveHover loading={loading} type='primary' className='buttonCreate mt-3'>
+                  <ButtonActiveHover loading={loading} type='primary'  className='buttonCreate mt-3'>
                     Create account
                   </ButtonActiveHover>
                 </Form>

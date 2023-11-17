@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const StyleProvider = styled.div`
   .item {
-    :hover {
+    &:hover {
       cursor: pointer;
     }
   }

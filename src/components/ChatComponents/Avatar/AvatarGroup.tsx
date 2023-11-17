@@ -1,3 +1,7 @@
+import { Image } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
+
 import { IUserInfo } from '@/types';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
@@ -8,13 +12,14 @@ import getImageURL from '@/util/getImageURL';
 interface IAvatarGroup {
   users: IUserInfo[];
   size?: number;
+  preview?: boolean;
   image?: string;
 }
 
-const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
+const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image, preview = false }) => {
   const { themeColorSet } = getTheme();
 
-  const { members } = useAppSelector((state) => state.socketIO);
+  const { activeMembers: members } = useAppSelector((state) => state.socketIO);
   const { currentUserInfo } = useCurrentUserInfo();
 
   const slicedUsers = users.length > 3 ? users.slice(0, 4) : users.slice(0, 3);
@@ -42,10 +47,11 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image }) => {
   return (
     <div className='relative' style={{ width: size, height: size }}>
       {image ? (
-        <div className='relative rounded-full overflow-hidden'>
-          <img
+        <div className='relative flex rounded-full overflow-hidden' style={{ width: size, height: size }}>
+          <Image
             src={getImageURL(image, 'avatar_mini')}
             alt='Avatar'
+            preview={preview ? { src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> } : false}
             style={{
               width: '100%',
               height: '100%',

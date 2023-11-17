@@ -12,7 +12,7 @@ import StyleProvider from './cssSelectInterest';
 
 const SelectInterest = () => {
   const dispatch = useAppDispatch();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -22,7 +22,7 @@ const SelectInterest = () => {
 
   // Hàm hiển thị mesage
   const error = () => {
-    messageApi.open({
+    void messageApi.open({
       type: 'error',
       content: 'Please choose at least 5 interest to get started'
     });
@@ -117,7 +117,6 @@ const SelectInterest = () => {
           </div>
           <div className='btnNext absolute'>
             <ButtonActiveHover
-              rounded
               onClick={() => {
                 if (addArray.length < 5) {
                   error();

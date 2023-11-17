@@ -92,7 +92,6 @@ const RenderPeopleItem = ({ item }: any) => {
             width: '10%'
           }}>
           <ButtonActiveHover
-            rounded
             onClick={() => {
               setFollow(!follow);
               mutateFollowUser(item._id);

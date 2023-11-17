@@ -29,7 +29,7 @@ const StyleProvider = styled.div`
       }
       .mode {
         color: ${(props) => props.theme.colorText3};
-        :hover {
+        &:hover {
           color: ${(props) => props.theme.colorText1};
           cursor: pointer;
           transition: all 0.4s;
@@ -48,7 +48,7 @@ const StyleProvider = styled.div`
         .iconEmoji {
           .emoji {
             color: ${(props) => props.theme.colorText3};
-            :hover {
+            &:hover {
               cursor: pointer;
               color: ${(props) => props.theme.colorText2};
               transition: all 0.5s;
@@ -59,7 +59,7 @@ const StyleProvider = styled.div`
           .upload,
           .micro {
             color: ${(props) => props.theme.colorText3};
-            :hover {
+            &:hover {
               cursor: pointer;
               color: ${(props) => props.theme.colorText2};
               transition: all 0.5s;

@@ -383,6 +383,24 @@ export const useFollowersData = (userID: string) => {
   };
 };
 
+export const useGetAllUsersUsedToChatWith = () => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['allUsersUsedToChatWith'],
+    queryFn: async () => {
+      const { data } = await messageService.getAllUsersUsedToChatWith();
+      return data.metadata;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingAllUsersUsedToChatWith: isPending,
+    isErrorAllUsersUsedToChatWith: isError,
+    allUsersUsedToChatWith: data!,
+    isFetchingAllUsersUsedToChatWith: isFetching
+  };
+};
+
 /**
  * The `useMessagesData` function is a custom hook that fetches and returns messages data for a given
  * conversation ID.

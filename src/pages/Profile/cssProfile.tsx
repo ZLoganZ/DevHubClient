@@ -19,7 +19,7 @@ const StyleProvider = styled.div`
   .chat_Follow {
     .chat {
       background-color: ${(props) => props.theme.colorBg3};
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg4};
         color: ${commonColor.colorBlue2};
         cursor: pointer;
@@ -35,7 +35,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText3};
     .item {
       display: inline-block;
-      ::after {
+      &::after {
         content: '•';
         margin-left: 0.5rem;
       }
@@ -47,7 +47,7 @@ const StyleProvider = styled.div`
       border-radius: 0.8rem;
       font-size: 0.8rem;
       font-weight: 500;
-      :hover {
+      &:hover {
         cursor: pointer;
         transition: all 0.3s;
       }
@@ -57,7 +57,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText3};
     .item {
       display: inline-block;
-      ::after {
+      &::after {
         content: '•';
         margin-left: 0.5rem;
       }
@@ -72,7 +72,7 @@ const StyleProvider = styled.div`
   .contact {
     .item {
       background-color: ${(props) => props.theme.colorBg3};
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg4};
         cursor: pointer;
         transition: all 0.3s;
