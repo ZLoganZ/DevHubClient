@@ -258,7 +258,7 @@ export interface IUpdateConversation extends IConversation {
   typeUpdate: TypeofUpdateConversation;
 }
 
-type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
+type TypeofMessage = 'text' | 'image' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
 export interface IMessage {
   _id: string;
@@ -267,7 +267,7 @@ export interface IMessage {
   sender: IUserInfo;
   content: string;
   isSending?: boolean;
-  image?: string;
+  images?: string[];
   createdAt: string;
 }
 
@@ -286,9 +286,6 @@ export interface ICalled {
   createdAt: string;
 }
 
-export interface ImageResponse {
-  key: string;
-}
 export interface IEmoji {
   id: string;
   name: string;

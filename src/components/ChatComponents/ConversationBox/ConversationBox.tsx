@@ -146,7 +146,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [conversation.lastMessage, conversation.seen]);
 
   const lastMessageText = useMemo(() => {
-    if (conversation.lastMessage?.image) return 'Sent an image';
+    if (conversation.lastMessage?.images) return 'Sent an image';
 
     if (conversation.lastMessage?.content) return conversation.lastMessage.content;
 

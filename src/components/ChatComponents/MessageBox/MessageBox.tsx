@@ -17,6 +17,7 @@ import { useCurrentUserInfo } from '@/hooks/fetch';
 import { IMessage, IUserInfo, TypeofConversation } from '@/types';
 import StyleProvider from './cssMessageBox';
 import { audioCall, videoChat } from '@/util/call';
+import ImageGroup from '../Image/ImageGroup';
 
 interface IMessageBox {
   message: IMessage;
@@ -76,8 +77,8 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
     };
     const messageStyle = merge(
       'text-sm max-w-[95%] overflow-hidden break-all',
-      message.image ? 'flex p-0' : 'py-2 px-3',
-      isOwn ? !message.image && 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7',
+      'py-2 px-3',
+      message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
       roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup)
     );
 
@@ -159,7 +160,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
             </div>
           </div>
         );
-      }
+      } else if (message.type === 'image') return <ImageGroup images={message.images} preview />;
       return message.content;
     };
 
@@ -239,17 +240,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                         videoChat(message.conversation_id);
                       }
                     }}>
-                    {message.image ? (
-                      <Image
-                        className='max-h-[288px] max-w-[512px]'
-                        alt='Image'
-                        placeholder={true}
-                        src={getImageURL(message.image, 'post')}
-                        preview={{ src: getImageURL(message.image), mask: <FontAwesomeIcon icon={faEye} /> }}
-                      />
-                    ) : (
-                      messageContent(message)
-                    )}
+                    {messageContent(message)}
                   </div>
                 </Tooltip>
               </div>

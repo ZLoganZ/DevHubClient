@@ -116,7 +116,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
     formData.append('image', file);
     const { data } = await imageService.uploadImage(formData);
     return {
-      url: data.metadata.key,
+      url: data.metadata,
       status: 'done'
     };
   };

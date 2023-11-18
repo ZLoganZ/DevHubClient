@@ -1,15 +1,20 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ConfigProvider, Input, Popover, Space, Upload, message } from 'antd';
-import { useCallback, useState } from 'react';
+import { ConfigProvider, Image, Input, Popover, Space, Upload, message } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
-import { faFaceSmile, faMicrophone, faPaperPlane, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFaceSmile,
+  faMicrophone,
+  faPaperPlane,
+  faPaperclip,
+  faXmark
+} from '@fortawesome/free-solid-svg-icons';
 import { debounce } from 'lodash';
 
 import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import { Socket } from '@/util/constants/SettingSystem';
-import { messageService } from '@/services/MessageService';
 import { imageService } from '@/services/ImageService';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
@@ -20,9 +25,10 @@ import { commonColor } from '@/util/cssVariable';
 interface IChatInput {
   conversationID: string;
   members: IUserInfo[];
+  setHaveMedia: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
+const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -31,7 +37,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
 
   const [messageContent, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
-  const [file, setFile] = useState<File>();
+  const [files, setFiles] = useState<File[]>([]);
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -41,7 +47,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
 
   const { mutateSendMessage } = useSendMessage();
 
-  const handleSubmit = (content: string) => {
+  const handleSubmit = async (content: string) => {
     if (!conversationID) return;
     if (!content) return;
 
@@ -60,34 +66,39 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
       createdAt: new Date()
     };
 
+    setId(uuidv4().replace(/-/g, ''));
+    mutateSendMessage(message as unknown as IMessage);
     chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
     chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
 
-    setId(uuidv4().replace(/-/g, ''));
-    mutateSendMessage(message as unknown as IMessage);
-  };
+    if (files.length > 0) {
+      const newFiles = [...files];
+      setFiles([]);
+      const result = await handleUploadImage(newFiles);
 
-  const handleUpload = async () => {
-    const formData = new FormData();
-    if (file) {
-      const result = await handleUploadImage(file);
-      formData.append('image', result.url);
+      const newMessage = {
+        _id: id + 'image',
+        conversation_id: conversationID,
+        images: result,
+        sender: {
+          _id: currentUserInfo._id,
+          user_image: currentUserInfo.user_image,
+          name: currentUserInfo.name
+        },
+        type: 'image',
+        createdAt: new Date()
+      };
+      chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message: newMessage });
     }
-    await messageService.sendMessage({
-      conversation_id: conversationID,
-      content: messageContent,
-      image: formData.get('image')?.toString()
-    });
   };
 
-  const handleUploadImage = async (file: File) => {
+  const handleUploadImage = async (files: File[]) => {
     const formData = new FormData();
-    formData.append('image', file);
-    const { data } = await imageService.uploadImage(formData);
-    return {
-      url: data.metadata.key,
-      status: 'done'
-    };
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+    const { data } = await imageService.uploadImages(formData);
+    return data.metadata;
   };
 
   const beforeUpload = (file: File) => {
@@ -98,7 +109,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
     return isLt2M;
   };
 
-  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !file;
+  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !files;
 
   const handleStopTyping = useCallback(
     debounce(
@@ -107,8 +118,18 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
     ),
     []
   );
+  useEffect(() => {
+    if (files.length > 0) {
+      setHaveMedia(true);
+    } else {
+      setHaveMedia(false);
+    }
+  }, [files.length]);
+
   return (
-    <div className='footer flex justify-between items-center' style={{ height: '8%' }}>
+    <div
+      className={merge('footer flex justify-between', files.length > 0 ? 'items-end pb-2' : 'items-center')}
+      style={{ height: files.length > 0 ? '20%' : '8%' }}>
       {contextHolder}
       <Popover
         className='text-center cursor-pointer'
@@ -136,11 +157,38 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
           style={{ color: commonColor.colorBlue1 }}
         />
       </Popover>
-      <div className='input' style={{ width: '100%' }}>
+
+      <div className='input relative top-0 left-0 z-0' style={{ width: '100%' }}>
+        {files.length > 0 && (
+          <div className='absolute list-image overflow-auto w-full h-20 flex px-4 pt-2 gap-5 z-10'>
+            <Image.PreviewGroup>
+              {files.map((file, index) => (
+                <div className='relative select-none' key={index}>
+                  <Image
+                    src={URL.createObjectURL(file) ?? ''}
+                    alt='Preview' // preview image
+                    className='rounded-sm min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] object-cover'
+                    width={50}
+                    preview={false}
+                  />
+                  <FontAwesomeIcon
+                    className='absolute block rounded-full -top-1 -right-1 w-4 h-4 cursor-pointer'
+                    style={{ backgroundColor: themeColorSet.colorBg4 }}
+                    icon={faXmark}
+                    color={themeColorSet.colorText1}
+                    onClick={() => {
+                      setFiles(files.filter((_, i) => i !== index));
+                    }}
+                  />
+                </div>
+              ))}
+            </Image.PreviewGroup>
+          </div>
+        )}
         <ConfigProvider theme={{ token: { controlHeight: 35, lineWidth: 0 } }}>
           <Input
             allowClear
-            className='rounded-full'
+            className={merge('rounded-3xl', files.length > 0 && 'pt-24')}
             placeholder='Write a message'
             value={messageContent}
             onKeyUp={(e) => {
@@ -183,14 +231,21 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members }) => {
       </div>
       <Space className='extension flex justify-center items-center' style={{ width: '12%' }}>
         <Upload
-          maxCount={5}
+          // maxCount={5}
+          multiple
           customRequest={({ onSuccess }) => {
             if (onSuccess) onSuccess('ok');
           }}
           showUploadList={false}
           listType='picture'
           beforeUpload={beforeUpload}
-          onChange={(info) => setFile(info.file.originFileObj)}>
+          fileList={files.map((file) => ({
+            uid: file.name,
+            name: file.name,
+            status: 'done',
+            url: URL.createObjectURL(file)
+          }))}
+          onChange={(info) => setFiles(info.fileList.map((item) => item.originFileObj!))}>
           <FontAwesomeIcon
             className='item mr-3'
             size='lg'
