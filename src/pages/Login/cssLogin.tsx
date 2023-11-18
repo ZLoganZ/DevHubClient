@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { flex_center_column, flex_center_row, darkThemeSet, commonColor } from '@/util/cssVariable';
+import { flex_center_column, flex_center_row, commonColor } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
-  background-color: ${darkThemeSet.colorBg1};
+  background-color: ${(props) => props.theme.colorBg1};
   height: 100vh;
   position: relative;
 
@@ -11,8 +11,8 @@ const StyleProvider = styled.div`
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px ${darkThemeSet.colorBg2} inset !important;
-      -webkit-text-fill-color: ${darkThemeSet.colorText1} !important;
+      -webkit-box-shadow: 0 0 0 30px ${(props) => props.theme.colorBg2} inset;
+      -webkit-text-fill-color: ${(props) => props.theme.colorText1};
     }
 
     width: 32rem;
@@ -25,19 +25,22 @@ const StyleProvider = styled.div`
     .loginForm {
       width: 100%;
       height: 100%;
-      background-color: ${darkThemeSet.colorBg1};
+      background-color: ${(props) => props.theme.colorBg1};
       ${flex_center_column};
       .welcomeBack {
         ${flex_center_column};
         .icon_logo {
-          color: ${darkThemeSet.colorText1};
+          color: ${(props) => props.theme.colorText1};
           font-size: 2rem;
           width: 70px;
           height: 70px;
           margin-bottom: 1rem;
           border: double 4px transparent;
           border-radius: 50%;
-          background-image: linear-gradient(${darkThemeSet.colorBg1}, ${darkThemeSet.colorBg1}),
+          background-image: linear-gradient(
+              ${(props) => props.theme.colorBg1},
+              ${(props) => props.theme.colorBg1}
+            ),
             radial-gradient(circle at right top, #2979ff, #07a787);
           background-origin: border-box;
           background-clip: padding-box, border-box;
@@ -45,7 +48,7 @@ const StyleProvider = styled.div`
           ${flex_center_row};
         }
         .title {
-          color: ${darkThemeSet.colorText1};
+          color: ${(props) => props.theme.colorText1};
           font-size: 1.5rem;
           font-weight: 500;
         }
@@ -54,7 +57,7 @@ const StyleProvider = styled.div`
       /* form */
       .btn {
         background-image: linear-gradient(to right, ${commonColor.colorBlue1}, ${commonColor.colorGreen1});
-        color: ${darkThemeSet.colorText1};
+        color: ${(props) => props.theme.colorText1};
         &:hover {
           background-image: linear-gradient(to right, ${commonColor.colorBlue2}, #0abe9a);
           transition: all 0.5s;
@@ -62,15 +65,15 @@ const StyleProvider = styled.div`
       }
 
       .forgot {
-        color: ${darkThemeSet.colorText2};
+        color: ${(props) => props.theme.colorText2};
         font-size: 0.9rem;
-        text-decoration: underline solid ${darkThemeSet.colorText2};
+        text-decoration: underline solid ${(props) => props.theme.colorText2};
         text-underline-position: below;
         &:hover {
           color: ${commonColor.colorBlue1};
           transition: all 0.5s;
           cursor: pointer;
-          text-decoration: none;
+          text-decoration: underline solid ${commonColor.colorBlue1};
         }
       }
 
@@ -81,7 +84,7 @@ const StyleProvider = styled.div`
             top: -0.9rem;
             left: 50%;
             transform: translateX(-50%);
-            background-color: ${darkThemeSet.colorBg1};
+            background-color: ${(props) => props.theme.colorBg1};
             padding: 0 0.5rem;
             font-size: 0.9rem;
           }
@@ -89,8 +92,8 @@ const StyleProvider = styled.div`
         .loginTool {
           .google {
             ${flex_center_row};
-            background-color: ${darkThemeSet.colorBg2};
-            color: ${darkThemeSet.colorText1};
+            background-color: ${(props) => props.theme.colorBg2};
+            color: ${(props) => props.theme.colorText1};
             font-size: 0.9rem;
             &:hover {
               background-color: ${commonColor.colorBlue1};
@@ -104,8 +107,8 @@ const StyleProvider = styled.div`
           }
           .github {
             ${flex_center_row};
-            background-color: ${darkThemeSet.colorBg2};
-            color: ${darkThemeSet.colorText1};
+            background-color: ${(props) => props.theme.colorBg2};
+            color: ${(props) => props.theme.colorText1};
             font-size: 0.9rem;
             &:hover {
               background-color: ${commonColor.colorBlue1};
@@ -121,7 +124,7 @@ const StyleProvider = styled.div`
       }
       .noAccount {
         width: 70%;
-        color: ${darkThemeSet.colorText3};
+        color: ${(props) => props.theme.colorText3};
         font-size: 0.9rem;
         .signUp {
           color: ${commonColor.colorBlue1};
