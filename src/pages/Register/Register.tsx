@@ -1,11 +1,11 @@
+import { useEffect, useRef } from 'react';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
-import { ConfigProvider, Form, Input } from 'antd';
+import { App, ConfigProvider, Form, Input } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useForm } from 'react-hook-form';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
-import { darkThemeSet } from '@/util/cssVariable';
 import { REGISTER_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { setLoading } from '@/redux/Slice/AuthSlice';
 import { IUserRegister } from '@/types';
@@ -13,11 +13,17 @@ import { useAppDispatch, useAppSelector } from '@/hooks/special';
 
 import { ButtonActiveHover } from '@/components/MiniComponent';
 import StyleProvider from './cssRegister';
+import { getTheme } from '@/util/theme';
 
 const Register = () => {
+  useAppSelector((state) => state.theme.changed);
+  const { themeColorSet } = getTheme();
   const dispatch = useAppDispatch();
+  const { notification } = App.useApp();
 
-  const { loading } = useAppSelector((state) => state.auth);
+  const { loading, errorRegister, countErrorRegister } = useAppSelector((state) => state.auth);
+
+  const countRef = useRef(countErrorRegister);
 
   const form = useForm({
     defaultValues: {
@@ -33,17 +39,27 @@ const Register = () => {
     dispatch(REGISTER_SAGA(values));
   };
 
+  useEffect(() => {
+    if (errorRegister && countRef.current < countErrorRegister) {
+      notification.error({
+        message: 'Register failed!',
+        description: errorRegister
+      });
+      countRef.current = countErrorRegister;
+    }
+  }, [countErrorRegister]);
+
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorTextBase: darkThemeSet.colorText2,
-          colorBgBase: darkThemeSet.colorBg2,
+          colorTextBase: themeColorSet.colorText2,
+          colorBgBase: themeColorSet.colorBg2,
           lineWidth: 0,
           controlHeight: 40
         }
       }}>
-      <StyleProvider className='w-screen h-screen'>
+      <StyleProvider theme={themeColorSet} className='w-screen h-screen'>
         <div className='register relative'>
           <div className='cover absolute top-0 left-0'>
             <div className='content'>
@@ -150,7 +166,7 @@ const Register = () => {
                       }}
                     />
                   </Form.Item>
-                  <ButtonActiveHover loading={loading} type='primary'  className='buttonCreate mt-3'>
+                  <ButtonActiveHover loading={loading} type='primary' className='buttonCreate mt-3'>
                     Create account
                   </ButtonActiveHover>
                 </Form>

@@ -218,25 +218,23 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           type: 'divider',
           style: {
             display:
-              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
-              (!isCurrentUserCreator && !isCurrentUser)
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) || (!isCurrentUserAdmin && !isCurrentUser)
                 ? 'none'
                 : ''
           }
         },
         {
           key: '5',
-          label: isCurrentUser ? 'Leave group' : isCurrentUserCreator && 'Remove member',
+          label: isCurrentUser ? 'Leave group' : isCurrentUserAdmin && 'Remove member',
           danger: true,
           icon: isCurrentUser ? (
             <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
           ) : (
-            isCurrentUserCreator && <FontAwesomeIcon icon={faUserSlash} />
+            isCurrentUserAdmin && <FontAwesomeIcon icon={faUserSlash} />
           ),
           style: {
             display:
-              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
-              (!isCurrentUserCreator && !isCurrentUser)
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) || (!isCurrentUserAdmin && !isCurrentUser)
                 ? 'none'
                 : ''
           },

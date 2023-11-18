@@ -1,4 +1,4 @@
-import { call, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import {
   CHECK_RESET_PASSWORD_SAGA,
@@ -11,6 +11,7 @@ import {
   RESET_PASSWORD_SAGA,
   VERIFY_CODE_SAGA
 } from '@/redux/ActionSaga/AuthActionSaga';
+import { setErrorLogin, setErrorRegister, setLoading } from '@/redux/Slice/AuthSlice';
 
 import { authService } from '@/services/AuthService';
 import { STATUS_CODE, AUTHORIZATION, GITHUB_TOKEN, CLIENT_ID } from '@/util/constants/SettingSystem';
@@ -32,7 +33,8 @@ function* LoginSaga({ payload }: any) {
       window.location.replace(from);
     }
   } catch (err: any) {
-    console.log(err);
+    yield put(setLoading(false));
+    yield put(setErrorLogin(err.response.data.message));
   }
 }
 
@@ -52,8 +54,8 @@ function* RegisterSaga({ payload }: any) {
       window.location.replace('/');
     }
   } catch (err: any) {
-    localStorage.removeItem(AUTHORIZATION);
-    console.log(err);
+    yield put(setLoading(false));
+    yield put(setErrorRegister(err.response.data.message));
   }
 }
 

@@ -1,3 +1,4 @@
+import { App as AppAntd } from 'antd';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -30,20 +31,21 @@ const App = () => {
       <DrawerHOC />
       <PresenceService />
       <ChatService />
+      <AppAntd>
+        <Routes>
+          <Route element={<NotAuth />}>
+            {publicRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+          </Route>
 
-      <Routes>
-        <Route element={<NotAuth />}>
-          {publicRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Route>
-
-        <Route element={<Auth />}>
-          {privateRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Route>
-      </Routes>
+          <Route element={<Auth />}>
+            {privateRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+          </Route>
+        </Routes>
+      </AppAntd>
     </ErrorBoundary>
   );
 };
