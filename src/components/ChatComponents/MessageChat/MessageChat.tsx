@@ -1,4 +1,4 @@
-import { Col, Row, App } from 'antd';
+import { Col, Row, App, Image } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@ import { debounce } from 'lodash';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
 import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
@@ -404,6 +405,18 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     [currentConversation]
   );
 
+  const scrollToBottomWhenTyping = () => {
+    if (messageRef.current) {
+      messageRef.current.scrollTop = messageRef.current.scrollHeight;
+    }
+  };
+  // Scroll to the bottom whenever messages change
+  useEffect(() => {
+    scrollToBottomWhenTyping();
+  }, [typingUsers.length]);
+
+  const [haveMedia, setHaveMedia] = useState<boolean>(false);
+
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
@@ -477,7 +490,9 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <div ref={messageRef} className='body flex-1 h-[92%] overflow-auto'>
+              <div
+                ref={messageRef}
+                className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
                 {!hasPreviousMessages && (
                   <ChatWelcome
                     type={currentConversation.type}
@@ -502,7 +517,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                     isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
                   />
                 ))}
-                <div className='pb-1' ref={bottomRef} />
+                <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
               </div>
               <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
                 {currentConversation.members.map((member) => {
@@ -531,7 +546,11 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   <div /> <div /> <div />
                 </div>
               </div>
-              <ChatInput conversationID={conversationID} members={currentConversation.members} />
+              <ChatInput
+                conversationID={conversationID}
+                members={currentConversation.members}
+                setHaveMedia={setHaveMedia}
+              />
             </div>
           </Col>
           {displayOption && (

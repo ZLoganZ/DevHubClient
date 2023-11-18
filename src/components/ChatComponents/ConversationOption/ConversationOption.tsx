@@ -325,47 +325,51 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             />
           ) : (
             <>
-              {items.slice(0, 4).map((item) => (
-                <div className='fileContent flex justify-between items-center mb-2 ml-2' key={item._id}>
-                  <div className='left flex justify-between items-center'>
-                    <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
-                      <Image
-                        src={getImageURL(item.image, 'post')}
-                        alt='image'
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover'
-                        }}
-                        preview={{ src: getImageURL(item.image), mask: <FontAwesomeIcon icon={faEye} /> }}
-                      />
-                    </div>
-                    <Space className='info' direction='vertical'>
-                      <div
-                        className='name'
-                        style={{
-                          color: themeColorSet.colorText1,
-                          fontWeight: '600'
-                        }}>
-                        {item.sender.name}
-                      </div>
-                      <Space
-                        style={{
-                          color: themeColorSet.colorText3
-                        }}>
-                        <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
-                      </Space>
-                    </Space>
-                  </div>
+              {items.map((item) =>
+                item.images?.map((image, index) => (
                   <div
-                    className='right cursor-pointer'
-                    onClick={() => {
-                      void downloadImage(item.image);
-                    }}>
-                    <FontAwesomeIcon icon={faDownload} />
+                    className='fileContent flex justify-between items-center mb-2 ml-2'
+                    key={item._id + index}>
+                    <div className='left flex justify-between items-center'>
+                      <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
+                        <Image
+                          src={getImageURL(image, 'post')}
+                          alt='image'
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                          preview={{ src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> }}
+                        />
+                      </div>
+                      <Space className='info' direction='vertical'>
+                        <div
+                          className='name'
+                          style={{
+                            color: themeColorSet.colorText1,
+                            fontWeight: '600'
+                          }}>
+                          {item.sender.name}
+                        </div>
+                        <Space
+                          style={{
+                            color: themeColorSet.colorText3
+                          }}>
+                          <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
+                        </Space>
+                      </Space>
+                    </div>
+                    <div
+                      className='right cursor-pointer'
+                      onClick={() => {
+                        void downloadImage(image);
+                      }}>
+                      <FontAwesomeIcon icon={faDownload} />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
               {items.length > 4 && (
                 <div
                   className='seeAll flex items-end justify-end'

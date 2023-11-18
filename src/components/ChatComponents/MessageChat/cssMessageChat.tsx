@@ -1,3 +1,4 @@
+import { custom_scrollBar } from '@/util/cssVariable';
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
@@ -55,6 +56,9 @@ const StyleProvider = styled.div`
     75% {
       transform: translateY(0);
     }
+  }
+  .list-image{
+    ${custom_scrollBar}
   }
 `;
 

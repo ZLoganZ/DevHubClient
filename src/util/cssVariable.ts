@@ -101,6 +101,7 @@ export const custom_scrollBar = css`
   &::-webkit-scrollbar {
     border-radius: 0.5rem;
     width: 10px;
+    height: 10px;
   }
 
   &::-webkit-scrollbar-track {
