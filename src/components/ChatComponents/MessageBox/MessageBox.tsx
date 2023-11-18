@@ -63,22 +63,26 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
 
     const roundedCornerStyle = (isOwn: boolean, isNextMesGroup: boolean, isPrevMesGroup: boolean) => {
       if (isOwn) {
-        if (isNextMesGroup && isPrevMesGroup) return 'rounded-s-[3rem] rounded-e-[1rem]';
-        if (isNextMesGroup && !isPrevMesGroup) return 'rounded-t-[3rem] rounded-bl-[3rem] rounded-br-[1rem]';
-        if (!isNextMesGroup && isPrevMesGroup) return 'rounded-b-[3rem] rounded-tl-[3rem] rounded-tr-[1rem]';
-        if (!isNextMesGroup && !isPrevMesGroup) return 'rounded-[3rem]';
+        if (isNextMesGroup && isPrevMesGroup) return 'rounded-s-[1.5rem] rounded-e-[0.75rem]';
+        if (isNextMesGroup && !isPrevMesGroup)
+          return 'rounded-t-[1.5rem] rounded-bl-[1.5rem] rounded-br-[0.75rem]';
+        if (!isNextMesGroup && isPrevMesGroup)
+          return 'rounded-b-[1.5rem] rounded-tl-[1.5rem] rounded-tr-[0.75rem]';
+        if (!isNextMesGroup && !isPrevMesGroup) return 'rounded-[1.5rem]';
       } else {
-        if (isNextMesGroup && isPrevMesGroup) return 'rounded-e-[3rem] rounded-s-[1rem]';
-        if (isNextMesGroup && !isPrevMesGroup) return 'rounded-t-[3rem] rounded-br-[3rem] rounded-bl-[1rem]';
-        if (!isNextMesGroup && isPrevMesGroup) return 'rounded-b-[3rem] rounded-tr-[3rem] rounded-tl-[1rem]';
-        if (!isNextMesGroup && !isPrevMesGroup) return 'rounded-[3rem]';
+        if (isNextMesGroup && isPrevMesGroup) return 'rounded-e-[1.5rem] rounded-s-[0.75rem]';
+        if (isNextMesGroup && !isPrevMesGroup)
+          return 'rounded-t-[1.5rem] rounded-br-[1.5rem] rounded-bl-[0.75rem]';
+        if (!isNextMesGroup && isPrevMesGroup)
+          return 'rounded-b-[1.5rem] rounded-tr-[1.5rem] rounded-tl-[0.75rem]';
+        if (!isNextMesGroup && !isPrevMesGroup) return 'rounded-[1.5rem]';
       }
     };
     const messageStyle = merge(
-      'text-sm max-w-[100%] overflow-hidden break-all',
+      'text-sm overflow-hidden break-words',
       message.type !== 'image' && 'py-2 px-3',
       message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
-      message.type !== 'image' ? roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup) : 'rounded-lg'
+      message.type !== 'image' ? roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup) : 'rounded-xl'
     );
 
     const userID = useAppSelector((state) => state.auth.userID);
@@ -163,6 +167,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
         if (message.images && message.images.length === 1) {
           return (
             <Image
+              rootClassName='flex'
               src={getImageURL(message.images[0])}
               alt='Avatar'
               preview={{ src: getImageURL(message.images[0]), mask: <FontAwesomeIcon icon={faEye} /> }}
@@ -210,7 +215,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                 <AvatarMessage key={message.sender._id} user={message.sender} />
               </NavLink>
             </Tooltip>
-            <div className={merge('flex flex-col', isOwn && 'items-end')}>
+            <div className={merge('flex max-w-[60%] flex-col', isOwn && 'items-end')}>
               {type === 'group' && !isOwn && !isPrevMesGroup && (
                 <div
                   className='text-sm flex items-center mb-1 ml-2'
