@@ -60,7 +60,7 @@ const StyleProvider = styled.div`
         color: ${(props) => props.theme.colorText1};
         &:hover {
           background-image: linear-gradient(to right, ${commonColor.colorBlue2}, #0abe9a);
-          transition: all 0.5s;
+          transition: background-image 0.5s;
         }
       }
 
@@ -71,9 +71,9 @@ const StyleProvider = styled.div`
         text-underline-position: below;
         &:hover {
           color: ${commonColor.colorBlue1};
-          transition: all 0.5s;
           cursor: pointer;
           text-decoration: underline solid ${commonColor.colorBlue1};
+          transition: color 0.5s, text-decoration 0.5s;
         }
       }
 
@@ -97,7 +97,7 @@ const StyleProvider = styled.div`
             font-size: 0.9rem;
             &:hover {
               background-color: ${commonColor.colorBlue1};
-              transition: all 0.5s;
+              transition: background-color 0.5s;
               cursor: pointer;
             }
             .icon {
@@ -112,7 +112,7 @@ const StyleProvider = styled.div`
             font-size: 0.9rem;
             &:hover {
               background-color: ${commonColor.colorBlue1};
-              transition: all 0.5s;
+              transition: background-color 0.5s;
               cursor: pointer;
             }
             .icon {
@@ -130,7 +130,7 @@ const StyleProvider = styled.div`
           color: ${commonColor.colorBlue1};
           &:hover {
             color: ${commonColor.colorBlue3};
-            transition: all 0.5s;
+            transition: color 0.5s;
             cursor: pointer;
           }
         }

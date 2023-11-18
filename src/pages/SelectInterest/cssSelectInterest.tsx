@@ -17,7 +17,7 @@ const StyleProvider = styled.div`
           &:hover {
             background-color: ${commonColor.colorBlue3};
             cursor: pointer;
-            transition: all 0.5s;
+            transition: background-color 0.3s ease;
           }
         }
       }

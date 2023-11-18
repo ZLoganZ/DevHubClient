@@ -20,7 +20,7 @@ const StyleProvider = styled.div`
           color: ${(props) => props.theme.colorText1};
           &:hover {
             text-decoration: underline;
-            transition: all 0.5s;
+            transition: text-decoration 0.5s;
           }
         }
       }
@@ -34,7 +34,7 @@ const StyleProvider = styled.div`
         &:hover {
           cursor: pointer;
           color: ${(props) => props.theme.colorText2};
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
       }
     }
@@ -43,7 +43,7 @@ const StyleProvider = styled.div`
         background-color: ${commonColor.colorBlue1};
         &:hover {
           background-color: ${commonColor.colorBlue3};
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
     }

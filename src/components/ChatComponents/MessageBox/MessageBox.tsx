@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from 'react';
-import { Image, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { CrownFilled } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,15 +8,15 @@ import { faEye, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
+import { audioCall, videoChat } from '@/util/call';
 import { getDateTime } from '@/util/formatDateTime';
 import { handleFirstName } from '@/util/convertText';
+import ImageGroup from '@/components/ChatComponents/Image/ImageGroup';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import { useAppSelector } from '@/hooks/special';
 import { useCurrentUserInfo } from '@/hooks/fetch';
 import { IMessage, IUserInfo, TypeofConversation } from '@/types';
 import StyleProvider from './cssMessageBox';
-import { audioCall, videoChat } from '@/util/call';
-import ImageGroup from '../Image/ImageGroup';
 
 interface IMessageBox {
   message: IMessage;
@@ -75,10 +75,10 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
       }
     };
     const messageStyle = merge(
-      'text-sm overflow-hidden break-all',
-      'py-2 px-3',
+      'text-sm max-w-[95%] overflow-hidden break-all',
+      message.type !== 'image' && 'py-2 px-3',
       message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
-      roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup)
+      message.type !== 'image' ? roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup) : 'rounded-lg'
     );
 
     const userID = useAppSelector((state) => state.auth.userID);

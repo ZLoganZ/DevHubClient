@@ -58,7 +58,7 @@ const Chat = () => {
     }
   };
 
-  const followers = useMemo(() => {
+  const contacts = useMemo(() => {
     return currentUserInfo?.members ?? [];
   }, [currentUserInfo?.members]);
 
@@ -92,9 +92,9 @@ const Chat = () => {
   }, [conversations]);
 
   const contactCount = useMemo(() => {
-    if (!followers) return 0;
-    return followers.length;
-  }, [followers]);
+    if (!contacts) return 0;
+    return contacts.length;
+  }, [contacts]);
 
   const [optionIndex, setOptionIndex] = useState(0);
 
@@ -110,7 +110,7 @@ const Chat = () => {
       case 0:
         return <ConversationList conversations={conversations} selecting={conversationID} />;
       case 1:
-        return <ContactList followers={followers ?? []} />;
+        return <ContactList contacts={contacts} />;
       case 2:
         return <></>;
       case 3:
@@ -118,7 +118,7 @@ const Chat = () => {
       default:
         return <></>;
     }
-  }, [conversations, followers, conversationID, optionIndex, calledList]);
+  }, [conversations, contacts, conversationID, optionIndex, calledList]);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -145,13 +145,9 @@ const Chat = () => {
                       {options.map((option, index) => (
                         <div
                           key={index}
-                          className={merge('optionItem flex p-4 rounded-xl', option.name)}
+                          className={merge('optionItem flex p-4 rounded-xl transition-colors', option.name)}
                           onClick={() => setOptionIndex(index)}
-                          style={
-                            optionIndex === index
-                              ? { backgroundColor: themeColorSet.colorBg4, transition: 'all 0.4s' }
-                              : { transition: 'all 0.4s' }
-                          }>
+                          style={optionIndex === index ? { backgroundColor: themeColorSet.colorBg4 } : {}}>
                           <Badge
                             count={option.count}
                             key={index}

@@ -9,7 +9,7 @@ const StyleProvider = styled.div`
       margin-bottom: 0.5rem;
       &:hover {
         background-color: ${(props) => props.theme.colorBg3};
-        transition: all 0.5s;
+        transition: background-color 0.3s ease;
       }
     }
   }

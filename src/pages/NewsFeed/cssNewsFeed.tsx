@@ -19,7 +19,7 @@ const StyleProvider = styled.div`
         background-color: ${(props) => props.theme.colorBg3};
         color: ${(props) => props.theme.colorText1};
         cursor: pointer;
-        transition: all 0.5s;
+        transition: background-color 0.5s, color 0.5s;
       }
     }
   }
@@ -30,7 +30,7 @@ const StyleProvider = styled.div`
         background-color: ${(props) => props.theme.colorBg3};
         color: ${(props) => props.theme.colorText1};
         cursor: pointer;
-        transition: all 0.5s;
+        transition: background-color 0.5s, color 0.5s;
       }
     }
   }

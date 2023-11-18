@@ -9,7 +9,7 @@ const StyleProvider = styled.div`
     &:hover {
       color: ${commonColor.colorWhite1};
       background-color: ${commonColor.colorBlue3};
-      transition: all 0.5s;
+      transition: background-color 0.5s, color 0.5s;
     }
   }
 
@@ -20,7 +20,7 @@ const StyleProvider = styled.div`
     &:hover {
       color: ${(props) => props.theme.colorText1};
       border-color: ${(props) => props.theme.colorText1};
-      transition: all 0.5s;
+      transition: background-color 0.5s, color 0.5s;
     }
   }
 `;

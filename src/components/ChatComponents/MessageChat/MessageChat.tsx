@@ -1,4 +1,4 @@
-import { Col, Row, App, Image } from 'antd';
+import { Col, Row, App,  } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
@@ -336,7 +336,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     });
 
     if (typingDiv.current) {
-      typingDiv.current.style.transition = '0.4s';
+      typingDiv.current.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
       if (typingUsers.length === 0 || !isTyping) {
         typingDiv.current.style.opacity = '0';
         typingDiv.current.style.transform = 'translateY(0)';

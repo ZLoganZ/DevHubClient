@@ -31,7 +31,7 @@ const StyleProvider = styled.div`
         &:hover {
           color: ${commonColor.colorBlue1};
           cursor: pointer;
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
       }
     }
@@ -54,7 +54,6 @@ const StyleProvider = styled.div`
       font-weight: 500;
       &:hover {
         cursor: pointer;
-        transition: all 0.3s;
       }
     }
   }
@@ -80,7 +79,7 @@ const StyleProvider = styled.div`
       &:hover {
         background-color: ${(props) => props.theme.colorBg4};
         cursor: pointer;
-        transition: all 0.3s;
+        transition: background-color 0.3s ease;
       }
     }
   }

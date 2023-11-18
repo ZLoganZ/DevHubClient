@@ -106,11 +106,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
                     }}
                   />
                 }>
-                <span
-                  className='emoji cursor-pointer hover:text-blue-700'
-                  style={{
-                    transition: 'all 0.3s'
-                  }}>
+                <span className='emoji cursor-pointer hover:text-blue-700 transition-colors'>
                   <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
@@ -118,7 +114,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
             suffix={
               <span
                 className={merge(
-                  'transition-all duration-300',
+                  'transition-colors duration-300',
                   checkEmpty
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'

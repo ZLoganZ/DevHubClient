@@ -23,7 +23,7 @@ const StyleProvider = styled.div`
           &:hover {
             cursor: pointer;
             color: ${(props) => props.theme.colorText2};
-            transition: all 0.3s;
+            transition: color 0.5s;
           }
         }
       }
