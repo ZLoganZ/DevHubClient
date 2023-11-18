@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from 'react';
-import { Tooltip } from 'antd';
+import { Image, Tooltip } from 'antd';
 import { CrownFilled } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -75,7 +75,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
       }
     };
     const messageStyle = merge(
-      'text-sm max-w-[95%] overflow-hidden break-all',
+      'text-sm max-w-[100%] overflow-hidden break-all',
       message.type !== 'image' && 'py-2 px-3',
       message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
       message.type !== 'image' ? roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup) : 'rounded-lg'
@@ -173,9 +173,9 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
               }}
             />
           );
-        }
-        return <ImageGroup images={message.images} preview />;
+        } else return <ImageGroup images={message.images} preview />;
       }
+      return message.content;
     };
 
     return (
