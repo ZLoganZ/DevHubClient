@@ -8,7 +8,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText1};
     &:hover {
       background-color: ${(props) => props.theme.colorBg4};
-      transition: all 0.3s;
+      transition: background-color 0.3s ease;
     }
   }
 
@@ -20,7 +20,7 @@ const StyleProvider = styled.div`
   }
 
   .letter {
-    transition: 0.4s;
+    transition: transform 0.4s ease;
     transform: translateX(0);
     color: ${(props) => props.theme.colorText1};
   }

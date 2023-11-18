@@ -15,10 +15,10 @@ import { IUserInfo } from '@/types';
 import StyleProvider from './cssContactList';
 
 interface IContactsList {
-  followers: IUserInfo[];
+  contacts: IUserInfo[];
 }
 
-const ContactList: React.FC<IContactsList> = ({ followers }) => {
+const ContactList: React.FC<IContactsList> = ({ contacts }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { theme } = useAppSelector((state) => state.theme);
@@ -30,7 +30,7 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
 
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [searchFollowers, setSearchFollowers] = useState<IUserInfo[]>(followers);
+  const [searchFollowers, setSearchFollowers] = useState<IUserInfo[]>(contacts);
 
   const HandleOnClick = (userFollow: string) => {
     void messageService
@@ -46,17 +46,17 @@ const ContactList: React.FC<IContactsList> = ({ followers }) => {
   };
 
   useEffect(() => {
-    setSearchFollowers(followers);
-  }, [followers]);
+    setSearchFollowers(contacts);
+  }, [contacts]);
 
   useEffect(() => {
     if (search === '') {
-      setSearchFollowers(followers);
+      setSearchFollowers(contacts);
     } else {
       const searchTerm = removeAccents(search).toLowerCase();
 
       setSearchFollowers(
-        followers.filter((follower) => {
+        contacts.filter((follower) => {
           const name = removeAccents(follower.name).toLowerCase();
           return name.includes(searchTerm);
         })

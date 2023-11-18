@@ -713,7 +713,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
                     icon={faCaretRight}
                     style={{
                       transform: isActive ? 'rotate(90deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.3s'
+                      transition: 'transform 0.3s ease'
                     }}
                   />
                 )}

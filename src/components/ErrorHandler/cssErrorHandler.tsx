@@ -86,8 +86,8 @@ const StyleProvider = styled.div`
       padding: 10px 40px;
       font-size: 14px;
       font-weight: 700;
-      -webkit-transition: 0.2s all;
-      transition: 0.2s all;
+      -webkit-transition: color 0.2s ease-in-out;
+      transition: color 0.2s ease-in-out;
     }
 
     .__error a:hover {

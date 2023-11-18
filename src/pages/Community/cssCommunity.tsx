@@ -28,7 +28,7 @@ const StyleProvider = styled.div`
             &:hover {
               background-color: ${(props) => props.theme.colorBg1};
               cursor: pointer;
-              transition: all 0.5s;
+              transition: background-color 0.3s ease;
             }
           }
         }
@@ -39,7 +39,7 @@ const StyleProvider = styled.div`
           &:hover {
             background-color: ${(props) => props.theme.colorBg4};
             cursor: pointer;
-            transition: all 0.5s;
+            transition: background-color 0.3s ease;
           }
         }
       }

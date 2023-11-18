@@ -6,7 +6,7 @@ const StyleProvider = styled.div`
       color: ${(props) => props.theme.colorText1};
       &:hover {
         text-decoration: underline;
-        transition: all 0.5s;
+        transition: text-decoration 0.5s; 
       }
     }
   }

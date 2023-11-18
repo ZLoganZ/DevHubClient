@@ -59,7 +59,7 @@ const StyleProvider = styled.div`
               &:hover {
                 cursor: pointer;
                 color: ${commonColor.colorBlue3};
-                transition: all 0.5s;
+                transition: color 0.5s;
               }
             }
           }
@@ -74,7 +74,7 @@ const StyleProvider = styled.div`
               &:hover {
                 cursor: pointer;
                 background-color: ${commonColor.colorBlue3};
-                transition: all 0.5s;
+                transition: background-color 0.5s;
               }
             }
           }

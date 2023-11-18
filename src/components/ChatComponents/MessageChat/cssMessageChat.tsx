@@ -13,7 +13,7 @@ const StyleProvider = styled.div`
       &:hover {
         background-color: ${(props) => props.theme.colorBg3};
         transform: scale(1.1);
-        transition: 0.3s;
+        transition: transform 0.3s ease, background-color 0.3s ease;
       }
     }
   }
@@ -57,7 +57,7 @@ const StyleProvider = styled.div`
       transform: translateY(0);
     }
   }
-  .list-image{
+  .list-image {
     ${custom_scrollBar}
   }
 `;

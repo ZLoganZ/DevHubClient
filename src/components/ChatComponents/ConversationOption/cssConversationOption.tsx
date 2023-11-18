@@ -16,7 +16,7 @@ const StyleProvider = styled.div`
         &:hover {
           background-color: ${commonColor.colorBlue1};
           color: ${commonColor.colorWhite1};
-          transition: all 0.3s;
+          transition: background-color 0.3s ease, color 0.3s ease;
         }
       }
     }
@@ -25,7 +25,7 @@ const StyleProvider = styled.div`
       &:hover {
         color: ${(props) => props.theme.colorTextReverse1};
         background-color: #f42f2f;
-        transition: all 0.3s;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
     }
   }

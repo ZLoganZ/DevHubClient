@@ -72,7 +72,7 @@ const StyleProvider = styled.div`
       .btnContent {
         &:hover {
           background-color: ${commonColor.colorBlue3}!important;
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
     }
@@ -83,7 +83,7 @@ const StyleProvider = styled.div`
         border-radius: 20rem;
         &:hover {
           background-color: ${commonColor.colorBlue3}!important;
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
       .btnRemove {
@@ -92,7 +92,7 @@ const StyleProvider = styled.div`
         border-radius: 20rem;
         &:hover {
           background-color: ${commonColor.colorRed2}!important;
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
     }
@@ -103,7 +103,7 @@ const StyleProvider = styled.div`
         border-radius: 20rem;
         &:hover {
           background-color: ${commonColor.colorBlue3}!important;
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
     }
@@ -112,7 +112,7 @@ const StyleProvider = styled.div`
         border-radius: 2rem;
         &:hover {
           background-color: ${(props) => props.theme.colorBg4};
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
       .item {
@@ -121,7 +121,7 @@ const StyleProvider = styled.div`
         &:hover {
           background-color: ${(props) => props.theme.colorBg4};
           cursor: pointer;
-          transition: all 0.3s;
+          transition: background-color 0.3s ease;
         }
       }
     }
@@ -131,11 +131,11 @@ const StyleProvider = styled.div`
         border-radius: 2rem;
         &:hover {
           color: ${(props) => props.theme.colorText2};
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
         &:hover {
           background-color: ${(props) => props.theme.colorBg4};
-          transition: all 0.5s;
+          transition: background-color 0.5s;
         }
       }
     }
@@ -144,7 +144,7 @@ const StyleProvider = styled.div`
         color: ${(props) => props.theme.colorText3};
         &:hover {
           color: ${(props) => props.theme.colorText2};
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
       }
     }
@@ -174,7 +174,7 @@ const StyleProvider = styled.div`
       font-weight: 500;
       &:hover {
         cursor: pointer;
-        transition: all 0.3s;
+        transition: border-color 0.5s;
       }
     }
   }

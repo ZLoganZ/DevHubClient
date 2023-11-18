@@ -109,7 +109,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
     return isLt2M;
   };
 
-  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && !files;
+  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && files.length === 0;
 
   const handleStopTyping = useCallback(
     debounce(
@@ -217,7 +217,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
             suffix={
               <span
                 className={merge(
-                  'transition-all duration-300',
+                  'transition-colors duration-300',
                   checkEmpty
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-blue-500 hover:text-blue-700 hover:scale-110 cursor-pointer'
