@@ -218,23 +218,25 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
           type: 'divider',
           style: {
             display:
-              (isAdmin && !isCurrentUser && !isCurrentUserCreator) || (!isCurrentUserAdmin && !isCurrentUser)
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
+              (!isCurrentUserCreator && !isCurrentUser)
                 ? 'none'
                 : ''
           }
         },
         {
           key: '5',
-          label: isCurrentUser ? 'Leave group' : isCurrentUserAdmin && 'Remove member',
+          label: isCurrentUser ? 'Leave group' : isCurrentUserCreator && 'Remove member',
           danger: true,
           icon: isCurrentUser ? (
             <FontAwesomeIcon className='text-xl' icon={faRightFromBracket} />
           ) : (
-            isCurrentUserAdmin && <FontAwesomeIcon icon={faUserSlash} />
+            isCurrentUserCreator && <FontAwesomeIcon icon={faUserSlash} />
           ),
           style: {
             display:
-              (isAdmin && !isCurrentUser && !isCurrentUserCreator) || (!isCurrentUserAdmin && !isCurrentUser)
+              (isAdmin && !isCurrentUser && !isCurrentUserCreator) ||
+              (!isCurrentUserCreator && !isCurrentUser)
                 ? 'none'
                 : ''
           },
@@ -300,7 +302,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     const imageURL = URL.createObjectURL(imageBlog);
     const link = document.createElement('a');
     link.href = imageURL;
-    link.download = '' + name + '';
+    link.download = '' + name + '.png';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -323,7 +325,7 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             />
           ) : (
             <>
-              {items.map((item) =>
+              {items.slice(0, 4).map((item) =>
                 item.images?.map((image, index) => (
                   <div
                     className='fileContent flex justify-between items-center mb-2 ml-2'

@@ -49,27 +49,29 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
 
   const handleSubmit = async (content: string) => {
     if (!conversationID) return;
-    if (!content) return;
+    if (!content && !files.length) return;
 
     setMessage('');
 
-    const message = {
-      _id: id,
-      conversation_id: conversationID,
-      sender: {
-        _id: currentUserInfo._id,
-        user_image: currentUserInfo.user_image,
-        name: currentUserInfo.name
-      },
-      isSending: true,
-      content: content,
-      createdAt: new Date()
-    };
+    if (content.trim() !== '' || content.trim().length !== 0) {
+      const message = {
+        _id: id,
+        conversation_id: conversationID,
+        sender: {
+          _id: currentUserInfo._id,
+          user_image: currentUserInfo.user_image,
+          name: currentUserInfo.name
+        },
+        isSending: true,
+        content: content,
+        createdAt: new Date()
+      };
 
-    setId(uuidv4().replace(/-/g, ''));
-    mutateSendMessage(message as unknown as IMessage);
-    chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
-    chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
+      setId(uuidv4().replace(/-/g, ''));
+      mutateSendMessage(message as unknown as IMessage);
+      chatSocket.emit(Socket.PRIVATE_MSG, { conversationID, message });
+      chatSocket.emit(Socket.STOP_TYPING, { conversationID, userID: currentUserInfo._id, members });
+    }
 
     if (files.length > 0) {
       const newFiles = [...files];

@@ -3,8 +3,7 @@ import { Image, Tooltip } from 'antd';
 import { CrownFilled } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShieldHalved } from '@fortawesome/free-solid-svg-icons';
-import { faEye } from '@fortawesome/free-regular-svg-icons';
+import { faEye, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 
 import merge from '@/util/mergeClassName';
 import { getTheme } from '@/util/theme';
@@ -76,7 +75,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
       }
     };
     const messageStyle = merge(
-      'text-sm max-w-[95%] overflow-hidden break-all',
+      'text-sm overflow-hidden break-all',
       'py-2 px-3',
       message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
       roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup)
@@ -160,8 +159,23 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
             </div>
           </div>
         );
-      } else if (message.type === 'image') return <ImageGroup images={message.images} preview />;
-      return message.content;
+      } else if (message.type === 'image') {
+        if (message.images && message.images.length === 1) {
+          return (
+            <Image
+              src={getImageURL(message.images[0])}
+              alt='Avatar'
+              preview={{ src: getImageURL(message.images[0]), mask: <FontAwesomeIcon icon={faEye} /> }}
+              style={{
+                width: '180px',
+                height: '180px',
+                objectFit: 'cover'
+              }}
+            />
+          );
+        }
+        return <ImageGroup images={message.images} preview />;
+      }
     };
 
     return (
