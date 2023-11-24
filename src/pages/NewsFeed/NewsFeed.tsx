@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -100,8 +100,8 @@ const NewsFeed = () => {
     isLoadingAllNewsfeedPosts,
     isFetchingAllNewsfeedPosts,
     allNewsfeedPosts,
-    hasNextNewsfeedPosts,
     fetchNextNewsfeedPosts,
+    hasNextNewsfeedPosts,
     isFetchingNextNewsfeedPosts
   } = useAllNewsfeedPostsData();
 
@@ -110,7 +110,13 @@ const NewsFeed = () => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  useIntersectionObserver(bottomRef, fetchNextNewsfeedPosts);
+  const fetchNextNewsfeedPostsCallback = useCallback(() => {
+    if (hasNextNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
+      fetchNextNewsfeedPosts();
+    }
+  }, [hasNextNewsfeedPosts, isFetchingNextNewsfeedPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextNewsfeedPostsCallback);
 
   useEffect(() => {
     if (isLoadingAllNewsfeedPosts) {
@@ -119,7 +125,7 @@ const NewsFeed = () => {
         behavior: 'smooth'
       });
     }
-    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts) {
+    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -147,7 +153,9 @@ const NewsFeed = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!community || isLoadingAllNewsfeedPosts || isFetchingAllNewsfeedPosts ? (
+      {!community ||
+      isLoadingAllNewsfeedPosts ||
+      (isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) ? (
         <LoadingNewFeed />
       ) : (
         <Row>
@@ -156,9 +164,9 @@ const NewsFeed = () => {
               <div className='news-feed-left w-8/12 xs:w-full'>
                 <NewPost currentUser={currentUserInfo} />
                 <div className='show'>
-                  {allNewsfeedPosts.map((item) => {
+                  {allNewsfeedPosts.map((item, index) => {
                     return (
-                      <Fragment key={item._id}>
+                      <div key={item._id} ref={index === allNewsfeedPosts.length - 3 ? bottomRef : undefined}>
                         {item.type === 'Post' ? (
                           <OtherPost
                             key={item._id}
@@ -175,8 +183,7 @@ const NewsFeed = () => {
                             currentUser={currentUserInfo}
                           />
                         )}
-                        <div ref={bottomRef} className='bottom-loading pt-1' />
-                      </Fragment>
+                      </div>
                     );
                   })}
                 </div>
