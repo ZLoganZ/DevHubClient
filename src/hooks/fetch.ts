@@ -124,20 +124,34 @@ export const useAllPostsData = () => {
  * - `refetchAllNewsfeedPosts` is a function that refetches the posts data.
  */
 export const useAllNewsfeedPostsData = () => {
-  const { data, isPending, isError, isFetching, refetch } = useQuery({
-    queryKey: ['allNewsfeedPosts'],
-    queryFn: async () => {
-      const { data } = await postService.getAllPostNewsFeed();
-      return ApplyDefaults(data.metadata);
-    },
-    staleTime: Infinity,
-    enabled: window.location.pathname === '/'
-  });
+  const { data, isPending, isError, isFetching, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['allNewsfeedPosts'],
+      queryFn: async ({ pageParam }) => {
+        const { data } = await postService.getAllPostNewsFeed(pageParam);
+        return ApplyDefaults(data.metadata);
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage,_,lasPageParam) => {
+        if (lastPage.length < 5) {
+          return undefined;
+        }
+        return lasPageParam + 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity,
+      enabled: window.location.pathname === '/'
+    });
 
   return {
     isLoadingAllNewsfeedPosts: isPending,
     isErrorAllNewsfeedPosts: isError,
     allNewsfeedPosts: data!,
+    hasNextNewsfeedPosts: hasNextPage,
+    fetchNextNewsfeedPosts: fetchNextPage,
+    isFetchingNextNewsfeedPosts: isFetchingNextPage,
     isFetchingAllNewsfeedPosts: isFetching,
     refetchAllNewsfeedPosts: refetch
   };

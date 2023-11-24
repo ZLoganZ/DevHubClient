@@ -33,7 +33,7 @@ export const useCreatePost = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess, error } = useMutation({
     mutationFn: async (newPost: ICreatePost) => {
       const { data } = await postService.createPost(newPost);
       return data.metadata;
@@ -43,9 +43,16 @@ export const useCreatePost = () => {
         if (!oldData) return;
         return [newPost, ...oldData];
       });
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], (oldData) => {
+      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
         if (!oldData) return;
-        return [newPost, ...oldData];
+        const newPages = [...oldData.pages];
+        const lastPage = newPages[newPages.length - 1];
+        const updatedLastPage = [...lastPage, newPost];
+        newPages[newPages.length - 1] = updatedLastPage;
+        return {
+          ...oldData,
+          pages: newPages
+        };
       });
     }
   });
@@ -53,6 +60,7 @@ export const useCreatePost = () => {
     mutateCreatePost: mutate,
     isLoadingCreatePost: isPending,
     isErrorCreatePost: isError,
+    errorCreatePost: error,
     isSuccessCreatePost: isSuccess
   };
 };
@@ -108,7 +116,25 @@ export const useUpdatePost = () => {
 
       queryClient.setQueryData<IPost[]>(['posts', updatedPost.post_attributes.user._id], updatePostData);
 
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
+        if (!oldData) return;
+        const newPages = [...oldData.pages];
+        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === updatedPost._id));
+        if (pageIndex !== -1) {
+          const newPage = newPages[pageIndex].map((post) => {
+            if (post._id === updatedPost._id) {
+              return updatedPost;
+            }
+            return post;
+          });
+          newPages[pageIndex] = newPage;
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+        return oldData;
+      });
 
       void queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
     }
@@ -145,7 +171,20 @@ export const useDeletePost = () => {
 
       queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
 
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
+        if (!oldData) return;
+        const newPages = [...oldData.pages];
+        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === postID));
+        if (pageIndex !== -1) {
+          const newPage = newPages[pageIndex].filter((post) => post._id !== postID);
+          newPages[pageIndex] = newPage;
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+        return oldData;
+      });
     }
   });
   return {
@@ -262,7 +301,31 @@ export const useCommentPost = () => {
         });
       };
 
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
+        if (!oldData) return;
+        const newPages = [...oldData.pages];
+        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === newComment.post));
+        if (pageIndex !== -1) {
+          const newPage = newPages[pageIndex].map((post) => {
+            if (post._id === newComment.post) {
+              return {
+                ...post,
+                post_attributes: {
+                  ...post.post_attributes,
+                  comment_number: post.post_attributes.comment_number + 1
+                }
+              };
+            }
+            return post;
+          });
+          newPages[pageIndex] = newPage;
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+        return oldData;
+      });
 
       queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
     }

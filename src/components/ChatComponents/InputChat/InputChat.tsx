@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConfigProvider, Image, Input, Popover, Space, Upload, message } from 'antd';
+import type { UploadFile } from 'antd/lib';
 import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Picker from '@emoji-mart/react';
@@ -38,6 +39,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
   const [messageContent, setMessage] = useState('');
   const [cursor, setCursor] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
+  const [filesUpload, setFilesUpload] = useState<UploadFile<any>[]>([]);
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
@@ -111,7 +113,8 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
     return isLt2M;
   };
 
-  const checkEmpty = (messageContent.trim() === '' || messageContent.trim().length === 0) && files.length === 0;
+  const checkEmpty =
+    (messageContent.trim() === '' || messageContent.trim().length === 0) && files.length === 0;
 
   const handleStopTyping = useCallback(
     debounce(
@@ -164,26 +167,29 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
         {files.length > 0 && (
           <div className='absolute list-image overflow-auto w-full h-20 flex px-4 pt-2 gap-5 z-10'>
             <Image.PreviewGroup>
-              {files.map((file, index) => (
-                <div className='relative select-none' key={index}>
-                  <Image
-                    src={URL.createObjectURL(file) ?? ''}
-                    alt='Preview' // preview image
-                    className='rounded-sm min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] object-cover'
-                    width={50}
-                    preview={false}
-                  />
-                  <FontAwesomeIcon
-                    className='absolute block rounded-full -top-1 -right-1 w-4 h-4 cursor-pointer'
-                    style={{ backgroundColor: themeColorSet.colorBg4 }}
-                    icon={faXmark}
-                    color={themeColorSet.colorText1}
-                    onClick={() => {
-                      setFiles(files.filter((_, i) => i !== index));
-                    }}
-                  />
-                </div>
-              ))}
+              {files.map((file, index) => {
+                return (
+                  <div className='relative select-none' key={index}>
+                    <Image
+                      src={URL.createObjectURL(file)}
+                      alt='Preview' // preview image
+                      className='rounded-sm min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] object-cover'
+                      width={50}
+                      preview={false}
+                    />
+                    <FontAwesomeIcon
+                      className='absolute block rounded-full -top-1 -right-1 w-4 h-4 cursor-pointer'
+                      style={{ backgroundColor: themeColorSet.colorBg4 }}
+                      icon={faXmark}
+                      color={themeColorSet.colorText1}
+                      onClick={() => {
+                        setFiles(files.filter((_, i) => i !== index));
+                        setFilesUpload(filesUpload.filter((_, i) => i !== index));
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </Image.PreviewGroup>
           </div>
         )}
@@ -236,18 +242,16 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
           // maxCount={5}
           multiple
           customRequest={({ onSuccess }) => {
-            if (onSuccess) onSuccess('ok');
+            if (onSuccess) onSuccess('done');
           }}
           showUploadList={false}
           listType='picture'
           beforeUpload={beforeUpload}
-          fileList={files.map((file) => ({
-            uid: file.name,
-            name: file.name,
-            status: 'done',
-            url: URL.createObjectURL(file)
-          }))}
-          onChange={(info) => setFiles(info.fileList.map((item) => item.originFileObj!))}>
+          fileList={filesUpload}
+          onChange={(info) => {
+            setFilesUpload(info.fileList);
+            setFiles(info.fileList.map((file) => file.originFileObj as File));
+          }}>
           <FontAwesomeIcon
             className='item mr-3'
             size='lg'

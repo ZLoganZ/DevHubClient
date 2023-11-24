@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo, Fragment, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +15,7 @@ import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import getImageURL from '@/util/getImageURL';
 import { useAllPopularPostsData, useAllNewsfeedPostsData, useCurrentUserInfo } from '@/hooks/fetch';
-import { useAppSelector } from '@/hooks/special';
+import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
 
@@ -94,13 +94,23 @@ const NewsFeed = () => {
   const [popularOpen, setPopularOpen] = useState(false);
   const [popularvalue, setPopularvalue] = useState('All time');
 
-  const { isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts, allNewsfeedPosts } =
-    useAllNewsfeedPostsData();
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const {
+    isLoadingAllNewsfeedPosts,
+    isFetchingAllNewsfeedPosts,
+    allNewsfeedPosts,
+    hasNextNewsfeedPosts,
+    fetchNextNewsfeedPosts,
+    isFetchingNextNewsfeedPosts
+  } = useAllNewsfeedPostsData();
 
   const { allPopularPosts, isLoadingAllPopularPosts, isFetchingAllPopularPosts } =
     useAllPopularPostsData(popularvalue);
 
   const { currentUserInfo } = useCurrentUserInfo();
+
+  useIntersectionObserver(bottomRef, fetchNextNewsfeedPosts);
 
   useEffect(() => {
     if (isLoadingAllNewsfeedPosts) {
@@ -165,6 +175,7 @@ const NewsFeed = () => {
                             currentUser={currentUserInfo}
                           />
                         )}
+                        <div ref={bottomRef} className='bottom-loading pt-1' />
                       </Fragment>
                     );
                   })}
