@@ -50,7 +50,7 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
           <div
             className='postDetail rounded-lg'
             style={
-              isDetail
+              !isDetail
                 ? {
                     overflow: 'auto',
                     backgroundColor: themeColorSet.colorBg2,

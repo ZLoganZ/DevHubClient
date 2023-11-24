@@ -52,7 +52,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
           <div
             className='postDetail'
             style={
-              isDetail
+              !isDetail
                 ? {
                     overflow: 'auto',
                     backgroundColor: themeColorSet.colorBg2,
