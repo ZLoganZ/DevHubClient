@@ -112,7 +112,7 @@ export interface TypeOfLink {
 export interface ICreatePost {
   title: string;
   content: string;
-  image?: string;
+  images?: string[];
 }
 
 export interface IUpdatePost {
@@ -168,6 +168,10 @@ export interface ICreateComment {
   type: TypeofComment;
   post: string;
   parent?: string;
+}
+
+export interface IImageResponse {
+  key: string;
 }
 
 export interface ICreateLikeComment {
