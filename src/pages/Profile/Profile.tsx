@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,7 +34,7 @@ import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
 
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
-import { useAppSelector } from '@/hooks/special';
+import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 import { IExperience } from '@/types';
 import StyleProvider from './cssProfile';
@@ -50,13 +50,16 @@ const Profile = ({ userID }: IProfile) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
+  const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
+    useUserPostsData(userID);
 
   const [experiences, setExperiences] = useState<IExperience[]>([]);
 
@@ -95,6 +98,14 @@ const Profile = ({ userID }: IProfile) => {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  const fetchNextPosts = useCallback(() => {
+    if (hasNextUserPosts && !isFetchingNextUserPosts) {
+      fetchNextUserPosts();
+    }
+  }, [hasNextUserPosts, isFetchingNextUserPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextPosts, { threshold: 0 });
+
   useEffect(() => {
     document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo.name} - DevHub`;
     if (!isLoadingOtherUserInfo && otherUserInfo) {
@@ -104,7 +115,7 @@ const Profile = ({ userID }: IProfile) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
+      {isLoadingUserPosts || isLoadingOtherUserInfo ? (
         <LoadingProfileComponent />
       ) : (
         <Row>
@@ -301,24 +312,27 @@ const Profile = ({ userID }: IProfile) => {
                             description='No posts available'
                           />
                         ) : (
-                          userPosts.map((item) =>
-                            item.type === 'Share' ? (
-                              <OtherPostShare
-                                key={item._id}
-                                postShared={item}
-                                postAuthor={otherUserInfo}
-                                postSharer={item.post_attributes.owner_post!}
-                                currentUser={currentUserInfo}
-                              />
-                            ) : (
-                              <OtherPost
-                                key={item._id}
-                                post={item}
-                                postAuthor={otherUserInfo}
-                                currentUser={currentUserInfo}
-                              />
-                            )
-                          )
+                          userPosts.map((item, index) => (
+                            <div className='relative' key={item._id}>
+                              {index === userPosts.length - 3 && (
+                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                              )}
+                              {item.type === 'Share' ? (
+                                <OtherPostShare
+                                  postShared={item}
+                                  postAuthor={otherUserInfo}
+                                  postSharer={item.post_attributes.owner_post!}
+                                  currentUser={currentUserInfo}
+                                />
+                              ) : (
+                                <OtherPost
+                                  post={item}
+                                  postAuthor={otherUserInfo}
+                                  currentUser={currentUserInfo}
+                                />
+                              )}
+                            </div>
+                          ))
                         )}
                       </div>
                     )

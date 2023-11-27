@@ -132,7 +132,7 @@ export const useAllNewsfeedPostsData = () => {
         return ApplyDefaults(data.metadata);
       },
       initialPageParam: 1,
-      getNextPageParam: (lastPage,_,lasPageParam) => {
+      getNextPageParam: (lastPage, _, lasPageParam) => {
         if (lastPage.length < 5) {
           return undefined;
         }
@@ -198,11 +198,21 @@ export const useAllPopularPostsData = (sort: string) => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const { data, isPending, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ['posts', userID],
-    queryFn: async () => {
-      const { data } = await postService.getAllPostByUserID(userID);
+    queryFn: async ({pageParam}) => {
+      const { data } = await postService.getAllPostByUserID(userID, pageParam);
       return ApplyDefaults(data.metadata);
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
     },
     staleTime: Infinity
   });
@@ -211,7 +221,9 @@ export const useUserPostsData = (userID: string) => {
     isLoadingUserPosts: isPending,
     isErrorUserPosts: isError,
     userPosts: data!,
-    isFetchingUserPosts: isFetching
+    hasNextUserPosts: hasNextPage,
+    fetchNextUserPosts: fetchNextPage,
+    isFetchingNextUserPosts: isFetchingNextPage
   };
 };
 
