@@ -169,14 +169,12 @@ const NewsFeed = () => {
                       <div key={item._id} ref={index === allNewsfeedPosts.length - 3 ? bottomRef : undefined}>
                         {item.type === 'Post' ? (
                           <OtherPost
-                            key={item._id}
                             post={item}
                             postAuthor={item.post_attributes.user}
                             currentUser={currentUserInfo}
                           />
                         ) : (
                           <OtherPostShare
-                            key={item._id}
                             postShared={item}
                             postAuthor={item.post_attributes.user}
                             postSharer={item.post_attributes.owner_post!}
@@ -269,7 +267,7 @@ const NewsFeed = () => {
                         </>
                       ) : (
                         popular.map((item) => (
-                          <NavLink key={item._id} to={`/post/${item._id}`}>
+                          <NavLink key={item._id + 'popular'} to={`/post/${item._id}`}>
                             <div className='popular-post-item flex rounded-lg items-center pt-3 pb-3'>
                               <img
                                 style={{
