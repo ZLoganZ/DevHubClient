@@ -98,18 +98,18 @@ export const change_color_autoFill = css`
   }
 `;
 export const custom_scrollBar = css`
-  &::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     border-radius: 0.5rem;
     width: 10px;
     height: 10px;
   }
 
-  &::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     border-radius: 8px;
     background-color: ${(props) => props.theme.colorBg2};
   }
 
-  &::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     border-radius: 8px;
     background-color: ${(props) => props.theme.colorBg4};
   }

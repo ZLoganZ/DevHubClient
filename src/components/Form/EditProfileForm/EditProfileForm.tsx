@@ -133,12 +133,12 @@ const EditProfileForm: React.FC = () => {
     const formData = new FormData();
     if (fileAvatar) {
       const res = await handleUploadImage(fileAvatar);
-      formData.append('userImage', res.url);
+      formData.append('userImage', res.url.key);
       // if (initialAvatar) await handleRemoveImage(initialAvatar);
     }
     if (fileCover) {
       const res = await handleUploadImage(fileCover);
-      formData.append('coverImage', res.url);
+      formData.append('coverImage', res.url.key);
       // if (initialCover) await handleRemoveImage(initialCover);
     }
 
