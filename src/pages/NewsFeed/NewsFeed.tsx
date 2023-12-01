@@ -116,7 +116,7 @@ const NewsFeed = () => {
     }
   }, [hasNextNewsfeedPosts, isFetchingNextNewsfeedPosts]);
 
-  useIntersectionObserver(bottomRef, fetchNextNewsfeedPostsCallback);
+  useIntersectionObserver(bottomRef, fetchNextNewsfeedPostsCallback, { threshold: 0 });
 
   useEffect(() => {
     if (isLoadingAllNewsfeedPosts) {
@@ -166,7 +166,10 @@ const NewsFeed = () => {
                 <div className='show'>
                   {allNewsfeedPosts.map((item, index) => {
                     return (
-                      <div key={item._id} ref={index === allNewsfeedPosts.length - 3 ? bottomRef : undefined}>
+                      <div key={item._id}>
+                        {index === allNewsfeedPosts.length - 3 && (
+                          <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                        )}
                         {item.type === 'Post' ? (
                           <OtherPost
                             post={item}

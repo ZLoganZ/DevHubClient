@@ -69,14 +69,14 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
       dispatch(setLoading(true));
       if (imageFile) {
         const result = await handleUploadImage(imageFile);
-        formdata.append('image', result.url);
+        formdata.append('image', result.url.key);
 
         // if (image) await handleRemoveImage(image);
       }
 
       mutateUpdatePost({
         id: id,
-        postUpdate: { ...values, content: contentQuill, image: formdata.get('image')?.toString() }
+        postUpdate: { ...values, content: contentQuill, images: [formdata.get('image')!.toString()] }
       });
     }
   };

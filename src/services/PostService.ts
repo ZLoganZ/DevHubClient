@@ -17,8 +17,8 @@ class PostService extends BaseService {
     super();
   }
 
-  getAllPostByUserID = (id: string): Promise<AxiosResponse<IResponse<IPost[]>>> => {
-    return this.get(`/posts/user/${id}`);
+  getAllPostByUserID = (id: string, pageParam: number): Promise<AxiosResponse<IResponse<IPost[]>>> => {
+    return this.get(`/posts/user/${id}?page=${pageParam}`);
   };
   getAllPost = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/all`);

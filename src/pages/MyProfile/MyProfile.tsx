@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,7 @@ import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useAppDispatch, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 
 import StyleProvider from './cssMyProfile';
@@ -55,9 +55,12 @@ const MyProfile = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
+  const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
+    useUserPostsData(userID);
 
   const experiences = currentUserInfo.experiences;
 
@@ -78,6 +81,14 @@ const MyProfile = () => {
     '4': faLinkedin
   };
 
+  const fetchNextPosts = useCallback(() => {
+    if (hasNextUserPosts && !isFetchingNextUserPosts) {
+      fetchNextUserPosts();
+    }
+  }, [hasNextUserPosts, isFetchingNextUserPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextPosts, { threshold: 0 });
+
   useEffect(() => {
     if (isLoadingUserPosts) {
       window.scrollTo({
@@ -93,7 +104,7 @@ const MyProfile = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isLoadingUserPosts || isFetchingUserPosts ? (
+      {isLoadingUserPosts ? (
         <LoadingProfileComponent />
       ) : (
         <Row>
@@ -302,18 +313,22 @@ const MyProfile = () => {
                             description='No posts available'
                           />
                         ) : (
-                          userPosts.map((item) =>
-                            item.type === 'Share' ? (
-                              <MyPostShare
-                                key={item._id}
-                                postShared={item}
-                                postAuthor={currentUserInfo}
-                                postSharer={item.post_attributes.owner_post!}
-                              />
-                            ) : (
-                              <MyPost key={item._id} post={item} postAuthor={currentUserInfo} />
-                            )
-                          )
+                          userPosts.map((item, index) => (
+                            <div key={item._id} className='relative'>
+                              {index === userPosts.length - 3 && (
+                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                              )}
+                              {item.type === 'Share' ? (
+                                <MyPostShare
+                                  postShared={item}
+                                  postAuthor={currentUserInfo}
+                                  postSharer={item.post_attributes.owner_post!}
+                                />
+                              ) : (
+                                <MyPost post={item} postAuthor={currentUserInfo} />
+                              )}
+                            </div>
+                          ))
                         )}
                       </div>
                     )
