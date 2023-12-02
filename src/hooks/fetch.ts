@@ -7,6 +7,7 @@ import { postService } from '@/services/PostService';
 import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
+import { communityService } from '@/services/CommunityService';
 
 // ---------------------------FETCH HOOKS---------------------------
 
@@ -597,3 +598,22 @@ export const useGetCalled = () => {
     isFetchingMessageCall: isFetching
   };
 };
+
+export const useGetCommunityByID = (id: string) => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['community', id],
+    queryFn: async () => {
+      const { data } = await communityService.getCommunityByID(id);
+      return data.metadata;
+    },
+    staleTime: Infinity,
+    enabled: !!id
+  });
+
+  return {
+    isLoadingCommunity: isPending,
+    isErrorMessageCall: isError,
+    community: data!,
+    isFetchingMessageCall: isFetching
+  };
+}
