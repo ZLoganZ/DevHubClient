@@ -140,6 +140,11 @@ export const useAllNewsfeedPostsData = () => {
         return lasPageParam + 1;
       },
       select: (data) => {
+        if (data.pages.length > 4) {
+          data.pages.shift();
+          data.pageParams.pop();
+        }
+        
         return data.pages.flat();
       },
       staleTime: Infinity,
@@ -201,7 +206,7 @@ export const useAllPopularPostsData = (sort: string) => {
 export const useUserPostsData = (userID: string) => {
   const { data, isPending, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ['posts', userID],
-    queryFn: async ({pageParam}) => {
+    queryFn: async ({ pageParam }) => {
       const { data } = await postService.getAllPostByUserID(userID, pageParam);
       return ApplyDefaults(data.metadata);
     },
@@ -616,4 +621,4 @@ export const useGetCommunityByID = (id: string) => {
     community: data!,
     isFetchingMessageCall: isFetching
   };
-}
+};

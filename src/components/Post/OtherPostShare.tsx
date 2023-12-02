@@ -67,7 +67,12 @@ const PostShare = forwardRef<HTMLDivElement, IPostShareProps>(
         <div className='post px-4 py-3'>
           <div className='postHeader flex justify-between items-center'>
             <div className='postHeader__left'>
-              <UserInfoPost userInfo={postAuthor} postID={postShared._id} date={isShowTime} />
+              <UserInfoPost
+                userInfo={postAuthor}
+                postID={postShared._id}
+                date={isShowTime}
+                visibility={post!.visibility}
+              />
             </div>
             <div className='postHeader__right'>
               <div className='icon'>
@@ -80,7 +85,12 @@ const PostShare = forwardRef<HTMLDivElement, IPostShareProps>(
           <div className='space-align-block'>
             <div className='postHeader flex justify-between items-center'>
               <div className='postHeader__left'>
-                <UserInfoPost userInfo={postSharer} postID={post!._id} date={postDate} />
+                <UserInfoPost
+                  userInfo={postSharer}
+                  postID={post!._id}
+                  date={postDate}
+                  visibility={postShared.visibility}
+                />
               </div>
             </div>
             <div className='postBody mt-5'>

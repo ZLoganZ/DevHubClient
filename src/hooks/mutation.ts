@@ -38,22 +38,9 @@ export const useCreatePost = () => {
       const { data } = await postService.createPost(newPost);
       return data.metadata;
     },
-    onSuccess(newPost) {
-      queryClient.setQueryData<IPost[]>(['posts', uid], (oldData) => {
-        if (!oldData) return;
-        return [newPost, ...oldData];
-      });
-      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
-        if (!oldData) return;
-        const newPages = [...oldData.pages];
-        const lastPage = newPages[newPages.length - 1];
-        const updatedLastPage = [...lastPage, newPost];
-        newPages[newPages.length - 1] = updatedLastPage;
-        return {
-          ...oldData,
-          pages: newPages
-        };
-      });
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['posts', uid] });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
@@ -101,40 +88,9 @@ export const useUpdatePost = () => {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
 
-      const updatePostData = (oldData: IPost[] | undefined) => {
-        if (!oldData) return;
+      queryClient.invalidateQueries({ queryKey: ['posts', updatedPost.post_attributes.user._id] });
 
-        const newData = [...oldData];
-
-        return newData.map((post) => {
-          if (post._id === updatedPost._id) {
-            return updatedPost;
-          }
-          return post;
-        });
-      };
-
-      queryClient.setQueryData<IPost[]>(['posts', updatedPost.post_attributes.user._id], updatePostData);
-
-      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
-        if (!oldData) return;
-        const newPages = [...oldData.pages];
-        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === updatedPost._id));
-        if (pageIndex !== -1) {
-          const newPage = newPages[pageIndex].map((post) => {
-            if (post._id === updatedPost._id) {
-              return updatedPost;
-            }
-            return post;
-          });
-          newPages[pageIndex] = newPage;
-          return {
-            ...oldData,
-            pages: newPages
-          };
-        }
-        return oldData;
-      });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
       void queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
     }
@@ -160,31 +116,10 @@ export const useDeletePost = () => {
     mutationFn: async (postID: string) => {
       await postService.deletePost(postID);
     },
-    onSuccess(_, postID) {
-      const updatePostData = (oldData: IPost[] | undefined) => {
-        if (!oldData) return;
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['posts', uid] });
 
-        const newData = [...oldData];
-
-        return newData.filter((post) => post._id !== postID);
-      };
-
-      queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
-
-      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
-        if (!oldData) return;
-        const newPages = [...oldData.pages];
-        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === postID));
-        if (pageIndex !== -1) {
-          const newPage = newPages[pageIndex].filter((post) => post._id !== postID);
-          newPages[pageIndex] = newPage;
-          return {
-            ...oldData,
-            pages: newPages
-          };
-        }
-        return oldData;
-      });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {

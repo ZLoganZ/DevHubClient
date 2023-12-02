@@ -25,6 +25,7 @@ const StyleProvider = styled.div`
       .recentlyJoin {
         .content {
           .item {
+            border-radius: 6px;
             &:hover {
               background-color: ${(props) => props.theme.colorBg1};
               cursor: pointer;
