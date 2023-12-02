@@ -133,18 +133,17 @@ export const useAllNewsfeedPostsData = () => {
         return ApplyDefaults(data.metadata);
       },
       initialPageParam: 1,
-      getNextPageParam: (lastPage, _, lasPageParam) => {
+      getNextPageParam: (lastPage, _, __, allPageParams) => {
         if (lastPage.length < 5) {
           return undefined;
         }
-        return lasPageParam + 1;
+        return allPageParams.length + 1;
       },
       select: (data) => {
         if (data.pages.length > 4) {
           data.pages.shift();
-          data.pageParams.pop();
         }
-        
+
         return data.pages.flat();
       },
       staleTime: Infinity,
