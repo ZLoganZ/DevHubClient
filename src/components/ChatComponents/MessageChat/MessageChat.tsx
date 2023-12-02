@@ -1,4 +1,4 @@
-import { Col, Row, App,  } from 'antd';
+import { Col, Row, App } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
