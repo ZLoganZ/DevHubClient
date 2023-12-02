@@ -112,7 +112,8 @@ export interface TypeOfLink {
 export interface ICreatePost {
   title: string;
   content: string;
-  images?: string[];
+  visibility: Visibility;
+  images?: (string | undefined)[];
 }
 
 export interface IUpdatePost {
@@ -122,6 +123,7 @@ export interface IUpdatePost {
 
 export interface ISharePost {
   post: string;
+  visibility: Visibility;
   owner_post: string;
 }
 
@@ -130,13 +132,14 @@ type TypeofPost = 'Post' | 'Share';
 export interface IPost {
   _id: string;
   type: TypeofPost;
+  visibility: Visibility;
   post_attributes: {
     user: IUserInfo;
 
     //if type is post
-    title?: string;
-    content?: string;
-    images?: string[];
+    title: string;
+    content: string;
+    images: string[];
     url?: TypeOfLink;
 
     //if type is share
@@ -321,7 +324,7 @@ export type ModalType =
     }
   | undefined;
 
-type Visibility = 'public' | 'private' | 'followed' | 'member';
+export type Visibility = 'public' | 'private' | 'member' | 'friend';
 
 export interface ICommunity {
   name: string;

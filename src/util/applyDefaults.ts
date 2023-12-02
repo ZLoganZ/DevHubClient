@@ -28,6 +28,7 @@ const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
     following_number: 0,
     post_number: 0,
     type: 'Post',
+    visibility: 'public',
     post_attributes: {
       user: {
         _id: '',

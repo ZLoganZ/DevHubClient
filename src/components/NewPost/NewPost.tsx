@@ -1,4 +1,4 @@
-import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
+import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload, Select } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,7 +18,7 @@ import { textToHTML } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
-import { IEmoji, IUserInfo } from '@/types';
+import { IEmoji, IUserInfo, Visibility } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
 
@@ -35,7 +35,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
+  const { mutateCreatePost } = useCreatePost();
 
   const [random, setRandom] = useState(uuidv4().replace(/-/g, ''));
 
@@ -43,6 +43,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [visibility, setVisibility] = useState<Visibility>('public'); // ['public', 'private', 'friend']
   const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
 
   const ReactQuillRef = useRef<ReactQuill | null>(null);
@@ -84,30 +85,29 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
 
       mutateCreatePost(
         {
-          title: title,
-          content: content,
-          images: [formData.get('image')!.toString()]
+          title,
+          content,
+          images: formData.get('image') ? [formData.get('image')?.toString()] : undefined,
+          visibility
         },
         {
           onSettled: () => {
             setIsLoadingCreatePost(false);
+          },
+          onSuccess: () => {
+            setContent('');
+            setRandom(uuidv4().replace(/-/g, ''));
+            setFile(undefined);
+
+            void messageApi.success('Create post successfully');
+          },
+          onError: () => {
+            void messageApi.error('Create post failed');
           }
         }
       );
     }
-  }, [content, file]);
-
-  useEffect(() => {
-    if (isSuccessCreatePost) {
-      setContent('');
-      setRandom(uuidv4().replace(/-/g, ''));
-      setFile(undefined);
-
-      void messageApi.success('Create post successfully');
-    } else if (isErrorCreatePost) {
-      void messageApi.error('Create post failed');
-    }
-  }, [isSuccessCreatePost, isErrorCreatePost]);
+  }, [content, file, visibility, title]);
 
   const handleUploadImage = async (file: File) => {
     const formData = new FormData();
@@ -208,6 +208,16 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                   <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
+              <Select
+                className='w-24'
+                defaultValue='Public'
+                onChange={(value) => setVisibility(value.toLowerCase() as Visibility)}
+                options={[
+                  { value: 'public', label: 'Public' },
+                  { value: 'private', label: 'Private' },
+                  { value: 'friend', label: 'Friend' }
+                ]}
+              />
               <span>
                 <Upload
                   accept='image/png, image/jpeg, image/jpg'

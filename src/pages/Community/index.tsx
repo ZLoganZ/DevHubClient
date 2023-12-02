@@ -36,6 +36,10 @@ export const CommunityAdmin = () => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
+  useEffect(() => {
+    document.title = community ? community.name + ' - DevHub' : 'Community - DevHub';
+  }, [community]);
+
   return (
     <StyleProvider theme={themeColorSet}>
       {!community ? (
@@ -175,7 +179,7 @@ export const CommunityAdmin = () => {
                     <div className='content flex flex-wrap'>
                       {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -264,7 +268,7 @@ export const CommunityAdmin = () => {
                     </Collapse>
                   </div>
                   <div
-                    className='recently_joined px-3 py-4 mb-3 rounded-md'
+                    className='recentlyJoin px-3 py-4 mb-3 rounded-md'
                     style={{ backgroundColor: themeColorSet.colorBg2 }}>
                     <div className='title mb-2 text-lg' style={{ fontWeight: 600 }}>
                       Recently Joined
@@ -462,7 +466,7 @@ export const CommunityMember = () => {
                     <div className='content flex flex-wrap'>
                       {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -551,7 +555,7 @@ export const CommunityMember = () => {
                     </Collapse>
                   </div>
                   <div
-                    className='recently_joined px-3 py-4 mb-3 rounded-md'
+                    className='recentlyJoin px-3 py-4 mb-3 rounded-md'
                     style={{ backgroundColor: themeColorSet.colorBg2 }}>
                     <div className='title mb-2 text-lg' style={{ fontWeight: 600 }}>
                       Recently Joined
@@ -749,7 +753,7 @@ export const CommunityNoMember = () => {
                     <div className='content flex flex-wrap'>
                       {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -838,7 +842,7 @@ export const CommunityNoMember = () => {
                     </Collapse>
                   </div>
                   <div
-                    className='recently_joined px-3 py-4 mb-3 rounded-md'
+                    className='recentlyJoin px-3 py-4 mb-3 rounded-md'
                     style={{ backgroundColor: themeColorSet.colorBg2 }}>
                     <div className='title mb-2 text-lg' style={{ fontWeight: 600 }}>
                       Recently Joined

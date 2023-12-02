@@ -1,4 +1,4 @@
-import { Button, ConfigProvider, Input, message, Popover, Upload, UploadFile } from 'antd';
+import { Button, ConfigProvider, Input, message, Popover, Select, Upload, UploadFile } from 'antd';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState, useRef } from 'react';
@@ -11,22 +11,23 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons';
 import { callBackSubmitDrawer, setLoading } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
-import { textToHTML } from '@/util/convertText';
+import { capitalizeFirstLetter, textToHTML } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useUpdatePost } from '@/hooks/mutation';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { imageService } from '@/services/ImageService';
-import { IEmoji } from '@/types';
+import { IEmoji, Visibility } from '@/types';
 import StyleProvider from './cssEditPostForm';
 
 interface IEditPost {
   id: string;
   title: string;
   content: string;
-  image?: string[];
+  visibility: Visibility;
+  image: string[];
 }
 
-const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
+const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image, visibility: visibilityPost }) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -38,6 +39,7 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
 
   const [contentQuill, setContentQuill] = useState(content);
   const [imageFile, setImageFile] = useState<File>();
+  const [visibility, setVisibility] = useState<Visibility>(visibilityPost); // ['public', 'private', 'friend']
 
   useEffect(() => {
     setContentQuill(contentQuill);
@@ -65,18 +67,23 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
     if (contentQuill === '<p><br></p>') {
       error();
     } else {
-      const formdata = new FormData();
+      const formData = new FormData();
       dispatch(setLoading(true));
       if (imageFile) {
         const result = await handleUploadImage(imageFile);
-        formdata.append('image', result.url.key);
+        formData.append('image', result.url.key);
 
         // if (image) await handleRemoveImage(image);
       }
 
       mutateUpdatePost({
         id: id,
-        postUpdate: { ...values, content: contentQuill, images: [formdata.get('image')!.toString()] }
+        postUpdate: {
+          ...values,
+          content: contentQuill,
+          images: formData.get('image') ? [formData.get('image')?.toString()] : undefined,
+          visibility
+        }
       });
     }
   };
@@ -109,7 +116,7 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
   useEffect(() => {
     // Dispatch callback submit lên cho DrawerHOC
     dispatch(callBackSubmitDrawer(form.handleSubmit(onSubmit)));
-  }, [contentQuill, form, imageFile]);
+  }, [contentQuill, form, imageFile, visibility]);
 
   // Hàm hiển thị mesage
   const error = () => {
@@ -122,9 +129,9 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
   const fileList: UploadFile[] = [
     {
       uid: '-1',
-      name: image![0],
+      name: image[0],
       status: 'done',
-      url: getImageURL(image![0], 'post_mini')
+      url: getImageURL(image[0], 'post_mini')
     }
   ];
 
@@ -185,13 +192,23 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image }) => {
                   <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
+              <Select
+                className='w-24'
+                defaultValue={capitalizeFirstLetter(visibilityPost)}
+                onChange={(value) => setVisibility(value.toLowerCase() as Visibility)}
+                options={[
+                  { value: 'public', label: 'Public' },
+                  { value: 'private', label: 'Private' },
+                  { value: 'friend', label: 'Friend' }
+                ]}
+              />
               <span>
                 <Upload
                   name='image'
                   listType='picture'
                   onChange={(info) => setImageFile(info.file.originFileObj)}
                   accept='image/png, image/jpeg, image/jpg'
-                  defaultFileList={image ? [...fileList] : []}
+                  defaultFileList={image.length !== 0 ? [...fileList] : []}
                   maxCount={5}
                   customRequest={({ onSuccess }) => {
                     if (onSuccess) onSuccess('ok');
