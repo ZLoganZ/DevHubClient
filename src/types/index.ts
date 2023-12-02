@@ -320,3 +320,32 @@ export type ModalType =
       then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
     }
   | undefined;
+
+type Visibility = 'public' | 'private' | 'followed' | 'member';
+
+export interface ICommunity {
+  name: string;
+  description: string;
+  image: string;
+  cover_image: string;
+  about: string;
+  tags: string[];
+  rules: {
+    title: string;
+    content: string;
+  }[];
+  visibility: Visibility;
+  creator: IUserInfo;
+  posts: IPost[];
+  members: IUserInfo[];
+  recently_joined: IUserInfo[];
+  admins: IUserInfo[];
+  waitlist_users: IUserInfo[];
+  waitlist_posts: IPost[];
+  post_number: number;
+  member_number: number;
+  admin_number: number;
+  waitlist_user_number: number;
+  waitlist_post_number: number;
+  createdAt: string;
+}
