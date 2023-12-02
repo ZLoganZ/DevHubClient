@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
-// import { VariableSizeList as List } from 'react-window'
-// import AutoSizer from 'react-virtualized-auto-sizer'
+import { VariableSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -490,7 +490,57 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <div
+              <AutoSizer>
+                {({ height, width }) => (
+                  <>
+                    <List
+                      height={height}
+                      width={width}
+                      itemCount={messages.length}
+                      itemSize={(index) => {
+                        const message = messages[index];
+                        if (message.type === 'notification') return 20;
+                        if (message.type === 'voice' || message.type === 'video') return 60;
+                        if (message.images?.length! > 0) return 300;
+                        return 40;
+                      }}
+                      itemData={messages}
+                      className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
+                      {({ index, style, data }) => {
+                        const message = data[index];
+                        if (!hasPreviousMessages)
+                          return (
+                            <ChatWelcome
+                              type={currentConversation.type}
+                              name={currentConversation.name}
+                              members={currentConversation.members}
+                              otherUser={otherUser}
+                              image={currentConversation.image}
+                            />
+                          );
+                        else
+                          return (
+                            <MessageBox
+                              key={conversationID + '|' + message._id}
+                              type={currentConversation.type}
+                              isLastMes={index === data.length - 1}
+                              message={message}
+                              seen={currentConversation.seen}
+                              isAdmin={isAdmin(message.sender._id)}
+                              isCreator={isCreator(message.sender._id)}
+                              isPrevMesGroup={isPrevMesGroup(message, index, data)}
+                              isNextMesGroup={isNextMesGroup(message, index, data)}
+                              isMoreThan10Min={isMoreThan10Min(message, index, data)}
+                              style={style}
+                            />
+                          );
+                      }}
+                    </List>
+                    <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
+                  </>
+                )}
+              </AutoSizer>
+              {/* <div
                 ref={messageRef}
                 className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
                 {!hasPreviousMessages && (
@@ -518,7 +568,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   />
                 ))}
                 <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
-              </div>
+              </div> */}
               <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
                 {currentConversation.members.map((member) => {
                   const index = typingUsers.findIndex((user) => user === member._id);
