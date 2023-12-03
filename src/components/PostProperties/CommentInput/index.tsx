@@ -31,7 +31,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
   const [cursor, setCursor] = useState(0);
   const data = useAppSelector((state) => state.modalHOC.data);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 1023 });
   const inputRef = useRef<InputRef | null>(null);
 
   const checkEmpty = commentContent.trim() === '' || commentContent.trim().length === 0;
@@ -60,7 +60,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
 
   return (
     <StyleProvider>
-      <div className='commentInput text-right flex items-center px-4 pb-5 mt-4 xs:px-0'>
+      <div className='commentInput text-right flex items-center px-4 pb-5 mt-4 md:px-0'>
         <Avatar className='rounded-full' size={30} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
         <div className='input w-full ml-2'>
           <Input
@@ -88,7 +88,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
             maxLength={150}
             addonAfter={
               <Popover
-                placement={!isXsScreen ? 'right' : 'top'}
+                placement={!isMdScreen ? 'right' : 'top'}
                 trigger='click'
                 content={
                   <Picker

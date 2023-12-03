@@ -490,7 +490,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}>
-              <AutoSizer>
+              {/* <AutoSizer>
                 {({ height, width }) => (
                   <>
                     <List
@@ -499,10 +499,10 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                       itemCount={messages.length}
                       itemSize={(index) => {
                         const message = messages[index];
-                        if (message.type === 'notification') return 20;
-                        if (message.type === 'voice' || message.type === 'video') return 60;
-                        if (message.images?.length! > 0) return 300;
-                        return 40;
+                        if (message.type === 'notification') return 50;
+                        if (message.type === 'voice' || message.type === 'video') return 90;
+                        if (message.images?.length! > 0) return 330;
+                        return 70;
                       }}
                       itemData={messages}
                       className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
@@ -539,8 +539,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                     <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
                   </>
                 )}
-              </AutoSizer>
-              {/* <div
+              </AutoSizer> */}
+              <div
                 ref={messageRef}
                 className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
                 {!hasPreviousMessages && (
@@ -568,7 +568,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   />
                 ))}
                 <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
-              </div> */}
+              </div>
               <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
                 {currentConversation.members.map((member) => {
                   const index = typingUsers.findIndex((user) => user === member._id);

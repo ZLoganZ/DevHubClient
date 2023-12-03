@@ -35,12 +35,12 @@ const MenuMain = () => {
   const [collapsed, setCollapsed] = useState(true);
   const handleMouseEnter = () => {
     setCollapsed(false);
-    if (isXsScreen) {
+    if (isMdScreen) {
       setShowMenu(true);
     }
   };
   const handleMouseLeave = () => {
-    if (isXsScreen) {
+    if (isMdScreen) {
       setShowMenu(false);
       return;
     }
@@ -66,21 +66,21 @@ const MenuMain = () => {
   const handleShowMenu = () => {
     setShowMenu(!showMenu);
   };
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 1023 });
   useEffect(() => {
-    if (isXsScreen) {
+    if (isMdScreen) {
       setShowMenu(false);
       setCollapsed(false);
     } else {
       setShowMenu(true);
       setCollapsed(true);
     }
-  }, [isXsScreen]);
+  }, [isMdScreen]);
 
   return (
     <StyleProvider theme={themeColorSet}>
       <div
-        className={isXsScreen ? 'showMenuButton text-3xl' : 'hidden'}
+        className={isMdScreen ? 'showMenuButton text-3xl' : 'hidden'}
         onClick={handleShowMenu}
         style={{
           color: themeColorSet.colorText1,
@@ -121,7 +121,7 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate('/');
-                if (isXsScreen) setShowMenu(false);
+                if (isMdScreen) setShowMenu(false);
               }
             },
             {
@@ -138,7 +138,7 @@ const MenuMain = () => {
               title: '',
               onClick: () => {
                 navigate(`/user/${currentUserInfo._id}`);
-                if (isXsScreen) setShowMenu(false);
+                if (isMdScreen) setShowMenu(false);
               }
             },
             {

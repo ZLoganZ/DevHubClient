@@ -180,9 +180,9 @@ const Chat = () => {
                 <Col span={5} className='h-screen z-10'>
                   {OptionRender}
                 </Col>
-                <Col span={18} className='pl-3 z-0'>
+                <Col span={18} className='z-0'>
                   <div
-                    className='chatBox h-screen'
+                    className='chatBox h-screen pl-3'
                     style={{
                       borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
                       backgroundColor: themeColorSet.colorBg1

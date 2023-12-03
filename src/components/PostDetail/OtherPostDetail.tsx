@@ -44,7 +44,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
       setCommentInput('');
     }
   }, [comments]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  
   return (
     <StyleProvider theme={themeColorSet}>
       <Row>
@@ -62,19 +62,18 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                     backgroundColor: themeColorSet.colorBg2
                   }
             }>
-            {!isXsScreen &&
-              (post.type === 'Share' ? (
-                <OtherPostShare
-                  postShared={post}
-                  postAuthor={postAuthor}
-                  postSharer={post.post_attributes.owner_post!}
-                  currentUser={currentUser}
-                />
-              ) : (
-                <OtherPost post={post} postAuthor={postAuthor} currentUser={currentUser} />
-              ))}
+            {post.type === 'Share' ? (
+              <OtherPostShare
+                postShared={post}
+                postAuthor={postAuthor}
+                postSharer={post.post_attributes.owner_post!}
+                currentUser={currentUser}
+              />
+            ) : (
+              <OtherPost post={post} postAuthor={postAuthor} currentUser={currentUser} />
+            )}
             <div
-              className='commentTotal px-3 ml-4 xs:px-0 xs:ml-0'
+              className='commentTotal px-3 ml-4 md:px-0 md:ml-0'
               style={{
                 maxHeight: '30rem'
                 // overflow: 'auto'
