@@ -66,7 +66,7 @@ const Profile = ({ userID }: IProfile) => {
   const positionNames = experiences.map((experience) => experience.position_name);
 
   const jobPosition =
-    positionNames?.length > 0
+    positionNames.length > 0
       ? positionNames.length > 2
         ? positionNames.slice(0, 2).join(' & ')
         : positionNames.join(' & ')
