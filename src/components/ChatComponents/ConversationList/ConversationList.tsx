@@ -17,6 +17,7 @@ import { Socket } from '@/util/constants/SettingSystem';
 import {
   useMutateConversation,
   useReceiveConversation,
+  useReceiveDissolveGroup,
   useReceiveLeaveGroup,
   useReceiveMessage,
   useReceiveSeenConversation
@@ -40,6 +41,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
 
   const { mutateReceiveConversation } = useReceiveConversation();
   const { mutateReceiveLeaveGroup } = useReceiveLeaveGroup();
+  const { mutateReceiveDissolveGroup } = useReceiveDissolveGroup();
   const { mutateReceiveSeenConversation } = useReceiveSeenConversation();
   const { mutateReceiveMessage } = useReceiveMessage(currentUserInfo._id, selected);
   const { mutateConversation } = useMutateConversation(currentUserInfo._id);
@@ -64,6 +66,9 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
     });
     chatSocket.on(Socket.LEAVE_GROUP, (conversation: IConversation) => {
       mutateReceiveLeaveGroup(conversation);
+    });
+    chatSocket.on(Socket.DISSOLVE_GROUP, (conversation: IConversation) => {
+      mutateReceiveDissolveGroup(conversation);
     });
     chatSocket.on(Socket.PRIVATE_MSG, (message: IMessage) => {
       mutateReceiveMessage(message);
@@ -126,7 +131,7 @@ const ConversationList: React.FC<IConversationList> = ({ conversations, selectin
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isOpenModal && <CreateGroupChat users={currentUserInfo.members} />}
+      {isOpenModal && <CreateGroupChat users={currentUserInfo.members ?? []} />}
       <Row className='searchChat'>
         <Col span={24}>
           <Row>

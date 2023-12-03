@@ -35,6 +35,8 @@ interface IConversationBox {
 }
 
 const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected }) => {
+  if (!conversation.lastMessage) return <></>;
+
   useAppSelector((state) => state.theme.changed);
   const { chatSocket } = useAppSelector((state) => state.socketIO);
   const { themeColorSet } = getTheme();
@@ -107,7 +109,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
           content: 'left the group',
           createdAt: new Date()
         };
-        
+
         mutateSendMessage(message as unknown as IMessage);
         chatSocket.emit(Socket.PRIVATE_MSG, { conversationID: conversation._id, message });
       },
@@ -144,7 +146,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [conversation.lastMessage, conversation.seen]);
 
   const lastMessageText = useMemo(() => {
-    if (conversation.lastMessage?.image) return 'Sent an image';
+    if (conversation.lastMessage?.images) return 'Sent an image';
 
     if (conversation.lastMessage?.content) return conversation.lastMessage.content;
 
@@ -156,7 +158,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
       <Dropdown menu={{ items }} trigger={['contextMenu']}>
         <NavLink to={`/message/${conversation._id}`}>
           <div
-            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-xl transition'
+            className='conversation-box w-full relative flex items-center space-x-3 my-3 p-3 rounded-xl'
             style={{ backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1 }}>
             {conversation.type === 'group' ? (
               <AvatarGroup key={conversation._id} users={conversation.members} image={conversation.image} />

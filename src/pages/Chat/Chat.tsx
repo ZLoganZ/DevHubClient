@@ -49,12 +49,6 @@ const Chat = () => {
   const { isLoadingCurrentConversation } = useCurrentConversationData(conversationID);
   const { calledList } = useGetCalled();
 
-  const followers = useMemo(() => {
-    return [...(currentUserInfo?.followers ?? []), ...(currentUserInfo?.following ?? [])].filter(
-      (item, index, arr) => arr.findIndex((t) => t._id === item._id) === index
-    );
-  }, [currentUserInfo]);
-
   const dispatch = useAppDispatch();
   const change = (checked: boolean) => {
     if (checked) {
@@ -63,6 +57,10 @@ const Chat = () => {
       dispatch(setTheme({ theme: LIGHT_THEME }));
     }
   };
+
+  const contacts = useMemo(() => {
+    return currentUserInfo?.members ?? [];
+  }, [currentUserInfo?.members]);
 
   useEffect(() => {
     document.title = 'DevHub Chat';
@@ -94,9 +92,9 @@ const Chat = () => {
   }, [conversations]);
 
   const contactCount = useMemo(() => {
-    if (!followers) return 0;
-    return followers.length;
-  }, [followers]);
+    if (!contacts) return 0;
+    return contacts.length;
+  }, [contacts]);
 
   const [optionIndex, setOptionIndex] = useState(0);
 
@@ -112,7 +110,7 @@ const Chat = () => {
       case 0:
         return <ConversationList conversations={conversations} selecting={conversationID} />;
       case 1:
-        return <ContactList followers={followers ?? []} />;
+        return <ContactList contacts={contacts} />;
       case 2:
         return <></>;
       case 3:
@@ -120,7 +118,7 @@ const Chat = () => {
       default:
         return <></>;
     }
-  }, [conversations, followers, conversationID, optionIndex, calledList]);
+  }, [conversations, contacts, conversationID, optionIndex, calledList]);
 
   useMediaQuery({ maxWidth: 639 });
 
@@ -139,33 +137,29 @@ const Chat = () => {
                   span={1}
                   className='py-3 flex flex-col justify-between items-center'
                   style={{ backgroundColor: themeColorSet.colorBg2 }}>
-                  <div>
-                    <div className='logo items-center'>
-                      <NavLink to='/' className='icon_logo'>
-                        <FontAwesomeIcon className='icon' icon={faSnowflake} />
-                      </NavLink>
-                    </div>
-                    <div className='option py-8 flex flex-col items-center'>
-                      <Space size={35} direction='vertical' align='center'>
-                        {options.map((option, index) => (
-                          <div
+                  <div className='option pt-1 flex flex-col items-center'>
+                    <NavLink to='/' className='icon_logo'>
+                      <FontAwesomeIcon className='icon' icon={faSnowflake} />
+                    </NavLink>
+                    <Space size={10} direction='vertical' align='center'>
+                      {options.map((option, index) => (
+                        <div
+                          key={index}
+                          className={merge('optionItem flex p-4 rounded-xl transition-colors', option.name)}
+                          onClick={() => setOptionIndex(index)}
+                          style={optionIndex === index ? { backgroundColor: themeColorSet.colorBg4 } : {}}>
+                          <Badge
+                            count={option.count}
                             key={index}
-                            className={merge('optionItem relative', option.name)}
-                            onClick={() => setOptionIndex(index)}
-                            style={optionIndex === index ? { color: themeColorSet.colorText1 } : {}}>
-                            <Badge
-                              count={option.count}
-                              key={index}
-                              title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
-                              <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
-                            </Badge>
-                          </div>
-                        ))}
-                      </Space>
-                    </div>
+                            title={`You have ${option.count} ${option.name}${option.count > 1 && 's'}`}>
+                            <FontAwesomeIcon className='icon text-2xl' icon={option.icon} />
+                          </Badge>
+                        </div>
+                      ))}
+                    </Space>
                   </div>
-                  <div className='flex flex-col items-center'>
-                    <div className='mode optionItem py-6'>
+                  <div className='flex flex-col items-center gap-1'>
+                    <div className='mode optionItem flex items-center justify-center h-[62px] w-[62px] p-4 rounded-xl'>
                       <FontAwesomeIcon
                         className='icon text-2xl'
                         icon={themeColorSet.colorPicker === 'light' ? faMoon : faCloudSun}
@@ -176,7 +170,7 @@ const Chat = () => {
                     </div>
                     <div className='mode'>
                       <Dropdown menu={{ items: settingItem }} trigger={['click']}>
-                        <div className='Setting optionItem'>
+                        <div className='Setting optionItem flex p-4 rounded-xl'>
                           <FontAwesomeIcon className='icon text-3xl' icon={faGear} />
                         </div>
                       </Dropdown>

@@ -1,6 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { Image } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 import 'react-quill/dist/quill.bubble.css';
 
 import { useViewPost } from '@/hooks/mutation';
@@ -63,7 +65,7 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
               src={getImageURL(image[0], 'post')}
               alt='pic content'
               fallback={imageErrorFallback}
-              preview={{ src: getImageURL(image[0]) }}
+              preview={{ src: getImageURL(image[0]) , mask: <FontAwesomeIcon icon={faEye} /> }}
             />
           </div>
         ) : (

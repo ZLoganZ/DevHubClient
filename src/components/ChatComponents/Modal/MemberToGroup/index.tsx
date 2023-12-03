@@ -31,14 +31,14 @@ const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setMembers }) => {
     }
   };
 
-  useEffect(() => {
-    setMembers(checkedUsers);
-  }, [checkedUsers]);
-
   const handleUncheck = (userID: string) => {
     setCheckList({ ...checkList, [userID]: false });
     setCheckedUsers(checkedUsers.filter((user) => user._id !== userID));
   };
+
+  useEffect(() => {
+    setMembers(checkedUsers);
+  }, [checkedUsers]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorBg4 } }}>
@@ -85,6 +85,11 @@ const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setMembers }) => {
           <Row className=' w-full'>
             <div className='font-bold text-lg'> List Followers </div>
             <div className='list-users flex flex-col w-full max-h-80 overflow-auto'>
+              {users.length == 0 && (
+                <div className='w-full h-full flex items-center justify-center'>
+                  <div className='font-bold text-sm py-2'>You don't have any followers anymore :(</div>
+                </div>
+              )}
               {users.map((user) => (
                 <div
                   className='user flex items-center justify-between cursor-pointer mt-5'

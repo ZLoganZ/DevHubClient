@@ -1,25 +1,35 @@
 import { Avatar, Popover } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGlobe, faUserGroup, faLock } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
 
 import PopupInfoUser from '@/components/PopupInfoUser';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
-import { IUserInfo } from '@/types';
+import { IUserInfo, Visibility } from '@/types';
 import StyleProvider from './cssPostUserInfo';
 
 interface IUserInfoPostProps {
   userInfo: IUserInfo;
   postID: string;
+  visibility: Visibility;
   date: string;
 }
 
-const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date }) => {
+const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date, visibility }) => {
   const { themeColorSet } = getTheme();
 
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
   const userID = useAppSelector((state) => state.auth.userID);
+
+  const icon =
+    visibility === 'public'
+      ? faGlobe
+      : visibility === 'member' || visibility === 'friend'
+      ? faUserGroup
+      : faLock;
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -38,10 +48,11 @@ const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date }) 
               </NavLink>
             </div>
           </Popover>
-          <div className='time' style={{ color: themeColorSet.colorText3 }}>
+          <div className='time flex items-center gap-2' style={{ color: themeColorSet.colorText3 }}>
             <NavLink to={`/post/${postID}`} style={{ color: themeColorSet.colorText3 }}>
               <span>{date}</span>
             </NavLink>
+            <FontAwesomeIcon icon={icon} />
           </div>
         </div>
       </div>

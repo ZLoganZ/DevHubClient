@@ -19,12 +19,12 @@ const StyleProvider = styled.div`
     font-weight: 600;
     cursor: pointer;
 
-    :hover {
+    &:hover {
       text-decoration: underline;
       color: ${commonColor.colorBlue1};
     }
 
-    ::after {
+    &::after {
       content: '...';
     }
   }

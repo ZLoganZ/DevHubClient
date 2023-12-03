@@ -28,7 +28,7 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [membersToAdd, SetMembersToAdd] = useState<IUserInfo[]>([]);
+  const [membersToAdd, setMembersToAdd] = useState<IUserInfo[]>([]);
 
   const isChanged = useMemo(() => {
     return membersToAdd.length === 0;
@@ -73,13 +73,13 @@ const AddMemberToGroup: React.FC<IAddMemberModal> = ({ users, conversationID }) 
     dispatch(
       openModal({
         title: 'Select members to add to the group',
-        component: <MemberToGroup users={users} setMembers={SetMembersToAdd} />,
+        component: <MemberToGroup users={users} setMembers={setMembersToAdd} />,
         footer: (
           <div className='mt-6 flex items-center justify-end gap-x-3'>
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
-            <ButtonActiveHover disabled={isChanged} rounded loading={isLoading} onClick={onSubmit}>
+            <ButtonActiveHover disabled={isChanged} loading={isLoading} onClick={onSubmit}>
               Add
             </ButtonActiveHover>
           </div>

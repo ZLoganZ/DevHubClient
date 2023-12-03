@@ -128,9 +128,9 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
   return (
     <ConfigProvider theme={{ token: { controlHeight: 40, colorBorder: themeColorSet.colorBg4 } }}>
       <StyleProvider theme={themeColorSet}>
-        <div className='flex flex-col mt-7'>
+        <div className='flex flex-col mt-7 gap-3'>
           {addLinkArr.map((item, index) => (
-            <div key={index} className='flex flex-row items-center mb-4'>
+            <div key={index} className='flex flex-row items-center'>
               <Dropdown
                 menu={{
                   items: contactArrays,
@@ -207,17 +207,16 @@ const AddContacts: React.FC<IAddContacts> = ({ contacts, callback }) => {
               </Button>
             </div>
           ))}
-          <Button className='my-3' onClick={handleClickAdd}>
-            <FontAwesomeIcon icon={faPlus} className='mr-2' />
-            Add
-          </Button>
-          <div className='mt-3'>
+          <div className='flex justify-end gap-3 mr-3'>
+            <Button className='rounded-full font-semibold' onClick={handleClickAdd}>
+              <FontAwesomeIcon icon={faPlus} />
+              &nbsp;Add more
+            </Button>
             <ButtonActiveHover
               onClick={() => {
                 handleClickSubmit();
                 dispatch(closeModal(setSave(true)));
-              }}
-              block>
+              }}>
               UPDATE
             </ButtonActiveHover>
           </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +15,7 @@ import { getTheme } from '@/util/theme';
 import ConvertNumber from '@/util/convertNumber';
 import getImageURL from '@/util/getImageURL';
 import { useAllPopularPostsData, useAllNewsfeedPostsData, useCurrentUserInfo } from '@/hooks/fetch';
-import { useAppSelector } from '@/hooks/special';
+import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 
 import StyleProvider from './cssNewsFeed';
 
@@ -94,13 +94,29 @@ const NewsFeed = () => {
   const [popularOpen, setPopularOpen] = useState(false);
   const [popularvalue, setPopularvalue] = useState('All time');
 
-  const { isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts, allNewsfeedPosts } =
-    useAllNewsfeedPostsData();
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const {
+    isLoadingAllNewsfeedPosts,
+    isFetchingAllNewsfeedPosts,
+    allNewsfeedPosts,
+    fetchNextNewsfeedPosts,
+    hasNextNewsfeedPosts,
+    isFetchingNextNewsfeedPosts
+  } = useAllNewsfeedPostsData();
 
   const { allPopularPosts, isLoadingAllPopularPosts, isFetchingAllPopularPosts } =
     useAllPopularPostsData(popularvalue);
 
   const { currentUserInfo } = useCurrentUserInfo();
+
+  const fetchNextNewsfeedPostsCallback = useCallback(() => {
+    if (hasNextNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
+      fetchNextNewsfeedPosts();
+    }
+  }, [hasNextNewsfeedPosts, isFetchingNextNewsfeedPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextNewsfeedPostsCallback, { threshold: 0 });
 
   useEffect(() => {
     if (isLoadingAllNewsfeedPosts) {
@@ -109,7 +125,7 @@ const NewsFeed = () => {
         behavior: 'smooth'
       });
     }
-    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts) {
+    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -137,7 +153,9 @@ const NewsFeed = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!community || isLoadingAllNewsfeedPosts || isFetchingAllNewsfeedPosts ? (
+      {!community ||
+      isLoadingAllNewsfeedPosts ||
+      (isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) ? (
         <LoadingNewFeed />
       ) : (
         <Row>
@@ -146,9 +164,12 @@ const NewsFeed = () => {
               <div className='news-feed-left w-8/12 xs:w-full'>
                 <NewPost currentUser={currentUserInfo} />
                 <div className='show'>
-                  {allNewsfeedPosts.map((item) => {
+                  {allNewsfeedPosts.map((item, index) => {
                     return (
-                      <Fragment key={item._id}>
+                      <div key={item._id}>
+                        {index === allNewsfeedPosts.length - 3 && (
+                          <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                        )}
                         {item.type === 'Post' ? (
                           <OtherPost
                             key={item._id}
@@ -165,7 +186,7 @@ const NewsFeed = () => {
                             currentUser={currentUserInfo}
                           />
                         )}
-                      </Fragment>
+                      </div>
                     );
                   })}
                 </div>

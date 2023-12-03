@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,6 +16,7 @@ import {
   faInstagram,
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
@@ -33,7 +34,7 @@ import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
 
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
-import { useAppSelector } from '@/hooks/special';
+import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useFollowUser } from '@/hooks/mutation';
 import { IExperience } from '@/types';
 import StyleProvider from './cssProfile';
@@ -49,13 +50,16 @@ const Profile = ({ userID }: IProfile) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
+  const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
+    useUserPostsData(userID);
 
   const [experiences, setExperiences] = useState<IExperience[]>([]);
 
@@ -94,6 +98,14 @@ const Profile = ({ userID }: IProfile) => {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  const fetchNextPosts = useCallback(() => {
+    if (hasNextUserPosts && !isFetchingNextUserPosts) {
+      fetchNextUserPosts();
+    }
+  }, [hasNextUserPosts, isFetchingNextUserPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextPosts, { threshold: 0 });
+
   useEffect(() => {
     document.title = isLoadingOtherUserInfo ? 'DevHub' : `${otherUserInfo.name} - DevHub`;
     if (!isLoadingOtherUserInfo && otherUserInfo) {
@@ -103,33 +115,27 @@ const Profile = ({ userID }: IProfile) => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isLoadingUserPosts || isFetchingUserPosts || isLoadingOtherUserInfo ? (
+      {isLoadingUserPosts || isLoadingOtherUserInfo ? (
         <LoadingProfileComponent />
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center w-full max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center items-center w-full h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
-                src={getImageURL(otherUserInfo.cover_image)}
+                src={getImageURL(otherUserInfo.cover_image) ?? '/images/ProfilePage/cover.jpg'}
+                preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
               />
             </div>
-            <div className='avatar rounded-full overflow-hidden object-cover flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
+            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-[30%] left-[15%] xs:left-3 xs:w-28 xs:h-28 xs:-bottom-8'>
               <Image
                 src={getImageURL(otherUserInfo.user_image, 'avatar')}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
                 preview={{
-                  src: getImageURL(otherUserInfo.user_image)
+                  src: getImageURL(otherUserInfo.user_image),
+                  mask: <FontAwesomeIcon icon={faEye} />
                 }}
               />
             </div>
@@ -156,7 +162,7 @@ const Profile = ({ userID }: IProfile) => {
               <Col span={6}>
                 <div className='chat_Follow flex justify-around items-center w-full h-full'>
                   <ButtonActiveHover
-                    className='follow px-6 h-11 rounded-full'
+                    className='follow px-6 h-11 border-2 border-solid'
                     type='default'
                     loading={isLoadingFollowUser}
                     onClick={() => {
@@ -168,10 +174,10 @@ const Profile = ({ userID }: IProfile) => {
               </Col>
             </Row>
             <div className='id_address_join xs:pl-3'>
-              <span className='id item mr-2'>@{otherUserInfo.alias ?? 'user'}</span>
+              <span className='id item mr-2'>@{otherUserInfo.alias || 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                {otherUserInfo.location ?? 'Global'}
+                {otherUserInfo.location || 'Global'}
               </span>
               <span className='join'>
                 <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
@@ -306,24 +312,27 @@ const Profile = ({ userID }: IProfile) => {
                             description='No posts available'
                           />
                         ) : (
-                          userPosts.map((item) =>
-                            item.type === 'Share' ? (
-                              <OtherPostShare
-                                key={item._id}
-                                postShared={item}
-                                postAuthor={otherUserInfo}
-                                postSharer={item.post_attributes.owner_post!}
-                                currentUser={currentUserInfo}
-                              />
-                            ) : (
-                              <OtherPost
-                                key={item._id}
-                                post={item}
-                                postAuthor={otherUserInfo}
-                                currentUser={currentUserInfo}
-                              />
-                            )
-                          )
+                          userPosts.map((item, index) => (
+                            <div className='relative' key={item._id}>
+                              {index === userPosts.length - 3 && (
+                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                              )}
+                              {item.type === 'Share' ? (
+                                <OtherPostShare
+                                  postShared={item}
+                                  postAuthor={otherUserInfo}
+                                  postSharer={item.post_attributes.owner_post!}
+                                  currentUser={currentUserInfo}
+                                />
+                              ) : (
+                                <OtherPost
+                                  post={item}
+                                  postAuthor={otherUserInfo}
+                                  currentUser={currentUserInfo}
+                                />
+                              )}
+                            </div>
+                          ))
                         )}
                       </div>
                     )

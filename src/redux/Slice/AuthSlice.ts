@@ -6,10 +6,7 @@ import { AUTHORIZATION } from '@/util/constants/SettingSystem';
 const getUserID = async () => {
   try {
     const pathname = window.location.pathname;
-    if (
-      (pathname === '/login' && !localStorage.getItem(AUTHORIZATION)) ||
-      (pathname === '/register' && !localStorage.getItem(AUTHORIZATION))
-    )
+    if (!localStorage.getItem(AUTHORIZATION) || pathname === '/register' || pathname === '/login')
       return 'Méo có UserID!';
 
     const { data } = await userService.getUserInfo();
@@ -23,7 +20,11 @@ const getUserID = async () => {
 
 const initialState = {
   userID: await getUserID(),
-  loading: false
+  loading: false,
+  countErrorLogin: 0,
+  errorLogin: '',
+  countErrorRegister: 0,
+  errorRegister: ''
 };
 
 const authSlice = createSlice({
@@ -35,9 +36,15 @@ const authSlice = createSlice({
     },
     setLoading: (state, action) => {
       return { ...state, loading: action.payload };
+    },
+    setErrorLogin: (state, action) => {
+      return { ...state, errorLogin: action.payload, countErrorLogin: state.countErrorLogin + 1 };
+    },
+    setErrorRegister: (state, action) => {
+      return { ...state, errorRegister: action.payload, countErrorRegister: state.countErrorRegister + 1 };
     }
   }
 });
 
-export const { setUserID, setLoading } = authSlice.actions;
+export const { setUserID, setLoading, setErrorLogin,setErrorRegister } = authSlice.actions;
 export default authSlice.reducer;

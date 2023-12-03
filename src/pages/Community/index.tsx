@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom';
 import { Fragment, useEffect } from 'react';
 import StyleProvider from './cssCommunity';
 import { format } from 'date-fns';
@@ -7,17 +8,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileLines, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 import { commonColor } from '@/util/cssVariable';
-import MyPost from '@/components/Post/MyPost';
+import OtherPost from '@/components/Post/OtherPost';
+import OtherPostShare from '@/components/Post/OtherPostShare';
 import NewPost from '@/components/NewPost';
-import MyPostShare from '@/components/Post/MyPostShare';
 import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
 import { useAppSelector } from '@/hooks/special';
-import { useCurrentUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo, useGetCommunityByID } from '@/hooks/fetch';
+import getImageURL from '@/util/getImageURL';
 
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
 export const CommunityAdmin = () => {
+  const communityID = useParams<{ communityID: string }>().communityID;
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -29,9 +32,13 @@ export const CommunityAdmin = () => {
     });
   }, []);
 
-  const community = useAppSelector((state) => state.community.community);
+  const { community } = useGetCommunityByID(communityID!);
 
   const { currentUserInfo } = useCurrentUserInfo();
+
+  useEffect(() => {
+    document.title = community ? community.name + ' - DevHub' : 'Community - DevHub';
+  }, [community]);
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -44,13 +51,13 @@ export const CommunityAdmin = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage}")`,
+                  backgroundImage: `url("${getImageURL(community.cover_image)}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img src={community?.communityImage} alt='avt' />
+                <img src={getImageURL(community.image)} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>
@@ -73,7 +80,7 @@ export const CommunityAdmin = () => {
                     </div>
                     <div className='members' style={{ color: themeColorSet.colorText3 }}>
                       <FontAwesomeIcon className='icon' icon={faCalendar} />
-                      <span className='ml-2'>{community.memberLength} Members</span>
+                      <span className='ml-2'>{community.member_number} Members</span>
                     </div>
                   </Space>
                 </Col>
@@ -93,19 +100,25 @@ export const CommunityAdmin = () => {
                           description={<span>No post</span>}
                         />
                       )}
-                      {community.posts.map((item: any, index: any) => {
+                      {community.posts.map((item, index) => {
                         return (
                           <Fragment key={index}>
-                            {item.PostShared && (
-                              <MyPostShare
+                            {item.type === 'Share' && (
+                              <OtherPostShare
                                 key={item._id}
-                                post={item}
-                                userInfo={currentUserInfo}
-                                postSharer={item.user}
+                                postShared={item.post_attributes.post!}
+                                postAuthor={item.post_attributes.post!.post_attributes.user}
+                                postSharer={item.post_attributes.user}
+                                currentUser={currentUserInfo}
                               />
                             )}
-                            {!item.PostShared && (
-                              <MyPost key={item._id} post={item} userInfo={currentUserInfo} />
+                            {item.type === 'Post' && (
+                              <OtherPost
+                                key={item._id}
+                                post={item}
+                                postAuthor={item.post_attributes.user}
+                                currentUser={currentUserInfo}
+                              />
                             )}
                           </Fragment>
                         );
@@ -151,7 +164,7 @@ export const CommunityAdmin = () => {
                       </span>
                     </div>
                     <div className='numberMember text-xl' style={{ fontWeight: 600 }}>
-                      {community.memberLength}
+                      {community.member_number}
                     </div>
                     <div className='titleMembers' style={{ color: themeColorSet.colorText3 }}>
                       Members
@@ -164,9 +177,9 @@ export const CommunityAdmin = () => {
                       Tags
                     </div>
                     <div className='content flex flex-wrap'>
-                      {community.tags.map((item: any, index: number) => {
+                      {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -180,10 +193,10 @@ export const CommunityAdmin = () => {
                       Admins
                     </div>
                     <div className='content'>
-                      {community.admins.map((item: any, index: number) => {
+                      {community.admins.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -212,10 +225,10 @@ export const CommunityAdmin = () => {
                       Members
                     </div>
                     <div className='content'>
-                      {community.members.map((item: any, index: number) => {
+                      {community.members.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -245,7 +258,7 @@ export const CommunityAdmin = () => {
                       Rules
                     </div>
                     <Collapse>
-                      {community.rules.map((item: any, index: number) => {
+                      {community.rules.map((item, index) => {
                         return (
                           <Panel header={index + 1 + '. ' + item.title} key={index}>
                             <p>{item.content}</p>
@@ -261,10 +274,10 @@ export const CommunityAdmin = () => {
                       Recently Joined
                     </div>
                     <div className='content'>
-                      {community.recentlyJoin.map((item: any, index: number) => {
+                      {community.recently_joined.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -298,6 +311,7 @@ export const CommunityAdmin = () => {
 };
 
 export const CommunityMember = () => {
+  const communityID = useParams<{ communityID: string }>().communityID;
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -309,9 +323,9 @@ export const CommunityMember = () => {
     });
   }, []);
 
-  const community = useSelector((state: any) => state.community.community);
+  const { community } = useGetCommunityByID(communityID!);
 
-  const userInfo = useSelector((state: RootState) => state.userReducer.userInfo);
+  const { currentUserInfo } = useCurrentUserInfo();
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -324,13 +338,13 @@ export const CommunityMember = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage}")`,
+                  backgroundImage: `url("${getImageURL(community.cover_image)}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img src={community?.communityImage} alt='avt' />
+                <img src={getImageURL(community.image)} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>
@@ -353,7 +367,7 @@ export const CommunityMember = () => {
                     </div>
                     <div className='members' style={{ color: themeColorSet.colorText3 }}>
                       <FontAwesomeIcon className='icon' icon={faCalendar} />
-                      <span className='ml-2'>{community.memberLength} Members</span>
+                      <span className='ml-2'>{community.member_number} Members</span>
                     </div>
                   </Space>
                 </Col>
@@ -365,7 +379,7 @@ export const CommunityMember = () => {
                     // onChange={onChange}
                   >
                     <TabPane tab='All' key='1' className='mt-10'>
-                      <NewPost userInfo={userInfo} />
+                      <NewPost currentUser={currentUserInfo} />
                       {community.posts.length === 0 && (
                         <Empty
                           className='mt-10 mb-20'
@@ -373,18 +387,26 @@ export const CommunityMember = () => {
                           description={<span>No post</span>}
                         />
                       )}
-                      {community.posts.map((item: any, index: any) => {
+                      {community.posts.map((item, index) => {
                         return (
                           <Fragment key={index}>
-                            {item.PostShared && (
-                              <MyPostShare
+                            {item.type === 'Share' && (
+                              <OtherPostShare
                                 key={item._id}
-                                post={item}
-                                userInfo={userInfo}
-                                postSharer={item.user}
+                                postShared={item.post_attributes.post!}
+                                postAuthor={item.post_attributes.post!.post_attributes.user}
+                                postSharer={item.post_attributes.user}
+                                currentUser={currentUserInfo}
                               />
                             )}
-                            {!item.PostShared && <MyPost key={item._id} post={item} userInfo={userInfo} />}
+                            {item.type === 'Post' && (
+                              <OtherPost
+                                key={item._id}
+                                post={item}
+                                postAuthor={item.post_attributes.user}
+                                currentUser={currentUserInfo}
+                              />
+                            )}
                           </Fragment>
                         );
                       })}
@@ -429,7 +451,7 @@ export const CommunityMember = () => {
                       </span>
                     </div>
                     <div className='numberMember text-xl' style={{ fontWeight: 600 }}>
-                      {community.memberLength}
+                      {community.member_number}
                     </div>
                     <div className='titleMembers' style={{ color: themeColorSet.colorText3 }}>
                       Members
@@ -442,9 +464,9 @@ export const CommunityMember = () => {
                       Tags
                     </div>
                     <div className='content flex flex-wrap'>
-                      {community.tags.map((item: any, index: number) => {
+                      {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -458,10 +480,10 @@ export const CommunityMember = () => {
                       Admins
                     </div>
                     <div className='content'>
-                      {community.admins.map((item: any, index: number) => {
+                      {community.admins.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -490,10 +512,10 @@ export const CommunityMember = () => {
                       Members
                     </div>
                     <div className='content'>
-                      {community.members.map((item: any, index: number) => {
+                      {community.members.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -523,7 +545,7 @@ export const CommunityMember = () => {
                       Rules
                     </div>
                     <Collapse>
-                      {community.rules.map((item: any, index: number) => {
+                      {community.rules.map((item, index) => {
                         return (
                           <Panel header={index + 1 + '. ' + item.title} key={index}>
                             <p>{item.content}</p>
@@ -539,10 +561,10 @@ export const CommunityMember = () => {
                       Recently Joined
                     </div>
                     <div className='content'>
-                      {community.recentlyJoin.map((item: any, index: number) => {
+                      {community.recently_joined.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -576,6 +598,7 @@ export const CommunityMember = () => {
 };
 
 export const CommunityNoMember = () => {
+  const communityID = useParams<{ communityID: string }>().communityID;
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -587,9 +610,9 @@ export const CommunityNoMember = () => {
     });
   }, []);
 
-  const community = useSelector((state: any) => state.community.community);
+  const { community } = useGetCommunityByID(communityID!);
 
-  const userInfo = useSelector((state: RootState) => state.userReducer.userInfo);
+  const { currentUserInfo } = useCurrentUserInfo();
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -602,13 +625,13 @@ export const CommunityNoMember = () => {
               <div
                 className='cover w-full h-80 rounded-br-lg rounded-bl-lg'
                 style={{
-                  backgroundImage: `url("${community?.coverImage}")`,
+                  backgroundImage: `url("${getImageURL(community.cover_image)}")`,
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center'
                 }}></div>
               <div className='avatar rounded-full overflow-hidden object-fill flex'>
-                <img src={community?.communityImage} alt='avt' />
+                <img src={getImageURL(community.image)} alt='avt' />
               </div>
             </Col>
             <Col offset={3} span={18}>
@@ -631,7 +654,7 @@ export const CommunityNoMember = () => {
                     </div>
                     <div className='members' style={{ color: themeColorSet.colorText3 }}>
                       <FontAwesomeIcon className='icon' icon={faCalendar} />
-                      <span className='ml-2'>{community.memberLength} Members</span>
+                      <span className='ml-2'>{community.member_number} Members</span>
                     </div>
                   </Space>
                 </Col>
@@ -643,7 +666,7 @@ export const CommunityNoMember = () => {
                     // onChange={onChange}
                   >
                     <TabPane tab='All' key='1' className='mt-10'>
-                      <NewPost userInfo={userInfo} />
+                      <NewPost currentUser={currentUserInfo} />
                       {community.posts.length === 0 && (
                         <Empty
                           className='mt-10 mb-20'
@@ -651,18 +674,26 @@ export const CommunityNoMember = () => {
                           description={<span>No post</span>}
                         />
                       )}
-                      {community.posts.map((item: any, index: any) => {
+                      {community.posts.map((item, index) => {
                         return (
                           <Fragment key={index}>
-                            {item.PostShared && (
-                              <MyPostShare
+                            {item.type === 'Share' && (
+                              <OtherPostShare
                                 key={item._id}
-                                post={item}
-                                userInfo={userInfo}
-                                postSharer={item.user}
+                                postShared={item.post_attributes.post!}
+                                postAuthor={item.post_attributes.post!.post_attributes.user}
+                                postSharer={item.post_attributes.user}
+                                currentUser={currentUserInfo}
                               />
                             )}
-                            {!item.PostShared && <MyPost key={item._id} post={item} userInfo={userInfo} />}
+                            {item.type === 'Post' && (
+                              <OtherPost
+                                key={item._id}
+                                post={item}
+                                postAuthor={item.post_attributes.user}
+                                currentUser={currentUserInfo}
+                              />
+                            )}
                           </Fragment>
                         );
                       })}
@@ -707,7 +738,7 @@ export const CommunityNoMember = () => {
                       </span>
                     </div>
                     <div className='numberMember text-xl' style={{ fontWeight: 600 }}>
-                      {community.memberLength}
+                      {community.member_number}
                     </div>
                     <div className='titleMembers' style={{ color: themeColorSet.colorText3 }}>
                       Members
@@ -720,9 +751,9 @@ export const CommunityNoMember = () => {
                       Tags
                     </div>
                     <div className='content flex flex-wrap'>
-                      {community.tags.map((item: any, index: number) => {
+                      {community.tags.map((item, index) => {
                         return (
-                          <span className='tagItem px-4 py-2 mr-2' key={index}>
+                          <span className='tagItem px-4 py-2 mr-2 rounded-md' key={index}>
                             {item}
                           </span>
                         );
@@ -736,10 +767,10 @@ export const CommunityNoMember = () => {
                       Admins
                     </div>
                     <div className='content'>
-                      {community.admins.map((item: any, index: number) => {
+                      {community.admins.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -768,10 +799,10 @@ export const CommunityNoMember = () => {
                       Members
                     </div>
                     <div className='content'>
-                      {community.members.map((item: any, index: number) => {
+                      {community.members.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'
@@ -801,7 +832,7 @@ export const CommunityNoMember = () => {
                       Rules
                     </div>
                     <Collapse>
-                      {community.rules.map((item: any, index: number) => {
+                      {community.rules.map((item, index) => {
                         return (
                           <Panel header={index + 1 + '. ' + item.title} key={index}>
                             <p>{item.content}</p>
@@ -817,10 +848,10 @@ export const CommunityNoMember = () => {
                       Recently Joined
                     </div>
                     <div className='content'>
-                      {community.recentlyJoin.map((item: any, index: number) => {
+                      {community.recently_joined.map((item, index) => {
                         return (
                           <div className='item flex items-center px-2 py-2' key={index}>
-                            <Avatar src={item.userImage} />
+                            <Avatar src={getImageURL(item.user_image)} />
                             <Space
                               size={1}
                               direction='vertical'

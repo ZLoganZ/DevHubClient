@@ -11,15 +11,15 @@ const StyleProvider = styled.div`
     &.active {
       background-color: ${(props) => props.theme.colorBg4};
     }
-    :hover {
+    &:hover {
       background-color: ${(props) => props.theme.colorBg4};
       cursor: pointer;
-      transition: all 0.5s;
+      transition: background-color 0.3s ease;
     }
   }
   .inputlink {
     box-shadow: none;
-    :hover {
+    &:hover {
       border-color: ${commonColor.colorBlue1};
     }
   }

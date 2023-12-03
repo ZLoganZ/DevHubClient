@@ -11,7 +11,7 @@ import { getDateTimeToNow } from '@/util/formatDateTime';
 import { useAppSelector } from '@/hooks/special';
 import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPost';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 interface IPostProps {
   post: IPost;
@@ -21,7 +21,7 @@ interface IPostProps {
 
 // -----------------------------------------------------
 
-const OtherPost: React.FC<IPostProps> = ({ post, postAuthor, currentUser }) => {
+const OtherPost = forwardRef<HTMLDivElement, IPostProps>(({ post, postAuthor, currentUser }, ref) => {
   const link = post.post_attributes.url;
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -57,11 +57,16 @@ const OtherPost: React.FC<IPostProps> = ({ post, postAuthor, currentUser }) => {
   ];
 
   return (
-    <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
+    <StyleProvider ref={ref} theme={themeColorSet} className='rounded-lg mb-4'>
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={post.post_attributes.user} postID={post._id} date={isShowTime} />
+            <UserInfoPost
+              userInfo={post.post_attributes.user}
+              postID={post._id}
+              date={isShowTime}
+              visibility={post.visibility}
+            />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>
@@ -87,6 +92,6 @@ const OtherPost: React.FC<IPostProps> = ({ post, postAuthor, currentUser }) => {
       </div>
     </StyleProvider>
   );
-};
+});
 
 export default OtherPost;

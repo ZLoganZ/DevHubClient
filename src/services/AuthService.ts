@@ -25,19 +25,19 @@ class AuthService extends BaseService {
     return this.post(`/auth/logout`);
   };
   forgotPassword = (email: string) => {
-    return this.post(`/forgot`, email);
+    return this.post(`/auth/forgot`, email);
   };
   verifyCode = (data: IVerifyCode) => {
-    return this.post(`/verify`, data);
+    return this.post(`/auth/verify`, data);
   };
   checkVerifyCode = (data: IForgotPassword) => {
-    return this.post(`/checkVerify`, data);
+    return this.post(`/auth/checkVerify`, data);
   };
   resetPassword = (data: IResetPassword) => {
-    return this.post(`/reset`, data);
+    return this.post(`/auth/reset`, data);
   };
   checkResetPassword = (data: IForgotPassword) => {
-    return this.post(`/checkReset`, data);
+    return this.post(`/auth/checkReset`, data);
   };
 }
 

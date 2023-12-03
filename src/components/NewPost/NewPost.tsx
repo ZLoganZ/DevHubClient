@@ -1,6 +1,5 @@
-import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload } from 'antd';
+import { Avatar, Button, ConfigProvider, Input, message, Popover, Upload, Select } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import ReactQuill from 'react-quill';
@@ -19,7 +18,7 @@ import { textToHTML } from '@/util/convertText';
 import { toolbarOptions } from '@/util/constants/SettingSystem';
 import { useCreatePost } from '@/hooks/mutation';
 import { useAppSelector } from '@/hooks/special';
-import { IEmoji, IUserInfo } from '@/types';
+import { IEmoji, IUserInfo, Visibility } from '@/types';
 import { imageService } from '@/services/ImageService';
 import StyleProvider from './cssNewPost';
 
@@ -36,13 +35,16 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateCreatePost, isLoadingCreatePost, isSuccessCreatePost, isErrorCreatePost } = useCreatePost();
+  const { mutateCreatePost } = useCreatePost();
 
   const [random, setRandom] = useState(uuidv4().replace(/-/g, ''));
 
   const [file, setFile] = useState<File>();
 
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [visibility, setVisibility] = useState<Visibility>('public'); // ['public', 'private', 'friend']
+  const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
 
   const ReactQuillRef = useRef<ReactQuill | null>(null);
 
@@ -70,46 +72,42 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
     });
   };
 
-  const form = useForm({
-    defaultValues: {
-      title: ''
-    }
-  });
-
-  const onSubmit = useCallback(
-    async (values: { title: string }) => {
-      if (content === '<p><br></p>' || content === '<p></p>') {
-        error();
-      } else {
-        const formData = new FormData();
-        if (file) {
-          const result = await handleUploadImage(file);
-          formData.append('image', result.url);
-        }
-
-        mutateCreatePost({
-          title: values.title,
-          content: content,
-          image: formData.get('image')?.toString()
-        });
+  const onSubmit = useCallback(async () => {
+    if (content === '<p><br></p>' || content === '<p></p>' || content === '') {
+      error();
+    } else {
+      setIsLoadingCreatePost(true);
+      const formData = new FormData();
+      if (file) {
+        const result = await handleUploadImage(file);
+        formData.append('image', result.url);
       }
-    },
-    [content, file]
-  );
 
-  useEffect(() => {
-    if (isSuccessCreatePost) {
-      setContent('');
-      setRandom(uuidv4().replace(/-/g, ''));
-      setFile(undefined);
-      form.setValue('title', '');
-      void messageApi.success('Create post successfully');
-    }
+      mutateCreatePost(
+        {
+          title,
+          content,
+          images: formData.get('image') ? [formData.get('image')?.toString()] : undefined,
+          visibility
+        },
+        {
+          onSettled: () => {
+            setIsLoadingCreatePost(false);
+          },
+          onSuccess: () => {
+            setContent('');
+            setRandom(uuidv4().replace(/-/g, ''));
+            setFile(undefined);
 
-    if (isErrorCreatePost) {
-      void messageApi.error('Create post failed');
+            void messageApi.success('Create post successfully');
+          },
+          onError: () => {
+            void messageApi.error('Create post failed');
+          }
+        }
+      );
     }
-  }, [isSuccessCreatePost, isErrorCreatePost]);
+  }, [content, file, visibility, title]);
 
   const handleUploadImage = async (file: File) => {
     const formData = new FormData();
@@ -120,6 +118,18 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
       status: 'done'
     };
   };
+
+  // const handleUploadImages = async (files: File[]) => {
+  //   const formData = new FormData();
+  //   files.forEach((file) => {
+  //     formData.append('images', file);
+  //   });
+  //   const { data } = await imageService.uploadImages(formData);
+  //   return {
+  //     url: data.metadata,
+  //     status: 'done'
+  //   };
+  // };
 
   const beforeUpload = (file: File) => {
     const isLt2M = file.size / 1024 / 1024 < 3;
@@ -156,7 +166,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                 style={{ borderColor: themeColorSet.colorText3 }}
                 maxLength={150}
                 onChange={(e) => {
-                  form.setValue('title', e.target.value);
+                  setTitle(e.target.value);
                 }}
               />
             </div>
@@ -198,6 +208,16 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                   <FontAwesomeIcon className='item mr-3 ml-3' size='lg' icon={faFaceSmile} />
                 </span>
               </Popover>
+              <Select
+                className='w-24'
+                defaultValue='Public'
+                onChange={(value) => setVisibility(value.toLowerCase() as Visibility)}
+                options={[
+                  { value: 'public', label: 'Public' },
+                  { value: 'private', label: 'Private' },
+                  { value: 'friend', label: 'Friend' }
+                ]}
+              />
               <span>
                 <Upload
                   accept='image/png, image/jpeg, image/jpg'
@@ -218,10 +238,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
               </span>
             </div>
             <div className='newPostFooter__right'>
-              <ButtonActiveHover
-                rounded
-                onClick={() => form.handleSubmit(onSubmit)}
-                loading={isLoadingCreatePost}>
+              <ButtonActiveHover type='primary' onClick={onSubmit} loading={isLoadingCreatePost}>
                 <span style={{ color: commonColor.colorWhite1 }}>
                   {isLoadingCreatePost ? 'Creating..' : 'Create'}
                 </span>

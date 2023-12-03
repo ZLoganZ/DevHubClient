@@ -28,10 +28,10 @@ const StyleProvider = styled.div`
       .btnEditProfile {
         color: ${(props) => props.theme.colorText1};
         background-color: ${(props) => props.theme.colorBg2};
-        :hover {
+        &:hover {
           color: ${commonColor.colorBlue1};
           cursor: pointer;
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
       }
     }
@@ -40,7 +40,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText3};
     .item {
       display: inline-block;
-      ::after {
+      &::after {
         content: '•';
         margin-left: 0.5rem;
       }
@@ -52,9 +52,8 @@ const StyleProvider = styled.div`
       border-radius: 0.8rem;
       font-size: 0.8rem;
       font-weight: 500;
-      :hover {
+      &:hover {
         cursor: pointer;
-        transition: all 0.3s;
       }
     }
   }
@@ -62,7 +61,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText3};
     .item {
       display: inline-block;
-      ::after {
+      &::after {
         content: '•';
         margin-left: 0.5rem;
       }
@@ -77,17 +76,17 @@ const StyleProvider = styled.div`
   .contact {
     .item {
       background-color: ${(props) => props.theme.colorBg3};
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg4};
         cursor: pointer;
-        transition: all 0.3s;
+        transition: background-color 0.3s ease;
       }
     }
   }
   .mainContain {
     .renderRepositoryIem {
       cursor: pointer;
-      :hover {
+      &:hover {
         .top {
           .name {
             text-decoration: underline;

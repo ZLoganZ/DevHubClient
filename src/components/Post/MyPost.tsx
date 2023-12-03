@@ -83,6 +83,7 @@ const MyPost: React.FC<IPostProps> = ({ post, postAuthor }) => {
                 title={post.post_attributes.title!}
                 content={post.post_attributes.content!}
                 image={post.post_attributes.images}
+                visibility={post.visibility}
               />
             )
           })
@@ -114,7 +115,12 @@ const MyPost: React.FC<IPostProps> = ({ post, postAuthor }) => {
       <div className='post px-4 py-3'>
         <div className='postHeader flex justify-between items-center'>
           <div className='postHeader__left'>
-            <UserInfoPost userInfo={postAuthor} postID={post._id} date={isShowTime} />
+            <UserInfoPost
+              userInfo={postAuthor}
+              postID={post._id}
+              date={isShowTime}
+              visibility={post.visibility}
+            />
           </div>
           <div className='postHeader__right'>
             <div className='icon'>

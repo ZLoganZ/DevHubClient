@@ -1,3 +1,5 @@
+import type { ModalFuncProps } from 'antd';
+
 export interface IUserLogin {
   email: string;
   password: string;
@@ -110,7 +112,8 @@ export interface TypeOfLink {
 export interface ICreatePost {
   title: string;
   content: string;
-  image?: string;
+  visibility: Visibility;
+  images?: (string | undefined)[];
 }
 
 export interface IUpdatePost {
@@ -120,6 +123,7 @@ export interface IUpdatePost {
 
 export interface ISharePost {
   post: string;
+  visibility: Visibility;
   owner_post: string;
 }
 
@@ -128,13 +132,14 @@ type TypeofPost = 'Post' | 'Share';
 export interface IPost {
   _id: string;
   type: TypeofPost;
+  visibility: Visibility;
   post_attributes: {
     user: IUserInfo;
 
     //if type is post
-    title?: string;
-    content?: string;
-    images?: string[];
+    title: string;
+    content: string;
+    images: string[];
     url?: TypeOfLink;
 
     //if type is share
@@ -166,6 +171,10 @@ export interface ICreateComment {
   type: TypeofComment;
   post: string;
   parent?: string;
+}
+
+export interface IImageResponse {
+  key: string;
 }
 
 export interface ICreateLikeComment {
@@ -256,7 +265,7 @@ export interface IUpdateConversation extends IConversation {
   typeUpdate: TypeofUpdateConversation;
 }
 
-type TypeofMessage = 'text' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
+type TypeofMessage = 'text' | 'image' | 'notification' | 'audio' | 'file' | 'voice' | 'video';
 
 export interface IMessage {
   _id: string;
@@ -265,7 +274,7 @@ export interface IMessage {
   sender: IUserInfo;
   content: string;
   isSending?: boolean;
-  image?: string;
+  images?: string[];
   createdAt: string;
 }
 
@@ -284,9 +293,6 @@ export interface ICalled {
   createdAt: string;
 }
 
-export interface ImageResponse {
-  key: string;
-}
 export interface IEmoji {
   id: string;
   name: string;
@@ -308,4 +314,41 @@ export interface ISocketCall {
   typeofConversation: TypeofConversation;
   conversation_id: string;
   conversation_name: string;
+}
+
+export type ModalType =
+  | {
+      destroy: () => void;
+      update: (configUpdate: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
+      then<T>(resolve: (confirmed: boolean) => T, reject: VoidFunction): Promise<T>;
+    }
+  | undefined;
+
+export type Visibility = 'public' | 'private' | 'member' | 'friend';
+
+export interface ICommunity {
+  name: string;
+  description: string;
+  image: string;
+  cover_image: string;
+  about: string;
+  tags: string[];
+  rules: {
+    title: string;
+    content: string;
+  }[];
+  visibility: Visibility;
+  creator: IUserInfo;
+  posts: IPost[];
+  members: IUserInfo[];
+  recently_joined: IUserInfo[];
+  admins: IUserInfo[];
+  waitlist_users: IUserInfo[];
+  waitlist_posts: IPost[];
+  post_number: number;
+  member_number: number;
+  admin_number: number;
+  waitlist_user_number: number;
+  waitlist_post_number: number;
+  createdAt: string;
 }

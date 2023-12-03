@@ -1,3 +1,4 @@
+import { custom_scrollBar } from '@/util/cssVariable';
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
@@ -9,10 +10,10 @@ const StyleProvider = styled.div`
       border-radius: 50%;
       height: 20px;
       width: 20px;
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg3};
         transform: scale(1.1);
-        transition: 0.3s;
+        transition: transform 0.3s ease, background-color 0.3s ease;
       }
     }
   }
@@ -22,7 +23,7 @@ const StyleProvider = styled.div`
     position: absolute;
     width: 52px;
     height: 30px;
-    top: 9px;
+    top: -9px;
   }
   .typing-indicator div {
     position: absolute;
@@ -55,6 +56,9 @@ const StyleProvider = styled.div`
     75% {
       transform: translateY(0);
     }
+  }
+  .list-image {
+    ${custom_scrollBar}
   }
 `;
 

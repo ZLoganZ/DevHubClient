@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyleProvider = styled.div`
   .messageButton,
@@ -8,7 +8,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText1};
     &:hover {
       background-color: ${(props) => props.theme.colorBg4};
-      transition: all 0.3s;
+      transition: background-color 0.3s ease;
     }
   }
 
@@ -20,18 +20,14 @@ const StyleProvider = styled.div`
   }
 
   .letter {
-    transition: 0.4s;
+    transition: transform 0.4s ease;
     transform: translateX(0);
     color: ${(props) => props.theme.colorText1};
   }
 
   .letter:hover {
     transform: translateY(-1rem);
-    background: -webkit-linear-gradient(
-      120deg,
-      hsl(19, 90%, 52%),
-      hsl(56, 100%, 50%)
-    );
+    background: -webkit-linear-gradient(120deg, hsl(19, 90%, 52%), hsl(56, 100%, 50%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

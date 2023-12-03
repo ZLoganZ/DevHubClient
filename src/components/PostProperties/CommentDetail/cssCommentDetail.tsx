@@ -4,9 +4,9 @@ const StyleProvider = styled.div`
   .commentDetail {
     a {
       color: ${(props) => props.theme.colorText1};
-      :hover {
+      &:hover {
         text-decoration: underline;
-        transition: all 0.5s;
+        transition: text-decoration 0.5s; 
       }
     }
   }

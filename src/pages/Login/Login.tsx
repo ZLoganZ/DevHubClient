@@ -1,6 +1,7 @@
+import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-regular-svg-icons';
-import { ConfigProvider, Form, Input } from 'antd';
+import { ConfigProvider, Form, Input, App } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
@@ -10,7 +11,7 @@ import { LOGIN_SAGA, LOGIN_WITH_GOOGLE_SAGA } from '@/redux/ActionSaga/AuthActio
 import { setLoading } from '@/redux/Slice/AuthSlice';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
 import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
-import { darkThemeSet } from '@/util/cssVariable';
+import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { IUserLogin } from '@/types';
 
@@ -18,11 +19,16 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import StyleProvider from './cssLogin';
 
 const Login = () => {
+  useAppSelector((state) => state.theme.changed);
+  const { themeColorSet } = getTheme();
   const dispatch = useAppDispatch();
+  const { notification } = App.useApp();
 
-  const { loading } = useAppSelector((state) => state.auth);
+  const { loading, errorLogin, countErrorLogin } = useAppSelector((state) => state.auth);
 
   const location = useLocation();
+
+  const countRef = useRef(countErrorLogin);
 
   const handleSignInWithGoogle = useGoogleLogin({
     onSuccess: (tokenResponse) => {
@@ -86,18 +92,28 @@ const Login = () => {
     dispatch(LOGIN_SAGA(values));
   };
 
+  useEffect(() => {
+    if (errorLogin && countRef.current < countErrorLogin) {
+      notification.error({
+        message: 'Login failed!',
+        description: errorLogin
+      });
+      countRef.current = countErrorLogin;
+    }
+  }, [countErrorLogin]);
+
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorTextBase: darkThemeSet.colorText2,
-          colorBgBase: darkThemeSet.colorBg2,
+          colorTextBase: themeColorSet.colorText2,
+          colorBgBase: themeColorSet.colorBg2,
           lineWidth: 0,
           controlHeight: 40,
           borderRadius: 0
         }
       }}>
-      <StyleProvider>
+      <StyleProvider theme={themeColorSet}>
         <div className='login'>
           <div className='loginForm'>
             <div className='welcomeBack mb-12'>
@@ -125,6 +141,7 @@ const Login = () => {
                   }
                 ]}>
                 <Input
+                  className='rounded-md'
                   placeholder='Email'
                   allowClear
                   prefix={<MailOutlined />}
@@ -142,17 +159,14 @@ const Login = () => {
                   }
                 ]}>
                 <Input.Password
+                  className='rounded-md'
                   placeholder='Password'
                   onChange={(e) => {
                     form.setValue('password', e.target.value);
                   }}
                 />
               </Form.Item>
-              <ButtonActiveHover
-                loading={loading}
-                block
-                type='primary'
-                className='btn h-9 mb-4 mt-3 font-bold'>
+              <ButtonActiveHover loading={loading} type='primary' className='btn h-9 mb-4 mt-3 font-bold'>
                 Login
               </ButtonActiveHover>
               <NavLink to='/forgot'>
@@ -161,19 +175,19 @@ const Login = () => {
             </Form>
             <div className='anotherLogin mt-10'>
               <div className='title relative'>
-                <span className='absolute' style={{ color: darkThemeSet.colorText2 }}>
+                <span className='absolute' style={{ color: themeColorSet.colorText2 }}>
                   Or
                 </span>
-                <hr />
+                <hr style={{ borderColor: themeColorSet.colorText2 }} />
               </div>
-              <div className='loginTool mt-10 w-full'>
-                <div className='google h-10' onClick={() => handleSignInWithGoogle()}>
+              <div className='loginTool mt-10 w-full flex flex-col gap-3'>
+                <div className='google h-10 rounded-md' onClick={() => handleSignInWithGoogle()}>
                   <span className='icon mr-2'>
                     <img src='/SVG/google.svg' alt='google' />
                   </span>
                   <span>Continue with Gmail</span>
                 </div>
-                <div className='github mt-4 h-10' onClick={() => openPopup()}>
+                <div className='github h-10 rounded-md' onClick={() => openPopup()}>
                   <span className='icon mr-2'>
                     <img src='/SVG/github.svg' alt='github' />
                   </span>
@@ -181,7 +195,6 @@ const Login = () => {
                 </div>
               </div>
             </div>
-
             <div className='noAccount text-center mt-8'>
               <span>Don't you have an account yet? </span>
               <span className='signUp ml-1'>

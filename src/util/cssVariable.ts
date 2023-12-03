@@ -101,6 +101,7 @@ export const custom_scrollBar = css`
   &::-webkit-scrollbar {
     border-radius: 0.5rem;
     width: 10px;
+    height: 10px;
   }
 
   &::-webkit-scrollbar-track {
@@ -112,8 +113,6 @@ export const custom_scrollBar = css`
     border-radius: 8px;
     background-color: ${(props) => props.theme.colorBg4};
   }
-
-  // make scrollbar display on the right side 12px
 `;
 
 export const custom_scrollBar_modal = css`

@@ -1,7 +1,7 @@
 import '@livekit/components-styles';
 import { LiveKitRoom, useTracks, GridLayout, RoomAudioRenderer, ControlBar } from '@livekit/components-react';
 import { Track } from 'livekit-client';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useMessageCall } from '@/hooks/fetch';
@@ -20,11 +20,13 @@ export const VideoCall = () => {
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const onDisconnected = () => {
-    chatSocket.emit(Socket.LEAVE_VIDEO_CALL, { ...dataVideo });
-    window.close();
+    if (!window.closed) {
+      chatSocket.emit(Socket.LEAVE_VIDEO_CALL, { ...dataVideo });
+      window.close();
+    }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     chatSocket.on(Socket.END_VIDEO_CALL, (data: ISocketCall) => {
       if (data.conversation_id === conversationID && !window.closed) {
         window.close();
@@ -59,11 +61,13 @@ export const VoiceCall = () => {
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
   const onDisconnected = () => {
-    chatSocket.emit(Socket.LEAVE_VOICE_CALL, { ...dataAudio });
-    window.close();
+    if (!window.closed) {
+      chatSocket.emit(Socket.LEAVE_VOICE_CALL, { ...dataAudio });
+      window.close();
+    }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     chatSocket.on(Socket.END_VOICE_CALL, (data: ISocketCall) => {
       if (data.conversation_id === conversationID && !window.closed) {
         window.close();

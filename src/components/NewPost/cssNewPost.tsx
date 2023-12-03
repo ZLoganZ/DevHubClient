@@ -25,9 +25,9 @@ const StyleProvider = styled.div`
       .name {
         a {
           color: ${(props) => props.theme.colorText1};
-          :hover {
+          &:hover {
             text-decoration: underline;
-            transition: all 0.5s;
+            transition: text-decoration 0.5s;
           }
         }
       }
@@ -38,10 +38,10 @@ const StyleProvider = styled.div`
       .emoji,
       .code {
         color: ${(props) => props.theme.colorText3};
-        :hover {
+        &:hover {
           cursor: pointer;
           color: ${(props) => props.theme.colorText2};
-          transition: all 0.5s;
+          transition: color 0.5s;
         }
       }
     }

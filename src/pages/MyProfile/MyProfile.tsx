@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +17,7 @@ import {
   faInstagram,
   faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import { format } from 'date-fns';
@@ -34,7 +35,7 @@ import { openDrawer } from '@/redux/Slice/DrawerHOCSlice';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useAppDispatch, useAppSelector, useIntersectionObserver } from '@/hooks/special';
 import { useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 
 import StyleProvider from './cssMyProfile';
@@ -54,9 +55,12 @@ const MyProfile = () => {
     window.open(url, '_blank', 'noreferrer');
   };
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const { isLoadingUserPosts, userPosts, isFetchingUserPosts } = useUserPostsData(userID);
+  const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
+    useUserPostsData(userID);
 
   const experiences = currentUserInfo.experiences;
 
@@ -77,6 +81,14 @@ const MyProfile = () => {
     '4': faLinkedin
   };
 
+  const fetchNextPosts = useCallback(() => {
+    if (hasNextUserPosts && !isFetchingNextUserPosts) {
+      fetchNextUserPosts();
+    }
+  }, [hasNextUserPosts, isFetchingNextUserPosts]);
+
+  useIntersectionObserver(bottomRef, fetchNextPosts, { threshold: 0 });
+
   useEffect(() => {
     if (isLoadingUserPosts) {
       window.scrollTo({
@@ -92,33 +104,27 @@ const MyProfile = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {isLoadingUserPosts || isFetchingUserPosts ? (
+      {isLoadingUserPosts ? (
         <LoadingProfileComponent />
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center w-full min-h-fit max-h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center items-center w-full h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
               <Image
-                src={getImageURL(currentUserInfo.cover_image)}
+                src={getImageURL(currentUserInfo.cover_image) ?? '/images/ProfilePage/cover.jpg'}
+                preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
               />
             </div>
-            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-24 left-60 xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
+            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-[30%] left-[15%] xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
               <Image
                 src={getImageURL(currentUserInfo.user_image, 'avatar')}
                 alt='avt'
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
+                style={{ objectFit: 'cover' }}
                 preview={{
-                  src: getImageURL(currentUserInfo.user_image)
+                  src: getImageURL(currentUserInfo.user_image),
+                  mask: <FontAwesomeIcon icon={faEye} />
                 }}
               />
             </div>
@@ -162,10 +168,10 @@ const MyProfile = () => {
               </Col>
             </Row>
             <div className='id_address_join xs:pl-3'>
-              <span className='id item mr-2'>@{currentUserInfo.alias ?? 'user'}</span>
+              <span className='id item mr-2'>@{currentUserInfo.alias || 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
-                {currentUserInfo.location ?? 'Global'}
+                {currentUserInfo.location || 'Global'}
               </span>
               <span className='join'>
                 <FontAwesomeIcon className='icon mr-2' icon={faBriefcase} />
@@ -307,18 +313,22 @@ const MyProfile = () => {
                             description='No posts available'
                           />
                         ) : (
-                          userPosts.map((item) =>
-                            item.type === 'Share' ? (
-                              <MyPostShare
-                                key={item._id}
-                                postShared={item}
-                                postAuthor={currentUserInfo}
-                                postSharer={item.post_attributes.owner_post!}
-                              />
-                            ) : (
-                              <MyPost key={item._id} post={item} postAuthor={currentUserInfo} />
-                            )
-                          )
+                          userPosts.map((item, index) => (
+                            <div key={item._id} className='relative'>
+                              {index === userPosts.length - 3 && (
+                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                              )}
+                              {item.type === 'Share' ? (
+                                <MyPostShare
+                                  postShared={item}
+                                  postAuthor={currentUserInfo}
+                                  postSharer={item.post_attributes.owner_post!}
+                                />
+                              ) : (
+                                <MyPost post={item} postAuthor={currentUserInfo} />
+                              )}
+                            </div>
+                          ))
                         )}
                       </div>
                     )

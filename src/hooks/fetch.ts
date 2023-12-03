@@ -7,6 +7,7 @@ import { postService } from '@/services/PostService';
 import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
+import { communityService } from '@/services/CommunityService';
 
 // ---------------------------FETCH HOOKS---------------------------
 
@@ -124,20 +125,38 @@ export const useAllPostsData = () => {
  * - `refetchAllNewsfeedPosts` is a function that refetches the posts data.
  */
 export const useAllNewsfeedPostsData = () => {
-  const { data, isPending, isError, isFetching, refetch } = useQuery({
-    queryKey: ['allNewsfeedPosts'],
-    queryFn: async () => {
-      const { data } = await postService.getAllPostNewsFeed();
-      return ApplyDefaults(data.metadata);
-    },
-    staleTime: Infinity,
-    enabled: window.location.pathname === '/'
-  });
+  const { data, isPending, isError, isFetching, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['allNewsfeedPosts'],
+      queryFn: async ({ pageParam }) => {
+        const { data } = await postService.getAllPostNewsFeed(pageParam);
+        return ApplyDefaults(data.metadata);
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _, __, allPageParams) => {
+        if (lastPage.length < 5) {
+          return undefined;
+        }
+        return allPageParams.length + 1;
+      },
+      select: (data) => {
+        if (data.pages.length > 4) {
+          data.pages.shift();
+        }
+
+        return data.pages.flat();
+      },
+      staleTime: Infinity,
+      enabled: window.location.pathname === '/'
+    });
 
   return {
     isLoadingAllNewsfeedPosts: isPending,
     isErrorAllNewsfeedPosts: isError,
     allNewsfeedPosts: data!,
+    hasNextNewsfeedPosts: hasNextPage,
+    fetchNextNewsfeedPosts: fetchNextPage,
+    isFetchingNextNewsfeedPosts: isFetchingNextPage,
     isFetchingAllNewsfeedPosts: isFetching,
     refetchAllNewsfeedPosts: refetch
   };
@@ -184,11 +203,21 @@ export const useAllPopularPostsData = (sort: string) => {
  * - `isFetchingUserPosts` is a boolean that indicates whether the query is currently fetching.
  */
 export const useUserPostsData = (userID: string) => {
-  const { data, isPending, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ['posts', userID],
-    queryFn: async () => {
-      const { data } = await postService.getAllPostByUserID(userID);
+    queryFn: async ({ pageParam }) => {
+      const { data } = await postService.getAllPostByUserID(userID, pageParam);
       return ApplyDefaults(data.metadata);
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
     },
     staleTime: Infinity
   });
@@ -197,7 +226,9 @@ export const useUserPostsData = (userID: string) => {
     isLoadingUserPosts: isPending,
     isErrorUserPosts: isError,
     userPosts: data!,
-    isFetchingUserPosts: isFetching
+    hasNextUserPosts: hasNextPage,
+    fetchNextUserPosts: fetchNextPage,
+    isFetchingNextUserPosts: isFetchingNextPage
   };
 };
 
@@ -383,6 +414,24 @@ export const useFollowersData = (userID: string) => {
   };
 };
 
+export const useGetAllUsersUsedToChatWith = () => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['allUsersUsedToChatWith'],
+    queryFn: async () => {
+      const { data } = await messageService.getAllUsersUsedToChatWith();
+      return data.metadata;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingAllUsersUsedToChatWith: isPending,
+    isErrorAllUsersUsedToChatWith: isError,
+    allUsersUsedToChatWith: data!,
+    isFetchingAllUsersUsedToChatWith: isFetching
+  };
+};
+
 /**
  * The `useMessagesData` function is a custom hook that fetches and returns messages data for a given
  * conversation ID.
@@ -550,6 +599,25 @@ export const useGetCalled = () => {
     isLoadingGetCalled: isPending,
     isErrorMessageCall: isError,
     calledList: data!,
+    isFetchingMessageCall: isFetching
+  };
+};
+
+export const useGetCommunityByID = (id: string) => {
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['community', id],
+    queryFn: async () => {
+      const { data } = await communityService.getCommunityByID(id);
+      return data.metadata;
+    },
+    staleTime: Infinity,
+    enabled: !!id
+  });
+
+  return {
+    isLoadingCommunity: isPending,
+    isErrorMessageCall: isError,
+    community: data!,
     isFetchingMessageCall: isFetching
   };
 };

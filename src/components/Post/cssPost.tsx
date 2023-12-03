@@ -8,7 +8,7 @@ const StyleProvider = styled.div`
     border: 1px solid ${(props) => props.theme.colorBg4};
     border-radius: 20px;
   }
-  
+
   .disableElement {
     pointer-events: none;
     opacity: 0.7;
@@ -20,10 +20,10 @@ const StyleProvider = styled.div`
       }
       .postHeader__right {
         .icon {
-          :hover {
+          &:hover {
             cursor: pointer;
             color: ${(props) => props.theme.colorText2};
-            transition: all 0.3s;
+            transition: color 0.5s;
           }
         }
       }
@@ -33,9 +33,6 @@ const StyleProvider = styled.div`
     .postFooter {
     }
   }
-
-
-
 `;
 
 export default StyleProvider;

@@ -14,10 +14,10 @@ const StyleProvider = styled.div`
           background-color: ${(props) => props.theme.colorBg2};
           color: ${(props) => props.theme.colorText2};
           border-radius: 1.5rem;
-          :hover {
+          &:hover {
             background-color: ${commonColor.colorBlue3};
             cursor: pointer;
-            transition: all 0.5s;
+            transition: background-color 0.3s ease;
           }
         }
       }

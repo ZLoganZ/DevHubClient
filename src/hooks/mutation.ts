@@ -33,26 +33,21 @@ export const useCreatePost = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutate, isPending, isError, isSuccess, error } = useMutation({
     mutationFn: async (newPost: ICreatePost) => {
       const { data } = await postService.createPost(newPost);
       return data.metadata;
     },
-    onSuccess(newPost) {
-      queryClient.setQueryData<IPost[]>(['posts', uid], (oldData) => {
-        if (!oldData) return;
-        return [newPost, ...oldData];
-      });
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], (oldData) => {
-        if (!oldData) return;
-        return [newPost, ...oldData];
-      });
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['posts', uid] });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
     mutateCreatePost: mutate,
     isLoadingCreatePost: isPending,
     isErrorCreatePost: isError,
+    errorCreatePost: error,
     isSuccessCreatePost: isSuccess
   };
 };
@@ -93,22 +88,9 @@ export const useUpdatePost = () => {
       dispatch(setLoading(false));
       dispatch(closeDrawer());
 
-      const updatePostData = (oldData: IPost[] | undefined) => {
-        if (!oldData) return;
+      queryClient.invalidateQueries({ queryKey: ['posts', updatedPost.post_attributes.user._id] });
 
-        const newData = [...oldData];
-
-        return newData.map((post) => {
-          if (post._id === updatedPost._id) {
-            return updatedPost;
-          }
-          return post;
-        });
-      };
-
-      queryClient.setQueryData<IPost[]>(['posts', updatedPost.post_attributes.user._id], updatePostData);
-
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
       void queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
     }
@@ -134,18 +116,10 @@ export const useDeletePost = () => {
     mutationFn: async (postID: string) => {
       await postService.deletePost(postID);
     },
-    onSuccess(_, postID) {
-      const updatePostData = (oldData: IPost[] | undefined) => {
-        if (!oldData) return;
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['posts', uid] });
 
-        const newData = [...oldData];
-
-        return newData.filter((post) => post._id !== postID);
-      };
-
-      queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
-
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
@@ -262,7 +236,31 @@ export const useCommentPost = () => {
         });
       };
 
-      queryClient.setQueryData<IPost[]>(['allNewsfeedPosts'], updatePostData);
+      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
+        if (!oldData) return;
+        const newPages = [...oldData.pages];
+        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === newComment.post));
+        if (pageIndex !== -1) {
+          const newPage = newPages[pageIndex].map((post) => {
+            if (post._id === newComment.post) {
+              return {
+                ...post,
+                post_attributes: {
+                  ...post.post_attributes,
+                  comment_number: post.post_attributes.comment_number + 1
+                }
+              };
+            }
+            return post;
+          });
+          newPages[pageIndex] = newPage;
+          return {
+            ...oldData,
+            pages: newPages
+          };
+        }
+        return oldData;
+      });
 
       queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
     }
@@ -573,9 +571,6 @@ export const useReceiveMessage = (currentUserID: string, conversationID?: string
  * object and updates the query data for conversations.
  */
 export const useReceiveConversation = () => {
-  const NotiMessage = new Audio('/sounds/sound-noti-message.wav');
-  NotiMessage.volume = 0.3;
-
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess, variables } = useMutation({
@@ -598,7 +593,6 @@ export const useReceiveConversation = () => {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           });
         } else {
-          void NotiMessage.play();
           newData.unshift(conversation);
         }
 
@@ -675,7 +669,8 @@ export const useDissolveGroup = () => {
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (conversationID: string) => {
-      await messageService.dissolveGroup(conversationID);
+      const { data } = await messageService.dissolveGroup(conversationID);
+      return data.metadata;
     },
     onSuccess(conversation, conversationID) {
       if (window.location.pathname.includes(conversationID)) navigate('/message', { replace: true });

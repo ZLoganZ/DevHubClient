@@ -7,7 +7,8 @@ import {
   ICreateMessage,
   IMessage,
   IResponse,
-  ISocketCall
+  ISocketCall,
+  IUserInfo
 } from '@/types';
 
 class MessageService extends BaseService {
@@ -47,6 +48,10 @@ class MessageService extends BaseService {
     extend?: number
   ): Promise<AxiosResponse<IResponse<IMessage[]>>> => {
     return this.get(`/chat/conversations/${conversationID}/images?page=${page}&extend=${extend}`);
+  };
+
+  getAllUsersUsedToChatWith = (): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
+    return this.get(`/chat/users`);
   };
 
   seenMessage = (conversationID: string) => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import getImageURL from '@/util/getImageURL';
@@ -36,12 +36,12 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
     return !fileAvatar;
   }, [fileAvatar]);
 
-  const handleChangeAvatar = (file: File) => {
+  const handleChangeAvatar = useCallback((file: File) => {
     setFileAvatar(file);
     setAvatar(URL.createObjectURL(file));
-  };
+  }, []);
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     setIsLoading(true);
 
     messageService
@@ -70,7 +70,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
       })
       .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
-  };
+  }, [fileAvatar]);
 
   useEffect(() => {
     dispatch(
@@ -82,7 +82,7 @@ const ChangeAvatarGroup: React.FC<IChangeAvatarGroup> = ({ image, conversationID
             <ButtonCancelHover onClick={() => dispatch(closeModal())} disabled={isLoading}>
               Cancel
             </ButtonCancelHover>
-            <ButtonActiveHover rounded loading={isLoading} disabled={isChanged} onClick={onSubmit}>
+            <ButtonActiveHover loading={isLoading} disabled={isChanged} onClick={onSubmit}>
               Change
             </ButtonActiveHover>
           </div>

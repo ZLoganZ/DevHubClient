@@ -1,9 +1,11 @@
+import { custom_scrollBar } from '@/util/cssVariable';
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg1};
   min-height: calc(100vh - 5rem);
   color: ${(props) => props.theme.colorText1};
+  ${custom_scrollBar}
 
   .popular-post-body {
     .no-post {
@@ -13,22 +15,22 @@ const StyleProvider = styled.div`
       margin-bottom: 1rem;
     }
     .popular-post-item {
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg3};
         color: ${(props) => props.theme.colorText1};
         cursor: pointer;
-        transition: all 0.5s;
+        transition: background-color 0.5s, color 0.5s;
       }
     }
   }
   .top-community-body {
     .top-community-item {
       border-radius: 5px;
-      :hover {
+      &:hover {
         background-color: ${(props) => props.theme.colorBg3};
         color: ${(props) => props.theme.colorText1};
         cursor: pointer;
-        transition: all 0.5s;
+        transition: background-color 0.5s, color 0.5s;
       }
     }
   }

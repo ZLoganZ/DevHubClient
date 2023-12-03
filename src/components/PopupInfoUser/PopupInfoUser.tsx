@@ -4,6 +4,7 @@ import { Avatar } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEllipsis, faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
+import { ButtonActiveHover } from '@/components/MiniComponent';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
@@ -22,7 +23,7 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateFollowUser } = useFollowUser();
+  const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
 
   const [isFollowed, setIsFollowed] = useState(userInfo?.is_followed);
   useEffect(() => {
@@ -90,11 +91,12 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
               <span className='position mr-2'>Software Engineer</span>
             </div>
           </div>
-          {userID !== userInfo._id ? (
+          {userID !== userInfo._id && (
             <div className='button_Total flex mb-5'>
               <div className='followButton mr-4'>
-                <button
-                  className='btnFollow btn-primary px-6 py-1.5 rounded-3xl'
+                <ButtonActiveHover
+                  className='btnFollow btn-primary px-5 py-1.5 rounded-3xl'
+                  loading={isLoadingFollowUser}
                   onClick={() => {
                     mutateFollowUser(userInfo._id);
                     setIsFollowed(!isFollowed);
@@ -102,7 +104,7 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                   <span style={{ color: commonColor.colorWhite1 }}>
                     {isFollowed ? 'Following' : 'Follow'}
                   </span>
-                </button>
+                </ButtonActiveHover>
               </div>
               <div className='optionButton '>
                 <button className='btnOption btn-primary px-3 py-1.5 text-center rounded-lg'>
@@ -110,8 +112,6 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                 </button>
               </div>
             </div>
-          ) : (
-            ''
           )}
         </div>
       </div>

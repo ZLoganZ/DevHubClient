@@ -17,14 +17,14 @@ class PostService extends BaseService {
     super();
   }
 
-  getAllPostByUserID = (id: string): Promise<AxiosResponse<IResponse<IPost[]>>> => {
-    return this.get(`/posts/user/${id}`);
+  getAllPostByUserID = (id: string, pageParam: number): Promise<AxiosResponse<IResponse<IPost[]>>> => {
+    return this.get(`/posts/user/${id}?page=${pageParam}`);
   };
   getAllPost = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/all`);
   };
-  getAllPostNewsFeed = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
-    return this.get(`/posts/newsfeed`);
+  getAllPostNewsFeed = (pageParam: number): Promise<AxiosResponse<IResponse<IPost[]>>> => {
+    return this.get(`/posts/newsfeed?page=${pageParam}`);
   };
   getAllPopularPost = (sort: string): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/popular/?sortBy=${sort}`);
