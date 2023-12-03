@@ -182,7 +182,7 @@ const Chat = () => {
                 </Col>
                 <Col span={18} className='z-0'>
                   <div
-                    className='chatBox h-screen pl-3'
+                    className='chatBox h-screen'
                     style={{
                       borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
                       backgroundColor: themeColorSet.colorBg1
