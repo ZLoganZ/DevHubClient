@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, Tooltip } from 'antd';
 import { CrownFilled } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
@@ -29,11 +29,23 @@ interface IMessageBox {
   isCreator: boolean;
   type: TypeofConversation;
   typeCalled?: string;
+  style?: React.CSSProperties;
 }
 
 const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
   (
-    { message, isLastMes, seen, isNextMesGroup, isPrevMesGroup, isMoreThan10Min, isAdmin, type, isCreator },
+    {
+      message,
+      isLastMes,
+      seen,
+      isNextMesGroup,
+      isPrevMesGroup,
+      isMoreThan10Min,
+      isAdmin,
+      type,
+      isCreator,
+      style
+    },
     ref
   ) => {
     // Lấy theme từ LocalStorage chuyển qua css
@@ -184,7 +196,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
     };
 
     return (
-      <StyleProvider ref={ref} theme={themeColorSet}>
+      <StyleProvider ref={ref} theme={themeColorSet} style={style}>
         {isMoreThan10Min && (
           <div className='flex justify-center my-2'>
             <div className='text-xs font-semibold' style={{ color: themeColorSet.colorText3 }}>

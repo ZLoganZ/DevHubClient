@@ -107,7 +107,7 @@ export const PostWrapper = () => {
         <LoadingPost />
       ) : (
         <div
-          className='py-4 px-80'
+          className='py-4 px-80 md:px-0'
           style={{
             backgroundColor: themeColorSet.colorBg1,
             minHeight: 'calc(100vh - 5rem)'

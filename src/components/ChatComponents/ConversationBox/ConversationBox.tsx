@@ -146,7 +146,10 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   }, [conversation.lastMessage, conversation.seen]);
 
   const lastMessageText = useMemo(() => {
-    if (conversation.lastMessage?.images) return 'Sent an image';
+    if (conversation.lastMessage?.images?.length! > 0) return 'Sent an image';
+
+    if (conversation.lastMessage?.type === 'voice' || conversation.lastMessage?.type === 'video')
+      return 'The call has ended';
 
     if (conversation.lastMessage?.content) return conversation.lastMessage.content;
 

@@ -111,7 +111,7 @@ const Headers = () => {
     }
   ];
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 1023 });
 
   // const popupNotification = (message: any, conversation: any) => {
   //   api.open({
@@ -142,18 +142,18 @@ const Headers = () => {
       <Affix>
         <StyleProvider theme={themeColorSet}>
           <Layout.Header
-            className='header xs:px-2'
+            className='header md:px-2'
             style={{
               backgroundColor: themeColorSet.colorBg2,
               height: '5rem'
             }}>
             <Row align='middle'>
-              <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
+              <Col span={isMdScreen ? 24 : 16} offset={isMdScreen ? 0 : 4}>
                 <Row align='middle'>
-                  <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
+                  <Col span={isMdScreen ? 5 : 4} offset={isMdScreen ? 2 : 0}>
                     <div className='flex items-center cursor-pointer' onClick={handleClick}>
                       <FontAwesomeIcon
-                        className='iconLogo text-3xl xs:hidden'
+                        className='iconLogo text-3xl'
                         icon={faSnowflake}
                         style={{ color: themeColorSet.colorText1 }}
                       />
@@ -167,7 +167,7 @@ const Headers = () => {
                       </div>
                     </div>
                   </Col>
-                  <Col span={isXsScreen ? 9 : 15} className='px-4'>
+                  <Col span={isMdScreen ? 9 : 15} className='px-4 items-center'>
                     <Input
                       allowClear
                       placeholder='Search'
@@ -175,8 +175,8 @@ const Headers = () => {
                       prefix={<SearchOutlined className='text-xl mr-1' />}
                     />
                   </Col>
-                  <Col span={5} className='pl-3 xs:pl-0'>
-                    <Space size={isXsScreen ? 8 : 25}>
+                  <Col span={5} className='pl-3 md:pl-0'>
+                    <Space size={25}>
                       <NavLink to='/message'>
                         <Badge count={0}>
                           <Avatar

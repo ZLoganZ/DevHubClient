@@ -21,7 +21,7 @@ interface IUserInfoPostProps {
 const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date, visibility }) => {
   const { themeColorSet } = getTheme();
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 639 });
   const userID = useAppSelector((state) => state.auth.userID);
 
   const icon =
@@ -34,7 +34,7 @@ const UserInfoPost: React.FC<IUserInfoPostProps> = ({ userInfo, postID, date, vi
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='name_avatar flex'>
-        <Avatar size={isXsScreen ? 40 : 50} src={getImageURL(userInfo.user_image, 'avatar_mini')} />
+        <Avatar size={isMdScreen ? 40 : 50} src={getImageURL(userInfo.user_image, 'avatar_mini')} />
         <div className='name ml-2'>
           <Popover
             overlayInnerStyle={{

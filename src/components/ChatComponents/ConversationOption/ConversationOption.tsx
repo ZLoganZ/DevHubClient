@@ -477,12 +477,14 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             );
           })}
         </div>
-        <div
-          className='add-member mt-3 w-full flex items-center flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
-          onClick={() => setOpenAddMember(!openAddMember)}>
-          <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
-          <span className='text-sm font-medium text-left ml-2'>Add members</span>
-        </div>
+        {currentConversation.admins.some((admin) => admin._id === currentUserInfo._id) && (
+          <div
+            className='add-member mt-3 w-full flex items-center flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
+            onClick={() => setOpenAddMember(!openAddMember)}>
+            <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
+            <span className='text-sm font-medium text-left ml-2'>Add members</span>
+          </div>
+        )}
       </div>
     );
   }, [themeColorSet, currentConversation.admins, currentConversation.members, memberOptions]);
