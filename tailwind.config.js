@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   theme: {
     screens: {
@@ -11,5 +11,5 @@ export default {
       '2xl': { min: '1536px' }
     }
   },
-  plugins: [import('tailwindcss-animate')]
+  plugins: [require('tailwindcss-animate')]
 };

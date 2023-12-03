@@ -5,8 +5,7 @@ import { AUTHORIZATION } from '@/util/constants/SettingSystem';
 
 const getUserID = async () => {
   try {
-    const pathname = window.location.pathname;
-    if (!localStorage.getItem(AUTHORIZATION) || pathname === '/register' || pathname === '/login')
+    if (!localStorage.getItem(AUTHORIZATION))
       return 'Méo có UserID!';
 
     const { data } = await userService.getUserInfo();
