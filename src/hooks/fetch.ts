@@ -133,19 +133,16 @@ export const useAllNewsfeedPostsData = () => {
         return ApplyDefaults(data.metadata);
       },
       initialPageParam: 1,
-      getNextPageParam: (lastPage, _, __, allPageParams) => {
+      getNextPageParam: (lastPage, _, lastPageParam) => {
         if (lastPage.length < 5) {
           return undefined;
         }
-        return allPageParams.length + 1;
+        return lastPageParam + 1;
       },
       select: (data) => {
-        if (data.pages.length > 4) {
-          data.pages.shift();
-        }
-
         return data.pages.flat();
       },
+      maxPages: 3,
       staleTime: Infinity,
       enabled: window.location.pathname === '/'
     });
@@ -258,6 +255,38 @@ export const usePostData = (postID: string) => {
     isErrorPost: isError,
     post: data?.metadata,
     isFetchingPost: isFetching
+  };
+};
+
+export const useSavedPostsData = () => {
+  const { data, isPending, isError, isFetching, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ['savedPosts'],
+      queryFn: async () => {
+        const { data } = await postService.getSavedPosts();
+        return data.metadata;
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length < 5) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity
+    });
+
+  return {
+    isLoadingSavedPosts: isPending,
+    isErrorSavedPosts: isError,
+    savedPosts: data!,
+    isFetchingSavedPosts: isFetching,
+    hasNextSavedPosts: hasNextPage,
+    isFetchingNextSavedPosts: isFetchingNextPage,
+    fetchNextSavedPosts: fetchNextPage
   };
 };
 

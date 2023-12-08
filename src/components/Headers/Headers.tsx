@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { BellOutlined, CommentOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMediaQuery } from 'react-responsive';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
@@ -27,7 +28,7 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 
-import { useAllNewsfeedPostsData, useCurrentUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 
@@ -39,6 +40,7 @@ const Headers = () => {
 
   const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
   const { currentUserInfo } = useCurrentUserInfo();
+  const queryClient = useQueryClient();
 
   // Switch theme
   const dispatch = useAppDispatch();
@@ -50,16 +52,14 @@ const Headers = () => {
     }
   };
 
-  const { refetchAllNewsfeedPosts } = useAllNewsfeedPostsData();
-
   const handleClick = useCallback(() => {
     const { pathname } = window.location;
     if (pathname === '/') {
-      void refetchAllNewsfeedPosts();
+      queryClient.resetQueries({ queryKey: ['allNewsfeedPosts'] });
     } else {
       navigate('/');
     }
-  }, [refetchAllNewsfeedPosts, window.location.pathname]);
+  }, [window.location.pathname]);
 
   const handleLogout = () => {
     dispatch(LOGOUT_SAGA());

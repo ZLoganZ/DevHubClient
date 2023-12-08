@@ -93,11 +93,10 @@ const RenderPeopleItem = ({ item }: any) => {
           }}>
           <ButtonActiveHover
             onClick={() => {
-              setFollow(!follow);
-              mutateFollowUser(item._id);
+              mutateFollowUser(item._id, { onSuccess: () => setFollow(!follow) });
             }}>
             &nbsp;
-            {!follow ? 'Follow' : 'Following'}
+            {!follow ? 'Unfriend' : 'Add friend'}
           </ButtonActiveHover>
         </div>
       </div>

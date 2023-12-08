@@ -98,7 +98,6 @@ const NewsFeed = () => {
 
   const {
     isLoadingAllNewsfeedPosts,
-    isFetchingAllNewsfeedPosts,
     allNewsfeedPosts,
     fetchNextNewsfeedPosts,
     hasNextNewsfeedPosts,
@@ -125,13 +124,13 @@ const NewsFeed = () => {
         behavior: 'smooth'
       });
     }
-    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
+    if (!isLoadingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-  }, [isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts]);
+  }, [isLoadingAllNewsfeedPosts]);
 
   const popular = useMemo(() => {
     return [...(allPopularPosts ?? [])];
@@ -153,9 +152,7 @@ const NewsFeed = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!community ||
-      isLoadingAllNewsfeedPosts ||
-      (isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) ? (
+      {!community || isLoadingAllNewsfeedPosts ? (
         <LoadingNewFeed />
       ) : (
         <Row>

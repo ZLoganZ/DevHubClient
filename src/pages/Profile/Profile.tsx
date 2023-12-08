@@ -168,7 +168,7 @@ const Profile = ({ userID }: IProfile) => {
                     onClick={() => {
                       mutateFollowUser(userID);
                     }}>
-                    {isFollowing ? 'Following' : 'Follow'}
+                    {isFollowing ? 'Unfriend' : 'Add friend'}
                   </ButtonActiveHover>
                 </div>
               </Col>

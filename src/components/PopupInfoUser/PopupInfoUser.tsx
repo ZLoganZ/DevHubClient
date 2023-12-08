@@ -98,11 +98,10 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                   className='btnFollow btn-primary px-5 py-1.5 rounded-3xl'
                   loading={isLoadingFollowUser}
                   onClick={() => {
-                    mutateFollowUser(userInfo._id);
-                    setIsFollowed(!isFollowed);
+                    mutateFollowUser(userInfo._id, { onSuccess: () => setIsFollowed(!isFollowed) });
                   }}>
                   <span style={{ color: commonColor.colorWhite1 }}>
-                    {isFollowed ? 'Following' : 'Follow'}
+                    {isFollowed ? 'Unfriend' : 'Add friend'}
                   </span>
                 </ButtonActiveHover>
               </div>

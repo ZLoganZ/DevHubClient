@@ -163,7 +163,11 @@ const MenuMain = () => {
               key: '6',
               icon: <FontAwesomeIcon className='icon' icon={faBookmark} />,
               label: 'Bookmarks',
-              title: ''
+              title: '',
+              onClick: () => {
+                navigate(`/bookmark`);
+                if (isMdScreen) setShowMenu(false);
+              }
             },
             {
               key: '7',

@@ -10,6 +10,7 @@ import SelectFollow from '@/pages/SelectFollow';
 import SelectCommunity from '@/pages/SelectCommunity';
 import GetStarted from '@/pages/GetStarted';
 import NotFound404 from '@/pages/NotFound404';
+import SavedPosts from '@/pages/SavedPosts';
 
 import { VoiceCall, VideoCall } from '@/components/ChatComponents/MessageCall';
 
@@ -47,6 +48,10 @@ export const privateRoutes = [
   {
     path: '/me',
     element: <MainLayout Component={<ProfileWrapper />} />
+  },
+  {
+    path: '/bookmark',
+    element: <MainLayout Component={<SavedPosts />} />
   },
   {
     path: '/post/:postID',

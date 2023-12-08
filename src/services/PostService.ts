@@ -38,11 +38,11 @@ class PostService extends BaseService {
   deletePost = (id: string) => {
     return this.delete(`/posts/delete/${id}`);
   };
-  likePost = (post: ISharePost) => {
-    return this.put(`/users/likepost`, post);
-  };
   sharePost = (sharepost: ISharePost) => {
     return this.post(`/posts/share`, sharepost);
+  };
+  likePost = (post: ISharePost) => {
+    return this.put(`/users/likepost`, post);
   };
   savePost = (id: string) => {
     return this.put(`/users/savepost/${id}`);
@@ -67,6 +67,9 @@ class PostService extends BaseService {
   };
   dislikeComment = (id: string, payload: ILikeComment) => {
     return this.put(`/comments/dislike/${id}`, payload);
+  };
+  getSavedPosts = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
+    return this.get(`/posts/saved`);
   };
 }
 
