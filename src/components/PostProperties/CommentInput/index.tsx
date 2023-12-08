@@ -64,6 +64,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
         <Avatar className='rounded-full' size={30} src={getImageURL(currentUser.user_image, 'avatar_mini')} />
         <div className='input w-full ml-2'>
           <Input
+            id='commentInput'
             ref={inputRef}
             value={commentContent}
             placeholder='Write a comment...'

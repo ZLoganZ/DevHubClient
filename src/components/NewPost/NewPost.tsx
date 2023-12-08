@@ -140,7 +140,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   };
 
   return (
-    <ConfigProvider theme={{ token: { controlHeight: 40, borderRadius: 0, lineWidth: 0 } }}>
+    <ConfigProvider theme={{ token: { controlHeight: 40, lineWidth: 0 } }}>
       {contextHolder}
       <StyleProvider theme={themeColorSet} className='rounded-lg mb-4'>
         <div className='newPost px-4 py-3'>
@@ -210,7 +210,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
               </Popover>
               <Select
                 className='w-24'
-                defaultValue='Public'
+                defaultValue='public'
                 onChange={(value) => setVisibility(value.toLowerCase() as Visibility)}
                 options={[
                   { value: 'public', label: 'Public' },
