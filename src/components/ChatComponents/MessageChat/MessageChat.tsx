@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
-import { VariableSizeList as List } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+// import { VariableSizeList as List } from 'react-window';
+// import AutoSizer from 'react-virtualized-auto-sizer';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -488,7 +488,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundImage: `url(${getImageURL(currentConversation.cover_image)})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                backgroundRepeat: 'no-repeat',
+                paddingLeft: '1rem'
               }}>
               {/* <AutoSizer>
                 {({ height, width }) => (

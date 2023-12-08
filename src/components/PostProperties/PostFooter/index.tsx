@@ -70,6 +70,11 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
     post.is_saved ? setSaveColor('yellow') : setSaveColor(themeColorSet.colorText1);
   }, [post.is_saved, changed]);
 
+  // get path url
+  const pathUrl = window.location.pathname;
+  // if path url is /post/:id, then isDetail = true
+  const isDetail = pathUrl.includes('/post/');
+
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='flex justify-between items-center'>
@@ -135,21 +140,24 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
               style={{ backgroundColor: 'transparent' }}
               icon={<FontAwesomeIcon icon={faComment} color={themeColorSet.colorText1} />}
               onClick={() =>
-                dispatch(
-                  openModal({
-                    title: 'The post of ' + post.post_attributes.user.name,
-                    component: (
-                      <OtherPostDetail
-                        key={post._id}
-                        post={post}
-                        postAuthor={postAuthor}
-                        currentUser={currentUser}
-                      />
-                    ),
-                    footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
-                    type: 'post'
-                  })
-                )
+                !isDetail
+                  ? dispatch(
+                      openModal({
+                        title: 'The post of ' + post.post_attributes.user.name,
+                        component: (
+                          <OtherPostDetail
+                            key={post._id}
+                            post={post}
+                            postAuthor={postAuthor}
+                            currentUser={currentUser}
+                          />
+                        ),
+                        footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
+                        type: 'post'
+                      })
+                    )
+                  : // focus to comment input in component CommentInput
+                    document.getElementById('commentInput')?.focus()
               }
             />
           </Space>
