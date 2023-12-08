@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
-// import { VariableSizeList as List } from 'react-window';
-// import AutoSizer from 'react-virtualized-auto-sizer';
+import AutoSizer from 'react-virtualized-auto-sizer';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
+import { useVirtualizer, useWindowVirtualizer } from '@tanstack/react-virtual';
 
 import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
@@ -417,6 +417,17 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   const [haveMedia, setHaveMedia] = useState<boolean>(false);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const counts = messages?.length ?? 0;
+  const virtualizer = useVirtualizer({
+    count: counts,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 45
+  });
+
+  const items = virtualizer.getVirtualItems();
+
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
       {isLoadingMessages ? (
@@ -491,26 +502,35 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundRepeat: 'no-repeat',
                 paddingLeft: '1rem'
               }}>
-              {/* <AutoSizer>
+              <AutoSizer>
                 {({ height, width }) => (
                   <>
-                    <List
-                      height={height}
-                      width={width}
-                      itemCount={messages.length}
-                      itemSize={(index) => {
-                        const message = messages[index];
-                        if (message.type === 'notification') return 50;
-                        if (message.type === 'voice' || message.type === 'video') return 90;
-                        if (message.images?.length! > 0) return 330;
-                        return 70;
-                      }}
-                      itemData={messages}
-                      className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
-                      {({ index, style, data }) => {
-                        const message = data[index];
-                        if (!hasPreviousMessages)
-                          return (
+                    <div
+                      ref={parentRef}
+                      className='List'
+                      style={{
+                        height: height,
+                        width: width,
+                        overflowY: 'auto',
+                        contain: 'strict'
+                      }}>
+                      <div
+                        style={{
+                          height: virtualizer.getTotalSize(),
+                          width: '100%',
+                          position: 'relative'
+                        }}>
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            transform: `translateY(${items[0]?.start ?? 0}px)`
+                          }}
+                          ref={messageRef}
+                          className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
+                          {!hasPreviousMessages && (
                             <ChatWelcome
                               type={currentConversation.type}
                               name={currentConversation.name}
@@ -518,30 +538,48 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                               otherUser={otherUser}
                               image={currentConversation.image}
                             />
-                          );
-                        else
-                          return (
-                            <MessageBox
-                              key={conversationID + '|' + message._id}
-                              type={currentConversation.type}
-                              isLastMes={index === data.length - 1}
-                              message={message}
-                              seen={currentConversation.seen}
-                              isAdmin={isAdmin(message.sender._id)}
-                              isCreator={isCreator(message.sender._id)}
-                              isPrevMesGroup={isPrevMesGroup(message, index, data)}
-                              isNextMesGroup={isNextMesGroup(message, index, data)}
-                              isMoreThan10Min={isMoreThan10Min(message, index, data)}
-                              style={style}
-                            />
-                          );
-                      }}
-                    </List>
+                          )}
+                          {items.map((virtualRow) => (
+                            <div
+                              key={virtualRow.key}
+                              data-index={virtualRow.index}
+                              ref={virtualizer.measureElement}
+                              className={virtualRow.index % 2 ? 'ListItemOdd' : 'ListItemEven'}>
+                              <div>
+                                <MessageBox
+                                  type={currentConversation.type}
+                                  isLastMes={virtualRow.index === items.length - 1}
+                                  message={messages[virtualRow.index]}
+                                  seen={currentConversation.seen}
+                                  isAdmin={isAdmin(messages[virtualRow.index].sender._id)}
+                                  isCreator={isCreator(messages[virtualRow.index].sender._id)}
+                                  isPrevMesGroup={isPrevMesGroup(
+                                    messages[virtualRow.index],
+                                    virtualRow.index,
+                                    messages
+                                  )}
+                                  isNextMesGroup={isNextMesGroup(
+                                    messages[virtualRow.index],
+                                    virtualRow.index,
+                                    messages
+                                  )}
+                                  isMoreThan10Min={isMoreThan10Min(
+                                    messages[virtualRow.index],
+                                    virtualRow.index,
+                                    messages
+                                  )}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                     <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
                   </>
                 )}
-              </AutoSizer> */}
-              <div
+              </AutoSizer>
+              {/* <div
                 ref={messageRef}
                 className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
                 {!hasPreviousMessages && (
@@ -569,7 +607,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   />
                 ))}
                 <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
-              </div>
+              </div> */}
               <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
                 {currentConversation.members.map((member) => {
                   const index = typingUsers.findIndex((user) => user === member._id);
