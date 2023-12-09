@@ -134,7 +134,7 @@ const ChatInput: React.FC<IChatInput> = ({ conversationID, members, setHaveMedia
   return (
     <div
       className={merge('footer flex justify-between', files.length > 0 ? 'items-end pb-2' : 'items-center')}
-      style={{ height: files.length > 0 ? '20%' : '8%' }}>
+      style={{ height: files.length > 0 ? '18%' : '8%' }}>
       {contextHolder}
       <Popover
         className='text-center cursor-pointer'

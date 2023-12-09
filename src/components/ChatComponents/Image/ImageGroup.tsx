@@ -25,7 +25,7 @@ const ImageGroup: React.FC<IImageGroup> = ({ images, preview = false }) => {
           {row.map((image, index) => (
             <Image
               key={index}
-              src={getImageURL(image)}
+              src={getImageURL(image, 'avatar_mini')}
               alt='Avatar'
               preview={preview ? { src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> } : false}
               style={{

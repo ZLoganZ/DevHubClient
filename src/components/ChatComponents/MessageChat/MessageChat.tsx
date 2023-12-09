@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { useVirtualizer, useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
@@ -493,8 +493,12 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               </div>
             </div>
             <div
+              className={merge(
+                'body',
+                haveMedia ? 'h-[72%]' : 'h-[83%]',
+                typingUsers.length ? 'pb-6' : 'pb-1'
+              )}
               style={{
-                height: '90%',
                 overflow: 'auto',
                 backgroundImage: `url(${getImageURL(currentConversation.cover_image)})`,
                 backgroundSize: 'cover',
@@ -507,7 +511,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                   <>
                     <div
                       ref={parentRef}
-                      className='List'
+                      className='list-image'
                       style={{
                         height: height,
                         width: width,
@@ -515,6 +519,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                         contain: 'strict'
                       }}>
                       <div
+                        ref={topRef}
                         style={{
                           height: virtualizer.getTotalSize(),
                           width: '100%',
@@ -527,9 +532,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                             left: 0,
                             width: '100%',
                             transform: `translateY(${items[0]?.start ?? 0}px)`
-                          }}
-                          ref={messageRef}
-                          className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
+                          }}>
                           {!hasPreviousMessages && (
                             <ChatWelcome
                               type={currentConversation.type}
@@ -572,75 +575,47 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                               </div>
                             </div>
                           ))}
+                          <div ref={messageRef}></div>
+                          <div ref={bottomRef}></div>
                         </div>
                       </div>
                     </div>
-                    <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
                   </>
                 )}
               </AutoSizer>
-              {/* <div
-                ref={messageRef}
-                className={merge('body flex-1 overflow-auto', haveMedia ? 'h-[80%]' : 'h-[92%]')}>
-                {!hasPreviousMessages && (
-                  <ChatWelcome
-                    type={currentConversation.type}
-                    name={currentConversation.name}
-                    members={currentConversation.members}
-                    otherUser={otherUser}
-                    image={currentConversation.image}
-                  />
-                )}
-                <div className='pt-1' ref={topRef} />
-                {messages.map((message, index, messArr) => (
-                  <MessageBox
-                    key={conversationID + '|' + message._id}
-                    type={currentConversation.type}
-                    isLastMes={index === messArr.length - 1}
-                    message={message}
-                    seen={currentConversation.seen}
-                    isAdmin={isAdmin(message.sender._id)}
-                    isCreator={isCreator(message.sender._id)}
-                    isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
-                    isNextMesGroup={isNextMesGroup(message, index, messArr)}
-                    isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
-                  />
-                ))}
-                <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
-              </div> */}
-              <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
-                {currentConversation.members.map((member) => {
-                  const index = typingUsers.findIndex((user) => user === member._id);
-                  if (index !== -1) {
-                    return (
-                      <img
-                        key={member._id}
-                        className='rounded-full -top-2 absolute h-6 w-6 overflow-hidden'
-                        src={getImageURL(member.user_image, 'avatar_mini')}
-                        style={{
-                          left: `${index * 30 + typingUsers.length * 10}px`,
-                          border: `2px solid ${themeColorSet.colorBg4}`
-                        }}
-                      />
-                    );
-                  }
-                  return null;
-                })}
-                <div
-                  className='typing-indicator rounded-full'
-                  style={{
-                    backgroundColor: themeColorSet.colorBg4,
-                    left: `${typingUsers.length * 30 + typingUsers.length * 10}px`
-                  }}>
-                  <div /> <div /> <div />
-                </div>
-              </div>
-              <ChatInput
-                conversationID={conversationID}
-                members={currentConversation.members}
-                setHaveMedia={setHaveMedia}
-              />
             </div>
+            <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
+              {currentConversation.members.map((member) => {
+                const index = typingUsers.findIndex((user) => user === member._id);
+                if (index !== -1) {
+                  return (
+                    <img
+                      key={member._id}
+                      className='rounded-full -top-2 absolute h-6 w-6 overflow-hidden'
+                      src={getImageURL(member.user_image, 'avatar_mini')}
+                      style={{
+                        left: `${index * 30 + typingUsers.length * 10}px`,
+                        border: `2px solid ${themeColorSet.colorBg4}`
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })}
+              <div
+                className='typing-indicator rounded-full'
+                style={{
+                  backgroundColor: themeColorSet.colorBg4,
+                  left: `${typingUsers.length * 30 + typingUsers.length * 10}px`
+                }}>
+                <div /> <div /> <div />
+              </div>
+            </div>
+            <ChatInput
+              conversationID={conversationID}
+              members={currentConversation.members}
+              setHaveMedia={setHaveMedia}
+            />
           </Col>
           {displayOption && (
             <Col span={8} className='h-full'>

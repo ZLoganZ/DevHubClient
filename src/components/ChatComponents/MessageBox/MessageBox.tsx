@@ -180,7 +180,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
           return (
             <Image
               rootClassName='flex'
-              src={getImageURL(message.images[0])}
+              src={getImageURL(message.images[0], 'avatar')}
               alt='Avatar'
               preview={{ src: getImageURL(message.images[0]), mask: <FontAwesomeIcon icon={faEye} /> }}
               style={{
