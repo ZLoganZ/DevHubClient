@@ -1,13 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Col, Row, App } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPhone, faVideo, faVideoCamera } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 import { debounce } from 'lodash';
-import AutoSizer from 'react-virtualized-auto-sizer';
-// import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { useVirtualizer } from '@tanstack/react-virtual';
 
 import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
@@ -15,11 +13,11 @@ import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/h
 import { useSendMessage } from '@/hooks/mutation';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
-import MessageBox from '@/components/ChatComponents/MessageBox';
 import ChatInput from '@/components/ChatComponents/InputChat/InputChat';
 import ConversationOption from '@/components/ChatComponents/ConversationOption';
-import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
+import MessageBox from '@/components/ChatComponents/MessageBox';
 import LoadingConversation from '@/components/Loading/LoadingConversation';
+import ChatWelcome from '@/components/ChatComponents/ChatWelcome';
 import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import { IMessage, ISocketCall, ModalType } from '@/types';
 import getImageURL from '@/util/getImageURL';
@@ -41,6 +39,7 @@ soundCall.loop = true;
 
 const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
   const { modal } = App.useApp();
+  const queryClient = useQueryClient();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -96,8 +95,16 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     }
   }, [currentConversation.seen, conversationID, messages]);
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+
   const fetchPreMessages = useCallback(() => {
-    if (!isFetchingPreviousPage && messages && hasPreviousMessages) void fetchPreviousMessages();
+    if (!isFetchingPreviousPage && messages && hasPreviousMessages) {
+      const element = messageRef.current;
+      if (element) {
+        setScrollPosition(element.scrollHeight - element.scrollTop);
+      }
+      void fetchPreviousMessages();
+    }
   }, [isFetchingPreviousPage, messages, hasPreviousMessages]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -122,8 +129,18 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   useEffect(() => {
     if (!messages) return;
-    if (count === 0) scrollToBottom('instant');
+    if (count === 0) {
+      scrollToBottom('instant');
+      setCount(messages.length);
+      return;
+    }
     if (messages.length - count === 1) scrollToBottom('auto');
+    // if load more message => keep scroll position
+    if (messages.length - count > 1) {
+      if (messageRef.current) {
+        messageRef.current.scrollTop = messageRef.current.scrollHeight - scrollPosition;
+      }
+    }
     setCount(messages.length);
   }, [messages]);
 
@@ -242,6 +259,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     });
 
     chatSocket.on(Socket.END_VIDEO_CALL, (data: ISocketCall) => {
+      queryClient.invalidateQueries({ queryKey: ['called'] });
       if (modalVideo) {
         void soundCall.pause();
         modalVideo.update({
@@ -274,6 +292,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     });
 
     chatSocket.on(Socket.END_VOICE_CALL, (data: ISocketCall) => {
+      queryClient.invalidateQueries({ queryKey: ['called'] });
       if (modalVoice) {
         void soundCall.pause();
         modalVoice.update({
@@ -356,6 +375,18 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     return activeUser?.is_online ? themeColorSet.colorText2 : themeColorSet.colorText3;
   }, [activeUser, themeColorSet]);
 
+  const scrollToBottomWhenTyping = () => {
+    if (messageRef.current) {
+      messageRef.current.scrollTop = messageRef.current.scrollHeight;
+    }
+  };
+  // Scroll to the bottom whenever messages change
+  useEffect(() => {
+    scrollToBottomWhenTyping();
+  }, [typingUsers.length]);
+
+  const [haveMedia, setHaveMedia] = useState<boolean>(false);
+
   const isPrevMesGroup = useCallback((message: IMessage, index: number, messArr: IMessage[]) => {
     if (index === 0) return false;
     if (!messArr) return false;
@@ -404,29 +435,6 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
     },
     [currentConversation]
   );
-
-  const scrollToBottomWhenTyping = () => {
-    if (messageRef.current) {
-      messageRef.current.scrollTop = messageRef.current.scrollHeight;
-    }
-  };
-  // Scroll to the bottom whenever messages change
-  useEffect(() => {
-    scrollToBottomWhenTyping();
-  }, [typingUsers.length]);
-
-  const [haveMedia, setHaveMedia] = useState<boolean>(false);
-
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const counts = messages?.length ?? 0;
-  const virtualizer = useVirtualizer({
-    count: counts,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 45
-  });
-
-  const items = virtualizer.getVirtualItems();
 
   return (
     <StyleProvider className='h-full' theme={themeColorSet}>
@@ -493,6 +501,7 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
               </div>
             </div>
             <div
+              ref={messageRef}
               className={merge(
                 'body',
                 haveMedia ? 'h-[72%]' : 'h-[83%]',
@@ -506,83 +515,31 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
                 backgroundRepeat: 'no-repeat',
                 paddingLeft: '1rem'
               }}>
-              <AutoSizer>
-                {({ height, width }) => (
-                  <>
-                    <div
-                      ref={parentRef}
-                      className='list-image'
-                      style={{
-                        height: height,
-                        width: width,
-                        overflowY: 'auto',
-                        contain: 'strict'
-                      }}>
-                      <div
-                        ref={topRef}
-                        style={{
-                          height: virtualizer.getTotalSize(),
-                          width: '100%',
-                          position: 'relative'
-                        }}>
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            transform: `translateY(${items[0]?.start ?? 0}px)`
-                          }}>
-                          {!hasPreviousMessages && (
-                            <ChatWelcome
-                              type={currentConversation.type}
-                              name={currentConversation.name}
-                              members={currentConversation.members}
-                              otherUser={otherUser}
-                              image={currentConversation.image}
-                            />
-                          )}
-                          {items.map((virtualRow) => (
-                            <div
-                              key={virtualRow.key}
-                              data-index={virtualRow.index}
-                              ref={virtualizer.measureElement}
-                              className={virtualRow.index % 2 ? 'ListItemOdd' : 'ListItemEven'}>
-                              <div>
-                                <MessageBox
-                                  type={currentConversation.type}
-                                  isLastMes={virtualRow.index === items.length - 1}
-                                  message={messages[virtualRow.index]}
-                                  seen={currentConversation.seen}
-                                  isAdmin={isAdmin(messages[virtualRow.index].sender._id)}
-                                  isCreator={isCreator(messages[virtualRow.index].sender._id)}
-                                  isPrevMesGroup={isPrevMesGroup(
-                                    messages[virtualRow.index],
-                                    virtualRow.index,
-                                    messages
-                                  )}
-                                  isNextMesGroup={isNextMesGroup(
-                                    messages[virtualRow.index],
-                                    virtualRow.index,
-                                    messages
-                                  )}
-                                  isMoreThan10Min={isMoreThan10Min(
-                                    messages[virtualRow.index],
-                                    virtualRow.index,
-                                    messages
-                                  )}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                          <div ref={messageRef}></div>
-                          <div ref={bottomRef}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </AutoSizer>
+              {!hasPreviousMessages && (
+                <ChatWelcome
+                  type={currentConversation.type}
+                  name={currentConversation.name}
+                  members={currentConversation.members}
+                  otherUser={otherUser}
+                  image={currentConversation.image}
+                />
+              )}
+              <div className='pt-1' ref={topRef} />
+              {messages.map((message, index, messArr) => (
+                <MessageBox
+                  key={conversationID + '|' + message._id}
+                  type={currentConversation.type}
+                  isLastMes={index === messArr.length - 1}
+                  message={message}
+                  seen={currentConversation.seen}
+                  isAdmin={isAdmin(message.sender._id)}
+                  isCreator={isCreator(message.sender._id)}
+                  isPrevMesGroup={isPrevMesGroup(message, index, messArr)}
+                  isNextMesGroup={isNextMesGroup(message, index, messArr)}
+                  isMoreThan10Min={isMoreThan10Min(message, index, messArr)}
+                />
+              ))}
+              <div className={typingUsers.length ? 'pb-6' : 'pb-1'} ref={bottomRef} />
             </div>
             <div className='px-2 flex flex-row items-center opacity-0' ref={typingDiv}>
               {currentConversation.members.map((member) => {
