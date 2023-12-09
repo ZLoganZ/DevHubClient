@@ -7,7 +7,7 @@ import { debounce } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 // import { LoadingOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { VirtualizerOptions, elementScroll, useVirtualizer } from '@tanstack/react-virtual';
 
 import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
@@ -417,13 +417,45 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
 
   const [haveMedia, setHaveMedia] = useState<boolean>(false);
 
+  const easeInOutQuint = (t: number) => {
+    return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+  };
   const parentRef = useRef<HTMLDivElement>(null);
 
+  const scrollingRef = useRef<number>();
+
+  const scrollToFn: VirtualizerOptions<any, any>['scrollToFn'] = useCallback(
+    (offset, canSmooth, instance) => {
+      const duration = 1000;
+      const start = parentRef?.current?.scrollTop;
+      const startTime = (scrollingRef.current = Date.now());
+
+      const run = () => {
+        if (scrollingRef.current !== startTime) return;
+        const now = Date.now();
+        const elapsed = now - startTime;
+        const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
+        const interpolated = start! + (offset - start!) * progress;
+
+        if (elapsed < duration) {
+          elementScroll(interpolated, canSmooth, instance);
+          requestAnimationFrame(run);
+        } else {
+          elementScroll(interpolated, canSmooth, instance);
+        }
+      };
+
+      requestAnimationFrame(run);
+    },
+    []
+  );
   const counts = messages?.length ?? 0;
   const virtualizer = useVirtualizer({
     count: counts,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 45
+    estimateSize: () => 45,
+    overscan: 5,
+    scrollToFn
   });
 
   const items = virtualizer.getVirtualItems();

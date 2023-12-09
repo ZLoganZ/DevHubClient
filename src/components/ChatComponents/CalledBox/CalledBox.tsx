@@ -4,9 +4,12 @@ import { Space } from 'antd';
 
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
-import { useOtherUser } from '@/hooks/special';
+import InfoCalled from '@/components/ChatComponents/InfoCalled/InfoCalled';
+import { useAppDispatch, useOtherUser } from '@/hooks/special';
 import { videoChat, audioCall } from '@/util/call';
 import { capitalizeFirstLetter } from '@/util/convertText';
+import { closeModal, openModal } from '@/redux/Slice/ModalHOCSlice';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 
 import { getTheme } from '@/util/theme';
 import { getDateMonth } from '@/util/formatDateTime';
@@ -23,6 +26,7 @@ interface IConversationBox {
 
 const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
   useAppSelector((state) => state.theme.changed);
+  const dispatch = useAppDispatch();
   const { themeColorSet } = getTheme();
   const otherUser = useOtherUser(called.conversation_id);
 
@@ -113,6 +117,32 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
         className='conversation-box w-full cursor-pointer flex items-center space-x-3 my-1 p-3 rounded-xl'
         style={{
           backgroundColor: selected ? themeColorSet.colorBg2 : themeColorSet.colorBg1
+        }}
+        onClick={() => {
+          dispatch(
+            openModal({
+              title: 'Call Details',
+              component: (
+                <InfoCalled
+                  user={called.sender}
+                  conversation={called.conversation_id}
+                  stateCalled={stateCalled(called.sender._id)}
+                  notification={notification[called.type][stateCalled(called.sender._id)]}
+                />
+              ),
+              footer: (
+                <div className='mt-6 flex items-center justify-end gap-x-3'>
+                  <ButtonCancelHover onClick={() => dispatch(closeModal())}>Cancel</ButtonCancelHover>
+                  <ButtonActiveHover
+                    onClick={() => {
+                      videoChat(called.conversation_id._id);
+                    }}>
+                    Call again
+                  </ButtonActiveHover>
+                </div>
+              )
+            })
+          );
         }}>
         {called.conversation_id.type === 'group' ? (
           <AvatarGroup
