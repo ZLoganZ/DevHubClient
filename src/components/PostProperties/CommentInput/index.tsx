@@ -16,9 +16,10 @@ import StyleProvider from './cssCommentInput';
 interface ICommentInputProps {
   currentUser: IUserInfo;
   postID: string;
+  ownerPost: string;
 }
 
-const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => {
+const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID, ownerPost }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
@@ -45,7 +46,9 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID }) => 
       content: commentContent,
       post: postID,
       type: isReply ? 'child' : 'parent',
-      parent: isReply ? idComment! : undefined
+      parent: isReply ? idComment! : undefined,
+      owner_post: ownerPost,
+      parentUser: isReply ? data.parentUser : undefined
     });
 
     // sent commentInput to parent

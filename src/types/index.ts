@@ -167,10 +167,12 @@ export interface ILikePost {
 type TypeofComment = 'parent' | 'child';
 
 export interface ICreateComment {
-  content: string;
   type: TypeofComment;
   post: string;
+  owner_post: string;
+  content: string;
   parent?: string;
+  parentUser?: string;
 }
 
 export interface IImageResponse {

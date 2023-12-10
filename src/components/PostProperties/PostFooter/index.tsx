@@ -152,7 +152,14 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
                             currentUser={currentUser}
                           />
                         ),
-                        footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
+                        footer: (
+                          <CommentInput
+                            key={post._id}
+                            postID={post._id}
+                            currentUser={currentUser}
+                            ownerPost={post.post_attributes.user._id}
+                          />
+                        ),
                         type: 'post'
                       })
                     )

@@ -44,7 +44,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
       setCommentInput('');
     }
   }, [comments]);
-  
+
   return (
     <StyleProvider theme={themeColorSet}>
       <Row>
@@ -109,7 +109,14 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                 })
               )}
             </div>
-            {isDetail && <CommentInput key={post._id} currentUser={currentUser} postID={post._id} />}
+            {isDetail && (
+              <CommentInput
+                key={post._id}
+                currentUser={currentUser}
+                postID={post._id}
+                ownerPost={post.post_attributes.user._id}
+              />
+            )}
           </div>
         </Col>
       </Row>

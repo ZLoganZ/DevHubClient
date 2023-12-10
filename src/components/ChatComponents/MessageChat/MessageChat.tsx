@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Col, Row, App } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +9,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import merge from '@/util/mergeClassName';
 import { useOtherUser, useAppSelector, useIntersectionObserver, useAppDispatch } from '@/hooks/special';
-import { useCurrentConversationData, useCurrentUserInfo, useMessages } from '@/hooks/fetch';
+import {
+  queryCache,
+  useCurrentConversationData,
+  useCurrentUserInfo,
+  useMessages,
+  useMessagesOption
+} from '@/hooks/fetch';
 import { useSendMessage } from '@/hooks/mutation';
 import AvatarMessage from '@/components/ChatComponents/Avatar/AvatarMessage';
 import AvatarGroup from '@/components/ChatComponents/Avatar/AvatarGroup';
@@ -103,7 +109,8 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
       if (element) {
         setScrollPosition(element.scrollHeight - element.scrollTop);
       }
-      void fetchPreviousMessages();
+      
+      fetchPreviousMessages();
     }
   }, [isFetchingPreviousPage, messages, hasPreviousMessages]);
 
@@ -339,6 +346,12 @@ const MessageChat: React.FC<IMessageChat> = ({ conversationID }) => {
       chatSocket.off(Socket.END_VOICE_CALL);
       chatSocket.off(Socket.SEND_END_VIDEO_CALL);
       chatSocket.off(Socket.SEND_END_VOICE_CALL);
+
+      if (queryCache.find({ queryKey: ['messages', conversationID] })?.getObserversCount() ?? 0 === 0) {
+        // remove all pages of messages from cache except the first page
+        queryClient.removeQueries({ queryKey: ['messages', conversationID], exact: true });
+        queryClient.prefetchInfiniteQuery(useMessagesOption(conversationID));
+      }
     };
   }, []);
 

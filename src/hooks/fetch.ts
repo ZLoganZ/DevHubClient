@@ -1,4 +1,11 @@
-import { type InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+  QueryCache,
+  infiniteQueryOptions
+} from '@tanstack/react-query';
 
 import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
@@ -8,6 +15,8 @@ import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
 import { communityService } from '@/services/CommunityService';
+
+export const queryCache = new QueryCache();
 
 // ---------------------------FETCH HOOKS---------------------------
 
@@ -650,3 +659,29 @@ export const useGetCommunityByID = (id: string) => {
     isFetchingMessageCall: isFetching
   };
 };
+
+export const useMessagesOption = (conversationID: string) =>
+  infiniteQueryOptions({
+    queryKey: ['messages', conversationID],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await messageService.getMessages(conversationID, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getPreviousPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 30) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    getNextPageParam: (_, __, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined;
+      }
+      return firstPageParam - 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    staleTime: Infinity
+  });

@@ -92,6 +92,7 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
       setData({
         isReply: _selectedCommentID ? true : false,
         idComment: _selectedCommentID,
+        parentUser: comment.user._id,
         name: comment.user.name,
         user_image: comment.user.user_image
       })

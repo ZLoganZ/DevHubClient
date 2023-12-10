@@ -102,7 +102,14 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                 })
               )}
             </div>
-            {isDetail && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
+            {isDetail && (
+              <CommentInput
+                key={post._id}
+                currentUser={postAuthor}
+                postID={post._id}
+                ownerPost={post.post_attributes.user._id}
+              />
+            )}
           </div>
         </Col>
       </Row>
