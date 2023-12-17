@@ -1,5 +1,7 @@
 import { useAppSelector } from '@/hooks/special';
 import { IConversation, IUserInfo } from '@/types';
+import { capitalizeFirstLetter } from '@/util/convertText';
+import { getDateTime } from '@/util/formatDateTime';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Row } from 'antd';
@@ -19,36 +21,60 @@ const InfoCalled: React.FC<IInfoCalled> = ({ user, conversation, stateCalled, no
   console.log('stateCalled ', stateCalled);
   console.log('notification ', notification);
   return (
-    <>
-      <Row>
-        <Col span={24}>
-          <Row className='header'>
-            <Col span={24} className='flex justify-between items-center'>
-              <div className='flex items-center'>
-                <div className='avatar'>
-                  <img src={user.user_image} alt='avatar' />
-                </div>
-                <div className='flex flex-col ml-2'>
-                  <div className='text-base font-semibold'>{user.name}</div>
-                  <div className='text-xs text-gray-500'>Đang gọi...</div>
-                </div>
-              </div>
-              <div className='flex items-center'>
-                <div className='display-share'>
-                  <FontAwesomeIcon icon={faCalendar} color='#fff' />
-                </div>
-                <div className='audio-call'>
-                  <FontAwesomeIcon icon={faCalendar} color='#fff' />
-                </div>
-                <div className='video-call'>
-                  <FontAwesomeIcon icon={faCalendar} color='#fff' />
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </>
+    <Row>
+      <Col span={24}>
+        <Row className='info-called'>
+          <Col span={24}>
+            <Row className='info-called__header'>
+              <Col span={24}>
+                <Row className='info-called__header__title '>
+                  <Col span={24}>
+                    <Row className='info-called__header__title__name'>
+                      <Col span={4}>
+                        <span>Called by </span>
+                      </Col>
+                      <Col span={12}>
+                        <span>: {user.name}</span>
+                      </Col>
+                    </Row>
+                    {conversation.type === 'group' && (
+                      <Row>
+                        <Col span={4}>
+                          <span>Call in group </span>
+                        </Col>
+                        <Col span={12}>: {conversation.name}</Col>
+                      </Row>
+                    )}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row className='info-called__body pt-2'>
+              <Col span={24}>
+                <Row className='info-called__body__time'>
+                  <Col span={1} className='flex justify-center'>
+                    <FontAwesomeIcon className='text-lg' icon={faCalendar} />
+                  </Col>
+                  <Col span={12} offset={3}>
+                    <span className='info-called__header__time__date'>
+                      {getDateTime(conversation.createdAt)}
+                    </span>
+                  </Col>
+                </Row>
+                <Row className='info-called__body__notification'>
+                  <Col span={1} className='flex justify-center'>{notification}</Col>
+                  <Col span={12} offset={3}>
+                    <span className='info-called__header__title__state'>
+                      {capitalizeFirstLetter(stateCalled)}
+                    </span>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

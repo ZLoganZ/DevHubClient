@@ -135,7 +135,9 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
                   <ButtonCancelHover onClick={() => dispatch(closeModal())}>Cancel</ButtonCancelHover>
                   <ButtonActiveHover
                     onClick={() => {
-                      videoChat(called.conversation_id._id);
+                      called.type === 'video'
+                        ? videoChat(called.conversation_id._id)
+                        : audioCall(called.conversation_id._id);
                     }}>
                     Call again
                   </ButtonActiveHover>

@@ -268,7 +268,7 @@ const SelectCommunity = () => {
             })}
           </div>
           <div className='button mt-16 mr-4 mb-10 text-right'>
-            <NavLink to='/select-follow'>
+            <NavLink to='/select-add-friend'>
               <ButtonActiveHover >Next</ButtonActiveHover>
             </NavLink>
           </div>

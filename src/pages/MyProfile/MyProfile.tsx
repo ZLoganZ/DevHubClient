@@ -201,13 +201,13 @@ const MyProfile = () => {
             </Col>
             <div className='follow mt-5 md:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>&nbsp;
-                {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
+                <span className='mr-1'>{currentUserInfo?.friend_number ?? 0}</span>&nbsp;
+                {currentUserInfo?.friend_number > 1 ? 'Friends' : 'Friend'}
               </span>
-              <span className='following item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>&nbsp;
-                {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
-              </span>
+              {/* <span className='following item mr-2'>
+                <span className='mr-1'>{currentUserInfo?.pendingFriend_number ?? 0}</span>&nbsp;
+                {currentUserInfo?.pendingFriend_number > 1 ? 'Followings' : 'Following'}
+              </span> */}
               <span className='post mr-2'>
                 <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
@@ -248,7 +248,7 @@ const MyProfile = () => {
             </div>
             <div className='mainContain mt-5 '>
               <Tabs
-                centered = {isMdScreen ? true : false}
+                centered={isMdScreen ? true : false}
                 className='mainContain__tab'
                 tabBarStyle={
                   isMdScreen

@@ -10,10 +10,10 @@ class GetStartedService extends BaseService {
   chooseInterest = (interest: any) => {
     return this.post(`/users/expertise`, interest);
   };
-  getShouldFollower = () => {
-    return this.get(`/user/shouldFollow`);
+  getShouldAddFriend = () => {
+    return this.get(`/user/shouldAddFriend`);
   };
-  chooseShouldFollowPeople = (arrPeople: any) => {
+  chooseShouldFriendPeople = (arrPeople: any) => {
     return this.post(`/interest`, arrPeople);
   };
 }

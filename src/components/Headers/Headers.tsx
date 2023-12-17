@@ -40,6 +40,7 @@ const Headers = () => {
 
   const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
   const { currentUserInfo } = useCurrentUserInfo();
+  
   const queryClient = useQueryClient();
 
   // Switch theme

@@ -1,18 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  arrayShouldFollowers: []
+  arrayShouldFriends: []
 };
 
 const getStartedSlice = createSlice({
   name: 'GetStarted',
   initialState,
   reducers: {
-    setShouldFollowers: (state, action) => {
-      return { ...state, arrayShouldFollowers: action.payload.users };
+    setShouldFriends: (state, action) => {
+      return { ...state, arrayShouldFriends: action.payload.users };
     }
   }
 });
 
-export const { setShouldFollowers } = getStartedSlice.actions;
+export const { setShouldFriends: setShouldFriends } = getStartedSlice.actions;
 export default getStartedSlice.reducer;

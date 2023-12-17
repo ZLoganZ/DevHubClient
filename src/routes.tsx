@@ -6,7 +6,7 @@ import { ForgotPassword, ResetPassword, VerifyCode } from '@/pages/ForgotPasswor
 import NewsFeed from '@/pages/NewsFeed/NewsFeed';
 import Chat from '@/pages/Chat';
 import SelectInterest from '@/pages/SelectInterest';
-import SelectFollow from '@/pages/SelectFollow';
+import SelectAddFriend from '@/pages/SelectAddFriend';
 import SelectCommunity from '@/pages/SelectCommunity';
 import GetStarted from '@/pages/GetStarted';
 import NotFound404 from '@/pages/NotFound404';
@@ -30,8 +30,8 @@ export const privateRoutes = [
     element: <SelectInterest />
   },
   {
-    path: '/select-follow',
-    element: <SelectFollow />
+    path: '/select-add-friend',
+    element: <SelectAddFriend />
   },
   {
     path: '/select-community',
