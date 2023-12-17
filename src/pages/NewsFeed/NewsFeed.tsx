@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
+import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix, Spin } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileLines /* , faUserFriends */ } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import NewPost from '@/components/NewPost';
@@ -184,6 +184,15 @@ const NewsFeed = () => {
                       </div>
                     );
                   })}
+                  {isFetchingNextNewsfeedPosts && (
+                    <div className='flex justify-center mb-2'>
+                      <Spin
+                        indicator={
+                          <LoadingOutlined style={{ fontSize: 24, color: themeColorSet.colorText1 }} spin />
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className='news-feed-right w-4/12 pl-3 md:hidden'>

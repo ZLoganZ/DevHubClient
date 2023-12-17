@@ -30,13 +30,13 @@ const ContactList: React.FC<IContactsList> = ({ contacts }) => {
 
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [searchFollowers, setSearchFollowers] = useState<IUserInfo[]>(contacts);
+  const [searchFriends, setSearchFriends] = useState<IUserInfo[]>(contacts);
 
-  const HandleOnClick = (userFollow: string) => {
+  const HandleOnClick = (userFriend: string) => {
     void messageService
       .createConversation({
         type: 'private',
-        members: [userFollow]
+        members: [userFriend]
       })
       .then((res) => {
         chatSocket.emit(Socket.NEW_CONVERSATION, res.data.metadata);
@@ -46,18 +46,18 @@ const ContactList: React.FC<IContactsList> = ({ contacts }) => {
   };
 
   useEffect(() => {
-    setSearchFollowers(contacts);
+    setSearchFriends(contacts);
   }, [contacts]);
 
   useEffect(() => {
     if (search === '') {
-      setSearchFollowers(contacts);
+      setSearchFriends(contacts);
     } else {
       const searchTerm = removeAccents(search).toLowerCase();
 
-      setSearchFollowers(
-        contacts.filter((follower) => {
-          const name = removeAccents(follower.name).toLowerCase();
+      setSearchFriends(
+        contacts.filter((friend) => {
+          const name = removeAccents(friend.name).toLowerCase();
           return name.includes(searchTerm);
         })
       );
@@ -124,7 +124,7 @@ const ContactList: React.FC<IContactsList> = ({ contacts }) => {
                 style={{
                   overflow: 'auto'
                 }}>
-                {searchFollowers.length === 0 ? (
+                {searchFriends.length === 0 ? (
                   <Empty
                     image='https://static.thenounproject.com/png/3668369-200.png'
                     description={
@@ -139,7 +139,7 @@ const ContactList: React.FC<IContactsList> = ({ contacts }) => {
                     }}
                   />
                 ) : (
-                  searchFollowers.map((item) => {
+                  searchFriends.map((item) => {
                     return (
                       <div
                         className='user flex items-center cursor-pointer p-4 rounded-xl'

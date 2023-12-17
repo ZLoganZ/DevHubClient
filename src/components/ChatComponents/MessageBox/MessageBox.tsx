@@ -29,7 +29,6 @@ interface IMessageBox {
   isCreator: boolean;
   type: TypeofConversation;
   typeCalled?: string;
-  style?: React.CSSProperties;
 }
 
 const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
@@ -43,8 +42,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
       isMoreThan10Min,
       isAdmin,
       type,
-      isCreator,
-      style
+      isCreator
     },
     ref
   ) => {
@@ -196,7 +194,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
     };
 
     return (
-      <StyleProvider ref={ref} theme={themeColorSet} style={style}>
+      <StyleProvider ref={ref} theme={themeColorSet}>
         {isMoreThan10Min && (
           <div className='flex justify-center my-2'>
             <div className='text-xs font-semibold' style={{ color: themeColorSet.colorText3 }}>

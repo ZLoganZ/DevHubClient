@@ -48,8 +48,8 @@ export function* rootSaga() {
     // getStartedSaga
     getStartedSaga.theoDoiChooseGetStartedSaga(),
     getStartedSaga.theoDoiChooseGetInterestSaga(),
-    getStartedSaga.theoDoigetShouldFollowSaga(),
-    getStartedSaga.theoDoichooseShouldFollowerSaga(),
+    getStartedSaga.theoDoigetShouldAddFriendSaga(),
+    getStartedSaga.theoDoichooseShouldFriendSaga(),
 
     // communitySaga
     communitySaga.theoDoiGetCommunityByIDSaga()

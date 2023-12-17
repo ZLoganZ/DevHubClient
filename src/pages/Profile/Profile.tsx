@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Avatar, Col, Empty, Image, Row, Space, Tabs, Tag } from 'antd';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,7 +35,7 @@ import getImageURL from '@/util/getImageURL';
 
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
-import { useFollowUser } from '@/hooks/mutation';
+import { useAddFriendUser, useAcceptFriendUser } from '@/hooks/mutation';
 import { IExperience } from '@/types';
 import StyleProvider from './cssProfile';
 
@@ -52,11 +52,33 @@ const Profile = ({ userID }: IProfile) => {
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
+  const { mutateAddFriendUser: mutateAddFriendUser, isLoadingAddFriendUser: isLoadingAddFriendUser } =
+    useAddFriendUser();
+
+  const {
+    mutateAcceptFriendUser: mutateAcceptFriendUser,
+    isLoadingAcceptFriendUser: isLoadingAcceptFriendUser
+  } = useAcceptFriendUser();
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
   const { currentUserInfo } = useCurrentUserInfo();
+
+  const sentRequest = useMemo(() => {
+    if (currentUserInfo && otherUserInfo) {
+      return currentUserInfo.requestSent.indexOf(otherUserInfo._id) !== -1;
+    }
+    return false;
+  }, [currentUserInfo, otherUserInfo]);
+
+  const receivedRequest = useMemo(() => {
+    if (currentUserInfo && otherUserInfo) {
+      return currentUserInfo.requestReceived.indexOf(otherUserInfo._id) !== -1;
+    }
+    return false;
+  }, [currentUserInfo, otherUserInfo]);
+
+  console.log(currentUserInfo, otherUserInfo)
 
   const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
     useUserPostsData(userID);
@@ -89,10 +111,12 @@ const Profile = ({ userID }: IProfile) => {
     }
   }, [isLoadingUserPosts]);
 
-  const [isFollowing, setIsFollowing] = useState(true);
+  const [isPendingFriend, setIsPendingFriend] = useState(false);
   useEffect(() => {
-    setIsFollowing(otherUserInfo?.is_followed);
+    setIsPendingFriend(otherUserInfo?.is_friend);
   }, [otherUserInfo]);
+
+  console.log(isPendingFriend, sentRequest, receivedRequest);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -164,11 +188,17 @@ const Profile = ({ userID }: IProfile) => {
                   <ButtonActiveHover
                     className='follow px-6 h-11 border-2 border-solid'
                     type='default'
-                    loading={isLoadingFollowUser}
+                    loading={isLoadingAddFriendUser}
                     onClick={() => {
-                      mutateFollowUser(userID);
+                      receivedRequest ? mutateAcceptFriendUser(userID) : mutateAddFriendUser(userID);
                     }}>
-                    {isFollowing ? 'Unfriend' : 'Add friend'}
+                    {isPendingFriend
+                      ? 'Unfriend'
+                      : sentRequest
+                      ? 'Cancel Request'
+                      : receivedRequest
+                      ? 'Accept'
+                      : 'Add Friend'}
                   </ButtonActiveHover>
                 </div>
               </Col>
@@ -207,13 +237,13 @@ const Profile = ({ userID }: IProfile) => {
             </Col>
             <div className='follow mt-5 md:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.follower_number ?? 0}</span>&nbsp;
-                {otherUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
+                <span className='mr-1'>{otherUserInfo?.friend_number ?? 0}</span>&nbsp;
+                {otherUserInfo?.friend_number > 1 ? 'Friends' : 'Friend'}
               </span>
-              <span className='following item mr-2'>
-                <span className='mr-1'>{otherUserInfo?.following_number ?? 0}</span>&nbsp;
-                {otherUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
-              </span>
+              {/* <span className='following item mr-2'>
+                <span className='mr-1'>{otherUserInfo?.pendingFriend_number ?? 0}</span>&nbsp;
+                {otherUserInfo?.pendingFriend_number > 1 ? 'Followings' : 'Following'}
+              </span> */}
               <span className='post mr-2'>
                 <span className='mr-1'>{otherUserInfo?.post_number ?? 0}</span>&nbsp;
                 {otherUserInfo?.post_number > 1 ? 'Posts' : 'Post'}

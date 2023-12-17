@@ -81,16 +81,16 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
   const { mutateSendMessage } = useSendMessage();
 
   const otherUser = useOtherUser(currentConversation);
-  const followers = useMemo(() => {
+  const friends = useMemo(() => {
     return currentUserInfo.members;
   }, [currentUserInfo.members]);
 
-  // filter members in followers but not in conversation
+  // filter members in friends but not in conversation
   const members = useMemo(() => {
-    return followers.filter((follower) => {
-      return !currentConversation.members.some((member) => member._id === follower._id);
+    return friends.filter((friend) => {
+      return !currentConversation.members.some((member) => member._id === friend._id);
     });
-  }, [followers, currentConversation.members]);
+  }, [friends, currentConversation.members]);
 
   const [openAvatar, setOpenAvatar] = useState(false);
   const [openChangeName, setOpenChangeName] = useState(false);

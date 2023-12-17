@@ -311,12 +311,12 @@ export const useUpdateUser = () => {
  * The `useFollowUser` function is a custom hook that handles following a user, including making the
  * API call, handling loading and error states, and invalidating relevant queries in the query cache.
  */
-export const useFollowUser = () => {
+export const useAddFriendUser = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (userID: string) => {
-      await userService.followUser(userID);
+      await userService.sendFriendRequest(userID);
     },
     onSuccess(_, userID) {
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
@@ -325,12 +325,38 @@ export const useFollowUser = () => {
     }
   });
   return {
-    mutateFollowUser: mutate,
-    isLoadingFollowUser: isPending,
-    isErrorFollowUser: isError,
-    isSuccessFollowUser: isSuccess
+    mutateAddFriendUser: mutate,
+    isLoadingAddFriendUser: isPending,
+    isErrorAddFriendUser: isError,
+    isSuccessAddFriendUser: isSuccess
   };
 };
+
+/**
+ * The `useAcceptFriendUser` function is a custom hook that handles accepting a friend request,
+ * including making the API call, handling loading and error states, and invalidating relevant
+ * queries in the query cache.
+ */
+export const useAcceptFriendUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.acceptFriendRequest(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
+
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
+    }
+  });
+  return {
+    mutateAcceptFriendUser: mutate,
+    isLoadingAcceptFriendUser: isPending,
+    isErrorAcceptFriendUser: isError,
+    isSuccessAcceptFriendUser: isSuccess
+  };
+}
 
 /**
  * The `useSendMessage` function is a custom hook in TypeScript that handles sending a message and
