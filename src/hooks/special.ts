@@ -78,7 +78,7 @@ export const useIntersectionObserver = (
         observer.unobserve(targetRef.current);
       }
     };
-  }, [targetRef, onIntersect]);
+  }, [targetRef, onIntersect, options]);
 };
 
 /**

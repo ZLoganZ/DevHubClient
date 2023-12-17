@@ -6,11 +6,11 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import RenderPeopleItem from './RenderPeopleItem';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
-import { GET_SHOULD_FOLLOWERS_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
+import { GET_SHOULD_FRIENDS_SAGA } from '@/redux/ActionSaga/GetStartedActionSaga';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
-import StyleProvider from './cssSelectFollow';
+import StyleProvider from './cssSelectAddFriend';
 
-const SelectFollow = () => {
+const SelectAddFriend = () => {
   const dispatch = useAppDispatch();
 
   // Lấy theme từ LocalStorage chuyển qua css
@@ -19,10 +19,10 @@ const SelectFollow = () => {
 
   // Lấy danh sách người theo dõi
   useEffect(() => {
-    dispatch(GET_SHOULD_FOLLOWERS_SAGA());
+    dispatch(GET_SHOULD_FRIENDS_SAGA());
   }, []);
 
-  const peopleArray = useAppSelector((state) => state.getStarted.arrayShouldFollowers);
+  const peopleArray = useAppSelector((state) => state.getStarted.arrayShouldFriends);
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -96,4 +96,4 @@ const SelectFollow = () => {
   );
 };
 
-export default SelectFollow;
+export default SelectAddFriend;

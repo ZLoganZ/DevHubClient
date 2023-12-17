@@ -7,16 +7,16 @@ import { ButtonActiveHover } from '@/components/MiniComponent';
 import { commonColor } from '@/util/cssVariable';
 import { getTheme } from '@/util/theme';
 import { useAppSelector } from '@/hooks/special';
-import { useFollowUser } from '@/hooks/mutation';
+import { useAddFriendUser } from '@/hooks/mutation';
 
 const RenderPeopleItem = ({ item }: any) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateFollowUser } = useFollowUser();
+  const { mutateAddFriendUser: mutateAddFriendUser } = useAddFriendUser();
 
-  const [follow, setFollow] = useState(false);
+  const [Friend, setFriend] = useState(false);
 
   return (
     <>
@@ -93,11 +93,10 @@ const RenderPeopleItem = ({ item }: any) => {
           }}>
           <ButtonActiveHover
             onClick={() => {
-              setFollow(!follow);
-              mutateFollowUser(item._id);
+              mutateAddFriendUser(item._id, { onSuccess: () => setFriend(!Friend) });
             }}>
             &nbsp;
-            {!follow ? 'Follow' : 'Following'}
+            {!Friend ? 'Unfriend' : 'Add friend'}
           </ButtonActiveHover>
         </div>
       </div>

@@ -11,24 +11,35 @@ class UserService extends BaseService {
   updateUser = (userUpdate: IUserUpdate): Promise<AxiosResponse<IResponse<IUserInfo>>> => {
     return this.put(`/users/update`, userUpdate);
   };
-  getFollowers = (userID: string): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
-    return this.get(`/users/followers/${userID}`);
+
+  // Friend request
+  getFriends = (userID: string): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
+    return this.get(`/users/friend_list/${userID}`);
   };
-  getFollowing = (userID: string): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
-    return this.get(`/users/following/${userID}`);
+  getRequestSent = (userID: string): Promise<AxiosResponse<IResponse<string[]>>> => {
+    return this.get(`/users/request_sent`, userID);
   };
-  getShouldFollow = (): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
-    return this.get(`/users/shouldfollow`);
+  getRequestReceived = (userID: string): Promise<AxiosResponse<IResponse<string[]>>> => {
+    return this.get(`/users/request_received`, userID);
   };
+  sendFriendRequest = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
+    return this.post(`/users/send_friend_request/${userID}`, '');
+  };
+  acceptFriendRequest = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
+    return this.post(`/users/accept_friend_request/${userID}`, '');
+  };
+  getShouldAddFriend = (): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
+    return this.get(`/users/should-add-friend`);
+  };
+
+  // User request
   getUserInfo = (): Promise<AxiosResponse<IResponse<IUserInfo>>> => {
     return this.get(`/users/me`);
   };
   getUserInfoByID = (userID: string): Promise<AxiosResponse<IResponse<IUserInfo>>> => {
     return this.get(`/users/find/${userID}`);
   };
-  followUser = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
-    return this.put(`/users/follow/${userID}`, '');
-  };
+
   getRepositoryGithub = (): Promise<AxiosResponse<IResponse<IRepository[]>>> => {
     return this.getGithub(`/users/repositories`);
   };

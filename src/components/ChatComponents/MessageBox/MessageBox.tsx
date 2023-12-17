@@ -33,7 +33,17 @@ interface IMessageBox {
 
 const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
   (
-    { message, isLastMes, seen, isNextMesGroup, isPrevMesGroup, isMoreThan10Min, isAdmin, type, isCreator },
+    {
+      message,
+      isLastMes,
+      seen,
+      isNextMesGroup,
+      isPrevMesGroup,
+      isMoreThan10Min,
+      isAdmin,
+      type,
+      isCreator
+    },
     ref
   ) => {
     // Lấy theme từ LocalStorage chuyển qua css
@@ -79,7 +89,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
       }
     };
     const messageStyle = merge(
-      'text-sm overflow-hidden break-words',
+      'text-sm overflow-hidden break-words max-w-full',
       message.type !== 'image' && 'py-2 px-3',
       message.type !== 'image' && (isOwn ? 'bg-sky-500 text-white ml-7' : 'bg-gray-700 text-white mr-7'),
       message.type !== 'image' ? roundedCornerStyle(isOwn, isNextMesGroup, isPrevMesGroup) : 'rounded-xl'
@@ -168,7 +178,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
           return (
             <Image
               rootClassName='flex'
-              src={getImageURL(message.images[0])}
+              src={getImageURL(message.images[0], 'avatar')}
               alt='Avatar'
               preview={{ src: getImageURL(message.images[0]), mask: <FontAwesomeIcon icon={faEye} /> }}
               style={{
@@ -233,7 +243,7 @@ const MessageBox = forwardRef<HTMLDivElement, IMessageBox>(
                   </NavLink>
                 </div>
               )}
-              <div className={merge('body-message flex flex-col', isOwn && 'items-end')}>
+              <div className={merge('body-message flex flex-col w-full', isOwn && 'items-end')}>
                 <Tooltip
                   placement={isOwn ? 'left' : 'right'}
                   arrow={false}

@@ -101,7 +101,7 @@ const Chat = () => {
   const options = [
     { name: 'new message', icon: faComment, count: notSeenCount },
     { name: 'contact', icon: faUser, count: contactCount },
-    { name: 'new notification', icon: faBell, count: 99 },
+    // { name: 'new notification', icon: faBell, count: 99 },
     { name: 'missing call', icon: faVideo, count: calledList?.length ?? 0 }
   ];
 
@@ -111,9 +111,9 @@ const Chat = () => {
         return <ConversationList conversations={conversations} selecting={conversationID} />;
       case 1:
         return <ContactList contacts={contacts} />;
+      // case 2:
+      //   return <></>;
       case 2:
-        return <></>;
-      case 3:
         return <CalledList />;
       default:
         return <></>;
@@ -180,7 +180,7 @@ const Chat = () => {
                 <Col span={5} className='h-screen z-10'>
                   {OptionRender}
                 </Col>
-                <Col span={18} className='pl-3 z-0'>
+                <Col span={18} className='z-0'>
                   <div
                     className='chatBox h-screen'
                     style={{

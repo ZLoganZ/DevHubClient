@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix } from 'antd';
+import { Col, Dropdown, type MenuProps, Row, Skeleton, Space, Affix, Spin } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileLines /* , faUserFriends */ } from '@fortawesome/free-solid-svg-icons';
 import { useMediaQuery } from 'react-responsive';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import NewPost from '@/components/NewPost';
@@ -98,7 +98,6 @@ const NewsFeed = () => {
 
   const {
     isLoadingAllNewsfeedPosts,
-    isFetchingAllNewsfeedPosts,
     allNewsfeedPosts,
     fetchNextNewsfeedPosts,
     hasNextNewsfeedPosts,
@@ -125,13 +124,13 @@ const NewsFeed = () => {
         behavior: 'smooth'
       });
     }
-    if (!isLoadingAllNewsfeedPosts && isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
+    if (!isLoadingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-  }, [isLoadingAllNewsfeedPosts, isFetchingAllNewsfeedPosts]);
+  }, [isLoadingAllNewsfeedPosts]);
 
   const popular = useMemo(() => {
     return [...(allPopularPosts ?? [])];
@@ -147,21 +146,19 @@ const NewsFeed = () => {
     setPopularOpen(flag);
   };
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 1023 });
 
   const isNoPopularPosts = !isFetchingAllPopularPosts && !isLoadingAllPopularPosts && popular.length === 0;
 
   return (
     <StyleProvider theme={themeColorSet}>
-      {!community ||
-      isLoadingAllNewsfeedPosts ||
-      (isFetchingAllNewsfeedPosts && !isFetchingNextNewsfeedPosts) ? (
+      {!community || isLoadingAllNewsfeedPosts ? (
         <LoadingNewFeed />
       ) : (
         <Row>
-          <Col className='xs:ml-0' offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
+          <Col className='md:ml-0' offset={isMdScreen ? 0 : 3} span={isMdScreen ? 24 : 18}>
             <div className='news-feed flex justify-between mt-10'>
-              <div className='news-feed-left w-8/12 xs:w-full'>
+              <div className='news-feed-left w-8/12 md:w-full'>
                 <NewPost currentUser={currentUserInfo} />
                 <div className='show'>
                   {allNewsfeedPosts.map((item, index) => {
@@ -172,14 +169,12 @@ const NewsFeed = () => {
                         )}
                         {item.type === 'Post' ? (
                           <OtherPost
-                            key={item._id}
                             post={item}
                             postAuthor={item.post_attributes.user}
                             currentUser={currentUserInfo}
                           />
                         ) : (
                           <OtherPostShare
-                            key={item._id}
                             postShared={item}
                             postAuthor={item.post_attributes.user}
                             postSharer={item.post_attributes.owner_post!}
@@ -189,9 +184,18 @@ const NewsFeed = () => {
                       </div>
                     );
                   })}
+                  {isFetchingNextNewsfeedPosts && (
+                    <div className='flex justify-center mb-2'>
+                      <Spin
+                        indicator={
+                          <LoadingOutlined style={{ fontSize: 24, color: themeColorSet.colorText1 }} spin />
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className='news-feed-right w-4/12 pl-3 xs:hidden'>
+              <div className='news-feed-right w-4/12 pl-3 md:hidden'>
                 <Affix offsetTop={100}>
                   <div key={popularvalue}>
                     <div
@@ -272,7 +276,7 @@ const NewsFeed = () => {
                         </>
                       ) : (
                         popular.map((item) => (
-                          <NavLink key={item._id} to={`/post/${item._id}`}>
+                          <NavLink key={item._id + 'popular'} to={`/post/${item._id}`}>
                             <div className='popular-post-item flex rounded-lg items-center pt-3 pb-3'>
                               <img
                                 style={{

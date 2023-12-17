@@ -70,10 +70,15 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
     post.is_saved ? setSaveColor('yellow') : setSaveColor(themeColorSet.colorText1);
   }, [post.is_saved, changed]);
 
+  // get path url
+  const pathUrl = window.location.pathname;
+  // if path url is /post/:id, then isDetail = true
+  const isDetail = pathUrl.includes('/post/');
+
   return (
     <StyleProvider theme={themeColorSet}>
       <div className='flex justify-between items-center'>
-        <div className='like_share flex justify-between w-1/5 xs:w-2/5'>
+        <div className='like_share flex justify-between w-1/5 md:w-2/5'>
           <Space className='like' direction='vertical' align='center'>
             <span>
               {ConvertNumber(likeNumber)} like{likeNumber > 1 && 's'}
@@ -93,7 +98,8 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
 
                 mutateLikePost({
                   post: post._id,
-                  owner_post: post.post_attributes.user._id
+                  owner_post: post.post_attributes.user._id,
+                  visibility: 'public'
                 });
               }}
             />
@@ -117,13 +123,14 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
 
                 mutateSharePost({
                   post: post._id,
-                  owner_post: post.post_attributes.user._id
+                  owner_post: post.post_attributes.user._id,
+                  visibility: 'public'
                 });
               }}
             />
           </Space>
         </div>
-        <div className='comment_view flex justify-between w-1/3 xs:w-6/12'>
+        <div className='comment_view flex justify-between w-1/3 md:w-6/12'>
           <Space className='like' direction='vertical' align='center'>
             <span>
               {ConvertNumber(commentNumber)} comment{commentNumber > 1 && 's'}
@@ -133,21 +140,31 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
               style={{ backgroundColor: 'transparent' }}
               icon={<FontAwesomeIcon icon={faComment} color={themeColorSet.colorText1} />}
               onClick={() =>
-                dispatch(
-                  openModal({
-                    title: 'The post of ' + post.post_attributes.user.name,
-                    component: (
-                      <OtherPostDetail
-                        key={post._id}
-                        post={post}
-                        postAuthor={postAuthor}
-                        currentUser={currentUser}
-                      />
-                    ),
-                    footer: <CommentInput key={post._id} postID={post._id} currentUser={currentUser} />,
-                    type: 'post'
-                  })
-                )
+                !isDetail
+                  ? dispatch(
+                      openModal({
+                        title: 'The post of ' + post.post_attributes.user.name,
+                        component: (
+                          <OtherPostDetail
+                            key={post._id}
+                            post={post}
+                            postAuthor={postAuthor}
+                            currentUser={currentUser}
+                          />
+                        ),
+                        footer: (
+                          <CommentInput
+                            key={post._id}
+                            postID={post._id}
+                            currentUser={currentUser}
+                            ownerPost={post.post_attributes.user._id}
+                          />
+                        ),
+                        type: 'post'
+                      })
+                    )
+                  : // focus to comment input in component CommentInput
+                    document.getElementById('commentInput')?.focus()
               }
             />
           </Space>

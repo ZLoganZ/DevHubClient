@@ -10,6 +10,7 @@ const initialState = {
   data: {
     isReply: false,
     idComment: null,
+    parentUser: '',
     name: null,
     user_image: null
   }
@@ -42,6 +43,7 @@ const modalHOCSlide = createSlice({
         data: {
           isReply: false,
           idComment: null,
+          parentUser: '',
           name: null,
           user_image: null
         }

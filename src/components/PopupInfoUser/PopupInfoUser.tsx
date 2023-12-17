@@ -9,7 +9,7 @@ import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
-import { useFollowUser } from '@/hooks/mutation';
+import { useAddFriendUser } from '@/hooks/mutation';
 import { IUserInfo } from '@/types';
 import StyleProvider from './cssPopupInfoUser';
 
@@ -23,11 +23,12 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateFollowUser, isLoadingFollowUser } = useFollowUser();
+  const { mutateAddFriendUser: mutateAddFriendUser, isLoadingAddFriendUser: isLoadingAddFriendUser } =
+    useAddFriendUser();
 
-  const [isFollowed, setIsFollowed] = useState(userInfo?.is_followed);
+  const [isFriend, setIsFriend] = useState(userInfo?.is_friend);
   useEffect(() => {
-    setIsFollowed(userInfo?.is_followed);
+    setIsFriend(userInfo?.is_friend);
   }, [userInfo]);
 
   return (
@@ -59,13 +60,13 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
 
           <div className='follow mt-5'>
             <span className='follower item mr-2'>
-              <span className='mr-1'>{userInfo?.follower_number ?? 0}</span>&nbsp;
-              {userInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
+              <span className='mr-1'>{userInfo?.friend_number ?? 0}</span>&nbsp;
+              {userInfo?.friend_number > 1 ? 'Friends' : 'Friend'}
             </span>
-            <span className='following item mr-2'>
-              <span className='mr-1'>{userInfo?.following_number ?? 0}</span>&nbsp;
-              {userInfo?.following_number > 1 ? 'Followings' : 'Following'}
-            </span>
+            {/* <span className='following item mr-2'>
+              <span className='mr-1'>{userInfo?.pendingFriend_number ?? 0}</span>&nbsp;
+              {userInfo?.pendingFriend_number > 1 ? 'Followings' : 'Following'}
+            </span> */}
             <span className='post mr-2'>
               <span className='mr-1'>{userInfo?.post_number ?? 0}</span>&nbsp;
               {userInfo?.post_number > 1 ? 'Posts' : 'Post'}
@@ -96,13 +97,12 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
               <div className='followButton mr-4'>
                 <ButtonActiveHover
                   className='btnFollow btn-primary px-5 py-1.5 rounded-3xl'
-                  loading={isLoadingFollowUser}
+                  loading={isLoadingAddFriendUser}
                   onClick={() => {
-                    mutateFollowUser(userInfo._id);
-                    setIsFollowed(!isFollowed);
+                    mutateAddFriendUser(userInfo._id, { onSuccess: () => setIsFriend(!isFriend) });
                   }}>
                   <span style={{ color: commonColor.colorWhite1 }}>
-                    {isFollowed ? 'Following' : 'Follow'}
+                    {isFriend ? 'Unfriend' : 'Add friend'}
                   </span>
                 </ButtonActiveHover>
               </div>

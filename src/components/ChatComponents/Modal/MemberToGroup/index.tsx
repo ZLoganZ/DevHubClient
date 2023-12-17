@@ -83,11 +83,11 @@ const MemberToGroup: React.FC<IMemberToGroup> = ({ users, setMembers }) => {
             </div>
           </Row>
           <Row className=' w-full'>
-            <div className='font-bold text-lg'> List Followers </div>
+            <div className='font-bold text-lg'> List Friends </div>
             <div className='list-users flex flex-col w-full max-h-80 overflow-auto'>
               {users.length == 0 && (
                 <div className='w-full h-full flex items-center justify-center'>
-                  <div className='font-bold text-sm py-2'>You don't have any followers anymore :(</div>
+                  <div className='font-bold text-sm py-2'>You don't have any friends anymore :(</div>
                 </div>
               )}
               {users.map((user) => (

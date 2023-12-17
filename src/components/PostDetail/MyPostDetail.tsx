@@ -11,7 +11,6 @@ import { useCommentsData } from '@/hooks/fetch';
 import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPostDetail';
-import { useMediaQuery } from 'react-responsive';
 interface IPostDetailProps {
   post: IPost;
   postAuthor: IUserInfo;
@@ -41,7 +40,6 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
       setCommentInput('');
     }
   }, [comments]);
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   return (
     <StyleProvider theme={themeColorSet}>
@@ -56,20 +54,19 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                     backgroundColor: themeColorSet.colorBg2,
                     maxHeight: 'calc(100vh - 200px)'
                   }
-                : { backgroundColor: themeColorSet.colorBg2 }
+                : { backgroundColor: themeColorSet.colorBg2, width: '100%' }
             }>
-            {!isXsScreen &&
-              (post.type === 'Share' ? (
-                <MyPostShare
-                  postShared={post}
-                  postAuthor={postAuthor}
-                  postSharer={post.post_attributes.owner_post!}
-                />
-              ) : (
-                <MyPost post={post} postAuthor={postAuthor} />
-              ))}
+            {post.type === 'Share' ? (
+              <MyPostShare
+                postShared={post}
+                postAuthor={postAuthor}
+                postSharer={post.post_attributes.owner_post!}
+              />
+            ) : (
+              <MyPost post={post} postAuthor={postAuthor} />
+            )}
             <div
-              className='commentTotal px-3 ml-4 xs:px-0 xs:ml-0'
+              className='commentTotal px-3 ml-4 md:px-0 md:ml-0'
               style={{
                 maxHeight: '30rem'
                 // overflow: 'auto'
@@ -105,7 +102,14 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                 })
               )}
             </div>
-            {isDetail && <CommentInput key={post._id} currentUser={postAuthor} postID={post._id} />}
+            {isDetail && (
+              <CommentInput
+                key={post._id}
+                currentUser={postAuthor}
+                postID={post._id}
+                ownerPost={post.post_attributes.user._id}
+              />
+            )}
           </div>
         </Col>
       </Row>

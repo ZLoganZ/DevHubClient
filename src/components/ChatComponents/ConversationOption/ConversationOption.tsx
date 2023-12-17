@@ -57,6 +57,7 @@ import AddMemberToGroup from '@/components/ChatComponents/OpenModal/AddMemberToG
 import { messageService } from '@/services/MessageService';
 import { IMessage, IUserInfo } from '@/types';
 import StyleProvider from './cssConversationOption';
+import MediaList from '../MediaList';
 
 interface IConversationOption {
   conversationID: string;
@@ -80,16 +81,16 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
   const { mutateSendMessage } = useSendMessage();
 
   const otherUser = useOtherUser(currentConversation);
-  const followers = useMemo(() => {
+  const friends = useMemo(() => {
     return currentUserInfo.members;
   }, [currentUserInfo.members]);
 
-  // filter members in followers but not in conversation
+  // filter members in friends but not in conversation
   const members = useMemo(() => {
-    return followers.filter((follower) => {
-      return !currentConversation.members.some((member) => member._id === follower._id);
+    return friends.filter((friend) => {
+      return !currentConversation.members.some((member) => member._id === friend._id);
     });
-  }, [followers, currentConversation.members]);
+  }, [friends, currentConversation.members]);
 
   const [openAvatar, setOpenAvatar] = useState(false);
   const [openChangeName, setOpenChangeName] = useState(false);
@@ -308,8 +309,34 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     document.body.removeChild(link);
   };
 
+  const [enableSeeAll, setEnableSeeAll] = useState(false);
+  const seeAllItems = useMemo(() => {
+    return {
+      images: messagesImage,
+      files: files,
+      links: links,
+      audios: audios
+    };
+  }, [audios, files, links, messagesImage]);
+  const [seeAllType, setSeeAllType] = useState<string>();
+
+  const changeConversationOption = useCallback((type: string) => {
+    setEnableSeeAll(!enableSeeAll);
+    setSeeAllType(type);
+  }, []);
+
   const listItems = useCallback(
     (items: IMessage[], icon: IconDefinition, description: string, isLoading: boolean) => {
+      const firstFourImagesWithInfo = items
+        .map((item) =>
+          item.images!.map((imageUrl) => ({
+            image: imageUrl,
+            sender: item.sender,
+            createdAt: item.createdAt
+          }))
+        )
+        .flat()
+        .slice(0, 4);
       return (
         <div className='content'>
           {isLoading ? (
@@ -325,58 +352,60 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             />
           ) : (
             <>
-              {items.slice(0, 4).map((item) =>
-                item.images?.map((image, index) => (
-                  <div
-                    className='fileContent flex justify-between items-center mb-2 ml-2'
-                    key={item._id + index}>
-                    <div className='left flex justify-between items-center'>
-                      <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
-                        <Image
-                          src={getImageURL(image, 'post')}
-                          alt='image'
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover'
-                          }}
-                          preview={{ src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> }}
-                        />
+              {firstFourImagesWithInfo.map((image, index) => (
+                <div className='fileContent flex justify-between items-center mb-2 ml-2' key={index}>
+                  <div className='left flex justify-between items-center'>
+                    <div className='image mr-2 flex rounded-xl h-14 w-14 overflow-hidden'>
+                      <Image
+                        src={getImageURL(image.image, 'post')}
+                        alt='image'
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover'
+                        }}
+                        preview={{ src: getImageURL(image.image), mask: <FontAwesomeIcon icon={faEye} /> }}
+                      />
+                    </div>
+                    <Space className='info' direction='vertical'>
+                      <div
+                        className='name'
+                        style={{
+                          color: themeColorSet.colorText1,
+                          fontWeight: '600'
+                        }}>
+                        {image?.sender.name}
                       </div>
-                      <Space className='info' direction='vertical'>
-                        <div
-                          className='name'
-                          style={{
-                            color: themeColorSet.colorText1,
-                            fontWeight: '600'
-                          }}>
-                          {item.sender.name}
-                        </div>
-                        <Space
-                          style={{
-                            color: themeColorSet.colorText3
-                          }}>
-                          <div className='date'>{getDateTimeToNow(item.createdAt)}</div>
-                        </Space>
+                      <Space
+                        style={{
+                          color: themeColorSet.colorText3
+                        }}>
+                        <div className='date'>{getDateTimeToNow(image.createdAt!)}</div>
                       </Space>
-                    </div>
-                    <div
-                      className='right cursor-pointer'
-                      onClick={() => {
-                        void downloadImage(image);
-                      }}>
-                      <FontAwesomeIcon icon={faDownload} />
-                    </div>
+                    </Space>
                   </div>
-                ))
-              )}
-              {items.length > 4 && (
+                  <div
+                    className='right cursor-pointer'
+                    onClick={() => {
+                      void downloadImage(image.image);
+                    }}>
+                    <FontAwesomeIcon icon={faDownload} />
+                  </div>
+                </div>
+              ))}
+              {items
+                .slice(0, 4)
+                .map((item) => item.images)
+                .flat().length > 4 && (
                 <div
                   className='seeAll flex items-end justify-end'
                   style={{
                     color: themeColorSet.colorText2,
                     fontSize: '0.8rem',
                     textDecoration: 'underline'
+                  }}
+                  onClick={() => {
+                    changeConversationOption('image');
                   }}>
                   <p className='cursor-pointer'>See all</p>
                 </div>
@@ -477,12 +506,14 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
             );
           })}
         </div>
-        <div
-          className='add-member mt-3 w-full flex items-center flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
-          onClick={() => setOpenAddMember(!openAddMember)}>
-          <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
-          <span className='text-sm font-medium text-left ml-2'>Add members</span>
-        </div>
+        {currentConversation.admins.some((admin) => admin._id === currentUserInfo._id) && (
+          <div
+            className='add-member mt-3 w-full flex items-center flex-row cursor-pointer pl-3 pr-5 py-2 rounded-full'
+            onClick={() => setOpenAddMember(!openAddMember)}>
+            <FontAwesomeIcon className='text-2xl' icon={faPlusCircle} />
+            <span className='text-sm font-medium text-left ml-2'>Add members</span>
+          </div>
+        )}
       </div>
     );
   }, [themeColorSet, currentConversation.admins, currentConversation.members, memberOptions]);
@@ -596,132 +627,138 @@ const ConversationOption: React.FC<IConversationOption> = ({ conversationID }) =
     <ConfigProvider
       theme={{ components: { Collapse: { headerPadding: '8px 12px', contentPadding: '0px 12px' } } }}>
       <StyleProvider theme={themeColorSet}>
-        {openAvatar && (
-          <ChangeAvatarGroup image={currentConversation.image} conversationID={conversationID} />
-        )}
-        {openChangeName && (
-          <ChangeGroupName name={currentConversation.name} conversationID={conversationID} />
-        )}
-        {openAddMember && <AddMemberToGroup conversationID={conversationID} users={members} />}
-        {isLoadingCurrentConversation ? (
-          <div
-            className='shared'
-            style={{
-              width: '25%',
-              height: '91%',
-              position: 'fixed',
-              backgroundColor: themeColorSet.colorBg1
-            }}>
-            <div
-              className='extension px-3 flex items-center'
-              style={{
-                height: '13%'
-              }}>
-              <div className='flex justify-center items-center w-full'>
-                <div
-                  className='setting text-center'
-                  style={{
-                    width: '25%'
-                  }}>
-                  <Skeleton.Button active size='large' shape='circle' />
-                </div>
-                <div
-                  className='notification text-center'
-                  style={{
-                    width: '25%'
-                  }}>
-                  <Skeleton.Button active size='large' shape='circle' />
-                </div>
-                <div
-                  className='warning text-center'
-                  style={{
-                    width: '25%'
-                  }}>
-                  <Skeleton.Button active size='large' shape='circle' />
-                </div>
-                <div
-                  className='logout text-center'
-                  style={{
-                    width: '25%'
-                  }}>
-                  <Skeleton.Button active size='large' shape='circle' />
-                </div>
-              </div>
-            </div>
-            <div className='fileShare px-3 py-4'>
-              <div className='sharedMedia'>
-                <Space className='content' size={20}>
-                  <Skeleton.Image active />
-                  <Skeleton.Image active />
-                  <Skeleton.Image active />
-                </Space>
-              </div>
-              <div className='sharedFile mt-5'>
-                <div className='flex justify-between items-center mb-3'></div>
-                <div className='content'>
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                  <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
-                </div>
-              </div>
-            </div>
-          </div>
+        {enableSeeAll ? (
+          <MediaList items={seeAllItems} type={seeAllType!} enable={setEnableSeeAll} />
         ) : (
-          <div
-            className='shared h-full overflow-auto'
-            style={{
-              borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
-              backgroundColor: themeColorSet.colorBg1
-            }}>
-            <Col className='info h-full'>
-              <Row align='middle' justify='center'>
-                <Space size={10} direction='vertical' align='center'>
-                  <div className='avatar mt-5'>
-                    {currentConversation.type === 'group' ? (
-                      <AvatarGroup
-                        key={currentConversation._id}
-                        users={currentConversation.members}
-                        image={currentConversation.image}
-                        preview
-                        size={120}
-                      />
-                    ) : (
-                      <AvatarMessage key={otherUser._id} user={otherUser} size={120} preview />
-                    )}
+          <>
+            {openAvatar && (
+              <ChangeAvatarGroup image={currentConversation.image} conversationID={conversationID} />
+            )}
+            {openChangeName && (
+              <ChangeGroupName name={currentConversation.name} conversationID={conversationID} />
+            )}
+            {openAddMember && <AddMemberToGroup conversationID={conversationID} users={members} />}
+            {isLoadingCurrentConversation ? (
+              <div
+                className='shared'
+                style={{
+                  width: '25%',
+                  height: '91%',
+                  position: 'fixed',
+                  backgroundColor: themeColorSet.colorBg1
+                }}>
+                <div
+                  className='extension px-3 flex items-center'
+                  style={{
+                    height: '13%'
+                  }}>
+                  <div className='flex justify-center items-center w-full'>
+                    <div
+                      className='setting text-center'
+                      style={{
+                        width: '25%'
+                      }}>
+                      <Skeleton.Button active size='large' shape='circle' />
+                    </div>
+                    <div
+                      className='notification text-center'
+                      style={{
+                        width: '25%'
+                      }}>
+                      <Skeleton.Button active size='large' shape='circle' />
+                    </div>
+                    <div
+                      className='warning text-center'
+                      style={{
+                        width: '25%'
+                      }}>
+                      <Skeleton.Button active size='large' shape='circle' />
+                    </div>
+                    <div
+                      className='logout text-center'
+                      style={{
+                        width: '25%'
+                      }}>
+                      <Skeleton.Button active size='large' shape='circle' />
+                    </div>
                   </div>
-                  <span className='name font-semibold text-xl'>
-                    {currentConversation.name ?? (
-                      <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                </div>
+                <div className='fileShare px-3 py-4'>
+                  <div className='sharedMedia'>
+                    <Space className='content' size={20}>
+                      <Skeleton.Image active />
+                      <Skeleton.Image active />
+                      <Skeleton.Image active />
+                    </Space>
+                  </div>
+                  <div className='sharedFile mt-5'>
+                    <div className='flex justify-between items-center mb-3'></div>
+                    <div className='content'>
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                      <Skeleton className='mb-3' active avatar paragraph={{ rows: 1 }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                className='shared h-full overflow-auto'
+                style={{
+                  borderLeft: '1px solid ' + themeColorSet.colorTextReverse2,
+                  backgroundColor: themeColorSet.colorBg1
+                }}>
+                <Col className='info h-full'>
+                  <Row align='middle' justify='center'>
+                    <Space size={10} direction='vertical' align='center'>
+                      <div className='avatar mt-5'>
+                        {currentConversation.type === 'group' ? (
+                          <AvatarGroup
+                            key={currentConversation._id}
+                            users={currentConversation.members}
+                            image={currentConversation.image}
+                            preview
+                            size={120}
+                          />
+                        ) : (
+                          <AvatarMessage key={otherUser._id} user={otherUser} size={120} preview />
+                        )}
+                      </div>
+                      <span className='name font-semibold text-xl'>
+                        {currentConversation.name ?? (
+                          <NavLink to={`/user/${otherUser._id}`}>{otherUser.name}</NavLink>
+                        )}
+                      </span>
+                    </Space>
+                  </Row>
+                  <Row className='mt-2' justify='center'>
+                    <SearchOutlined
+                      className='text-xl flex items-center justify-center px-2 py-2 rounded-full cursor-pointer'
+                      style={{ backgroundColor: themeColorSet.colorBg4 }}
+                    />
+                  </Row>
+                  <Collapse
+                    items={listOptions}
+                    defaultActiveKey={['5']}
+                    ghost
+                    expandIconPosition='start'
+                    expandIcon={({ isActive }) => (
+                      <FontAwesomeIcon
+                        icon={faCaretRight}
+                        style={{
+                          transform: isActive ? 'rotate(90deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease'
+                        }}
+                      />
                     )}
-                  </span>
-                </Space>
-              </Row>
-              <Row className='mt-2' justify='center'>
-                <SearchOutlined
-                  className='text-xl flex items-center justify-center px-2 py-2 rounded-full cursor-pointer'
-                  style={{ backgroundColor: themeColorSet.colorBg4 }}
-                />
-              </Row>
-              <Collapse
-                items={listOptions}
-                defaultActiveKey={['5']}
-                ghost
-                expandIconPosition='start'
-                expandIcon={({ isActive }) => (
-                  <FontAwesomeIcon
-                    icon={faCaretRight}
-                    style={{
-                      transform: isActive ? 'rotate(90deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.3s ease'
-                    }}
                   />
-                )}
-              />
-            </Col>
-          </div>
+                </Col>
+              </div>
+            )}
+          </>
         )}
       </StyleProvider>
     </ConfigProvider>

@@ -45,7 +45,7 @@ const MyProfile = () => {
 
   const userID = useAppSelector((state) => state.auth.userID);
 
-  const isXsScreen = useMediaQuery({ maxWidth: 639 });
+  const isMdScreen = useMediaQuery({ maxWidth: 1023 });
 
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -109,7 +109,7 @@ const MyProfile = () => {
       ) : (
         <Row>
           <Col span={24} className='avatar_cover relative'>
-            <div className='cover flex justify-center items-center w-full h-96 overflow-hidden xs:h-40 rounded-br-lg rounded-bl-lg'>
+            <div className='cover flex justify-center items-center w-full h-96 overflow-hidden md:h-60 rounded-br-lg rounded-bl-lg'>
               <Image
                 src={getImageURL(currentUserInfo.cover_image) ?? '/images/ProfilePage/cover.jpg'}
                 preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
@@ -117,7 +117,7 @@ const MyProfile = () => {
                 style={{ objectFit: 'cover' }}
               />
             </div>
-            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-[30%] left-[15%] xs:left-3 xs:w-28 xs:h-28 xs:-bottom-6'>
+            <div className='avatar rounded-full overflow-hidden flex w-44 h-44 -bottom-[30%] left-[15%] md:left-10 md:w-36 md:h-36 md:-bottom-20'>
               <Image
                 src={getImageURL(currentUserInfo.user_image, 'avatar')}
                 alt='avt'
@@ -129,9 +129,9 @@ const MyProfile = () => {
               />
             </div>
           </Col>
-          <Col offset={isXsScreen ? 0 : 3} span={isXsScreen ? 24 : 18}>
+          <Col offset={isMdScreen ? 0 : 3} span={isMdScreen ? 24 : 18}>
             <Row className='py-5 name_Editprofile'>
-              <Col offset={isXsScreen ? 1 : 6} span={isXsScreen ? 16 : 12}>
+              <Col offset={6} span={isMdScreen ? 12 : 12}>
                 <div className='text-2xl font-bold' style={{ color: themeColorSet.colorText1 }}>
                   {currentUserInfo.name}
                 </div>
@@ -148,11 +148,11 @@ const MyProfile = () => {
                   </NavLink>
                 </div>
               </Col>
-              <Col span={isXsScreen ? 5 : 6}>
-                <div className='chat_Follow flex justify-around items-center xs:items-start w-full h-full'>
+              <Col span={isMdScreen ? 1 : 6}>
+                <div className='chat_Follow flex justify-around items-center md:items-start w-full h-full'>
                   <div className='editProfile'>
                     <button
-                      className='btnEditProfile px-6 py-3 rounded-full xs:w-32'
+                      className='btnEditProfile px-6 py-3 rounded-full md:w-32'
                       onClick={() => {
                         dispatch(
                           openDrawer({
@@ -167,7 +167,7 @@ const MyProfile = () => {
                 </div>
               </Col>
             </Row>
-            <div className='id_address_join xs:pl-3'>
+            <div className='id_address_join md:pl-3'>
               <span className='id item mr-2'>@{currentUserInfo.alias || 'user'}</span>
               <span className='address item mr-2'>
                 <FontAwesomeIcon className='icon mr-2' icon={faLocationDot} />
@@ -179,7 +179,7 @@ const MyProfile = () => {
               </span>
             </div>
             <Col span={18} className='mt-5'>
-              <div className='tags flex flex-wrap xs:pl-1'>
+              <div className='tags flex flex-wrap md:pl-1'>
                 {descArray.map((item, index) => {
                   if (currentUserInfo.tags?.indexOf(item.title) !== -1) {
                     return (
@@ -199,21 +199,21 @@ const MyProfile = () => {
                 })}
               </div>
             </Col>
-            <div className='follow mt-5 xs:pl-3'>
+            <div className='follow mt-5 md:pl-3'>
               <span className='follower item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.follower_number ?? 0}</span>&nbsp;
-                {currentUserInfo?.follower_number > 1 ? 'Followers' : 'Follower'}
+                <span className='mr-1'>{currentUserInfo?.friend_number ?? 0}</span>&nbsp;
+                {currentUserInfo?.friend_number > 1 ? 'Friends' : 'Friend'}
               </span>
-              <span className='following item mr-2'>
-                <span className='mr-1'>{currentUserInfo?.following_number ?? 0}</span>&nbsp;
-                {currentUserInfo?.following_number > 1 ? 'Followings' : 'Following'}
-              </span>
+              {/* <span className='following item mr-2'>
+                <span className='mr-1'>{currentUserInfo?.pendingFriend_number ?? 0}</span>&nbsp;
+                {currentUserInfo?.pendingFriend_number > 1 ? 'Followings' : 'Following'}
+              </span> */}
               <span className='post mr-2'>
                 <span className='mr-1'>{currentUserInfo?.post_number ?? 0}</span>&nbsp;
                 {currentUserInfo?.post_number > 1 ? 'Posts' : 'Post'}
               </span>
             </div>
-            <div className='experience mt-5 xs:pl-1'>
+            <div className='experience mt-5 md:pl-1'>
               {currentUserInfo.experiences.map((item, index) => (
                 <div className='item mt-2' key={index}>
                   <FontAwesomeIcon
@@ -229,7 +229,7 @@ const MyProfile = () => {
                 </div>
               ))}
             </div>
-            <div className='contact mt-5 xs:pl-1'>
+            <div className='contact mt-5 md:pl-1'>
               <Space>
                 {currentUserInfo.contacts.map((item, index) => {
                   return (
@@ -246,10 +246,12 @@ const MyProfile = () => {
                 })}
               </Space>
             </div>
-            <div className='mainContain mt-5'>
+            <div className='mainContain mt-5 '>
               <Tabs
+                centered={isMdScreen ? true : false}
+                className='mainContain__tab'
                 tabBarStyle={
-                  isXsScreen
+                  isMdScreen
                     ? {
                         paddingLeft: '4px'
                       }
@@ -263,12 +265,12 @@ const MyProfile = () => {
                     children: (
                       <div className='mt-10 mb-20'>
                         {!currentUserInfo.about && currentUserInfo.repositories.length === 0 && (
-                          <div className='w-8/12 mb-10 xs:w-full'>
+                          <div className='w-8/12 mb-10 md:w-full'>
                             <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} description='No introduction' />
                           </div>
                         )}
                         {currentUserInfo.about && (
-                          <div className='w-8/12 mb-10 xs:w-full'>
+                          <div className='w-8/12 mb-10 md:w-full'>
                             <div
                               style={{
                                 color: themeColorSet.colorText1,
@@ -281,7 +283,7 @@ const MyProfile = () => {
                           </div>
                         )}
                         {currentUserInfo.repositories.length !== 0 && (
-                          <div className='w-8/12 mt-5 xs:w-full'>
+                          <div className='w-8/12 mt-5 md:w-full'>
                             <div
                               style={{
                                 color: themeColorSet.colorText1,
@@ -304,7 +306,7 @@ const MyProfile = () => {
                     key: '2',
                     label: 'Posts',
                     children: (
-                      <div className='mt-5 w-8/12 xs:w-full'>
+                      <div className='mt-5 w-8/12 md:w-full'>
                         <NewPost currentUser={currentUserInfo} />
                         {userPosts.length === 0 ? (
                           <Empty

@@ -1,4 +1,11 @@
-import { type InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+  QueryCache,
+  infiniteQueryOptions
+} from '@tanstack/react-query';
 
 import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
@@ -9,14 +16,15 @@ import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
 import { communityService } from '@/services/CommunityService';
 
+export const queryCache = new QueryCache();
+
 // ---------------------------FETCH HOOKS---------------------------
 
 /**
- * The `useCurrentUserInfo` function is a custom hook that retrieves the current user's information,
- * including their followers and following counts, from an API and returns the loading, error, and data
- * states.
- * @returns The function `useCurrentUserInfo` returns an object with the following properties:
- * - `isLoadingCurrentUserInfo` is a boolean that indicates whether the user data is still loading.
+ * The `useCurrentUserInfo` function is a custom hook that fetches and returns information about the
+ * current user.
+ * @returns The function `useCurrentUserInfo` returns an object with the pendingFriend properties:
+ * - `isLoadingCurrentUserInfo` is a boolean that indicates whether the data is still loading.
  * - `isErrorCurrentUserInfo` is a boolean that indicates whether there is an error.
  * - `currentUserInfo` is an object that contains information about the current user.
  * - `isFetchingCurrentUserInfo` is a boolean that indicates whether the query is currently fetching.
@@ -27,14 +35,17 @@ export const useCurrentUserInfo = () => {
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['currentUserInfo'],
     queryFn: async () => {
-      const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
-        userService.getFollowers(userID),
-        userService.getFollowing(userID),
-        userService.getUserInfoByID(userID)
-      ]);
+      const [{ data: Friends }, { data: RequestSent }, { data: requestReceived }, { data: userInfo }] =
+        await Promise.all([
+          userService.getFriends(userID),
+          userService.getRequestSent(userID),
+          userService.getRequestReceived(userID),
+          userService.getUserInfoByID(userID)
+        ]);
 
-      userInfo.metadata.followers = Followers.metadata;
-      userInfo.metadata.following = Following.metadata;
+      userInfo.metadata.friends = Friends.metadata;
+      userInfo.metadata.requestSent = RequestSent.metadata;
+      userInfo.metadata.requestReceived = requestReceived.metadata;
       return ApplyDefaults(userInfo.metadata);
     },
     staleTime: Infinity,
@@ -54,7 +65,7 @@ export const useCurrentUserInfo = () => {
  * other than the current user.
  * @param {string} userID - The `userID` parameter is a string that represents the unique identifier of
  * the user whose information we want to fetch.
- * @returns The function `useOtherUserInfo` returns an object with the following properties:
+ * @returns The function `useOtherUserInfo` returns an object with the PendingFiend properties:
  * - `isLoadingOtherUserInfo` is a boolean that indicates whether the data is still loading.
  * - `isErrorOtherUserInfo` is a boolean that indicates whether there is an error.
  * - `otherUserInfo` is an object that contains information about the other user.
@@ -64,14 +75,13 @@ export const useOtherUserInfo = (userID: string) => {
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
-      const [{ data: Followers }, { data: Following }, { data: userInfo }] = await Promise.all([
-        userService.getFollowers(userID),
-        userService.getFollowing(userID),
-        userService.getUserInfoByID(userID)
-      ]);
+      const [{ data: Friends }, { data: userInfo }] =
+        await Promise.all([
+          userService.getFriends(userID),
+          userService.getUserInfoByID(userID)
+        ]);
 
-      userInfo.metadata.followers = Followers.metadata;
-      userInfo.metadata.following = Following.metadata;
+      userInfo.metadata.friends = Friends.metadata;
       return ApplyDefaults(userInfo.metadata);
     },
     staleTime: Infinity
@@ -88,7 +98,7 @@ export const useOtherUserInfo = (userID: string) => {
 /**
  * The `useAllPostsData` function is a custom hook that fetches all posts data, sets the loading and
  * error states, and returns the fetched data along with additional information.
- * @returns The function `useAllPostsData` returns an object with the following properties:
+ * @returns The function `useAllPostsData` returns an object with the pendingFriend properties:
  * - `isLoadingAllPosts` is a boolean that indicates whether the data is still loading.
  * - `isErrorAllPosts` is a boolean that indicates whether there is an error.
  * - `allPosts` is an array of all posts.
@@ -133,19 +143,16 @@ export const useAllNewsfeedPostsData = () => {
         return ApplyDefaults(data.metadata);
       },
       initialPageParam: 1,
-      getNextPageParam: (lastPage, _, __, allPageParams) => {
+      getNextPageParam: (lastPage, _, lastPageParam) => {
         if (lastPage.length < 5) {
           return undefined;
         }
-        return allPageParams.length + 1;
+        return lastPageParam + 1;
       },
       select: (data) => {
-        if (data.pages.length > 4) {
-          data.pages.shift();
-        }
-
         return data.pages.flat();
       },
+      maxPages: 3,
       staleTime: Infinity,
       enabled: window.location.pathname === '/'
     });
@@ -258,6 +265,38 @@ export const usePostData = (postID: string) => {
     isErrorPost: isError,
     post: data?.metadata,
     isFetchingPost: isFetching
+  };
+};
+
+export const useSavedPostsData = () => {
+  const { data, isPending, isError, isFetching, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ['savedPosts'],
+      queryFn: async () => {
+        const { data } = await postService.getSavedPosts();
+        return data.metadata;
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _, lastPageParam) => {
+        if (lastPage.length < 5) {
+          return undefined;
+        }
+        return lastPageParam + 1;
+      },
+      select: (data) => {
+        return data.pages.flat();
+      },
+      staleTime: Infinity
+    });
+
+  return {
+    isLoadingSavedPosts: isPending,
+    isErrorSavedPosts: isError,
+    savedPosts: data!,
+    isFetchingSavedPosts: isFetching,
+    hasNextSavedPosts: hasNextPage,
+    isFetchingNextSavedPosts: isFetchingNextPage,
+    fetchNextSavedPosts: fetchNextPage
   };
 };
 
@@ -396,21 +435,21 @@ export const useCurrentConversationData = (conversationID: string | undefined) =
  * - `followers` is an array of followers.
  * - `isFetchingFollowers` is a boolean that indicates whether the query is currently fetching.
  */
-export const useFollowersData = (userID: string) => {
+export const useFriendsData = (userID: string) => {
   const { data, isPending, isError, isFetching } = useQuery({
-    queryKey: ['followers', userID],
+    queryKey: ['friends', userID],
     queryFn: async () => {
-      const { data } = await userService.getFollowers(userID);
+      const { data } = await userService.getFriends(userID);
       return data.metadata;
     },
     staleTime: Infinity
   });
 
   return {
-    isLoadingFollowers: isPending,
-    isErrorFollowers: isError,
-    followers: data!,
-    isFetchingFollowers: isFetching
+    isLoadingFriends: isPending,
+    isErrorFriends: isError,
+    friends: data!,
+    isFetchingFriends: isFetching
   };
 };
 
@@ -621,3 +660,29 @@ export const useGetCommunityByID = (id: string) => {
     isFetchingMessageCall: isFetching
   };
 };
+
+export const useMessagesOption = (conversationID: string) =>
+  infiniteQueryOptions({
+    queryKey: ['messages', conversationID],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await messageService.getMessages(conversationID, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getPreviousPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 30) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    getNextPageParam: (_, __, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined;
+      }
+      return firstPageParam - 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    staleTime: Infinity
+  });

@@ -10,7 +10,6 @@ import {
   ICreateLikeComment,
   ICreatePost,
   IMessage,
-  IPost,
   ISharePost,
   ISocketCall,
   IUpdateConversation,
@@ -92,7 +91,7 @@ export const useUpdatePost = () => {
 
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
-      void queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
+      queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
     }
   });
   return {
@@ -142,7 +141,7 @@ export const useLikePost = () => {
       await postService.likePost(post);
     },
     onSuccess(_, postLike) {
-      void queryClient.invalidateQueries({ queryKey: ['post', postLike.post] });
+      queryClient.invalidateQueries({ queryKey: ['post', postLike.post] });
     }
   });
   return {
@@ -165,7 +164,7 @@ export const useSharePost = () => {
       await postService.sharePost(post);
     },
     onSuccess(_, postShare) {
-      void queryClient.invalidateQueries({ queryKey: ['post', postShare.post] });
+      queryClient.invalidateQueries({ queryKey: ['post', postShare.post] });
     }
   });
   return {
@@ -188,7 +187,7 @@ export const useSavePost = () => {
       await postService.savePost(postID);
     },
     onSuccess(_, postID) {
-      void queryClient.invalidateQueries({ queryKey: ['post', postID] });
+      queryClient.invalidateQueries({ queryKey: ['post', postID] });
     }
   });
   return {
@@ -213,56 +212,13 @@ export const useCommentPost = () => {
       await postService.createComment(commentData);
     },
     onSuccess(_, newComment) {
-      void queryClient.invalidateQueries({ queryKey: ['comments', newComment.post] });
+      queryClient.invalidateQueries({ queryKey: ['comments', newComment.post] });
 
-      void queryClient.invalidateQueries({ queryKey: ['post', newComment.post] });
+      queryClient.invalidateQueries({ queryKey: ['post', newComment.post] });
 
-      const updatePostData = (oldData: IPost[] | undefined) => {
-        if (!oldData) return;
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
-        const newData = [...oldData];
-
-        return newData.map((post) => {
-          if (post._id === newComment.post) {
-            return {
-              ...post,
-              post_attributes: {
-                ...post.post_attributes,
-                comment_number: post.post_attributes.comment_number + 1
-              }
-            };
-          }
-          return post;
-        });
-      };
-
-      queryClient.setQueryData<InfiniteData<IPost[], number>>(['allNewsfeedPosts'], (oldData) => {
-        if (!oldData) return;
-        const newPages = [...oldData.pages];
-        const pageIndex = newPages.findIndex((page) => page.some((item) => item._id === newComment.post));
-        if (pageIndex !== -1) {
-          const newPage = newPages[pageIndex].map((post) => {
-            if (post._id === newComment.post) {
-              return {
-                ...post,
-                post_attributes: {
-                  ...post.post_attributes,
-                  comment_number: post.post_attributes.comment_number + 1
-                }
-              };
-            }
-            return post;
-          });
-          newPages[pageIndex] = newPage;
-          return {
-            ...oldData,
-            pages: newPages
-          };
-        }
-        return oldData;
-      });
-
-      queryClient.setQueryData<IPost[]>(['posts', uid], updatePostData);
+      queryClient.invalidateQueries({ queryKey: ['posts', uid] });
     }
   });
   return {
@@ -285,7 +241,7 @@ export const useLikeComment = () => {
       await postService.likeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
-      void queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
+      queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
     }
   });
   return {
@@ -308,7 +264,7 @@ export const useDislikeComment = () => {
       await postService.dislikeComment(payload.id, payload.comment);
     },
     onSuccess(_, payload) {
-      void queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
+      queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
     }
   });
   return {
@@ -355,42 +311,52 @@ export const useUpdateUser = () => {
  * The `useFollowUser` function is a custom hook that handles following a user, including making the
  * API call, handling loading and error states, and invalidating relevant queries in the query cache.
  */
-export const useFollowUser = () => {
+export const useAddFriendUser = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (userID: string) => {
-      await userService.followUser(userID);
+      await userService.sendFriendRequest(userID);
     },
     onSuccess(_, userID) {
-      queryClient.setQueryData<IUserInfo>(['currentUserInfo'], (oldData) => {
-        if (!oldData) return;
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
 
-        const index = oldData.following.findIndex((item) => item._id === userID);
-        return {
-          ...oldData,
-          following_number: oldData.following_number + (index !== -1 ? -1 : 1)
-        };
-      });
-
-      queryClient.setQueryData<IUserInfo>(['otherUserInfo', userID], (oldData) => {
-        if (!oldData) return;
-
-        return {
-          ...oldData,
-          follower_number: oldData.follower_number + (oldData.is_followed ? -1 : 1),
-          is_followed: !oldData.is_followed
-        };
-      });
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });
   return {
-    mutateFollowUser: mutate,
-    isLoadingFollowUser: isPending,
-    isErrorFollowUser: isError,
-    isSuccessFollowUser: isSuccess
+    mutateAddFriendUser: mutate,
+    isLoadingAddFriendUser: isPending,
+    isErrorAddFriendUser: isError,
+    isSuccessAddFriendUser: isSuccess
   };
 };
+
+/**
+ * The `useAcceptFriendUser` function is a custom hook that handles accepting a friend request,
+ * including making the API call, handling loading and error states, and invalidating relevant
+ * queries in the query cache.
+ */
+export const useAcceptFriendUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.acceptFriendRequest(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
+
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
+    }
+  });
+  return {
+    mutateAcceptFriendUser: mutate,
+    isLoadingAcceptFriendUser: isPending,
+    isErrorAcceptFriendUser: isError,
+    isSuccessAcceptFriendUser: isSuccess
+  };
+}
 
 /**
  * The `useSendMessage` function is a custom hook in TypeScript that handles sending a message and
@@ -681,7 +647,7 @@ export const useDissolveGroup = () => {
 
         return newData.filter((item) => item._id !== conversationID);
       });
-      queryClient.setQueryData<IConversation>(['conversation', conversationID], undefined);
+      queryClient.removeQueries({ queryKey: ['conversation', conversationID] });
 
       chatSocket.emit(Socket.DISSOLVE_GROUP, conversation);
     }
@@ -715,7 +681,7 @@ export const useReceiveDissolveGroup = () => {
         return newData.filter((item) => item._id !== conversation._id);
       });
 
-      queryClient.setQueryData<IConversation>(['conversation', conversation._id], undefined);
+      queryClient.removeQueries({ queryKey: ['conversation', conversation._id] });
     }
   });
 
@@ -752,7 +718,7 @@ export const useLeaveGroup = () => {
 
         return newData;
       });
-      queryClient.setQueryData<IConversation>(['conversation', conversationID], undefined);
+      queryClient.removeQueries({ queryKey: ['conversation', conversationID] });
 
       chatSocket.emit(Socket.LEAVE_GROUP, conversation);
     }
