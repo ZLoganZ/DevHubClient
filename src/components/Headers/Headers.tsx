@@ -17,7 +17,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BellOutlined, CommentOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  BellOutlined,
+  CommentOutlined,
+  UserOutlined,
+  SearchOutlined
+} from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
@@ -34,10 +39,12 @@ import StyleProvider from './cssHeaders';
 const Headers = () => {
   const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
-  useAppSelector((state) => state.theme.changed);
+  useAppSelector(state => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
+  const switchTheme = localStorage.getItem('theme')
+    ? localStorage.getItem('theme') === 'dark'
+    : true;
   const { currentUserInfo } = useCurrentUserInfo();
 
   // Switch theme
@@ -72,7 +79,10 @@ const Headers = () => {
         <NavLink to={`/user/${currentUserInfo._id}`}>
           <div className='flex items-center py-1 px-1'>
             <div className='avatar relative h-9 w-9 overflow-hidden rounded-full'>
-              <img key={currentUserInfo._id} src={getImageURL(currentUserInfo.user_image, 'avatar_mini')} />
+              <img
+                key={currentUserInfo._id}
+                src={getImageURL(currentUserInfo.user_image, 'avatar_mini')}
+              />
             </div>
             <div className='name_career'>
               <div
@@ -139,7 +149,7 @@ const Headers = () => {
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
-      <Affix>
+      <Affix offsetTop={1}>
         <StyleProvider theme={themeColorSet}>
           <Layout.Header
             className='header xs:px-2'
@@ -151,7 +161,9 @@ const Headers = () => {
               <Col span={isXsScreen ? 24 : 16} offset={isXsScreen ? 0 : 4}>
                 <Row align='middle'>
                   <Col className='xs:pt-1' span={isXsScreen ? 2 : 4}>
-                    <div className='flex items-center cursor-pointer' onClick={handleClick}>
+                    <div
+                      className='flex items-center cursor-pointer'
+                      onClick={handleClick}>
                       <FontAwesomeIcon
                         className='iconLogo text-3xl xs:hidden'
                         icon={faSnowflake}
@@ -181,11 +193,17 @@ const Headers = () => {
                         <Badge count={0}>
                           <Avatar
                             className='messageButton cursor-pointer'
-                            icon={<CommentOutlined className='text-xl messageButton cursor-pointer' />}
+                            icon={
+                              <CommentOutlined className='text-xl messageButton cursor-pointer' />
+                            }
                           />
                         </Badge>
                       </NavLink>
-                      <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
+                      <Dropdown
+                        arrow
+                        menu={{ items: itemsNoti }}
+                        trigger={['click']}
+                        placement='bottom'>
                         <Badge count={0}>
                           <Avatar
                             className='notiButton cursor-pointer'
@@ -204,7 +222,10 @@ const Headers = () => {
                           icon={<UserOutlined className='text-xl' />}
                         />
                       </Dropdown>
-                      <DayNightSwitch checked={switchTheme} onChange={onChange} />
+                      <DayNightSwitch
+                        checked={switchTheme}
+                        onChange={onChange}
+                      />
                     </Space>
                   </Col>
                 </Row>

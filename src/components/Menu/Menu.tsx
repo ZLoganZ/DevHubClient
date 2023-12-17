@@ -95,7 +95,7 @@ const MenuMain = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={200}
+        width={230}
         className={showMenu ? 'sider' : 'hidden'}
         style={{
           overflow: 'auto',
@@ -111,7 +111,7 @@ const MenuMain = () => {
         <Menu
           mode='inline'
           selectedKeys={[key]}
-          style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg1 }}
+          style={{ borderInlineEnd: 'none', backgroundColor: themeColorSet.colorBg2 }}
           className='min-h-full max-h-fit'
           items={[
             {
