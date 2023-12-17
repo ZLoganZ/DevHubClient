@@ -11,7 +11,6 @@ import { useCommentsData } from '@/hooks/fetch';
 import { setHandleInput } from '@/redux/Slice/CommentSlice';
 import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPostDetail';
-import { useMediaQuery } from 'react-responsive';
 
 interface IOtherPostDetailProps {
   post: IPost;
