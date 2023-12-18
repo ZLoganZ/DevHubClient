@@ -8,9 +8,10 @@ import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
-import { setHandleInput } from '@/redux/Slice/CommentSlice';
+import { setHandleParentInput } from '@/redux/Slice/CommentSlice';
 import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPostDetail';
+import CommentDetail from '../PostProperties/CommentDetail';
 interface IPostDetailProps {
   post: IPost;
   postAuthor: IUserInfo;
@@ -32,7 +33,7 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
   };
 
   useEffect(() => {
-    dispatch(setHandleInput(handleCommentInput));
+    dispatch(setHandleParentInput(handleCommentInput));
   }, []);
 
   useEffect(() => {
@@ -74,8 +75,9 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
               <div className='container'>
                 <div className='overlay'></div>
                 {commentInput !== '' && (
-                  <Comment
+                  <CommentDetail
                     key={post._id}
+                    postID={post._id}
                     comment={{
                       _id: '1',
                       post: post._id,
@@ -88,6 +90,7 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                       dislikes: [],
                       like_number: 0,
                       dislike_number: 0,
+                      child_number: 0,
                       createdAt: 'sending...'
                     }}
                   />

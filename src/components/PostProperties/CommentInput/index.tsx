@@ -24,7 +24,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID, owner
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { handleCommentInput } = useAppSelector((state) => state.comment);
+  const { handleCommentParentInput, handleCommentChildInput } = useAppSelector((state) => state.comment);
 
   const { mutateCommentPost } = useCommentPost();
 
@@ -52,7 +52,7 @@ const CommentInput: React.FC<ICommentInputProps> = ({ currentUser, postID, owner
     });
 
     // sent commentInput to parent
-    handleCommentInput(commentContent);
+    isReply ? handleCommentChildInput(commentContent) : handleCommentParentInput(commentContent);
 
     setCommentContent('');
   };

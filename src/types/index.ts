@@ -208,7 +208,7 @@ export interface ICommentPost {
   parent?: ICommentPost;
 
   //if interface is parent
-  children?: ICommentPost[];
+  child_number: number;
 
   is_liked: boolean;
   is_disliked: boolean;
