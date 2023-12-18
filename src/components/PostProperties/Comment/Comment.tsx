@@ -15,7 +15,7 @@ const Comment: React.FC<ICommentProps> = ({ comment }) => {
         <>Loading...</>
       ) : (
         childComments.map((childComment) => (
-          <CommentDetail comment={childComment} postID={comment.post} key={childComment._id}  />
+          <CommentDetail comment={childComment} postID={comment.post} key={childComment._id} isChild />
         ))
       )}
     </CommentDetail>
