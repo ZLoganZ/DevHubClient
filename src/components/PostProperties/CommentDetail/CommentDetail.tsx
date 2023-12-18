@@ -36,8 +36,8 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
 
   const { themeColorSet } = getTheme();
 
-  const [likes, setLike] = useState(comment.like_number ?? 0);
-  const [dislikes, setDislike] = useState(comment.dislike_number ?? 0);
+  const [likes, setLike] = useState(comment.likes?.length ?? 0);
+  const [dislikes, setDislike] = useState(comment.dislikes?.length ?? 0);
   const [action, setAction] = useState<Action>('');
 
   useEffect(() => {
@@ -46,7 +46,11 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
     } else if (comment.is_disliked) {
       setAction('disliked');
     }
-  }, [comment.is_liked, comment.is_disliked]);
+    if (comment) {
+      setLike(comment.likes.length);
+      setDislike(comment.dislikes.length);
+    }
+  }, [comment]);
 
   const like = () => {
     if (action === 'liked') {
