@@ -318,7 +318,7 @@ const MyProfile = () => {
                           userPosts.map((item, index) => (
                             <div key={item._id} className='relative'>
                               {index === userPosts.length - 3 && (
-                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                                <div className='absolute max-h-[130rem] w-full -z-10' ref={bottomRef} />
                               )}
                               {item.type === 'Share' ? (
                                 <MyPostShare

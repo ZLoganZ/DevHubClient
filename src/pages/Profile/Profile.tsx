@@ -78,8 +78,6 @@ const Profile = ({ userID }: IProfile) => {
     return false;
   }, [currentUserInfo, otherUserInfo]);
 
-  console.log(currentUserInfo, otherUserInfo)
-
   const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
     useUserPostsData(userID);
 
@@ -345,7 +343,7 @@ const Profile = ({ userID }: IProfile) => {
                           userPosts.map((item, index) => (
                             <div className='relative' key={item._id}>
                               {index === userPosts.length - 3 && (
-                                <div className='absolute h-[130rem] w-full' ref={bottomRef} />
+                                <div className='absolute max-h-[130rem] w-full -z-10' ref={bottomRef} />
                               )}
                               {item.type === 'Share' ? (
                                 <OtherPostShare
