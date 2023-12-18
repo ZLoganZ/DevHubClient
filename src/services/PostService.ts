@@ -47,11 +47,14 @@ class PostService extends BaseService {
   savePost = (id: string) => {
     return this.put(`/users/savepost/${id}`);
   };
-  getParentComments = (id: string): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
-    return this.get(`/comments/parents/${id}`);
+  getParentComments = (id: string, page: number): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
+    return this.get(`/comments/parents/${id}?page=${page}`);
   };
-  getChildComments = (comment: IGetChildComments): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
-    return this.get(`/comments/children`, comment);
+  getChildComments = (
+    comment: IGetChildComments,
+    page: number
+  ): Promise<AxiosResponse<IResponse<ICommentPost[]>>> => {
+    return this.get(`/comments/${comment.parent}/children/${comment.post}?page=${page}`);
   };
   createComment = (comment: ICreateComment) => {
     return this.post(`/comments/create`, comment);

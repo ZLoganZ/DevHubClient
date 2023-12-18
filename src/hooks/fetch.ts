@@ -312,11 +312,21 @@ export const useSavedPostsData = () => {
  * - `isFetchingComments` is a boolean that indicates whether the query is currently fetching.
  */
 export const useCommentsData = (postID: string) => {
-  const { data, isPending, isError, isFetching } = useQuery({
+  const { data, isPending, isError, isFetching } = useInfiniteQuery({
     queryKey: ['comments', postID],
-    queryFn: async () => {
-      const { data } = await postService.getParentComments(postID);
-      return data;
+    queryFn: async ({ pageParam }) => {
+      const { data } = await postService.getParentComments(postID, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
     },
     staleTime: Infinity
   });
@@ -324,8 +334,47 @@ export const useCommentsData = (postID: string) => {
   return {
     isLoadingComments: isPending,
     isErrorComments: isError,
-    comments: data?.metadata,
+    comments: data!,
     isFetchingComments: isFetching
+  };
+};
+
+/**
+ * The `useChildCommentsData` function is a custom hook that fetches and returns child comments data for
+ * a specific comment ID.
+ * @param {string} commentID - The commentID parameter is a string that represents the ID of a comment.
+ * It is used to fetch the child comments associated with that comment.
+ * @returns The function `useChildCommentsData` returns an object with the following properties:
+ * - `isLoadingChildComments` is a boolean that indicates whether the child comments data is still
+ * loading.
+ * - `isErrorChildComments` is a boolean that indicates whether there is an error.
+ * - `childComments` is an array of child comments.
+ * - `isFetchingChildComments` is a boolean that indicates whether the query is currently fetching.
+ */
+export const useChildCommentsData = (commentID: string, postID: string) => {
+  const { data, isPending, isError, isFetching } = useInfiniteQuery({
+    queryKey: ['childComments', commentID],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await postService.getChildComments({ post: postID, parent: commentID }, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    staleTime: Infinity
+  });
+  return {
+    isLoadingChildComments: isPending,
+    isErrorChildComments: isError,
+    childComments: data!,
+    isFetchingChildComments: isFetching
   };
 };
 

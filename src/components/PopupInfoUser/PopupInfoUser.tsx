@@ -147,7 +147,12 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                       : '!bg-blue-600 hover:!text-white hover:!border-none'
                   )}
                   type='default'
-                  loading={isLoadingAddFriendUser || isLoadingAcceptFriendUser}
+                  loading={
+                    isLoadingAddFriendUser ||
+                    isLoadingAcceptFriendUser ||
+                    isLoadingCancelFriendUser ||
+                    isLoadingDeleteFriendUser
+                  }
                   onClick={() => {
                     isFriend
                       ? mutateDeleteFriendUser(userInfo._id)
@@ -170,6 +175,7 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                 {receivedRequest && (
                   <ButtonCancelHover
                     className='follow px-6 h-11 border-2 border-solid !bg-red-600 hover:!text-white hover:!border-none'
+                    loading={isLoadingDeclineFriendUser}
                     onClick={() => {
                       mutateDeclineFriendUser(userID);
                     }}>
