@@ -34,7 +34,6 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
   const { mutateDislikeComment } = useDislikeComment();
 
   const { childComments, isLoadingChildComments } = useChildCommentsData(comment._id, postID);
-  console.log(childComments)
 
   const { themeColorSet } = getTheme();
 
@@ -196,41 +195,48 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
             )
           }
           content={comment.content}>
-          {childComments?.map((comment) => (
-            <Comment
-              key={comment._id}
-              actions={actions}
-              author={
-                <NavLink
-                  to={`/user/${comment.user._id}`}
-                  style={{
-                    fontWeight: 600,
-                    color: themeColorSet.colorText1,
-                    fontSize: '0.8rem'
-                  }}>
-                  {comment.user.name}
-                </NavLink>
-              }
-              datetime={
-                <div
-                  style={{
-                    color: themeColorSet.colorText3
-                  }}>
-                  {comment.createdAt === 'sending...'
-                    ? comment.createdAt
-                    : getDateTimeToNow(comment.createdAt)}
-                </div>
-              }
-              avatar={
-                comment.user.user_image ? (
-                  <Avatar src={getImageURL(comment.user.user_image, 'avatar_mini')} alt={comment.user.name} />
-                ) : (
-                  <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
-                )
-              }
-              content={comment.content}
-            />
-          ))}
+          {isLoadingChildComments ? (
+            <>loading...</>
+          ) : (
+            childComments?.map((comment) => (
+              <Comment
+                key={comment._id}
+                actions={actions}
+                author={
+                  <NavLink
+                    to={`/user/${comment.user._id}`}
+                    style={{
+                      fontWeight: 600,
+                      color: themeColorSet.colorText1,
+                      fontSize: '0.8rem'
+                    }}>
+                    {comment.user.name}
+                  </NavLink>
+                }
+                datetime={
+                  <div
+                    style={{
+                      color: themeColorSet.colorText3
+                    }}>
+                    {comment.createdAt === 'sending...'
+                      ? comment.createdAt
+                      : getDateTimeToNow(comment.createdAt)}
+                  </div>
+                }
+                avatar={
+                  comment.user.user_image ? (
+                    <Avatar
+                      src={getImageURL(comment.user.user_image, 'avatar_mini')}
+                      alt={comment.user.name}
+                    />
+                  ) : (
+                    <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
+                  )
+                }
+                content={comment.content}
+              />
+            ))
+          )}
         </Comment>
       </div>
     </StyleProvider>

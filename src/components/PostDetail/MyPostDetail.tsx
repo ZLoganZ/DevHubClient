@@ -68,8 +68,8 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
             <div
               className='commentTotal px-3 ml-4 md:px-0 md:ml-0'
               style={{
-                maxHeight: '30rem'
-                // overflow: 'auto'
+                maxHeight: '30rem',
+                overflow: 'auto'
               }}>
               <div className='container'>
                 <div className='overlay'></div>
