@@ -13,16 +13,15 @@ import { useDislikeComment, useLikeComment } from '@/hooks/mutation';
 import { setData } from '@/redux/Slice/ModalHOCSlice';
 import { ICommentPost } from '@/types';
 import StyleProvider from './cssCommentDetail';
-import { useChildCommentsData } from '@/hooks/fetch';
 
 interface ICommentDetailProps {
   comment: ICommentPost;
   postID: string;
   children?: React.ReactNode;
-  isReply?: boolean;
+  isChild?: boolean;
 }
 
-const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postID }) => {
+const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postID, isChild }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
 
@@ -32,9 +31,6 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
 
   const { mutateLikeComment } = useLikeComment();
   const { mutateDislikeComment } = useDislikeComment();
-
-  const { childComments, isLoadingChildComments } = useChildCommentsData(comment._id, postID);
-  console.log(childComments)
 
   const { themeColorSet } = getTheme();
 
@@ -63,7 +59,7 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
     mutateLikeComment({
       id: comment._id,
       comment: {
-        type: isReply ? 'child' : 'parent',
+        type: isChild ? 'child' : 'parent',
         post: postID,
         owner_comment: comment.user._id
       }
@@ -139,29 +135,31 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
       <span style={{ paddingLeft: 8, cursor: 'auto' }}>{dislikes}</span>
     </span>,
 
-    <span
-      id='reply'
-      key='comment-basic-reply-to'
-      onClick={setReply}
-      {...(idComment === comment._id
-        ? {
-            style: {
-              color: '#1890ff',
-              fontWeight: 'bold',
-              fontSize: '0.9rem'
+    !isChild && (
+      <span
+        id='reply'
+        key='comment-basic-reply-to'
+        onClick={setReply}
+        {...(idComment === comment._id
+          ? {
+              style: {
+                color: '#1890ff',
+                fontWeight: 'bold',
+                fontSize: '0.9rem'
+              }
             }
-          }
-        : {
-            style: {
-              color: '#D4D4D4A6',
-              fontWeight: 'normal',
-              fontSize: '0.9rem'
-            }
-          })}>
-      <span style={{ color: themeColorSet.colorText3 }}>
-        {idComment === comment._id ? 'Cancel' : 'Reply'}
+          : {
+              style: {
+                color: '#D4D4D4A6',
+                fontWeight: 'normal',
+                fontSize: '0.9rem'
+              }
+            })}>
+        <span style={{ color: themeColorSet.colorText3 }}>
+          {idComment === comment._id ? 'Cancel' : 'Reply'}
+        </span>
       </span>
-    </span>
+    )
   ];
 
   return (
@@ -196,41 +194,7 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
             )
           }
           content={comment.content}>
-          {childComments?.map((comment) => (
-            <Comment
-              key={comment._id}
-              actions={actions}
-              author={
-                <NavLink
-                  to={`/user/${comment.user._id}`}
-                  style={{
-                    fontWeight: 600,
-                    color: themeColorSet.colorText1,
-                    fontSize: '0.8rem'
-                  }}>
-                  {comment.user.name}
-                </NavLink>
-              }
-              datetime={
-                <div
-                  style={{
-                    color: themeColorSet.colorText3
-                  }}>
-                  {comment.createdAt === 'sending...'
-                    ? comment.createdAt
-                    : getDateTimeToNow(comment.createdAt)}
-                </div>
-              }
-              avatar={
-                comment.user.user_image ? (
-                  <Avatar src={getImageURL(comment.user.user_image, 'avatar_mini')} alt={comment.user.name} />
-                ) : (
-                  <Avatar style={{ backgroundColor: '#87d068' }} icon='user' alt={comment.user.name} />
-                )
-              }
-              content={comment.content}
-            />
-          ))}
+          {children}
         </Comment>
       </div>
     </StyleProvider>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Row, Skeleton } from 'antd';
 
-import CommentDetail from '@/components/PostProperties/CommentDetail';
+import Comment from '@/components/PostProperties/Comment/Comment';
 import OtherPost from '@/components/Post/OtherPost';
 import CommentInput from '@/components/PostProperties/CommentInput';
 import OtherPostShare from '@/components/Post/OtherPostShare';
@@ -74,17 +74,17 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
             <div
               className='commentTotal px-3 ml-4 md:px-0 md:ml-0'
               style={{
-                maxHeight: '30rem'
-                // overflow: 'auto'
+                maxHeight: '30rem',
+                overflow: 'auto'
               }}>
               <div className='container'>
                 <div className='overlay'></div>
                 {commentInput !== '' && (
-                  <CommentDetail
+                  <Comment
                     key={post._id}
                     comment={{
                       _id: '1',
-                      post: post,
+                      post: post._id,
                       user: currentUser,
                       content: commentInput,
                       type: 'parent',
@@ -96,7 +96,6 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                       dislike_number: 0,
                       createdAt: 'sending...'
                     }}
-                    postID={post._id}
                   />
                 )}
               </div>
@@ -104,7 +103,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
               ) : (
                 comments?.map((item) => {
-                  return <CommentDetail key={item._id} comment={item} postID={post._id} />;
+                  return <Comment key={item._id} comment={item} />;
                 })
               )}
             </div>

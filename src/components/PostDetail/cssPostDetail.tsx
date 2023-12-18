@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { custom_scrollBar_modal } from '@/util/cssVariable';
+import { custom_scrollBar, custom_scrollBar_modal } from '@/util/cssVariable';
 
 const StyleProvider = styled.div`
   background-color: ${(props) => props.theme.colorBg2};
@@ -8,6 +8,10 @@ const StyleProvider = styled.div`
 
   .postDetail {
     ${custom_scrollBar_modal}
+  }
+
+  .commentTotal{
+    ${custom_scrollBar}
   }
 
   .container {
