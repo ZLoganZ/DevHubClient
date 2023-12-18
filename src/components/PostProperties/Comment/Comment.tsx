@@ -10,12 +10,12 @@ const Comment: React.FC<ICommentProps> = ({ comment }) => {
   const { childComments, isLoadingChildComments } = useChildCommentsData(comment._id, comment.post);
 
   return (
-    <CommentDetail comment={comment} postID={comment.post}>
+    <CommentDetail key={comment._id} comment={comment} postID={comment.post}>
       {isLoadingChildComments ? (
         <>Loading...</>
       ) : (
         childComments.map((childComment) => (
-          <CommentDetail comment={childComment} postID={comment.post} key={childComment._id} isChild />
+          <CommentDetail key={childComment._id} comment={childComment} postID={comment.post} isChild />
         ))
       )}
     </CommentDetail>

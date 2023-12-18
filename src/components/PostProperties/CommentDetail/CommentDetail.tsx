@@ -21,6 +21,8 @@ interface ICommentDetailProps {
   isChild?: boolean;
 }
 
+type Action = 'liked' | 'disliked' | '';
+
 const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postID, isChild }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
@@ -36,7 +38,7 @@ const CommentDetail: React.FC<ICommentDetailProps> = ({ comment, children, postI
 
   const [likes, setLike] = useState(comment.like_number ?? 0);
   const [dislikes, setDislike] = useState(comment.dislike_number ?? 0);
-  const [action, setAction] = useState('');
+  const [action, setAction] = useState<Action>('');
 
   useEffect(() => {
     if (comment.is_liked) {

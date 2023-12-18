@@ -142,6 +142,8 @@ export const useLikePost = () => {
     },
     onSuccess(_, postLike) {
       queryClient.invalidateQueries({ queryKey: ['post', postLike.post] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
@@ -165,6 +167,8 @@ export const useSharePost = () => {
     },
     onSuccess(_, postShare) {
       queryClient.invalidateQueries({ queryKey: ['post', postShare.post] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
@@ -188,6 +192,8 @@ export const useSavePost = () => {
     },
     onSuccess(_, postID) {
       queryClient.invalidateQueries({ queryKey: ['post', postID] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
     }
   });
   return {
@@ -244,6 +250,7 @@ export const useLikeComment = () => {
     },
     onSuccess(_, payload) {
       queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
+      queryClient.invalidateQueries({ queryKey: ['childComments', payload.id] });
     }
   });
   return {
@@ -267,6 +274,7 @@ export const useDislikeComment = () => {
     },
     onSuccess(_, payload) {
       queryClient.invalidateQueries({ queryKey: ['comments', payload.comment.post] });
+      queryClient.invalidateQueries({ queryKey: ['childComments', payload.id] });
     }
   });
   return {

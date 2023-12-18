@@ -55,7 +55,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                 ? {
                     overflow: 'auto',
                     backgroundColor: themeColorSet.colorBg2,
-                    maxHeight: 'calc(100vh - 200px)'
+                    maxHeight: 'calc(100vh - 150px)'
                   }
                 : {
                     backgroundColor: themeColorSet.colorBg2
@@ -74,7 +74,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
             <div
               className='commentTotal px-3 ml-4 md:px-0 md:ml-0'
               style={{
-                maxHeight: '30rem',
+                maxHeight: '40rem',
                 overflow: 'auto'
               }}>
               <div className='container'>

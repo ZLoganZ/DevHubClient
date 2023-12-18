@@ -45,7 +45,7 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
     else if (!isMoreThan500) mutateViewPost(postID);
   }, [postID, isMoreThan500, expanded]);
 
-  useIntersectionObserver(contentRef, onIntersect, { delay: 5000 });
+  useIntersectionObserver(contentRef, onIntersect, { delay: 5000, threshold: 0.3 });
 
   return (
     <StyleProvider ref={contentRef} theme={themeColorSet}>
@@ -65,7 +65,7 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
               src={getImageURL(image[0], 'post')}
               alt='pic content'
               fallback={imageErrorFallback}
-              preview={{ src: getImageURL(image[0]) , mask: <FontAwesomeIcon icon={faEye} /> }}
+              preview={{ src: getImageURL(image[0]), mask: <FontAwesomeIcon icon={faEye} /> }}
             />
           </div>
         ) : (
