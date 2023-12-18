@@ -25,7 +25,7 @@ import 'react-quill/dist/quill.bubble.css';
 import OtherPost from '@/components/Post/OtherPost';
 import OtherPostShare from '@/components/Post/OtherPostShare';
 import LoadingProfileComponent from '@/components/Loading/LoadingProfile';
-import { ButtonActiveHover } from '@/components/MiniComponent';
+import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
 import RenderRepositoryIem from '@/components/ActionComponent/RenderRepositoryIem';
 
 import descArray from '@/util/Descriptions/Tags';
@@ -35,9 +35,16 @@ import getImageURL from '@/util/getImageURL';
 
 import { useOtherUserInfo, useCurrentUserInfo, useUserPostsData } from '@/hooks/fetch';
 import { useAppSelector, useIntersectionObserver } from '@/hooks/special';
-import { useAddFriendUser, useAcceptFriendUser } from '@/hooks/mutation';
+import {
+  useAddFriendUser,
+  useAcceptFriendUser,
+  useCancelFriendUser,
+  useDeclineFriendUser,
+  useDeleteFriendUser
+} from '@/hooks/mutation';
 import { IExperience } from '@/types';
 import StyleProvider from './cssProfile';
+import merge from '@/util/mergeClassName';
 
 interface IProfile {
   userID: string;
@@ -52,13 +59,15 @@ const Profile = ({ userID }: IProfile) => {
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { mutateAddFriendUser: mutateAddFriendUser, isLoadingAddFriendUser: isLoadingAddFriendUser } =
-    useAddFriendUser();
+  const { mutateAddFriendUser, isLoadingAddFriendUser } = useAddFriendUser();
 
-  const {
-    mutateAcceptFriendUser: mutateAcceptFriendUser,
-    isLoadingAcceptFriendUser: isLoadingAcceptFriendUser
-  } = useAcceptFriendUser();
+  const { mutateAcceptFriendUser, isLoadingAcceptFriendUser } = useAcceptFriendUser();
+
+  const { mutateCancelFriendUser, isLoadingCancelFriendUser } = useCancelFriendUser();
+
+  const { mutateDeclineFriendUser, isLoadingDeclineFriendUser } = useDeclineFriendUser();
+
+  const { mutateDeleteFriendUser, isLoadingDeleteFriendUser } = useDeleteFriendUser();
 
   const { otherUserInfo, isLoadingOtherUserInfo } = useOtherUserInfo(userID);
 
@@ -109,12 +118,10 @@ const Profile = ({ userID }: IProfile) => {
     }
   }, [isLoadingUserPosts]);
 
-  const [isPendingFriend, setIsPendingFriend] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
   useEffect(() => {
-    setIsPendingFriend(otherUserInfo?.is_friend);
+    setIsFriend(otherUserInfo?.is_friend);
   }, [otherUserInfo]);
-
-  console.log(isPendingFriend, sentRequest, receivedRequest);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -184,13 +191,31 @@ const Profile = ({ userID }: IProfile) => {
               <Col span={6}>
                 <div className='chat_Follow flex justify-around items-center w-full h-full'>
                   <ButtonActiveHover
-                    className='follow px-6 h-11 border-2 border-solid'
+                    className={merge(
+                      'follow px-6 h-11 border-2 border-solid',
+                      isFriend || sentRequest
+                        ? '!bg-red-600 hover:!text-white hover:!border-none'
+                        : receivedRequest
+                        ? '!bg-green-600 hover:!text-white hover:!border-none'
+                        : '!bg-blue-600 hover:!text-white hover:!border-none'
+                    )}
                     type='default'
-                    loading={isLoadingAddFriendUser}
+                    loading={
+                      isLoadingAddFriendUser ||
+                      isLoadingAcceptFriendUser ||
+                      isLoadingCancelFriendUser ||
+                      isLoadingDeleteFriendUser
+                    }
                     onClick={() => {
-                      receivedRequest ? mutateAcceptFriendUser(userID) : mutateAddFriendUser(userID);
+                      isFriend
+                        ? mutateDeleteFriendUser(userID)
+                        : sentRequest
+                        ? mutateCancelFriendUser(userID)
+                        : receivedRequest
+                        ? mutateAcceptFriendUser(userID)
+                        : mutateAddFriendUser(userID);
                     }}>
-                    {isPendingFriend
+                    {isFriend
                       ? 'Unfriend'
                       : sentRequest
                       ? 'Cancel Request'
@@ -198,6 +223,16 @@ const Profile = ({ userID }: IProfile) => {
                       ? 'Accept'
                       : 'Add Friend'}
                   </ButtonActiveHover>
+                  {receivedRequest && (
+                    <ButtonCancelHover
+                      className='follow px-6 h-11 border-2 border-solid !bg-red-600 hover:!text-white hover:!border-none'
+                      loading={isLoadingDeclineFriendUser}
+                      onClick={() => {
+                        mutateDeclineFriendUser(userID);
+                      }}>
+                      Decline
+                    </ButtonCancelHover>
+                  )}
                 </div>
               </Col>
             </Row>

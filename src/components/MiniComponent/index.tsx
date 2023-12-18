@@ -57,6 +57,7 @@ export const ButtonActiveNonHover = () => {
 
 interface IButtonCancelHover {
   children?: React.ReactNode;
+  loading?: boolean;
   onClick?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
   className?: string;
@@ -65,6 +66,7 @@ interface IButtonCancelHover {
 export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
   className,
   children,
+  loading,
   onClick,
   disabled
 }) => {
@@ -74,6 +76,7 @@ export const ButtonCancelHover: React.FC<IButtonCancelHover> = ({
     <StyleProvider theme={themeColorSet}>
       <Button
         className={merge('ButtonCancelHover font-bold px-6 py-2 rounded-3xl', className)}
+        loading={loading}
         onClick={onClick}
         style={{ height: '100%' }}
         htmlType='button'

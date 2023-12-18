@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Avatar,
   Badge,
@@ -28,9 +28,10 @@ import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 
-import { useCurrentUserInfo } from '@/hooks/fetch';
+import { useCurrentUserInfo, useGetNoti } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 
 const Headers = () => {
   const navigate = useNavigate();
@@ -40,7 +41,9 @@ const Headers = () => {
 
   const switchTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
   const { currentUserInfo } = useCurrentUserInfo();
-  
+
+  const noti = useGetNoti(currentUserInfo?.id_incr).noti;
+
   const queryClient = useQueryClient();
 
   // Switch theme
@@ -111,6 +114,42 @@ const Headers = () => {
       )
     }
   ];
+
+  if (noti) {
+    itemsNoti.pop();
+    noti.forEach((item) => {
+      itemsNoti.push({
+        key: item._id,
+        label: (
+          <NavLink
+            to={
+              item.type.includes('POST') || item.type.includes('COMMENT')
+                ? `/post/${item.options.post}`
+                : `/user/${item.sender._id}`
+            }>
+            <div className='flex items-center py-1 px-1'>
+              <div className='avatar relative h-9 w-9 overflow-hidden rounded-full'>
+                <img key={item._id} src={getImageURL(item.sender.user_image, 'avatar_mini')} />
+              </div>
+              <div className='name_career'>
+                <div
+                  className='name ml-4'
+                  style={{
+                    color: themeColorSet.colorText1,
+                    fontWeight: 600
+                  }}>
+                  {item.sender.name + ' ' + item.content}
+                </div>
+                <div className='time ml-4' style={{ color: themeColorSet.colorText2 }}>
+                  {getDateTimeToNow(item.createAt)}
+                </div>
+              </div>
+            </div>
+          </NavLink>
+        )
+      });
+    });
+  }
 
   const isMdScreen = useMediaQuery({ maxWidth: 1023 });
 

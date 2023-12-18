@@ -9,6 +9,7 @@ import {
 
 import { IMessage } from '@/types';
 import { userService } from '@/services/UserService';
+import { notiService } from '@/services/NotificationService';
 import ApplyDefaults from '@/util/applyDefaults';
 import { postService } from '@/services/PostService';
 import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
@@ -75,11 +76,10 @@ export const useOtherUserInfo = (userID: string) => {
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['otherUserInfo', userID],
     queryFn: async () => {
-      const [{ data: Friends }, { data: userInfo }] =
-        await Promise.all([
-          userService.getFriends(userID),
-          userService.getUserInfoByID(userID)
-        ]);
+      const [{ data: Friends }, { data: userInfo }] = await Promise.all([
+        userService.getFriends(userID),
+        userService.getUserInfoByID(userID)
+      ]);
 
       userInfo.metadata.friends = Friends.metadata;
       return ApplyDefaults(userInfo.metadata);
@@ -686,3 +686,32 @@ export const useMessagesOption = (conversationID: string) =>
     },
     staleTime: Infinity
   });
+
+export const useGetNoti = (userID: number) => {
+  const { data, isPending, isError, isFetching } = useInfiniteQuery({
+    queryKey: ['noti', userID],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await notiService.getNoti(userID, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    enabled: !!userID,
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingNoti: isPending,
+    isErrorNoti: isError,
+    noti: data!,
+    isFetchingNoti: isFetching
+  };
+};

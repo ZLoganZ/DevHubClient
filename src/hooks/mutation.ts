@@ -32,7 +32,7 @@ export const useCreatePost = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, error } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, error } = useMutation({
     mutationFn: async (newPost: ICreatePost) => {
       const { data } = await postService.createPost(newPost);
       return data.metadata;
@@ -43,7 +43,7 @@ export const useCreatePost = () => {
     }
   });
   return {
-    mutateCreatePost: mutate,
+    mutateCreatePost: mutateAsync,
     isLoadingCreatePost: isPending,
     isErrorCreatePost: isError,
     errorCreatePost: error,
@@ -56,13 +56,13 @@ export const useCreatePost = () => {
  * making a mutation request to the server and updating the cache.
  */
 export const useViewPost = () => {
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.viewPost(postID);
     }
   });
   return {
-    mutateViewPost: mutate,
+    mutateViewPost: mutateAsync,
     isLoadingViewPost: isPending,
     isErrorViewPost: isError,
     isSuccessViewPost: isSuccess
@@ -78,7 +78,7 @@ export const useUpdatePost = () => {
 
   const dispatch = useAppDispatch();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: IUpdatePost) => {
       const { data } = await postService.updatePost(post.id, post.postUpdate);
       return data.metadata;
@@ -95,7 +95,7 @@ export const useUpdatePost = () => {
     }
   });
   return {
-    mutateUpdatePost: mutate,
+    mutateUpdatePost: mutateAsync,
     isLoadingUpdatePost: isPending,
     isErrorUpdatePost: isError,
     isSuccessUpdatePost: isSuccess
@@ -111,7 +111,7 @@ export const useDeletePost = () => {
 
   const uid = useAppSelector((state) => state.auth.userID);
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.deletePost(postID);
     },
@@ -122,7 +122,7 @@ export const useDeletePost = () => {
     }
   });
   return {
-    mutateDeletePost: mutate,
+    mutateDeletePost: mutateAsync,
     isLoadingDeletePost: isPending,
     isErrorDeletePost: isError,
     isSuccessDeletePost: isSuccess
@@ -136,7 +136,7 @@ export const useDeletePost = () => {
 export const useLikePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: ISharePost) => {
       await postService.likePost(post);
     },
@@ -145,7 +145,7 @@ export const useLikePost = () => {
     }
   });
   return {
-    mutateLikePost: mutate,
+    mutateLikePost: mutateAsync,
     isLoadingLikePost: isPending,
     isErrorLikePost: isError,
     isSuccessLikePost: isSuccess
@@ -159,7 +159,7 @@ export const useLikePost = () => {
 export const useSharePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (post: ISharePost) => {
       await postService.sharePost(post);
     },
@@ -168,7 +168,7 @@ export const useSharePost = () => {
     }
   });
   return {
-    mutateSharePost: mutate,
+    mutateSharePost: mutateAsync,
     isLoadingSharePost: isPending,
     isErrorSharePost: isError,
     isSuccessSharePost: isSuccess
@@ -182,7 +182,7 @@ export const useSharePost = () => {
 export const useSavePost = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
       await postService.savePost(postID);
     },
@@ -191,7 +191,7 @@ export const useSavePost = () => {
     }
   });
   return {
-    mutateSavePost: mutate,
+    mutateSavePost: mutateAsync,
     isLoadingSavePost: isPending,
     isErrorSavePost: isError,
     isSuccessSavePost: isSuccess
@@ -207,7 +207,7 @@ export const useCommentPost = () => {
 
   const uid = useAppSelector((state) => state.auth.userID);
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (commentData: ICreateComment) => {
       await postService.createComment(commentData);
     },
@@ -222,7 +222,7 @@ export const useCommentPost = () => {
     }
   });
   return {
-    mutateCommentPost: mutate,
+    mutateCommentPost: mutateAsync,
     isLoadingCommentPost: isPending,
     isErrorCommentPost: isError,
     isSuccessCommentPost: isSuccess
@@ -236,7 +236,7 @@ export const useCommentPost = () => {
 export const useLikeComment = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: ICreateLikeComment) => {
       await postService.likeComment(payload.id, payload.comment);
     },
@@ -245,7 +245,7 @@ export const useLikeComment = () => {
     }
   });
   return {
-    mutateLikeComment: mutate,
+    mutateLikeComment: mutateAsync,
     isLoadingLikeComment: isPending,
     isErrorLikeComment: isError,
     isSuccessLikeComment: isSuccess
@@ -259,7 +259,7 @@ export const useLikeComment = () => {
 export const useDislikeComment = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: ICreateLikeComment) => {
       await postService.dislikeComment(payload.id, payload.comment);
     },
@@ -268,7 +268,7 @@ export const useDislikeComment = () => {
     }
   });
   return {
-    mutateDislikeComment: mutate,
+    mutateDislikeComment: mutateAsync,
     isLoadingDislikeComment: isPending,
     isErrorDislikeComment: isError,
     isSuccessDislikeComment: isSuccess
@@ -284,7 +284,7 @@ export const useUpdateUser = () => {
 
   const dispatch = useAppDispatch();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (user: IUserUpdate) => {
       const { data } = await userService.updateUser(user);
       return data.metadata;
@@ -300,7 +300,7 @@ export const useUpdateUser = () => {
     }
   });
   return {
-    mutateUpdateUser: mutate,
+    mutateUpdateUser: mutateAsync,
     isLoadingUpdateUser: isPending,
     isErrorUpdateUser: isError,
     isSuccessUpdateUser: isSuccess
@@ -314,7 +314,7 @@ export const useUpdateUser = () => {
 export const useAddFriendUser = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (userID: string) => {
       await userService.sendFriendRequest(userID);
     },
@@ -325,7 +325,7 @@ export const useAddFriendUser = () => {
     }
   });
   return {
-    mutateAddFriendUser: mutate,
+    mutateAddFriendUser: mutateAsync,
     isLoadingAddFriendUser: isPending,
     isErrorAddFriendUser: isError,
     isSuccessAddFriendUser: isSuccess
@@ -340,7 +340,7 @@ export const useAddFriendUser = () => {
 export const useAcceptFriendUser = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (userID: string) => {
       await userService.acceptFriendRequest(userID);
     },
@@ -351,12 +351,90 @@ export const useAcceptFriendUser = () => {
     }
   });
   return {
-    mutateAcceptFriendUser: mutate,
+    mutateAcceptFriendUser: mutateAsync,
     isLoadingAcceptFriendUser: isPending,
     isErrorAcceptFriendUser: isError,
     isSuccessAcceptFriendUser: isSuccess
   };
-}
+};
+
+/**
+ * The `useCancelFriendUser` function is a custom hook that handles canceling a friend request,
+ * including making the API call, handling loading and error states, and invalidating relevant
+ * queries in the query cache.
+ */
+export const useCancelFriendUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.cancelFriendRequest(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
+
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
+    }
+  });
+  return {
+    mutateCancelFriendUser: mutateAsync,
+    isLoadingCancelFriendUser: isPending,
+    isErrorCancelFriendUser: isError,
+    isSuccessCancelFriendUser: isSuccess
+  };
+};
+
+/**
+ * The `useDeclineFriendUser` function is a custom hook that handles declining a friend request,
+ * including making the API call, handling loading and error states, and invalidating relevant
+ * queries in the query cache.
+ */
+export const useDeclineFriendUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.declineFriendRequest(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
+
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
+    }
+  });
+  return {
+    mutateDeclineFriendUser: mutateAsync,
+    isLoadingDeclineFriendUser: isPending,
+    isErrorDeclineFriendUser: isError,
+    isSuccessDeclineFriendUser: isSuccess
+  };
+};
+
+/**
+ * The `useDeleteFriendUser` function is a custom hook that handles deleting a friend, including
+ * making the API call, handling loading and error states, and invalidating relevant queries in the
+ * query cache.
+ */
+export const useDeleteFriendUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (userID: string) => {
+      await userService.deleteFriend(userID);
+    },
+    onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
+
+      queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
+    }
+  });
+  return {
+    mutateDeleteFriendUser: mutateAsync,
+    isLoadingDeleteFriendUser: isPending,
+    isErrorDeleteFriendUser: isError,
+    isSuccessDeleteFriendUser: isSuccess
+  };
+};
 
 /**
  * The `useSendMessage` function is a custom hook in TypeScript that handles sending a message and
@@ -365,7 +443,7 @@ export const useAcceptFriendUser = () => {
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (message: IMessage) => await Promise.resolve(message),
     onSuccess(message) {
       queryClient.setQueryData<InfiniteData<IMessage[], number>>(
@@ -421,7 +499,7 @@ export const useSendMessage = () => {
     }
   });
   return {
-    mutateSendMessage: mutate,
+    mutateSendMessage: mutateAsync,
     isLoadingSendMessage: isPending,
     isErrorSendMessage: isError,
     isSuccessSendMessage: isSuccess,
@@ -443,7 +521,7 @@ export const useReceiveMessage = (currentUserID: string, conversationID?: string
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (message: IMessage) => await Promise.resolve(message),
     onSuccess(message) {
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
@@ -524,7 +602,7 @@ export const useReceiveMessage = (currentUserID: string, conversationID?: string
   });
 
   return {
-    mutateReceiveMessage: mutate,
+    mutateReceiveMessage: mutateAsync,
     isLoadingReceiveMessage: isPending,
     isErrorReceiveMessage: isError,
     isSuccessReceiveMessage: isSuccess,
@@ -539,7 +617,7 @@ export const useReceiveMessage = (currentUserID: string, conversationID?: string
 export const useReceiveConversation = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
@@ -568,7 +646,7 @@ export const useReceiveConversation = () => {
   });
 
   return {
-    mutateReceiveConversation: mutate,
+    mutateReceiveConversation: mutateAsync,
     isLoadingReceiveConversation: isPending,
     isErrorReceiveConversation: isError,
     isSuccessReceiveConversation: isSuccess,
@@ -583,7 +661,7 @@ export const useReceiveConversation = () => {
 export const useReceiveSeenConversation = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
@@ -615,7 +693,7 @@ export const useReceiveSeenConversation = () => {
   });
 
   return {
-    mutateReceiveSeenConversation: mutate,
+    mutateReceiveSeenConversation: mutateAsync,
     isLoadingReceiveSeenConversation: isPending,
     isErrorReceiveSeenConversation: isError,
     isSuccessReceiveSeenConversation: isSuccess,
@@ -633,7 +711,7 @@ export const useDissolveGroup = () => {
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (conversationID: string) => {
       const { data } = await messageService.dissolveGroup(conversationID);
       return data.metadata;
@@ -654,7 +732,7 @@ export const useDissolveGroup = () => {
   });
 
   return {
-    mutateDissolveGroup: mutate,
+    mutateDissolveGroup: mutateAsync,
     isLoadingDissolveGroup: isPending,
     isErrorDissolveGroup: isError,
     isSuccessDissolveGroup: isSuccess
@@ -669,7 +747,7 @@ export const useReceiveDissolveGroup = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       if (window.location.pathname.includes(conversation._id)) navigate('/message', { replace: true });
@@ -686,7 +764,7 @@ export const useReceiveDissolveGroup = () => {
   });
 
   return {
-    mutateReceiveDissolveGroup: mutate,
+    mutateReceiveDissolveGroup: mutateAsync,
     isLoadingReceiveDissolveGroup: isPending,
     isErrorReceiveDissolveGroup: isError,
     isSuccessReceiveDissolveGroup: isSuccess,
@@ -704,7 +782,7 @@ export const useLeaveGroup = () => {
 
   const { chatSocket } = useAppSelector((state) => state.socketIO);
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (conversationID: string) => {
       const { data } = await messageService.leaveGroup(conversationID);
       return data.metadata;
@@ -725,7 +803,7 @@ export const useLeaveGroup = () => {
   });
 
   return {
-    mutateLeaveGroup: mutate,
+    mutateLeaveGroup: mutateAsync,
     isLoadingLeaveGroup: isPending,
     isErrorLeaveGroup: isError,
     isSuccessLeaveGroup: isSuccess
@@ -739,7 +817,7 @@ export const useLeaveGroup = () => {
 export const useReceiveLeaveGroup = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess, variables } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess, variables } = useMutation({
     mutationFn: async (conversation: IConversation) => await Promise.resolve(conversation),
     onSuccess(conversation) {
       queryClient.setQueryData<IConversation[]>(['conversations'], (oldData) => {
@@ -771,7 +849,7 @@ export const useReceiveLeaveGroup = () => {
   });
 
   return {
-    mutateReceiveLeaveGroup: mutate,
+    mutateReceiveLeaveGroup: mutateAsync,
     isLoadingReceiveLeaveGroup: isPending,
     isErrorReceiveLeaveGroup: isError,
     isSuccessReceiveLeaveGroup: isSuccess,
@@ -791,7 +869,7 @@ export const useReceiveLeaveGroup = () => {
 export const useMutateMessageCall = (conversation_id: string | undefined, type: string) => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (data: ISocketCall) => await Promise.resolve(data),
     onSuccess(data) {
       queryClient.setQueryData<ISocketCall>(['messageCall', conversation_id, type], (oldData) => {
@@ -803,7 +881,7 @@ export const useMutateMessageCall = (conversation_id: string | undefined, type: 
   });
 
   return {
-    mutateMessageCall: mutate,
+    mutateMessageCall: mutateAsync,
     isLoadingMessageCall: isPending,
     isErrorMessageCall: isError,
     isSuccessMessageCall: isSuccess
@@ -818,7 +896,7 @@ export const useMutateConversation = (currentUserID: string) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (payload: IUpdateConversation) => await Promise.resolve(payload),
     onSuccess(conversation) {
       switch (conversation.typeUpdate) {
@@ -1028,9 +1106,10 @@ export const useMutateConversation = (currentUserID: string) => {
   });
 
   return {
-    mutateConversation: mutate,
+    mutateConversation: mutateAsync,
     isLoadingConversation: isPending,
     isErrorConversation: isError,
     isSuccessConversation: isSuccess
   };
 };
+

@@ -17,7 +17,7 @@ export const PresenceService = () => {
   useEffect(() => {
     if (currentUserInfo && allUsersUsedToChatWith) {
       presenceSocket.emit(Socket.SET_PRESENCE, currentUserInfo._id);
-      console.log(currentUserInfo);
+      
       currentUserInfo.members = [...currentUserInfo.friends, ...allUsersUsedToChatWith].filter(
         (item, index, arr) =>
           arr.findIndex((t) => t._id === item._id) === index && item._id !== currentUserInfo._id

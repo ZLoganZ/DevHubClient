@@ -74,6 +74,7 @@ export interface IContact {
 
 export interface IUserInfo {
   _id: string;
+  id_incr: number;
   name: string;
   email: string;
   role: string[];
@@ -354,4 +355,20 @@ export interface ICommunity {
   waitlist_user_number: number;
   waitlist_post_number: number;
   createdAt: string;
+}
+
+export interface INotification {
+  _id: string;
+  type: string;
+  sender: IUserInfo;
+  receiver: IUserInfo;
+  content: string;
+  createAt: string;
+  options: {
+    post: string;
+    comment: string;
+    conversation: string;
+    community: string;
+  };
+  is_viewed: boolean;
 }

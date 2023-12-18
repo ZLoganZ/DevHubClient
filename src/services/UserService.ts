@@ -28,6 +28,16 @@ class UserService extends BaseService {
   acceptFriendRequest = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
     return this.post(`/users/accept_friend_request/${userID}`, '');
   };
+  cancelFriendRequest = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
+    return this.post(`/users/cancel_friend_request/${userID}`);
+  };
+  declineFriendRequest = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
+    return this.post(`/users/decline_friend_request/${userID}`);
+  };
+  deleteFriend = (userID: string): Promise<AxiosResponse<IResponse<boolean>>> => {
+    return this.post(`/users/delete_friend/${userID}`);
+  };
+
   getShouldAddFriend = (): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
     return this.get(`/users/should-add-friend`);
   };
