@@ -1,21 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  handleCommentInput: (_: string) => {}
+  handleCommentParentInput: (_: string) => {},
+  handleCommentChildInput: (_: string) => {}
 };
 
 const commentSlice = createSlice({
   name: 'comment',
   initialState,
   reducers: {
-    setHandleInput: (state, action) => {
+    setHandleParentInput: (state, action) => {
       return {
         ...state,
-        handleCommentInput: action.payload
+        handleCommentParentInput: action.payload
+      };
+    },
+    setHandleChildInput: (state, action) => {
+      return {
+        ...state,
+        handleCommentChildInput: action.payload
       };
     }
   }
 });
 
-export const { setHandleInput } = commentSlice.actions;
+export const { setHandleParentInput, setHandleChildInput } = commentSlice.actions;
 export default commentSlice.reducer;

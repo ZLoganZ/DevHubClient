@@ -8,9 +8,10 @@ import OtherPostShare from '@/components/Post/OtherPostShare';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { useCommentsData } from '@/hooks/fetch';
-import { setHandleInput } from '@/redux/Slice/CommentSlice';
+import { setHandleParentInput } from '@/redux/Slice/CommentSlice';
 import { IPost, IUserInfo } from '@/types';
 import StyleProvider from './cssPostDetail';
+import CommentDetail from '../PostProperties/CommentDetail';
 
 interface IOtherPostDetailProps {
   post: IPost;
@@ -35,7 +36,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
   };
 
   useEffect(() => {
-    dispatch(setHandleInput(handleCommentInput));
+    dispatch(setHandleParentInput(handleCommentInput));
   }, []);
 
   useEffect(() => {
@@ -80,8 +81,9 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
               <div className='container'>
                 <div className='overlay'></div>
                 {commentInput !== '' && (
-                  <Comment
+                  <CommentDetail
                     key={post._id}
+                    postID={post._id}
                     comment={{
                       _id: '1',
                       post: post._id,
@@ -94,6 +96,7 @@ const OtherPostDetail: React.FC<IOtherPostDetailProps> = ({ post, postAuthor, cu
                       dislikes: [],
                       like_number: 0,
                       dislike_number: 0,
+                      child_number: 0,
                       createdAt: 'sending...'
                     }}
                   />
