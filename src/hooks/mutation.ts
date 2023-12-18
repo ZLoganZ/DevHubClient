@@ -214,6 +214,8 @@ export const useCommentPost = () => {
     onSuccess(_, newComment) {
       queryClient.invalidateQueries({ queryKey: ['comments', newComment.post] });
 
+      queryClient.invalidateQueries({ queryKey: ['childComments', newComment.parent] });
+
       queryClient.invalidateQueries({ queryKey: ['post', newComment.post] });
 
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
@@ -1112,4 +1114,3 @@ export const useMutateConversation = (currentUserID: string) => {
     isSuccessConversation: isSuccess
   };
 };
-

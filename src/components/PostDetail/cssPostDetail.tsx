@@ -14,6 +14,10 @@ const StyleProvider = styled.div`
     ${custom_scrollBar_modal}
   }
 
+  .commentTotal{
+    ${custom_scrollBar}
+  }
+
   .container {
     position: relative;
     width: 100%;

@@ -199,7 +199,7 @@ export interface ILikeComment {
 
 export interface ICommentPost {
   _id: string;
-  post: IPost;
+  post: string;
   user: IUserInfo;
   content: string;
   type: TypeofComment;

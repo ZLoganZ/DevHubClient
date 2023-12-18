@@ -2,7 +2,7 @@ import { Col, Row, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
 import MyPostShare from '@/components/Post/MyPostShare';
-import CommentDetail from '@/components/PostProperties/CommentDetail';
+import Comment from '@/components/PostProperties/Comment/Comment';
 import CommentInput from '@/components/PostProperties/CommentInput';
 import MyPost from '@/components/Post/MyPost';
 import { getTheme } from '@/util/theme';
@@ -74,11 +74,11 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
               <div className='container'>
                 <div className='overlay'></div>
                 {commentInput !== '' && (
-                  <CommentDetail
+                  <Comment
                     key={post._id}
                     comment={{
                       _id: '1',
-                      post: post,
+                      post: post._id,
                       user: postAuthor,
                       content: commentInput,
                       type: 'parent',
@@ -90,7 +90,6 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                       dislike_number: 0,
                       createdAt: 'sending...'
                     }}
-                    postID={post._id}
                   />
                 )}
               </div>
@@ -98,7 +97,7 @@ const MyPostDetail: React.FC<IPostDetailProps> = ({ post, postAuthor, isDetail }
                 <Skeleton avatar paragraph={{ rows: 2 }} active />
               ) : (
                 comments?.map((item) => {
-                  return <CommentDetail key={item._id} comment={item} postID={post._id} />;
+                  return <Comment key={item._id} comment={item} />;
                 })
               )}
             </div>
