@@ -5,7 +5,6 @@ import {
   faSnowflake,
   faComment,
   faUser,
-  faBell,
   faGear,
   faVideo,
   faCloudSun

@@ -3,6 +3,7 @@ import { IPost, IUserInfo } from '@/types';
 const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
   const defaultValues: IUserInfo | IPost = {
     _id: '',
+    id_incr: 0,
     email: '',
     phone_number: '',
     user_image: '',
@@ -33,6 +34,7 @@ const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
     post_attributes: {
       user: {
         _id: '',
+        id_incr: 0,
         email: '',
         role: [],
         phone_number: '',
@@ -61,9 +63,9 @@ const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
         pendingFriend_number: 0,
         post_number: 0
       },
-      title: undefined,
-      content: undefined,
-      images: undefined,
+      title: '',
+      content: '',
+      images: [],
       url: undefined,
       post: undefined,
       owner_post: undefined,
