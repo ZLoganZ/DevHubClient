@@ -1,4 +1,4 @@
-import { useCallback,  } from 'react';
+import { useCallback } from 'react';
 import {
   Avatar,
   Badge,
@@ -225,7 +225,18 @@ const Headers = () => {
                           />
                         </Badge>
                       </NavLink>
-                      <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
+                      <Dropdown
+                        arrow
+                        menu={{
+                          items: itemsNoti,
+                          className: 'notiLayout',
+                          style: {
+                            maxHeight: '35rem',
+                            overflow: 'auto'
+                          }
+                        }}
+                        trigger={['click']}
+                        placement='bottom'>
                         <Badge count={0}>
                           <Avatar
                             className='notiButton cursor-pointer'

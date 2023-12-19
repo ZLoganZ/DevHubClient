@@ -148,6 +148,10 @@ export interface IPost {
     post?: IPost;
     owner_post?: IUserInfo;
 
+    likes: ILikePost[];
+    comments: ICommentPost[];
+    shares: ISharePost[];
+
     view_number: number;
     like_number: number;
     comment_number: number;
