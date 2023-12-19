@@ -1,6 +1,8 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+import type { Config } from 'tailwindcss';
+import tailwindcssAnimate from 'tailwindcss-animate';
+
+export default <Config>{
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     screens: {
       xs: { min: '320px', max: '639px' },
@@ -11,5 +13,5 @@ module.exports = {
       '2xl': { min: '1536px' }
     }
   },
-  plugins: [require('tailwindcss-animate')]
+  plugins: [tailwindcssAnimate]
 };
