@@ -51,7 +51,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
   const isXsScreen = useMediaQuery({ maxWidth: 639 });
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor()!;
+    const quill = ReactQuillRef.current!.getEditor();
 
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
@@ -222,7 +222,8 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                 <Upload
                   accept='image/png, image/jpeg, image/jpg'
                   key={random}
-                  maxCount={5}
+                  // maxCount={5}
+                  maxCount={1}
                   customRequest={({ onSuccess }) => {
                     if (onSuccess) onSuccess('ok');
                   }}
