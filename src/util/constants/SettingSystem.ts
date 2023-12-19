@@ -1,4 +1,4 @@
-export const DOMAIN_NAME = 'http://localhost:4052/api/v1';
+export const DOMAIN_NAME = import.meta.env.VITE_SERVER_ENDPOINT;
 
 export const USER_LOGIN = 'user_login';
 export const ID_USER = '_id';
