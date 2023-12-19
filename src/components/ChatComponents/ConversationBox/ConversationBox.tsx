@@ -118,7 +118,7 @@ const ConversationBox: React.FC<IConversationBox> = ({ conversation, selected })
   ];
 
   const isOwn = useMemo(() => {
-    return currentUserInfo._id === conversation.lastMessage?.sender?._id ?? false;
+    return currentUserInfo._id === conversation.lastMessage?.sender?._id;
   }, [conversation.lastMessage]);
 
   const senderName = useMemo(() => {
