@@ -115,7 +115,7 @@ const Headers = () => {
     }
   ];
 
-  if (noti) {
+  if (noti && noti.length !== 0) {
     itemsNoti.pop();
     noti.forEach((item) => {
       itemsNoti.push({
