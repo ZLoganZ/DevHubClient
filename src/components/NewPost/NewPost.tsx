@@ -233,7 +233,7 @@ const NewPost: React.FC<INewPost> = ({ currentUser }) => {
                   onRemove={() => {
                     setFile(undefined);
                   }}>
-                  <Button icon={<UploadOutlined />}>Upload (Max: 5)</Button>
+                  <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>
               </span>
             </div>

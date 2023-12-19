@@ -214,7 +214,7 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image, visibili
                     if (onSuccess) onSuccess('ok');
                   }}
                   beforeUpload={beforeUpload}>
-                  <Button icon={<UploadOutlined />}>Upload (Max: 5)</Button>
+                  <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>
               </span>
             </div>
