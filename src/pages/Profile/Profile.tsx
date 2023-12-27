@@ -73,19 +73,17 @@ const Profile = ({ userID }: IProfile) => {
 
   const { currentUserInfo } = useCurrentUserInfo();
 
-  const sentRequest = useMemo(() => {
-    if (currentUserInfo && otherUserInfo) {
-      return currentUserInfo.requestSent.indexOf(otherUserInfo._id) !== -1;
-    }
-    return false;
-  }, [currentUserInfo, otherUserInfo]);
+  const [isFriend, setIsFriend] = useState(false);
 
-  const receivedRequest = useMemo(() => {
-    if (currentUserInfo && otherUserInfo) {
-      return currentUserInfo.requestReceived.indexOf(otherUserInfo._id) !== -1;
-    }
-    return false;
-  }, [currentUserInfo, otherUserInfo]);
+  const [sentRequest, setSentRequest] = useState(false);
+
+  const [receivedRequest, setReceivedRequest] = useState(false);
+
+  useEffect(() => {
+    setIsFriend(otherUserInfo?.is_friend);
+    setSentRequest(currentUserInfo?.requestSent.indexOf(otherUserInfo?._id) !== -1);
+    setReceivedRequest(currentUserInfo?.requestReceived.indexOf(otherUserInfo?._id) !== -1);
+  }, [otherUserInfo, currentUserInfo]);
 
   const { isLoadingUserPosts, userPosts, isFetchingNextUserPosts, hasNextUserPosts, fetchNextUserPosts } =
     useUserPostsData(userID);
@@ -117,11 +115,6 @@ const Profile = ({ userID }: IProfile) => {
       });
     }
   }, [isLoadingUserPosts]);
-
-  const [isFriend, setIsFriend] = useState(false);
-  useEffect(() => {
-    setIsFriend(otherUserInfo?.is_friend);
-  }, [otherUserInfo]);
 
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
@@ -208,12 +201,15 @@ const Profile = ({ userID }: IProfile) => {
                     }
                     onClick={() => {
                       isFriend
-                        ? mutateDeleteFriendUser(userID)
+                        ? mutateDeleteFriendUser(userID).then(() => setIsFriend(false))
                         : sentRequest
-                        ? mutateCancelFriendUser(userID)
+                        ? mutateCancelFriendUser(userID).then(() => setSentRequest(false))
                         : receivedRequest
-                        ? mutateAcceptFriendUser(userID)
-                        : mutateAddFriendUser(userID);
+                        ? mutateAcceptFriendUser(userID).then(() => {
+                            setReceivedRequest(false);
+                            setIsFriend(true);
+                          })
+                        : mutateAddFriendUser(userID).then(() => setSentRequest(true));
                     }}>
                     {isFriend
                       ? 'Unfriend'
