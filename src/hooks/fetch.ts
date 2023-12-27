@@ -764,3 +764,61 @@ export const useGetNoti = (userID: number) => {
     isFetchingNoti: isFetching
   };
 };
+
+export const useGetUsersByName = (keyword: string) => {
+  const { data, isPending, isError, isFetching } = useInfiniteQuery({
+    queryKey: ['userByName', keyword],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await userService.searchUsersByName(keyword, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    staleTime: Infinity,
+    enabled: !!keyword
+  });
+
+  return {
+    isLoadingUsersByName: isPending,
+    isErrorUsersByName: isError,
+    usersByName: data!,
+    isFetchingUsersByName: isFetching
+  };
+};
+
+export const useGetPostsByTitle = (keyword: string) => {
+  const { data, isPending, isError, isFetching } = useInfiniteQuery({
+    queryKey: ['postByTitle', keyword],
+    queryFn: async ({ pageParam }) => {
+      const { data } = await postService.getPostsByTitle(keyword, pageParam);
+      return data.metadata;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => {
+      if (lastPage.length < 5) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    select: (data) => {
+      return data.pages.flat();
+    },
+    staleTime: Infinity,
+    enabled: !!keyword
+  });
+
+  return {
+    isLoadingPostsByTitle: isPending,
+    isErrorPostsByTitle: isError,
+    postsByTitle: data!,
+    isFetchingPostsByTitle: isFetching
+  };
+};

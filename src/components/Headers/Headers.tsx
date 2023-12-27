@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -29,10 +29,11 @@ import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 
-import { useCurrentUserInfo, useGetNoti } from '@/hooks/fetch';
+import { useCurrentUserInfo, useGetNoti, useGetUsersByName } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
-
+import AvatarMessage from '../ChatComponents/Avatar/AvatarMessage';
+import { IUserInfo } from '@/types';
 const Headers = () => {
   const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
@@ -43,6 +44,10 @@ const Headers = () => {
   const { currentUserInfo } = useCurrentUserInfo();
 
   const noti = useGetNoti(currentUserInfo?.id_incr).noti;
+
+  const [search, setSearch] = useState('');
+
+  const { usersByName, isLoadingUsersByName, isFetchingUsersByName } = useGetUsersByName(search);
 
   const queryClient = useQueryClient();
 
@@ -183,6 +188,42 @@ const Headers = () => {
   //     )
   //   });
   // };
+  const contacts = useMemo(() => {
+    return currentUserInfo?.members ?? [];
+  }, [currentUserInfo?.members]);
+
+  const [users, setUsers] = useState<IUserInfo[]>(contacts);
+  const [isListVisible, setIsListVisible] = useState(false);
+
+  const handleSearchClick = () => {
+    setIsListVisible(true);
+  };
+
+  const handleSearchBlur = () => {
+    setTimeout(() => {
+      setIsListVisible(false);
+    }, 50);
+  };
+
+  const handleShowUserProfile = (id: string) => {
+    navigate(`/user/${id}`);
+  };
+
+  const getSearchPage = (key: string) => {
+    navigate(`/search/top?search=${key}`);
+  };
+
+  const handleSearch = (key: string) => {
+    setSearch(key.trim());
+  };
+
+  useEffect(() => {
+    if (search !== '') {
+      setUsers(usersByName);
+    } else {
+      setUsers(contacts);
+    }
+  }, [usersByName, search]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
@@ -220,8 +261,46 @@ const Headers = () => {
                       placeholder='Search'
                       className='rounded-full'
                       prefix={<SearchOutlined className='text-xl mr-1' />}
+                      onClick={handleSearchClick}
+                      onBlur={handleSearchBlur}
+                      onPressEnter={(e) => getSearchPage(e.currentTarget.value)}
+                      onInput={(e) => {
+                        handleSearch(e.currentTarget.value);
+                      }}
                     />
+                    {isListVisible && (
+                      <div
+                        className='absolute z-40'
+                        style={{
+                          backgroundColor: themeColorSet.colorBg2,
+                          width: '80%',
+                          top: '4rem',
+                          border: '1px solid #d9d9d9',
+                          borderRadius: '0.5rem',
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                        }}>
+                        {users.map((item) => (
+                          <div
+                            className='user flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-200 z-50'
+                            key={item._id}
+                            onClick={() => handleShowUserProfile(item._id)}>
+                            <div className='avatar relative'>
+                              <AvatarMessage key={item._id} user={item} />
+                            </div>
+                            <div
+                              className='name text-center ml-2'
+                              style={{
+                                fontSize: '0.9rem',
+                                color: themeColorSet.colorText1
+                              }}>
+                              {item.name}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </Col>
+
                   <Col span={5} className='pl-3 md:pl-0'>
                     <Space size={25}>
                       <NavLink to='/message'>

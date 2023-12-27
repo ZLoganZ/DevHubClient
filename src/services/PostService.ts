@@ -74,6 +74,10 @@ class PostService extends BaseService {
   getSavedPosts = (): Promise<AxiosResponse<IResponse<IPost[]>>> => {
     return this.get(`/posts/saved`);
   };
+
+  getPostsByTitle = (keyword: string, page: number): Promise<AxiosResponse<IResponse<IPost[]>>> => {
+    return this.get(`/posts/search/top?search=${keyword}&page=${page}`);
+  };
 }
 
 export const postService = new PostService();

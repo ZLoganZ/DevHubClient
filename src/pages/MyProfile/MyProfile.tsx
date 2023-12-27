@@ -122,6 +122,7 @@ const MyProfile = () => {
                 src={getImageURL(currentUserInfo.user_image, 'avatar')}
                 alt='avt'
                 style={{ objectFit: 'cover' }}
+                width={176}
                 preview={{
                   src: getImageURL(currentUserInfo.user_image),
                   mask: <FontAwesomeIcon icon={faEye} />

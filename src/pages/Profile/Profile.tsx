@@ -155,6 +155,7 @@ const Profile = ({ userID }: IProfile) => {
                 src={getImageURL(otherUserInfo.user_image, 'avatar')}
                 alt='avt'
                 style={{ objectFit: 'cover' }}
+                width={176}
                 preview={{
                   src: getImageURL(otherUserInfo.user_image),
                   mask: <FontAwesomeIcon icon={faEye} />
