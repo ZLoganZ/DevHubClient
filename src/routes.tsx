@@ -12,6 +12,7 @@ import SelectCommunity from '@/pages/SelectCommunity';
 import GetStarted from '@/pages/GetStarted';
 import NotFound404 from '@/pages/NotFound404';
 import SavedPosts from '@/pages/SavedPosts';
+import Search from '@/pages/Search/Search';
 
 import { VoiceCall, VideoCall } from '@/components/ChatComponents/MessageCall';
 
@@ -21,6 +22,10 @@ export const privateRoutes = [
   {
     path: '/',
     element: <MainLayout Component={<NewsFeed />} />
+  },
+  {
+    path: '/search/top',
+    element: <MainLayout Component={<Search />} />
   },
   {
     path: '/message/:conversationID?',

@@ -53,6 +53,10 @@ class UserService extends BaseService {
   getRepositoryGithub = (): Promise<AxiosResponse<IResponse<IRepository[]>>> => {
     return this.getGithub(`/users/repositories`);
   };
+
+  searchUsersByName = (keyword: string, page: number): Promise<AxiosResponse<IResponse<IUserInfo[]>>> => {
+    return this.get(`/users/search/top/?search=${keyword}&page=${page}`);
+  };
 }
 
 export const userService = new UserService();

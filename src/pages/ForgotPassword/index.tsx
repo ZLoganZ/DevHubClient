@@ -11,6 +11,7 @@ import {
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssForgotPassword';
+import { Input } from 'antd';
 
 export const ForgotPassword = () => {
   // Lấy theme từ LocalStorage chuyển qua css
@@ -32,17 +33,53 @@ export const ForgotPassword = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <h1>ForgotPassword</h1>
-      <label htmlFor='email' className='mr-3'>
-        Email
-      </label>
-      <input type='email' name='email' id='email' onChange={handleChangeEmail} />
-      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
-        Send
-      </button>
-      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/login')}>
-        Back
-      </button>
+      <div id='content' role='main' className='w-full max-w-md mx-auto p-6'>
+        <div className='mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300'>
+          <div className='p-4 sm:p-7'>
+            <div className='text-center'>
+              <h1 className='block text-2xl font-bold text-gray-800 dark:text-white'>Forgot password?</h1>
+              <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
+                Remember your password?&nbsp;
+                <span
+                  className='text-blue-600 decoration-2 hover:underline font-medium cursor-pointer'
+                  onClick={() => navigate('/login')}>
+                  Login here
+                </span>
+              </p>
+            </div>
+
+            <div className='mt-5'>
+              <div className='grid gap-y-4'>
+                <div>
+                  <label htmlFor='email' className='block text-sm font-bold ml-1 mb-2 dark:text-white'>
+                    Email address
+                  </label>
+                  <div className='relative'>
+                    <Input
+                      type='email'
+                      id='email'
+                      name='email'
+                      placeholder='Enter your email address'
+                      className='py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm'
+                      required
+                      aria-describedby='email-error'
+                      onChange={handleChangeEmail}
+                    />
+                  </div>
+                  <p className='hidden text-xs text-red-600 mt-2' id='email-error'>
+                    Please include a valid email address so we can get back to you
+                  </p>
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  className='py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800'>
+                  Reset password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </StyleProvider>
   );
 };
@@ -94,26 +131,60 @@ export const ResetPassword = () => {
 
   return (
     <StyleProvider theme={themeColorSet}>
-      <h1>ResetPassword</h1>
-      <label htmlFor='password' className='mr-3'>
-        Password
-      </label>
-      <input type='password' name='password' id='password' onChange={handleChangePassword} />
-      <label htmlFor='confirmPassword' className='mr-3'>
-        Confirm Password
-      </label>
-      <input
-        type='password'
-        name='confirmPassword'
-        id='confirmPassword'
-        onChange={handleChangeConfirmPassword}
-      />
-      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
-        Next
-      </button>
-      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/forgot')}>
-        Back
-      </button>
+      <div id='content' role='main' className='w-full max-w-md mx-auto p-6'>
+        <div className='mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300'>
+          <div className='p-4 sm:p-7'>
+            <div className='text-center'>
+              <h1 className='block text-2xl font-bold text-gray-800 dark:text-white'>Reset your password</h1>
+            </div>
+
+            <div className='mt-5'>
+              <div className='grid gap-y-4'>
+                <div>
+                  <label htmlFor='password' className='block text-sm font-bold ml-1 mb-2 dark:text-white'>
+                    Password
+                  </label>
+                  <div className='relative'>
+                    <Input
+                      type='password'
+                      id='password'
+                      name='password'
+                      placeholder='Enter your password'
+                      className='py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm'
+                      required
+                      aria-describedby='email-error'
+                      onChange={handleChangePassword}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor='confirmPassword'
+                    className='block text-sm font-bold ml-1 mb-2 dark:text-white'>
+                    Confirm Password
+                  </label>
+                  <div className='relative'>
+                    <Input
+                      type='password'
+                      id='confirmPassword'
+                      name='confirmPassword'
+                      placeholder='Enter your confirm password'
+                      className='py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm'
+                      required
+                      onChange={handleChangeConfirmPassword}
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  className='py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800'>
+                  Reset password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </StyleProvider>
   );
 };
@@ -132,8 +203,36 @@ export const VerifyCode = () => {
 
   const [code, setCode] = useState('');
 
-  const handleChangeCode = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCode(e.target.value);
+  const [inputValues, setInputValues] = useState<string[]>(['', '', '', '', '', '', '', '']);
+
+  const handleInputChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newInputValues = [...inputValues];
+    newInputValues[index] = e.target.value;
+    setInputValues(newInputValues);
+
+    if (index < inputValues.length - 1 && e.target.value) {
+      const nextInput = document.getElementById(`input-${index + 1}`);
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+    const str = newInputValues.join('');
+    setCode(str);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text');
+
+    const pastedArray = pastedData.split('').slice(0, inputValues.length);
+
+    setInputValues(pastedArray);
+    setCode(pastedData);
+
+    const nextInput = document.getElementById(`input-${inputValues.length - 1}`);
+    if (nextInput) {
+      nextInput.focus();
+    }
   };
 
   useEffect(() => {
@@ -153,19 +252,76 @@ export const VerifyCode = () => {
     dispatch(VERIFY_CODE_SAGA({ email: email!, code: code }));
   };
 
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [countdown]);
+
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
+  const handleResendOTP = () => {
+    if (!isResendDisabled) {
+      setInputValues(['', '', '', '', '', '', '', '']);
+      dispatch(FORGOT_PASSWORD_SAGA({ email: email! }));
+
+      // Disable the resend button
+      setIsResendDisabled(true);
+
+      // Enable the resend button after 60 seconds
+      setTimeout(() => {
+        setIsResendDisabled(false);
+      }, 60000); // 60000 milliseconds = 60 seconds
+
+      setCountdown(60);
+    }
+  };
+
   return (
     <StyleProvider theme={themeColorSet}>
-      <h1>VerifyCode</h1>
-      <label htmlFor='code' className='mr-3'>
-        Code
-      </label>
-      <input type='text' name='code' id='code' onChange={handleChangeCode} />
-      <button className='btnNext ml-3 mr-3 px-3 py-1' onClick={handleSubmit}>
-        Next
-      </button>
-      <button className='btnBack mr-3 px-3 py-1' onClick={() => navigate('/forgot')}>
-        Back
-      </button>
+      <div className='pt-20'>
+        <div className='max-w-lg mx-auto border rounded'>
+          <div className='shadow-md px-4 py-6'>
+            <div className='flex justify-center gap-2 mb-6'>
+              {inputValues.map((value, index) => (
+                <input
+                  key={index}
+                  id={`input-${index}`}
+                  className='w-12 h-12 text-center font-bold text-lg border rounded-md shadow-sm focus:border-teal-500 focus:ring-teal-500'
+                  type='text'
+                  maxLength={1}
+                  autoComplete='one-time-code'
+                  value={value}
+                  onChange={handleInputChange(index)}
+                  onPaste={handlePaste}
+                  required
+                />
+              ))}
+            </div>
+            <div className='flex items-center justify-center'>
+              <button
+                className='bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                onClick={handleSubmit}>
+                Verify
+              </button>
+              <button
+                className='inline-block align-baseline font-bold text-sm text-teal-500 hover:text-teal-800 ml-4'
+                onClick={handleResendOTP}
+                disabled={isResendDisabled}>
+                Resend OTP {isResendDisabled ? '(' + countdown + 's)' : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </StyleProvider>
   );
 };

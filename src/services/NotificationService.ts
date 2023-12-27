@@ -8,7 +8,7 @@ class NotificationService extends BaseService {
     super();
   }
 
-  getNoti(userID: number, page: number): Promise<AxiosResponse<IResponse<INotification[]>>> {
+  getNoti = (userID: number, page: number): Promise<AxiosResponse<IResponse<INotification[]>>> => {
     return this.get(`/notifications/newnoti/${userID}?page=${page}`);
   }
 }
