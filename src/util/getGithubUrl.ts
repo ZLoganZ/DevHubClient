@@ -3,7 +3,7 @@ export const GetGitHubUrl = () => {
 
   const options = {
     client_id: import.meta.env.VITE_GITHUB_OAUTH_CLIENT_ID as string,
-    redirect_uri: import.meta.env.VITE_GITHUB_OAUTH_REDIRECT_URL as string,
+    // redirect_uri: import.meta.env.VITE_GITHUB_OAUTH_REDIRECT_URL as string,
     scope: 'user,repo'
   };
 

@@ -19,7 +19,7 @@ class AuthService extends BaseService {
     return this.post(`/auth/login`, userLogin);
   };
   loginWithGoogle = (token: IGoogleLogin) => {
-    return this.post(`/auth/googleV2`, token);
+    return this.post(`/auth/login-google`, token);
   };
   logout = () => {
     return this.post(`/auth/logout`);
