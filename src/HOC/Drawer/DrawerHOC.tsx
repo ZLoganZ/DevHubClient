@@ -41,8 +41,7 @@ const DrawerHOC = () => {
                   onClick={() => {
                     callBackSubmit();
                   }}
-                  loading={loading}
-                  >
+                  loading={loading}>
                   Submit
                 </ButtonActiveHover>
               </Space>
