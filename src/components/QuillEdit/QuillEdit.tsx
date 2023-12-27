@@ -26,7 +26,7 @@ const QuillEdit: React.FC<IQuillEdit> = ({ placeholder, callbackFunction, conten
   const ReactQuillRef = useRef<ReactQuill | null>(null);
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor()!;
+    const quill = ReactQuillRef.current!.getEditor();
 
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();

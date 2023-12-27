@@ -101,7 +101,7 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image, visibili
   };
 
   useEffect(() => {
-    const quill = ReactQuillRef.current?.getEditor()!;
+    const quill = ReactQuillRef.current!.getEditor();
     quill.root.addEventListener('paste', (event: ClipboardEvent) => {
       event.preventDefault();
       const text = event.clipboardData!.getData('text/plain');
@@ -209,12 +209,13 @@ const EditPostForm: React.FC<IEditPost> = ({ id, title, content, image, visibili
                   onChange={(info) => setImageFile(info.file.originFileObj)}
                   accept='image/png, image/jpeg, image/jpg'
                   defaultFileList={image.length !== 0 ? [...fileList] : []}
-                  maxCount={5}
+                  // maxCount={5}
+                  maxCount={1}
                   customRequest={({ onSuccess }) => {
                     if (onSuccess) onSuccess('ok');
                   }}
                   beforeUpload={beforeUpload}>
-                  <Button icon={<UploadOutlined />}>Upload (Max: 5)</Button>
+                  <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>
               </span>
             </div>

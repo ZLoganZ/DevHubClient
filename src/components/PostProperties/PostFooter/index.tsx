@@ -23,6 +23,7 @@ interface IPostFooterProps {
 
 const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare, currentUser }) => {
   const changed = useAppSelector((state) => state.theme.changed);
+  const { visible } = useAppSelector((state) => state.modalHOC);
   const { themeColorSet } = getTheme();
 
   const dispatch = useAppDispatch();
@@ -140,7 +141,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
               style={{ backgroundColor: 'transparent' }}
               icon={<FontAwesomeIcon icon={faComment} color={themeColorSet.colorText1} />}
               onClick={() =>
-                !isDetail
+                !isDetail && !visible
                   ? dispatch(
                       openModal({
                         title: 'The post of ' + post.post_attributes.user.name,
@@ -163,8 +164,7 @@ const PostFooter: React.FC<IPostFooterProps> = ({ post, postAuthor, isPostShare,
                         type: 'post'
                       })
                     )
-                  : // focus to comment input in component CommentInput
-                    document.getElementById('commentInput')?.focus()
+                  : document.getElementById('commentInput')!.focus()
               }
             />
           </Space>

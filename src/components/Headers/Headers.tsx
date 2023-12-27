@@ -27,11 +27,11 @@ import DayNightSwitch from '@/components/Day&NightSwitch';
 import { DARK_THEME, LIGHT_THEME } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
+import { getDateTimeToNow } from '@/util/formatDateTime';
 
 import { useCurrentUserInfo, useGetNoti } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
-import { getDateTimeToNow } from '@/util/formatDateTime';
 
 const Headers = () => {
   const navigate = useNavigate();
@@ -236,6 +236,7 @@ const Headers = () => {
                         arrow
                         menu={{
                           items: itemsNoti,
+                          className: 'notiLayout',
                           style: {
                             maxHeight: '35rem',
                             overflow: 'auto'
