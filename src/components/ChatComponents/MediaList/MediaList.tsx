@@ -83,7 +83,7 @@ const MediaList: React.FC<IMediaList> = ({ items, type, enable }) => {
                   }
                 />
               ) : (
-                <Col className='pl-2'>
+                <Col className='px-2'>
                   <div
                     className='list-items'
                     style={{

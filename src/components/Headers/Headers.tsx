@@ -1,4 +1,4 @@
-import { useCallback,  } from 'react';
+import { useCallback } from 'react';
 import {
   Avatar,
   Badge,
@@ -115,7 +115,7 @@ const Headers = () => {
     }
   ];
 
-  if (noti) {
+  if (noti && noti.length !== 0) {
     itemsNoti.pop();
     noti.forEach((item) => {
       itemsNoti.push({
@@ -133,12 +133,19 @@ const Headers = () => {
               </div>
               <div className='name_career'>
                 <div
-                  className='name ml-4'
+                  className='name ml-4 font-bold'
                   style={{
                     color: themeColorSet.colorText1,
                     fontWeight: 600
                   }}>
-                  {item.sender.name + ' ' + item.content}
+                  {item.sender.name + ' '}
+                  <span
+                    style={{
+                      color: themeColorSet.colorText1,
+                      fontWeight: 400
+                    }}>
+                    {item.content}
+                  </span>
                 </div>
                 <div className='time ml-4' style={{ color: themeColorSet.colorText2 }}>
                   {getDateTimeToNow(item.createAt)}
@@ -225,7 +232,17 @@ const Headers = () => {
                           />
                         </Badge>
                       </NavLink>
-                      <Dropdown arrow menu={{ items: itemsNoti }} trigger={['click']} placement='bottom'>
+                      <Dropdown
+                        arrow
+                        menu={{
+                          items: itemsNoti,
+                          style: {
+                            maxHeight: '35rem',
+                            overflow: 'auto'
+                          }
+                        }}
+                        trigger={['click']}
+                        placement='bottom'>
                         <Badge count={0}>
                           <Avatar
                             className='notiButton cursor-pointer'
