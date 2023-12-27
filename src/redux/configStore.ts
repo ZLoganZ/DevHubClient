@@ -14,7 +14,6 @@ import comment from './Slice/CommentSlice';
 import message from './Slice/MessageSlice';
 
 const sagaMiddleware = createSagaMiddleware();
-const middleware = [sagaMiddleware];
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +28,20 @@ export const store = configureStore({
     comment,
     message
   },
-  middleware
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          'hook/setNavigate',
+          'hook/setLocation',
+          'hook/setUseSelector',
+          'hook/setDispatch',
+          'comment/setHandleParentInput',
+          'comment/setHandleChildInput'
+        ],
+        ignoredPaths: ['hook', 'drawerHOC', 'modalHOC', 'socketIO', 'comment']
+      }
+    }).concat(sagaMiddleware as any)
 });
 
 // Hàm run nhận vào 1 generator hook
