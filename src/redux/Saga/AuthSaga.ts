@@ -89,7 +89,8 @@ function* LoginWithGoogleSaga({ payload }: any) {
     const { data, status } = yield call(authService.loginWithGoogle, payload);
     if (status === STATUS_CODE.SUCCESS) {
       // Lưu token vào localStorage
-      localStorage.setItem(AUTHORIZATION, data.metadata?.accessToken);
+      localStorage.setItem(AUTHORIZATION, data.metadata.tokens.accessToken);
+      localStorage.setItem(CLIENT_ID, data.metadata.user._id);
 
       const { location } = yield select((state) => state.hook);
 

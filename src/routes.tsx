@@ -2,6 +2,7 @@ import { CommunityWrapper, PostWrapper, ProfileWrapper } from '@/Wrapper';
 
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import AlternativeLogin from '@/pages/Login/AlternativeLogin';
 import { ForgotPassword, ResetPassword, VerifyCode } from '@/pages/ForgotPassword';
 import NewsFeed from '@/pages/NewsFeed/NewsFeed';
 import Chat from '@/pages/Chat';
@@ -79,6 +80,10 @@ export const publicRoutes = [
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/login-callback',
+    element: <AlternativeLogin />
   },
   {
     path: '/register',

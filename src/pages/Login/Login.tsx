@@ -5,12 +5,11 @@ import { ConfigProvider, Form, Input, App } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { LOGIN_SAGA, LOGIN_WITH_GOOGLE_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
 import { setLoading } from '@/redux/Slice/AuthSlice';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
-import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
 import { IUserLogin } from '@/types';
@@ -26,8 +25,6 @@ const Login = () => {
 
   const { loading, errorLogin, countErrorLogin } = useAppSelector((state) => state.auth);
 
-  const location = useLocation();
-
   const countRef = useRef(countErrorLogin);
 
   const handleSignInWithGoogle = useGoogleLogin({
@@ -41,43 +38,7 @@ const Login = () => {
   });
 
   const openPopup = () => {
-    const width = 500; // Width of the pop-up window
-    const height = 800; // Height of the pop-up window
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
-
-    const popup = window.open(
-      GetGitHubUrl(),
-      'GithubAuth',
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-
-    const handleMessage = (event: MessageEvent) => {
-      if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
-        // Check the origin of the message for security
-        // Handle the received data from the server
-        const userData = event.data;
-        if (userData) {
-          localStorage.setItem(AUTHORIZATION, userData.accessToken);
-          localStorage.setItem(GITHUB_TOKEN, userData.accessTokenGitHub);
-
-          // go to home page or redirect to previous page
-          const state = location.state as { from: Location };
-          const from = state?.from?.pathname ?? '/';
-
-          window.location.replace(from);
-        }
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    const pollOAuthStatus = setInterval(() => {
-      if (popup?.closed) {
-        clearInterval(pollOAuthStatus);
-        window.removeEventListener('message', handleMessage);
-      }
-    }, 500);
+    window.location.assign(GetGitHubUrl());
   };
 
   const form = useForm({
