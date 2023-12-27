@@ -47,7 +47,7 @@ const Headers = () => {
 
   const [search, setSearch] = useState('');
 
-  const { usersByName, isLoadingUsersByName, isFetchingUsersByName } = useGetUsersByName(search);
+  const { usersByName } = useGetUsersByName(search);
 
   const queryClient = useQueryClient();
 
@@ -202,7 +202,7 @@ const Headers = () => {
   const handleSearchBlur = () => {
     setTimeout(() => {
       setIsListVisible(false);
-    }, 50);
+    }, 100);
   };
 
   const handleShowUserProfile = (id: string) => {
@@ -218,7 +218,7 @@ const Headers = () => {
   };
 
   useEffect(() => {
-    if (search !== '') {
+    if (search !== '' && usersByName) {
       setUsers(usersByName);
     } else {
       setUsers(contacts);
