@@ -60,6 +60,12 @@ export const useViewPost = () => {
     mutationFn: async (postID: string) => {
       if (document.cookie.includes(`${postID}`)) return;
       await postService.viewPost(postID);
+    },
+    onSuccess(_, postID) {
+      const viewedPosts = document.cookie.split(';').find((item) => item.includes('viewedPosts'));
+      const newViewedPosts = new Set(viewedPosts?.split('=')[1]?.split(',') ?? []);
+      newViewedPosts.add(postID);
+      document.cookie = `viewedPosts=${[...newViewedPosts].join(',')};max-age=43200000;path=/`;
     }
   });
   return {
