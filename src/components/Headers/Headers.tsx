@@ -291,7 +291,8 @@ const Headers = () => {
                         {isLoadingSearchLogs ||
                         (searchLogs &&
                           searchLogs.keywords.length === 0 &&
-                          searchLogs.recently_search_list.length === 0) ? (
+                          searchLogs.recently_search_list.length === 0) ||
+                        !searchLogs ? (
                           <Empty
                             className='cursor-default px-40'
                             image={Empty.PRESENTED_IMAGE_SIMPLE}
