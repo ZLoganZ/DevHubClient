@@ -45,7 +45,7 @@ const ContentPost: React.FC<IContentPostProps> = ({ postID, title, content, imag
     else if (!isMoreThan500) mutateViewPost(postID);
   }, [postID, isMoreThan500, expanded]);
 
-  useIntersectionObserver(contentRef, onIntersect, { delay: 5000, threshold: 0.3 });
+  useIntersectionObserver(contentRef, onIntersect, { delay: 5000 });
 
   return (
     <StyleProvider ref={contentRef} theme={themeColorSet}>

@@ -46,13 +46,17 @@ export const useIntersectionObserver = (
   const { threshold = 0.85, delay = 0, pauseOnTabChange = true } = options ?? {};
 
   useEffect(() => {
-    const handleIntersect = debounce((entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          onIntersect();
-        }
-      });
-    }, delay);
+    const handleIntersect = debounce(
+      (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            onIntersect();
+          }
+        });
+      },
+      delay,
+      { leading: true, trailing: true }
+    );
 
     const observer = new IntersectionObserver(handleIntersect, { rootMargin: '0px', threshold });
 

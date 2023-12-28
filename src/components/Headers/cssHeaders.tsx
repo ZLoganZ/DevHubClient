@@ -17,20 +17,25 @@ const StyleProvider = styled.div`
     align-items: center;
     justify-content: center;
     color: ${(props) => props.theme.colorText1};
+    .letter {
+      transition: transform 0.5s ease;
+      transform: translateX(0);
+      color: ${(props) => props.theme.colorText1};
+      &:hover {
+        transform: translateY(-1rem);
+        background: -webkit-linear-gradient(120deg, hsl(19, 90%, 52%), hsl(56, 100%, 50%));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
   }
 
-  .letter {
-    transition: transform 0.4s ease;
-    transform: translateX(0);
-    color: ${(props) => props.theme.colorText1};
-  }
-
-  .letter:hover {
-    transform: translateY(-1rem);
-    background: -webkit-linear-gradient(120deg, hsl(19, 90%, 52%), hsl(56, 100%, 50%));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .userSearch {
+    &:hover {
+      background-color: ${(props) => props.theme.colorBg4};
+      transition: background-color 0.3s ease;
+    }
   }
 `;
 

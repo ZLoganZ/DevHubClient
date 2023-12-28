@@ -197,7 +197,7 @@ const NewsFeed = () => {
               </div>
               <div className='news-feed-right w-4/12 pl-3 md:hidden'>
                 <Affix offsetTop={100}>
-                  <div key={popularvalue}>
+                  <div>
                     <div
                       className='popular-post flex justify-between items-center'
                       style={{

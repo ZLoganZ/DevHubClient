@@ -213,7 +213,7 @@ const Headers = () => {
   };
 
   const getSearchPage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // e.stopPropagation();
+    e.stopPropagation();
     navigate(`/search/top?search=${e.currentTarget.value}`);
   };
 
@@ -259,10 +259,11 @@ const Headers = () => {
                       </div>
                     </div>
                   </Col>
-                  <Col span={isMdScreen ? 9 : 15} className='px-4 items-center'>
+                  <Col span={isMdScreen ? 9 : 15} className='px-4 items-center relative'>
                     <Input
                       allowClear
                       placeholder='Search'
+                      autoComplete='off'
                       className='rounded-full'
                       prefix={<SearchOutlined className='text-xl mr-1' />}
                       onClick={handleSearchClick}
@@ -272,21 +273,17 @@ const Headers = () => {
                     />
                     {isListVisible && (
                       <div
-                        className='absolute z-40'
+                        className='absolute w-[95%] z-10 rounded-lg'
                         style={{
                           backgroundColor: themeColorSet.colorBg2,
-                          width: '80%',
-                          top: '4rem',
-                          border: '1px solid #d9d9d9',
-                          borderRadius: '0.5rem',
                           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
                         }}>
                         {users.map((item) => (
                           <div
-                            className='user flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-200 z-50'
+                            className='userSearch flex items-center cursor-pointer p-1 rounded-md'
                             key={item._id}
                             onClick={(e) => handleShowUserProfile(e, item._id)}>
-                            <div className='avatar relative'>
+                            <div className='avatar'>
                               <AvatarMessage key={item._id} user={item} />
                             </div>
                             <div
