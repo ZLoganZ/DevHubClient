@@ -205,12 +205,14 @@ const Headers = () => {
     }, 100);
   };
 
-  const handleShowUserProfile = (id: string) => {
+  const handleShowUserProfile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
     navigate(`/user/${id}`);
   };
 
-  const getSearchPage = (key: string) => {
-    navigate(`/search/top?search=${key}`);
+  const getSearchPage = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // e.stopPropagation();
+    navigate(`/search/top?search=${e.currentTarget.value}`);
   };
 
   const handleSearch = (key: string) => {
@@ -223,7 +225,7 @@ const Headers = () => {
     } else {
       setUsers(contacts);
     }
-  }, [usersByName, search]);
+  }, [usersByName, search, contacts]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
@@ -263,10 +265,8 @@ const Headers = () => {
                       prefix={<SearchOutlined className='text-xl mr-1' />}
                       onClick={handleSearchClick}
                       onBlur={handleSearchBlur}
-                      onPressEnter={(e) => getSearchPage(e.currentTarget.value)}
-                      onInput={(e) => {
-                        handleSearch(e.currentTarget.value);
-                      }}
+                      onPressEnter={(e) => getSearchPage(e)}
+                      onInput={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
                       <div
@@ -283,7 +283,7 @@ const Headers = () => {
                           <div
                             className='user flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-200 z-50'
                             key={item._id}
-                            onClick={() => handleShowUserProfile(item._id)}>
+                            onClick={(e) => handleShowUserProfile(e, item._id)}>
                             <div className='avatar relative'>
                               <AvatarMessage key={item._id} user={item} />
                             </div>

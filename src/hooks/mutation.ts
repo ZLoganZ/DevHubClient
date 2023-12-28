@@ -58,6 +58,7 @@ export const useCreatePost = () => {
 export const useViewPost = () => {
   const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: async (postID: string) => {
+      if (document.cookie.includes(`${postID}`)) return;
       await postService.viewPost(postID);
     }
   });
