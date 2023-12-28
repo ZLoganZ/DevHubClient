@@ -67,7 +67,7 @@ export const useViewPost = () => {
       const viewedPosts = document.cookie.split(';').find((item) => item.includes('viewedPosts'));
       const newViewedPosts = new Set(viewedPosts?.split('=')[1]?.split(',') ?? []);
       newViewedPosts.add(postID);
-      document.cookie = `viewedPosts=${[...newViewedPosts].join(',')};max-age=43200000;path=/`;
+      document.cookie = `viewedPosts=${[...newViewedPosts].join(',')};max-age=43200;path=/`;
     }
   });
   return {
@@ -1146,4 +1146,4 @@ export const useCreateSearchLog = () => {
     isErrorCreateSearchLog: isError,
     isSuccessCreateSearchLog: isSuccess
   };
-}
+};
