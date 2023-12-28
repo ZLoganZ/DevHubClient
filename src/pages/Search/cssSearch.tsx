@@ -7,6 +7,15 @@ const StyleProvider = styled.div`
   color: ${(props) => props.theme.colorText1};
   ${custom_scrollBar}
 
+  .users {
+    background-color: ${(props) => props.theme.colorBg2};
+    .people {
+      color: ${(props) => props.theme.colorText1};
+    }
+    .ant-list-item {
+      
+    }
+  }
 `;
 
 export default StyleProvider;

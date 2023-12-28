@@ -212,9 +212,9 @@ const Headers = () => {
     navigate(`/user/${id}`);
   };
 
-  const getSearchPage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // e.stopPropagation();
-    navigate(`/search/top?search=${e.currentTarget.value}`);
+  const getSearchPage = (keySearch: string) => {
+    if (keySearch.trim() === '') return;
+    navigate(`/search/top?search=${keySearch}`);
   };
 
   const handleSearch = (key: string) => {
@@ -267,23 +267,22 @@ const Headers = () => {
                       prefix={<SearchOutlined className='text-xl mr-1' />}
                       onClick={handleSearchClick}
                       onBlur={handleSearchBlur}
-                      onPressEnter={(e) => getSearchPage(e)}
+                      onPressEnter={(e) => getSearchPage(e.currentTarget.value)}
                       onInput={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
                       <div
-                        className='absolute z-40'
+                        className='listSearch absolute z-40'
                         style={{
-                          backgroundColor: themeColorSet.colorBg2,
                           width: '80%',
+                          maxHeight: '30rem',
+                          overflow: 'auto',
                           top: '4rem',
-                          border: '1px solid #d9d9d9',
-                          borderRadius: '0.5rem',
-                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                          borderRadius: '0.5rem'
                         }}>
                         {users.map((item) => (
                           <div
-                            className='user flex items-center cursor-pointer p-1 rounded-md hover:bg-gray-200 z-50'
+                            className='user flex items-center cursor-pointer p-1 rounded-md z-50'
                             key={item._id}
                             onClick={(e) => handleShowUserProfile(e, item._id)}>
                             <div className='avatar relative'>
@@ -299,6 +298,27 @@ const Headers = () => {
                             </div>
                           </div>
                         ))}
+
+                        {searchDebounce !== '' && (
+                          <div
+                            className='user flex items-center cursor-pointer p-1 rounded-md z-50'
+                            onClick={() => getSearchPage(searchDebounce)}>
+                            <div className='avatar relative'>
+                              <Avatar
+                                className='avatarButton cursor-pointer'
+                                icon={<SearchOutlined className='text-xl' />}
+                              />
+                            </div>
+                            <div
+                              className='name text-center ml-2'
+                              style={{
+                                fontSize: '0.9rem',
+                                color: themeColorSet.colorText1
+                              }}>
+                              Search for "{searchDebounce}"
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </Col>

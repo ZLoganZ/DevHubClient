@@ -766,6 +766,14 @@ export const useGetNoti = (userID: number) => {
 };
 
 export const useGetUsersByName = (keyword: string) => {
+  if (!keyword) {
+    return {
+      isLoadingUsersByName: false,
+      isErrorUsersByName: false,
+      usersByName: [],
+      isFetchingUsersByName: false
+    };
+  }
   const { data, isPending, isError, isFetching } = useInfiniteQuery({
     queryKey: ['userByName', keyword],
     queryFn: async ({ pageParam }) => {
@@ -795,6 +803,14 @@ export const useGetUsersByName = (keyword: string) => {
 };
 
 export const useGetPostsByTitle = (keyword: string) => {
+  if (!keyword) {
+    return {
+      isLoadingPostsByTitle: false,
+      isErrorPostsByTitle: false,
+      postsByTitle: [],
+      isFetchingPostsByTitle: false
+    };
+  }
   const { data, isPending, isError, isFetching } = useInfiniteQuery({
     queryKey: ['postByTitle', keyword],
     queryFn: async ({ pageParam }) => {
