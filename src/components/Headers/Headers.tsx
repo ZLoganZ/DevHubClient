@@ -284,7 +284,7 @@ const Headers = () => {
                       onClick={handleSearchClick}
                       onBlur={handleSearchBlur}
                       onPressEnter={(e) => getSearchPage(e.currentTarget.value)}
-                      onInput={(e) => handleSearch(e.currentTarget.value)}
+                      onChange={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
                       <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg'>
