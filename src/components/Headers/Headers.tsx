@@ -212,9 +212,9 @@ const Headers = () => {
     navigate(`/user/${id}`);
   };
 
-  const getSearchPage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    navigate(`/search/top?search=${e.currentTarget.value}`);
+  const getSearchPage = (search: string) => {
+    if (search.trim() === '') return;
+    navigate(`/search/top?search=${search}`);
   };
 
   const handleSearch = (key: string) => {
@@ -268,12 +268,12 @@ const Headers = () => {
                       prefix={<SearchOutlined className='text-xl mr-1' />}
                       onClick={handleSearchClick}
                       onBlur={handleSearchBlur}
-                      onPressEnter={(e) => getSearchPage(e)}
+                      onPressEnter={(e) => getSearchPage(e.currentTarget.value)}
                       onInput={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
                       <div
-                        className='absolute w-[95%] z-10 rounded-lg'
+                        className='listSearch absolute w-[95%] z-10 rounded-lg'
                         style={{
                           backgroundColor: themeColorSet.colorBg2,
                           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
@@ -296,6 +296,27 @@ const Headers = () => {
                             </div>
                           </div>
                         ))}
+
+                        {searchDebounce !== '' && (
+                          <div
+                            className='user flex items-center cursor-pointer p-1 rounded-md z-50'
+                            onClick={() => getSearchPage(searchDebounce)}>
+                            <div className='avatar relative'>
+                              <Avatar
+                                className='avatarButton cursor-pointer'
+                                icon={<SearchOutlined className='text-xl' />}
+                              />
+                            </div>
+                            <div
+                              className='name text-center ml-2'
+                              style={{
+                                fontSize: '0.9rem',
+                                color: themeColorSet.colorText1
+                              }}>
+                              Search for "{searchDebounce}"
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </Col>

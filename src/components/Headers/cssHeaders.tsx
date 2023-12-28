@@ -37,6 +37,20 @@ const StyleProvider = styled.div`
       transition: background-color 0.3s ease;
     }
   }
+
+  .listSearch {
+    background-color: ${(props) => props.theme.colorBg2};
+    color: ${(props) => props.theme.colorText1};
+    border: 1px solid ${(props) => props.theme.colorBg4};
+    box-shadow: 0 2px 8px ${(props) => props.theme.colorBg4};
+
+    .user {
+      &:hover {
+        background-color: ${(props) => props.theme.colorBg4};
+        transition: background-color 0.3s ease;
+      }
+    }
+  }
 `;
 
 export default StyleProvider;

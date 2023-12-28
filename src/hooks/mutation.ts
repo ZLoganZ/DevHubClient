@@ -337,7 +337,7 @@ export const useAddFriendUser = () => {
     },
     onSuccess(_, userID) {
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
-
+      queryClient.invalidateQueries({ queryKey: ['userByName'] });
       queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });
@@ -363,7 +363,7 @@ export const useAcceptFriendUser = () => {
     },
     onSuccess(_, userID) {
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
-
+      queryClient.invalidateQueries({ queryKey: ['userByName'] });
       queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });
@@ -388,8 +388,8 @@ export const useCancelFriendUser = () => {
       await userService.cancelFriendRequest(userID);
     },
     onSuccess(_, userID) {
+      queryClient.invalidateQueries({ queryKey: ['userByName'] });
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
-
       queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });
@@ -415,7 +415,7 @@ export const useDeclineFriendUser = () => {
     },
     onSuccess(_, userID) {
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
-
+      queryClient.invalidateQueries({ queryKey: ['userByName'] });
       queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });
@@ -441,7 +441,7 @@ export const useDeleteFriendUser = () => {
     },
     onSuccess(_, userID) {
       queryClient.invalidateQueries({ queryKey: ['currentUserInfo'] });
-
+      queryClient.invalidateQueries({ queryKey: ['userByName'] });
       queryClient.invalidateQueries({ queryKey: ['otherUserInfo', userID] });
     }
   });

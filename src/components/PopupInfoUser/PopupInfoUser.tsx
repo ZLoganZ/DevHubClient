@@ -1,25 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Avatar } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faEllipsis, faSnowflake } from '@fortawesome/free-solid-svg-icons';
 
-import { ButtonActiveHover, ButtonCancelHover } from '@/components/MiniComponent';
+import { ButtonFriend } from '@/components/MiniComponent';
 import { getTheme } from '@/util/theme';
 import { commonColor } from '@/util/cssVariable';
 import getImageURL from '@/util/getImageURL';
 import { useAppSelector } from '@/hooks/special';
-import {
-  useAcceptFriendUser,
-  useAddFriendUser,
-  useCancelFriendUser,
-  useDeclineFriendUser,
-  useDeleteFriendUser
-} from '@/hooks/mutation';
 import { IUserInfo } from '@/types';
 import StyleProvider from './cssPopupInfoUser';
-import merge from '@/util/mergeClassName';
-import { useCurrentUserInfo } from '@/hooks/fetch';
 
 interface IPopUp {
   userInfo: IUserInfo;
@@ -31,38 +21,6 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const { mutateAddFriendUser, isLoadingAddFriendUser } = useAddFriendUser();
-
-  const { mutateAcceptFriendUser, isLoadingAcceptFriendUser } = useAcceptFriendUser();
-
-  const { mutateCancelFriendUser, isLoadingCancelFriendUser } = useCancelFriendUser();
-
-  const { mutateDeclineFriendUser, isLoadingDeclineFriendUser } = useDeclineFriendUser();
-
-  const { mutateDeleteFriendUser, isLoadingDeleteFriendUser } = useDeleteFriendUser();
-
-  const { currentUserInfo } = useCurrentUserInfo();
-
-  const sentRequest = useMemo(() => {
-    if (currentUserInfo && userInfo) {
-      return currentUserInfo.requestSent.indexOf(userInfo._id) !== -1;
-    }
-    return false;
-  }, [currentUserInfo, userInfo]);
-
-  const receivedRequest = useMemo(() => {
-    if (currentUserInfo && userInfo) {
-      return currentUserInfo.requestReceived.indexOf(userInfo._id) !== -1;
-    }
-    return false;
-  }, [currentUserInfo, userInfo]);
-
-  const [isFriend, setIsFriend] = useState(userInfo?.is_friend);
-  useEffect(() => {
-    setIsFriend(userInfo?.is_friend);
-  }, [userInfo]);
-
-  console.log(isFriend, userID, userInfo);
   return (
     <StyleProvider theme={themeColorSet} className='flex justify-center'>
       <div className='popupInfoUser flex' style={{ width: '95%' }}>
@@ -137,51 +95,7 @@ const PopupInfoUser: React.FC<IPopUp> = ({ userInfo, userID }) => {
                     {isFriend ? 'Unfriend' : 'Add friend'}
                   </span>
                 </ButtonActiveHover> */}
-                <ButtonActiveHover
-                  className={merge(
-                    'follow px-6 h-11 border-2 border-solid',
-                    isFriend || sentRequest
-                      ? '!bg-red-600 hover:!text-white hover:!border-none'
-                      : receivedRequest
-                      ? '!bg-green-600 hover:!text-white hover:!border-none'
-                      : '!bg-blue-600 hover:!text-white hover:!border-none'
-                  )}
-                  type='default'
-                  loading={
-                    isLoadingAddFriendUser ||
-                    isLoadingAcceptFriendUser ||
-                    isLoadingCancelFriendUser ||
-                    isLoadingDeleteFriendUser
-                  }
-                  onClick={() => {
-                    isFriend
-                      ? mutateDeleteFriendUser(userInfo._id)
-                      : sentRequest
-                      ? mutateCancelFriendUser(userInfo._id)
-                      : receivedRequest
-                      ? mutateAcceptFriendUser(userInfo._id)
-                      : mutateAddFriendUser(userInfo._id);
-                  }}>
-                  <span style={{ color: commonColor.colorWhite1 }}>
-                    {isFriend
-                      ? 'Unfriend'
-                      : sentRequest
-                      ? 'Cancel Request'
-                      : receivedRequest
-                      ? 'Accept'
-                      : 'Add Friend'}
-                  </span>
-                </ButtonActiveHover>
-                {receivedRequest && (
-                  <ButtonCancelHover
-                    className='follow px-6 h-11 border-2 border-solid !bg-red-600 hover:!text-white hover:!border-none'
-                    loading={isLoadingDeclineFriendUser}
-                    onClick={() => {
-                      mutateDeclineFriendUser(userID);
-                    }}>
-                    Decline
-                  </ButtonCancelHover>
-                )}
+                <ButtonFriend user={userInfo} />
               </div>
               <div className='optionButton '>
                 <button className='btnOption btn-primary px-3 py-1.5 text-center rounded-lg'>
