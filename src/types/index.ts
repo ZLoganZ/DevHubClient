@@ -379,14 +379,14 @@ export interface INotification {
 
 export interface ICreateSearchLog {
   user: string;
-  keyword: string;
-  recently_search: string;
+  keyword?: string;
+  recently_search?: string;
 }
 
 export interface ISearchLog {
   _id: string;
   user: string;
   keywords: string[];
-  recently_search: IUserInfo[];
+  recently_search_list: IUserInfo[];
   createdAt: string;
 }

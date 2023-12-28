@@ -29,11 +29,12 @@ import { getTheme } from '@/util/theme';
 import getImageURL from '@/util/getImageURL';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 
-import { useCurrentUserInfo, useGetNoti, useGetUsersByName } from '@/hooks/fetch';
+import { useCurrentUserInfo, useGetNoti, useGetSearchLogs, useGetUsersByName } from '@/hooks/fetch';
 import { useAppDispatch, useAppSelector, useDebounce } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 import AvatarMessage from '../ChatComponents/Avatar/AvatarMessage';
 import { IUserInfo } from '@/types';
+import { useCreateSearchLog } from '@/hooks/mutation';
 const Headers = () => {
   const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
@@ -191,7 +192,11 @@ const Headers = () => {
   //   });
   // };
 
-  const [users, setUsers] = useState<IUserInfo[]>(currentUserInfo.members);
+  const { searchLogs, isLoadingSearchLogs } = useGetSearchLogs();
+
+  const { mutateCreateSearchLog } = useCreateSearchLog();
+
+  const [users, setUsers] = useState<IUserInfo[]>([]);
   const [isListVisible, setIsListVisible] = useState(false);
 
   const handleSearchClick = () => {
@@ -206,11 +211,23 @@ const Headers = () => {
 
   const handleShowUserProfile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
     e.stopPropagation();
+    mutateCreateSearchLog({
+      user: currentUserInfo._id,
+      recently_search: id
+    }).then(() => {
+      queryClient.resetQueries({ queryKey: ['searchLogs'] });
+    });
     navigate(`/user/${id}`);
   };
 
   const getSearchPage = (search: string) => {
     if (search.trim() === '') return;
+    mutateCreateSearchLog({
+      user: currentUserInfo._id,
+      keyword: search.trim()
+    }).then(() => {
+      queryClient.resetQueries({ queryKey: ['searchLogs'] });
+    });
     navigate(`/search/top?search=${search}`);
     setIsListVisible(false);
   };
@@ -223,9 +240,9 @@ const Headers = () => {
     if (searchDebounce !== '' && usersByName) {
       setUsers(usersByName);
     } else {
-      setUsers(currentUserInfo.members);
+      setUsers([]);
     }
-  }, [usersByName, searchDebounce, currentUserInfo.members]);
+  }, [usersByName, searchDebounce]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
@@ -257,7 +274,7 @@ const Headers = () => {
                       </div>
                     </div>
                   </Col>
-                  <Col span={isMdScreen ? 9 : 15} className='px-4 items-center relative'>
+                  <Col span={isMdScreen ? 9 : 15} className='px-4 items-center'>
                     <Input
                       allowClear
                       placeholder='Search'
@@ -270,26 +287,90 @@ const Headers = () => {
                       onInput={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
-                      <div
-                        className='listSearch absolute w-[95%] z-10 rounded-lg'
-                        style={{
-                          backgroundColor: themeColorSet.colorBg2,
-                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-                        }}>
-                        {users.length === 0 && searchDebounce === '' ? (
+                      <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg'>
+                        {isLoadingSearchLogs ||
+                        (searchLogs &&
+                          searchLogs.keywords.length === 0 &&
+                          searchLogs.recently_search_list.length === 0) ? (
                           <Empty
                             className='cursor-default px-40'
                             image={Empty.PRESENTED_IMAGE_SIMPLE}
                             description='No users found'
                           />
                         ) : (
-                          users.map((item) => (
+                          searchDebounce === '' && (
+                            <>
+                              <h1 className='font-bold text-lg mx-2'> Recently search</h1>
+                              {searchLogs.recently_search_list.map((item) => (
+                                <div
+                                  className='userSearch flex gap-1.5 items-center cursor-pointer p-2 rounded-md'
+                                  key={item._id}
+                                  onClick={(e) => handleShowUserProfile(e, item._id)}>
+                                  <div className='avatar'>
+                                    <AvatarMessage key={item._id} user={item} />
+                                  </div>
+                                  <div
+                                    className='name text-center ml-2'
+                                    style={{
+                                      fontSize: '0.9rem',
+                                      color: themeColorSet.colorText1
+                                    }}>
+                                    {item.name}
+                                  </div>
+                                </div>
+                              ))}
+                              {searchLogs.keywords.map((item) => (
+                                <div
+                                  className='user flex gap-1.5 items-center cursor-pointer p-2 rounded-md z-50'
+                                  onClick={() => getSearchPage(item)}>
+                                  <div className='avatar relative'>
+                                    <Avatar
+                                      className='avatarButton cursor-pointer'
+                                      icon={<SearchOutlined className='text-xl' />}
+                                    />
+                                  </div>
+                                  <div
+                                    className='name text-center ml-2'
+                                    style={{
+                                      fontSize: '0.9rem',
+                                      color: themeColorSet.colorText1
+                                    }}>
+                                    Search for "{item}"
+                                  </div>
+                                </div>
+                              ))}
+                            </>
+                          )
+                        )}
+
+                        {searchDebounce !== '' && (
+                          <>
+                            {users.map((item) => (
+                              <div
+                                className='userSearch flex gap-1.5 items-center cursor-pointer p-2 rounded-md'
+                                key={item._id}
+                                onClick={(e) => handleShowUserProfile(e, item._id)}>
+                                <div className='avatar'>
+                                  <AvatarMessage key={item._id} user={item} />
+                                </div>
+                                <div
+                                  className='name text-center ml-2'
+                                  style={{
+                                    fontSize: '0.9rem',
+                                    color: themeColorSet.colorText1
+                                  }}>
+                                  {item.name}
+                                </div>
+                              </div>
+                            ))}
                             <div
-                              className='userSearch flex items-center cursor-pointer p-1 rounded-md'
-                              key={item._id}
-                              onClick={(e) => handleShowUserProfile(e, item._id)}>
-                              <div className='avatar'>
-                                <AvatarMessage key={item._id} user={item} />
+                              className='user flex gap-1.5 items-center cursor-pointer p-2 rounded-md z-50'
+                              onClick={() => getSearchPage(searchDebounce)}>
+                              <div className='avatar relative'>
+                                <Avatar
+                                  className='avatarButton cursor-pointer'
+                                  icon={<SearchOutlined className='text-xl' />}
+                                />
                               </div>
                               <div
                                 className='name text-center ml-2'
@@ -297,31 +378,10 @@ const Headers = () => {
                                   fontSize: '0.9rem',
                                   color: themeColorSet.colorText1
                                 }}>
-                                {item.name}
+                                Search for "{searchDebounce}"
                               </div>
                             </div>
-                          ))
-                        )}
-
-                        {searchDebounce !== '' && (
-                          <div
-                            className='user flex items-center cursor-pointer p-1 rounded-md z-50'
-                            onClick={() => getSearchPage(searchDebounce)}>
-                            <div className='avatar relative'>
-                              <Avatar
-                                className='avatarButton cursor-pointer'
-                                icon={<SearchOutlined className='text-xl' />}
-                              />
-                            </div>
-                            <div
-                              className='name text-center ml-2'
-                              style={{
-                                fontSize: '0.9rem',
-                                color: themeColorSet.colorText1
-                              }}>
-                              Search for "{searchDebounce}"
-                            </div>
-                          </div>
+                          </>
                         )}
                       </div>
                     )}

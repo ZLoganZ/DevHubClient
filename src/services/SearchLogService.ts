@@ -7,7 +7,7 @@ class SearchLogService extends BaseService {
     super();
   }
 
-  getAllSearchLog = (): Promise<AxiosResponse<IResponse<ISearchLog[]>>> => {
+  getAllSearchLog = (): Promise<AxiosResponse<IResponse<ISearchLog>>> => {
     return this.get(`/searchlog`);
   };
 
