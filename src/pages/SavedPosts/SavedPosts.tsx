@@ -1,5 +1,7 @@
 import { useRef } from 'react';
+import { Empty, Spin } from 'antd';
 
+import { LoadingOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/hooks/special';
 import { getTheme } from '@/util/theme';
 import { useCurrentUserInfo, useSavedPostsData } from '@/hooks/fetch';
@@ -25,9 +27,21 @@ const SavedPosts = () => {
   return (
     <StyleProvider theme={themeColorSet}>
       {isLoadingSavedPosts ? (
-        <>Loading...</>
+        <div className='flex flex-col flex-1 items-center justify-center p-5'>
+          <div className='flex justify-center mb-2'>
+            <Spin
+              indicator={<LoadingOutlined style={{ fontSize: 24, color: themeColorSet.colorText1 }} spin />}
+            />
+          </div>
+        </div>
       ) : savedPosts.length === 0 ? (
-        <>No saved posts</>
+        <div className='flex flex-col flex-1 items-center justify-center p-5'>
+          <Empty
+            className='cursor-default px-40'
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description='No posts saved yet'
+          />
+        </div>
       ) : (
         <div className='flex flex-col flex-1 items-center justify-center p-5'>
           {savedPosts.map((post) => (
