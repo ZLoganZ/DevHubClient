@@ -17,6 +17,7 @@ const ApplyDefaults = <T extends IUserInfo | IPost | IPost[]>(obj: T): T => {
     contacts: [],
     location: '',
     createdAt: '',
+    members: [],
     favorites: [],
     communities: [],
     notifications: [],
