@@ -215,6 +215,7 @@ const Headers = () => {
   const getSearchPage = (search: string) => {
     if (search.trim() === '') return;
     navigate(`/search/top?search=${search}`);
+    setIsListVisible(false);
   };
 
   const handleSearch = (key: string) => {
