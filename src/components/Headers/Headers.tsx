@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -190,11 +190,8 @@ const Headers = () => {
   //     )
   //   });
   // };
-  const contacts = useMemo(() => {
-    return currentUserInfo?.members ?? [];
-  }, [currentUserInfo?.members]);
 
-  const [users, setUsers] = useState<IUserInfo[]>(contacts);
+  const [users, setUsers] = useState<IUserInfo[]>(currentUserInfo.members);
   const [isListVisible, setIsListVisible] = useState(false);
 
   const handleSearchClick = () => {
@@ -226,9 +223,9 @@ const Headers = () => {
     if (searchDebounce !== '' && usersByName) {
       setUsers(usersByName);
     } else {
-      setUsers(contacts);
+      setUsers(currentUserInfo.members);
     }
-  }, [usersByName, searchDebounce, contacts]);
+  }, [usersByName, searchDebounce, currentUserInfo.members]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
@@ -279,24 +276,32 @@ const Headers = () => {
                           backgroundColor: themeColorSet.colorBg2,
                           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
                         }}>
-                        {users.map((item) => (
-                          <div
-                            className='userSearch flex items-center cursor-pointer p-1 rounded-md'
-                            key={item._id}
-                            onClick={(e) => handleShowUserProfile(e, item._id)}>
-                            <div className='avatar'>
-                              <AvatarMessage key={item._id} user={item} />
-                            </div>
+                        {users.length === 0 && searchDebounce === '' ? (
+                          <Empty
+                            className='cursor-default px-40'
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description='No users found'
+                          />
+                        ) : (
+                          users.map((item) => (
                             <div
-                              className='name text-center ml-2'
-                              style={{
-                                fontSize: '0.9rem',
-                                color: themeColorSet.colorText1
-                              }}>
-                              {item.name}
+                              className='userSearch flex items-center cursor-pointer p-1 rounded-md'
+                              key={item._id}
+                              onClick={(e) => handleShowUserProfile(e, item._id)}>
+                              <div className='avatar'>
+                                <AvatarMessage key={item._id} user={item} />
+                              </div>
+                              <div
+                                className='name text-center ml-2'
+                                style={{
+                                  fontSize: '0.9rem',
+                                  color: themeColorSet.colorText1
+                                }}>
+                                {item.name}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))
+                        )}
 
                         {searchDebounce !== '' && (
                           <div
