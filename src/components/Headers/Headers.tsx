@@ -296,7 +296,7 @@ const Headers = () => {
                           <Empty
                             className='cursor-default px-40'
                             image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description='No users found'
+                            description='No search history'
                           />
                         ) : (
                           searchDebounce === '' && (
