@@ -786,7 +786,6 @@ export const useGetUsersByName = (keyword: string) => {
       return data.pages.flat();
     },
     staleTime: Infinity,
-    enabled: !!keyword
   });
 
   return {
@@ -818,7 +817,6 @@ export const useGetPostsByTitle = (keyword: string) => {
       return data.pages.flat();
     },
     staleTime: Infinity,
-    enabled: !!keyword
   });
 
   return {
