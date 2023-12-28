@@ -376,3 +376,17 @@ export interface INotification {
   };
   is_viewed: boolean;
 }
+
+export interface ICreateSearchLog {
+  user: string;
+  keyword: string;
+  recently_search: string;
+}
+
+export interface ISearchLog {
+  _id: string;
+  user: string;
+  keywords: string[];
+  recently_search: IUserInfo[];
+  createdAt: string;
+}

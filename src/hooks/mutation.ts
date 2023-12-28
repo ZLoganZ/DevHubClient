@@ -9,6 +9,7 @@ import {
   ICreateComment,
   ICreateLikeComment,
   ICreatePost,
+  ICreateSearchLog,
   IMessage,
   ISharePost,
   ISocketCall,
@@ -20,6 +21,7 @@ import {
 import { useAppDispatch, useAppSelector } from './special';
 import { messageService } from '@/services/MessageService';
 import { Socket } from '@/util/constants/SettingSystem';
+import { searchLogService } from '@/services/SearchLogService';
 
 // ----------------------------- MUTATIONS -----------------------------
 
@@ -1129,3 +1131,19 @@ export const useMutateConversation = (currentUserID: string) => {
     isSuccessConversation: isSuccess
   };
 };
+
+export const useCreateSearchLog = () => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (payload: ICreateSearchLog) => {
+      const { data } = await searchLogService.createSearchLog(payload);
+      return data.metadata;
+    }
+  });
+
+  return {
+    mutateCreateSearchLog: mutateAsync,
+    isLoadingCreateSearchLog: isPending,
+    isErrorCreateSearchLog: isError,
+    isSuccessCreateSearchLog: isSuccess
+  };
+}

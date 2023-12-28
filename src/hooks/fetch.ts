@@ -16,6 +16,7 @@ import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { messageService } from '@/services/MessageService';
 import { useAppSelector } from './special';
 import { communityService } from '@/services/CommunityService';
+import { searchLogService } from '@/services/SearchLogService';
 
 export const queryCache = new QueryCache();
 
@@ -826,3 +827,21 @@ export const useGetPostsByTitle = (keyword: string) => {
     isFetchingPostsByTitle: isFetching
   };
 };
+
+export const useGetSearchLogs = () =>{
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ['searchLogs'],
+    queryFn: async () => {
+      const { data } = await searchLogService.getAllSearchLog();
+      return data.metadata;
+    },
+    staleTime: Infinity
+  });
+
+  return {
+    isLoadingSearchLogs: isPending,
+    isErrorSearchLogs: isError,
+    searchLogs: data!,
+    isFetchingSearchLogs: isFetching
+  };
+}
