@@ -30,7 +30,7 @@ import getImageURL from '@/util/getImageURL';
 import { getDateTimeToNow } from '@/util/formatDateTime';
 
 import { useCurrentUserInfo, useGetNoti, useGetUsersByName } from '@/hooks/fetch';
-import { useAppDispatch, useAppSelector } from '@/hooks/special';
+import { useAppDispatch, useAppSelector, useDebounce } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 import AvatarMessage from '../ChatComponents/Avatar/AvatarMessage';
 import { IUserInfo } from '@/types';
@@ -47,7 +47,9 @@ const Headers = () => {
 
   const [search, setSearch] = useState('');
 
-  const { usersByName } = useGetUsersByName(search);
+  const searchDebounce = useDebounce(search, 500);
+
+  const { usersByName } = useGetUsersByName(searchDebounce);
 
   const queryClient = useQueryClient();
 
@@ -220,12 +222,12 @@ const Headers = () => {
   };
 
   useEffect(() => {
-    if (search !== '' && usersByName) {
+    if (searchDebounce !== '' && usersByName) {
       setUsers(usersByName);
     } else {
       setUsers(contacts);
     }
-  }, [usersByName, search, contacts]);
+  }, [usersByName, searchDebounce, contacts]);
 
   return (
     <ConfigProvider theme={{ token: { controlHeight: 38 } }}>
