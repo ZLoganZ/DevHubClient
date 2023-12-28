@@ -288,18 +288,18 @@ const Headers = () => {
                     />
                     {isListVisible && (
                       <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg'>
-                        {isLoadingSearchLogs ||
-                        (searchLogs &&
-                          searchLogs.keywords.length === 0 &&
-                          searchLogs.recently_search_list.length === 0) ||
-                        !searchLogs ? (
-                          <Empty
-                            className='cursor-default px-40'
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description='No search history'
-                          />
-                        ) : (
-                          searchDebounce === '' && (
+                        {searchDebounce === '' ? (
+                          isLoadingSearchLogs ||
+                          (searchLogs &&
+                            searchLogs.keywords.length === 0 &&
+                            searchLogs.recently_search_list.length === 0) ||
+                          !searchLogs ? (
+                            <Empty
+                              className='cursor-default px-40'
+                              image={Empty.PRESENTED_IMAGE_SIMPLE}
+                              description='No search history'
+                            />
+                          ) : (
                             <>
                               <h1 className='font-bold text-lg mx-2'> Recently search</h1>
                               {searchLogs.recently_search_list.map((item) => (
@@ -342,9 +342,7 @@ const Headers = () => {
                               ))}
                             </>
                           )
-                        )}
-
-                        {searchDebounce !== '' && (
+                        ) : (
                           <>
                             {users.map((item) => (
                               <div
