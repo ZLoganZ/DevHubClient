@@ -23,6 +23,7 @@ const AvatarMessage: React.FC<IAvatar> = ({ size = 36, user, preview = false }) 
         <Image
           src={getImageURL(user.user_image, 'avatar_mini')}
           alt='Avatar'
+          referrerPolicy="no-referrer"
           preview={
             preview ? { src: getImageURL(user.user_image), mask: <FontAwesomeIcon icon={faEye} /> } : false
           }

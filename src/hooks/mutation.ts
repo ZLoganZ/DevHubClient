@@ -101,6 +101,8 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
       queryClient.invalidateQueries({ queryKey: ['post', updatedPost._id] });
+
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {
@@ -128,6 +130,8 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts', uid] });
 
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
+
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {
@@ -153,6 +157,7 @@ export const useLikePost = () => {
       queryClient.invalidateQueries({ queryKey: ['post', postLike.post] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {
@@ -178,6 +183,7 @@ export const useSharePost = () => {
       queryClient.invalidateQueries({ queryKey: ['post', postShare.post] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {
@@ -203,6 +209,7 @@ export const useSavePost = () => {
       queryClient.invalidateQueries({ queryKey: ['post', postID] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {
@@ -236,6 +243,8 @@ export const useCommentPost = () => {
       queryClient.invalidateQueries({ queryKey: ['allNewsfeedPosts'] });
 
       queryClient.invalidateQueries({ queryKey: ['posts', uid] });
+
+      queryClient.invalidateQueries({ queryKey: ['savedPosts'] });
     }
   });
   return {

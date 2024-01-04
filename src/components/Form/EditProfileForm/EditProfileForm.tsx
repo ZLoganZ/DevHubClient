@@ -273,6 +273,7 @@ const EditProfileForm: React.FC = () => {
             <Image
               className='coverImage rounded-xl'
               src={cover}
+              referrerPolicy="no-referrer"
               preview={{ mask: <FontAwesomeIcon icon={faEye} /> }}
               style={{
                 objectFit: 'cover',
@@ -308,6 +309,7 @@ const EditProfileForm: React.FC = () => {
           <div className='avatarImage rounded-full overflow-hidden flex'>
             <Image
               src={avatar}
+              referrerPolicy="no-referrer"
               alt='avatar'
               style={{
                 width: '7rem',

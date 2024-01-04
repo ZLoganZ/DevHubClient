@@ -39,7 +39,10 @@ export const store = configureStore({
           'comment/setHandleParentInput',
           'comment/setHandleChildInput',
           'post/openDrawer',
-          'post/callBackSubmitDrawer'
+          'post/callBackSubmitDrawer',
+          'post/setHandleSubmit',
+          'post/openModal',
+          'post/callBackSubmitModal'
         ],
         ignoredPaths: ['hook', 'drawerHOC', 'modalHOC', 'socketIO', 'comment']
       }

@@ -6,7 +6,7 @@ import { faCodeFork, faStar } from '@fortawesome/free-solid-svg-icons';
 
 import StyleProvider from './cssAddRepositoryForm';
 import { GetGitHubUrl } from '@/util/getGithubUrl';
-import { AUTHORIZATION, GITHUB_TOKEN } from '@/util/constants/SettingSystem';
+import { GITHUB_TOKEN } from '@/util/constants/SettingSystem';
 import { getTheme } from '@/util/theme';
 import { closeModal, setHandleSubmit } from '@/redux/Slice/ModalHOCSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/special';
@@ -18,18 +18,13 @@ interface IRepos {
   setRepositories: React.Dispatch<React.SetStateAction<IRepository[]>>;
 }
 
-interface IUserData {
-  accessTokenGitHub: string;
-  accessToken: string;
-}
-
 const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) => {
   const dispatch = useAppDispatch();
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
   const { themeColorSet } = getTheme();
 
-  const [access_token_github, setAccess_token_github] = useState(localStorage.getItem(GITHUB_TOKEN));
+  const access_token_github = localStorage.getItem(GITHUB_TOKEN);
 
   const { repository, isLoadingRepository } = useGetRepository();
 
@@ -40,31 +35,16 @@ const AddRepositoryForm: React.FC<IRepos> = ({ repositories, setRepositories }) 
     const top = window.screen.height / 2 - height / 2;
 
     const popup = window.open(
-      GetGitHubUrl(),
-      'GithubAuth',
+      GetGitHubUrl(true),
+      'GithubRepo',
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    let userData: IUserData;
-
-    const handleMessage = (event: MessageEvent<IUserData>) => {
-      if (event.origin === import.meta.env.VITE_SERVER_ENDPOINT) {
-        userData = event.data;
-        if (userData) {
-          localStorage.setItem(GITHUB_TOKEN, userData.accessTokenGitHub);
-          localStorage.setItem(AUTHORIZATION, userData.accessToken);
-          setAccess_token_github(userData.accessTokenGitHub);
-        }
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    const pollOAuthStatus = setInterval(() => {
+    const pollRepoStatus = setInterval(() => {
       if (popup?.closed) {
-        clearInterval(pollOAuthStatus);
-        window.removeEventListener('message', handleMessage);
-        !userData && dispatch(closeModal());
+        clearInterval(pollRepoStatus);
+        const access_token_github = localStorage.getItem(GITHUB_TOKEN);
+        !access_token_github && dispatch(closeModal());
       }
     }, 300);
   };

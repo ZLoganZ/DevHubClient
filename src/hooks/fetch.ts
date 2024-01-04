@@ -392,7 +392,7 @@ export const useGetRepository = () => {
   const aGToken = localStorage.getItem(GITHUB_TOKEN);
 
   const { data, isPending, isError, isFetching } = useQuery({
-    queryKey: ['repository'],
+    queryKey: ['repository', aGToken],
     queryFn: async () => {
       const { data } = await userService.getRepositoryGithub();
       return data;
@@ -786,7 +786,7 @@ export const useGetUsersByName = (keyword: string) => {
     select: (data) => {
       return data.pages.flat();
     },
-    staleTime: Infinity,
+    staleTime: Infinity
   });
 
   return {
@@ -817,7 +817,7 @@ export const useGetPostsByTitle = (keyword: string) => {
     select: (data) => {
       return data.pages.flat();
     },
-    staleTime: Infinity,
+    staleTime: Infinity
   });
 
   return {
@@ -828,7 +828,7 @@ export const useGetPostsByTitle = (keyword: string) => {
   };
 };
 
-export const useGetSearchLogs = () =>{
+export const useGetSearchLogs = () => {
   const { data, isPending, isError, isFetching } = useQuery({
     queryKey: ['searchLogs'],
     queryFn: async () => {
@@ -844,4 +844,4 @@ export const useGetSearchLogs = () =>{
     searchLogs: data!,
     isFetchingSearchLogs: isFetching
   };
-}
+};

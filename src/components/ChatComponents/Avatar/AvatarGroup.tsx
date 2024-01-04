@@ -51,6 +51,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image, preview 
           <Image
             src={getImageURL(image, 'avatar_mini')}
             alt='Avatar'
+            referrerPolicy="no-referrer"
             preview={preview ? { src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> } : false}
             style={{
               width: '100%',

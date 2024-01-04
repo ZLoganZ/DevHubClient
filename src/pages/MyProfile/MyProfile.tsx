@@ -121,6 +121,7 @@ const MyProfile = () => {
               <Image
                 src={getImageURL(currentUserInfo.user_image, 'avatar')}
                 alt='avt'
+                referrerPolicy="no-referrer"
                 style={{ objectFit: 'cover' }}
                 width={176}
                 preview={{

@@ -125,6 +125,7 @@ const Profile = ({ userID }: IProfile) => {
               <Image
                 src={getImageURL(otherUserInfo.user_image, 'avatar')}
                 alt='avt'
+                referrerPolicy='no-referrer'
                 style={{ objectFit: 'cover' }}
                 width={176}
                 preview={{

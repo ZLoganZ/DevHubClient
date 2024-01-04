@@ -15,6 +15,7 @@ import SavedPosts from '@/pages/SavedPosts';
 import Search from '@/pages/Search/Search';
 
 import { VoiceCall, VideoCall } from '@/components/ChatComponents/MessageCall';
+import RepoCallback from '@/components/Form/AddRepositoryForm/RepoCallback';
 
 import MainLayout from '@/layouts/MainLayout';
 
@@ -74,6 +75,10 @@ export const privateRoutes = [
   {
     path: '/call/:conversationID?/video',
     element: <VideoCall />
+  },
+  {
+    path: '/repo-callback',
+    element: <RepoCallback />
   },
   {
     path: '*',

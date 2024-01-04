@@ -12,7 +12,8 @@ import {
   type MenuProps,
   Layout,
   Input,
-  Affix
+  Affix,
+  Spin
 } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSnowflake } from '@fortawesome/free-solid-svg-icons';
@@ -206,7 +207,7 @@ const Headers = () => {
   const handleSearchBlur = () => {
     setTimeout(() => {
       setIsListVisible(false);
-    }, 100);
+    }, 200);
   };
 
   const handleShowUserProfile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
@@ -289,39 +290,27 @@ const Headers = () => {
                     {isListVisible && (
                       <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg'>
                         {searchDebounce === '' ? (
-                          isLoadingSearchLogs ||
-                          (searchLogs &&
-                            searchLogs.keywords.length === 0 &&
-                            searchLogs.recently_search_list.length === 0) ||
-                          !searchLogs ? (
+                          isLoadingSearchLogs ? (
+                            <div className='py-20'>
+                              <Spin tip='Loading' size='large'>
+                                <div className='content' />
+                              </Spin>
+                            </div>
+                          ) : (searchLogs &&
+                              searchLogs.keywords.length === 0 &&
+                              searchLogs.recently_search_list.length === 0) ||
+                            !searchLogs ? (
                             <Empty
                               className='cursor-default px-40'
                               image={Empty.PRESENTED_IMAGE_SIMPLE}
                               description='No search history'
                             />
                           ) : (
-                            <>
+                            <div className='max-h-96'>
                               <h1 className='font-bold text-lg mx-2'> Recently search</h1>
-                              {searchLogs.recently_search_list.map((item) => (
-                                <div
-                                  className='userSearch flex gap-1.5 items-center cursor-pointer p-2 rounded-md'
-                                  key={item._id}
-                                  onClick={(e) => handleShowUserProfile(e, item._id)}>
-                                  <div className='avatar'>
-                                    <AvatarMessage key={item._id} user={item} />
-                                  </div>
-                                  <div
-                                    className='name text-center ml-2'
-                                    style={{
-                                      fontSize: '0.9rem',
-                                      color: themeColorSet.colorText1
-                                    }}>
-                                    {item.name}
-                                  </div>
-                                </div>
-                              ))}
                               {searchLogs.keywords.map((item) => (
                                 <div
+                                  key={item}
                                   className='user flex gap-1.5 items-center cursor-pointer p-2 rounded-md z-50'
                                   onClick={() => getSearchPage(item)}>
                                   <div className='avatar relative'>
@@ -336,11 +325,26 @@ const Headers = () => {
                                       fontSize: '0.9rem',
                                       color: themeColorSet.colorText1
                                     }}>
-                                    Search for "{item}"
+                                    {item}
                                   </div>
                                 </div>
                               ))}
-                            </>
+                              {searchLogs.recently_search_list.map((item) => (
+                                <div
+                                  key={item._id}
+                                  className='userSearch flex gap-1.5 items-center cursor-pointer p-2 rounded-md'
+                                  onClick={(e) => handleShowUserProfile(e, item._id)}>
+                                  <div className='avatar'>
+                                    <AvatarMessage key={item._id} user={item} />
+                                  </div>
+                                  <div
+                                    className='name text-center ml-2 font-medium'
+                                    style={{ color: themeColorSet.colorText1 }}>
+                                    {item.name}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           )
                         ) : (
                           <>

@@ -7,11 +7,6 @@ const headers = {
   'x-client-id': localStorage.getItem(CLIENT_ID)
 };
 
-const githubHeaders = {
-  'x-github-token': localStorage.getItem(GITHUB_TOKEN),
-  ...headers
-};
-
 class BaseService {
   private request(method: string, url: string, data?: object | string, customHeaders?: object) {
     const requestHeaders = customHeaders ? { ...headers, ...customHeaders } : headers;
@@ -37,7 +32,10 @@ class BaseService {
   }
 
   getGithub(url: string) {
-    return this.request('get', url, undefined, githubHeaders);
+    return this.request('get', url, undefined, {
+      ...headers,
+      'x-github-token': localStorage.getItem(GITHUB_TOKEN)
+    });
   }
 }
 

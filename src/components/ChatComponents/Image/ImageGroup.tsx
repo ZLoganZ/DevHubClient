@@ -26,6 +26,7 @@ const ImageGroup: React.FC<IImageGroup> = ({ images, preview = false }) => {
             <Image
               key={index}
               src={getImageURL(image, 'avatar_mini')}
+              referrerPolicy="no-referrer"
               alt='Avatar'
               preview={preview ? { src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> } : false}
               style={{
