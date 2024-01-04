@@ -14,6 +14,10 @@ class SearchLogService extends BaseService {
   createSearchLog = (searchLog: ICreateSearchLog): Promise<AxiosResponse<IResponse<ISearchLog>>> => {
     return this.post(`/searchlog`, searchLog);
   };
+
+  deleteSearchLog = (searchLog: ICreateSearchLog): Promise<AxiosResponse<IResponse<ISearchLog>>> => {
+    return this.put(`/searchlog`, searchLog);
+  };
 }
 
 export const searchLogService = new SearchLogService();

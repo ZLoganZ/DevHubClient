@@ -21,6 +21,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { BellOutlined, CommentOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMediaQuery } from 'react-responsive';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 
 import { setTheme } from '@/redux/Slice/ThemeSlice';
 import { LOGOUT_SAGA } from '@/redux/ActionSaga/AuthActionSaga';
@@ -35,7 +36,7 @@ import { useAppDispatch, useAppSelector, useDebounce } from '@/hooks/special';
 import StyleProvider from './cssHeaders';
 import AvatarMessage from '../ChatComponents/Avatar/AvatarMessage';
 import { IUserInfo } from '@/types';
-import { useCreateSearchLog } from '@/hooks/mutation';
+import { useCreateSearchLog, useDeleteSearchLog } from '@/hooks/mutation';
 const Headers = () => {
   const navigate = useNavigate();
   // Lấy theme từ LocalStorage chuyển qua css
@@ -196,9 +197,24 @@ const Headers = () => {
   const { searchLogs, isLoadingSearchLogs } = useGetSearchLogs();
 
   const { mutateCreateSearchLog } = useCreateSearchLog();
+  const { mutateDeleteSearchLog } = useDeleteSearchLog();
 
   const [users, setUsers] = useState<IUserInfo[]>([]);
   const [isListVisible, setIsListVisible] = useState(false);
+
+  const handleDeleteSearchLog = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    type = 'keyword' || 'recently_search',
+    value: string
+  ) => {
+    e.stopPropagation();
+    mutateDeleteSearchLog({
+      user: currentUserInfo._id,
+      [type]: value
+    }).then(() => {
+      queryClient.resetQueries({ queryKey: ['searchLogs'] });
+    });
+  };
 
   const handleSearchClick = () => {
     setIsListVisible(true);
@@ -327,6 +343,12 @@ const Headers = () => {
                                     }}>
                                     {item}
                                   </div>
+                                  <div
+                                    className='font-medium text-right ml-auto rounded-full size-6 flex items-center justify-center border border-gray-300 px-2 py-0.5 hover:border-gray-500'
+                                    style={{ color: themeColorSet.colorText1 }}
+                                    onClick={(e) => handleDeleteSearchLog(e, 'keyword', item)}>
+                                    <FontAwesomeIcon icon={faX} className='size-2.5' />
+                                  </div>
                                 </div>
                               ))}
                               {searchLogs.recently_search_list.map((item) => (
@@ -341,6 +363,12 @@ const Headers = () => {
                                     className='name text-center ml-2 font-medium'
                                     style={{ color: themeColorSet.colorText1 }}>
                                     {item.name}
+                                  </div>
+                                  <div
+                                    className='font-medium text-right ml-auto rounded-full size-6 flex items-center justify-center border border-gray-300 px-2 py-0.5 hover:border-gray-500'
+                                    style={{ color: themeColorSet.colorText1 }}
+                                    onClick={(e) => handleDeleteSearchLog(e, 'recently_search', item._id)}>
+                                    <FontAwesomeIcon icon={faX} className='size-2.5' />
                                   </div>
                                 </div>
                               ))}

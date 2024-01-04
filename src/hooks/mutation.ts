@@ -1156,3 +1156,19 @@ export const useCreateSearchLog = () => {
     isSuccessCreateSearchLog: isSuccess
   };
 };
+
+export const useDeleteSearchLog = () => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (payload: ICreateSearchLog) => {
+      const { data } = await searchLogService.deleteSearchLog(payload);
+      return data.metadata;
+    }
+  });
+
+  return {
+    mutateDeleteSearchLog: mutateAsync,
+    isLoadingDeleteSearchLog: isPending,
+    isErrorDeleteSearchLog: isError,
+    isSuccessDeleteSearchLog: isSuccess
+  };
+};
