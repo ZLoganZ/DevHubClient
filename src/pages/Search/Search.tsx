@@ -87,7 +87,7 @@ const Search = () => {
                                 </Popover>
                               </div>
                             }
-                            description={`${user.alias}`}
+                            description={user.alias ? `@${user.alias}` : '@user'}
                           />
                         </div>
                         <div className='friendButton'>
