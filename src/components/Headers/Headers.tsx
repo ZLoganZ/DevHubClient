@@ -320,7 +320,7 @@ const Headers = () => {
                                     />
                                   </div>
                                   <div
-                                    className='name text-center ml-2'
+                                    className='name text-left ml-2'
                                     style={{
                                       fontSize: '0.9rem',
                                       color: themeColorSet.colorText1

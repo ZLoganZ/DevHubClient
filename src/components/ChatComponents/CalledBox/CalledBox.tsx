@@ -124,7 +124,7 @@ const CalledBox: React.FC<IConversationBox> = ({ selected, called }) => {
               title: 'Call Details',
               component: (
                 <InfoCalled
-                  user={called.sender}
+                  called={called}
                   conversation={called.conversation_id}
                   stateCalled={stateCalled(called.sender._id)}
                   notification={notification[called.type][stateCalled(called.sender._id)]}
