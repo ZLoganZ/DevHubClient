@@ -32,7 +32,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image, preview 
       .indexOf(true) !== -1;
 
   const positionMap: Record<number, string> = {
-    0: `top-0 left-[${size / 4}px]`,
+    0: `top-0 left-1/4`,
     1: 'bottom-1',
     2: 'bottom-1 right-0'
   };
@@ -51,7 +51,7 @@ const AvatarGroup: React.FC<IAvatarGroup> = ({ size = 36, users, image, preview 
           <Image
             src={getImageURL(image, 'avatar_mini')}
             alt='Avatar'
-            referrerPolicy="no-referrer"
+            referrerPolicy='no-referrer'
             preview={preview ? { src: getImageURL(image), mask: <FontAwesomeIcon icon={faEye} /> } : false}
             style={{
               width: '100%',
