@@ -1,3 +1,4 @@
+import { custom_scrollBar } from '@/util/cssVariable';
 import styled from 'styled-components';
 
 const StyleProvider = styled.div`
@@ -43,6 +44,7 @@ const StyleProvider = styled.div`
     color: ${(props) => props.theme.colorText1};
     border: 1px solid ${(props) => props.theme.colorBg4};
     box-shadow: 0 2px 8px ${(props) => props.theme.colorBg4};
+    ${custom_scrollBar};
 
     .user {
       &:hover {

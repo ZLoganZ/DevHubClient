@@ -32,7 +32,7 @@ const MainLayout = ({ Component }: IMainLayout) => {
             <Layout>
               <Headers />
               <FloatButton.BackTop />
-              <Layout.Content className='xs:ml-0 ml-20'>{Component}</Layout.Content>
+              <Layout.Content className='md:ml-0 ml-20'>{Component}</Layout.Content>
             </Layout>
           </Layout>
         </StyleProvider>

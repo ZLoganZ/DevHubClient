@@ -288,7 +288,7 @@ const Headers = () => {
                       onChange={(e) => handleSearch(e.currentTarget.value)}
                     />
                     {isListVisible && (
-                      <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg'>
+                      <div className='listSearch leading-none flex flex-col gap-1.5 absolute w-[95%] z-10 rounded-lg max-h-[40rem] overflow-auto'>
                         {searchDebounce === '' ? (
                           isLoadingSearchLogs ? (
                             <div className='py-20'>
