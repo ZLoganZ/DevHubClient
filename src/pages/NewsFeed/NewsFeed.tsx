@@ -193,6 +193,11 @@ const NewsFeed = () => {
                       />
                     </div>
                   )}
+                  {!hasNextNewsfeedPosts && (
+                    <div className='flex justify-center mb-4'>
+                      Follow more people to see more posts.
+                    </div>
+                  )}
                 </div>
               </div>
               <div className='news-feed-right w-4/12 pl-3 md:hidden'>

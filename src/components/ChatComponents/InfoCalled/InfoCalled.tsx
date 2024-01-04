@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/hooks/special';
-import { IConversation, IUserInfo } from '@/types';
+import { ICalled, IConversation } from '@/types';
 import { capitalizeFirstLetter } from '@/util/convertText';
 import { getDateTime } from '@/util/formatDateTime';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
@@ -7,16 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Row } from 'antd';
 
 interface IInfoCalled {
-  user: IUserInfo;
+  called: ICalled;
   conversation: IConversation;
   stateCalled: string;
   notification: JSX.Element;
 }
 
-const InfoCalled: React.FC<IInfoCalled> = ({ user, conversation, stateCalled, notification }) => {
+const InfoCalled: React.FC<IInfoCalled> = ({ called, conversation, stateCalled, notification }) => {
   // Lấy theme từ LocalStorage chuyển qua css
   useAppSelector((state) => state.theme.changed);
-  console.log('user ', user);
   console.log('conversation ', conversation);
   console.log('stateCalled ', stateCalled);
   console.log('notification ', notification);
@@ -34,7 +33,7 @@ const InfoCalled: React.FC<IInfoCalled> = ({ user, conversation, stateCalled, no
                         <span>Called by </span>
                       </Col>
                       <Col span={12}>
-                        <span>: {user.name}</span>
+                        <span>: {called.sender.name}</span>
                       </Col>
                     </Row>
                     {conversation.type === 'group' && (
@@ -56,13 +55,13 @@ const InfoCalled: React.FC<IInfoCalled> = ({ user, conversation, stateCalled, no
                     <FontAwesomeIcon className='text-lg' icon={faCalendar} />
                   </Col>
                   <Col span={12} offset={3}>
-                    <span className='info-called__header__time__date'>
-                      {getDateTime(conversation.createdAt)}
-                    </span>
+                    <span className='info-called__header__time__date'>{getDateTime(called.createdAt)}</span>
                   </Col>
                 </Row>
                 <Row className='info-called__body__notification'>
-                  <Col span={1} className='flex justify-center'>{notification}</Col>
+                  <Col span={1} className='flex justify-center'>
+                    {notification}
+                  </Col>
                   <Col span={12} offset={3}>
                     <span className='info-called__header__title__state'>
                       {capitalizeFirstLetter(stateCalled)}
